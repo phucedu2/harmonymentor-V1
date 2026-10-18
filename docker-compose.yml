@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: harmonymentor
+      POSTGRES_USER: harmonymentor
+      POSTGRES_PASSWORD: harmonymentor
+    ports:
+      - "5432:5432"
+    volumes:
+      - harmonymentor_pgdata:/var/lib/postgresql/data
+
+volumes:
+  harmonymentor_pgdata:

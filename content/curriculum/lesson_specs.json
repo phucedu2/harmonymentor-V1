@@ -1,0 +1,3611 @@
+[
+  {
+    "id": "L01",
+    "order": 1,
+    "track": "Foundation",
+    "title": "Nốt, quãng và cấu trúc hợp âm",
+    "status": "reviewed",
+    "objectives": [
+      "Phân biệt tên nốt với cao độ nghe được trong các trường hợp enharmonic.",
+      "Nhận diện quãng theo số và tính chất.",
+      "Dựng major/minor/diminished triad bằng đúng spelling."
+    ],
+    "skills": [
+      "pitch.spelling",
+      "interval.naming",
+      "chord.triad_formula",
+      "chord.triad_build"
+    ],
+    "sources": [
+      {
+        "source_id": "OMT_V2",
+        "locator": "Fundamentals → Intervals",
+        "note": "Interval size/quality and enharmonic interval spelling."
+      },
+      {
+        "source_id": "OMT_V2",
+        "locator": "Fundamentals → Triads",
+        "note": "Triad structure, qualities, spelling, and listening."
+      },
+      {
+        "source_id": "FANK_WIH",
+        "locator": "Unit 1: Music Fundamentals — scales, intervals, triads",
+        "note": "Current official unit verified; exact current PDF page locators not locked."
+      },
+      {
+        "source_id": "TEREFENKO_WB",
+        "locator": "Part I, Ch.1 Music Fundamentals, PDF pp. 13–22",
+        "note": "Written notation plus interval/triad ear-training sequence."
+      }
+    ],
+    "blocks": [
+      [
+        "L01-B01",
+        "objectives",
+        {
+          "title": "Mục tiêu",
+          "items": [
+            "Gọi tên quãng",
+            "Dựng triad",
+            "Phân biệt enharmonic spelling"
+          ]
+        }
+      ],
+      [
+        "L01-B02",
+        "theory",
+        {
+          "title": "Quãng có số và tính chất",
+          "paragraphs": [
+            "Một quãng được xác định bởi khoảng cách chữ cái và chất lượng như trưởng, thứ, đúng, tăng hoặc giảm."
+          ]
+        }
+      ],
+      [
+        "L01-BCP1",
+        "checkpoint",
+        {
+          "title": "Checkpoint · Nhận diện quãng",
+          "exercise_id": "L01-Q01",
+          "note": "Tự trả lời trước khi tiếp tục."
+        }
+      ],
+      [
+        "L01-B03",
+        "theory",
+        {
+          "title": "Triad được dựng theo root–third–fifth",
+          "paragraphs": [
+            "Major, minor và diminished triad khác nhau ở chất lượng quãng 3 và quãng 5 tính từ root."
+          ]
+        }
+      ],
+      [
+        "L01-BCP2",
+        "checkpoint",
+        {
+          "title": "Checkpoint · Dựng triad",
+          "exercise_id": "L01-Q02",
+          "note": "Dựng hợp âm từ trí nhớ, không nhìn đáp án."
+        }
+      ],
+      [
+        "L01-B04",
+        "callout",
+        {
+          "title": "Spelling matters",
+          "prompt": "Hai tên nốt có thể cùng phím đàn nhưng không mặc nhiên thay thế nhau trong bài viết nhạc."
+        }
+      ],
+      [
+        "L01-B05",
+        "summary",
+        {
+          "title": "Ghi nhớ",
+          "items": [
+            "M3 khác m3",
+            "C major = C–E–G",
+            "B diminished = B–D–F"
+          ]
+        }
+      ]
+    ],
+    "exercises": [
+      {
+        "id": "L01-Q01",
+        "kind": "mcq",
+        "prompt": "Quãng từ C lên E là gì?",
+        "skill": "interval.naming",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "M3"
+        },
+        "grader_config": {
+          "case_sensitive": true
+        },
+        "options": [
+          "m3",
+          "M3",
+          "P4",
+          "A4"
+        ],
+        "explanation": "C–E là quãng ba trưởng.",
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Intervals",
+            "note": "Interval size/quality and enharmonic interval spelling."
+          },
+          {
+            "source_id": "FANK_WIH",
+            "locator": "Unit 1: Music Fundamentals — scales, intervals, triads",
+            "note": "Current official unit verified; exact current PDF page locators not locked."
+          }
+        ]
+      },
+      {
+        "id": "L01-Q02",
+        "kind": "build",
+        "prompt": "Dựng hợp âm C trưởng bằng tên nốt.",
+        "skill": "chord.triad_build",
+        "strategy": "music_engine",
+        "answer_key": {
+          "expected": [
+            "C",
+            "E",
+            "G"
+          ]
+        },
+        "grader_config": {
+          "kind": "build_chord",
+          "symbol": "C"
+        },
+        "options": null,
+        "explanation": "C major = C–E–G.",
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Triads",
+            "note": "Triad structure, qualities, spelling, and listening."
+          },
+          {
+            "source_id": "FANK_WIH",
+            "locator": "Unit 1: Music Fundamentals — scales, intervals, triads",
+            "note": "Current official unit verified; exact current PDF page locators not locked."
+          }
+        ]
+      },
+      {
+        "id": "L01-Q03",
+        "kind": "active_recall",
+        "prompt": "Không nhìn đáp án: công thức minor triad là gì?",
+        "skill": "chord.triad_formula",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "1-b3-5"
+        },
+        "grader_config": {
+          "normalize_dashes": true
+        },
+        "options": null,
+        "explanation": "Minor triad = 1–♭3–5.",
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Triads",
+            "note": "Triad structure, qualities, spelling, and listening."
+          }
+        ]
+      },
+      {
+        "id": "L01-Q04",
+        "kind": "build",
+        "prompt": "Dựng hợp âm A minor bằng tên nốt.",
+        "skill": "chord.triad_build",
+        "strategy": "music_engine",
+        "answer_key": {
+          "expected": [
+            "A",
+            "C",
+            "E"
+          ]
+        },
+        "grader_config": {
+          "kind": "build_chord",
+          "symbol": "Am"
+        },
+        "options": null,
+        "explanation": "A minor = A–C–E.",
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Triads",
+            "note": "Triad structure, qualities, spelling, and listening."
+          },
+          {
+            "source_id": "TEREFENKO_WB",
+            "locator": "Part I, Ch.1 Music Fundamentals, PDF pp. 13–22",
+            "note": "Written notation plus interval/triad ear-training sequence."
+          }
+        ]
+      },
+      {
+        "id": "L01-Q05",
+        "kind": "context",
+        "prompt": "G# và Ab có thể cùng cao độ trên đàn. Điều đó có nghĩa chúng luôn cùng spelling không?",
+        "skill": "pitch.spelling",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "không",
+            "khong",
+            "không phải",
+            "khong phai"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any",
+          "strip_accents": true
+        },
+        "options": null,
+        "explanation": "Enharmonic pitches có thể cùng cao độ nhưng khác tên viết theo ngữ cảnh.",
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Intervals",
+            "note": "Interval size/quality and enharmonic interval spelling."
+          },
+          {
+            "source_id": "FANK_WIH",
+            "locator": "Unit 1: Music Fundamentals — scales, intervals, triads",
+            "note": "Current official unit verified; exact current PDF page locators not locked."
+          }
+        ]
+      },
+      {
+        "id": "L01-Q06",
+        "kind": "build",
+        "prompt": "Dựng hợp âm B diminished.",
+        "skill": "chord.triad_build",
+        "strategy": "music_engine",
+        "answer_key": {
+          "expected": [
+            "B",
+            "D",
+            "F"
+          ]
+        },
+        "grader_config": {
+          "kind": "build_chord",
+          "symbol": "Bdim"
+        },
+        "options": null,
+        "explanation": "B diminished = B–D–F.",
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Triads",
+            "note": "Triad structure, qualities, spelling, and listening."
+          },
+          {
+            "source_id": "TEREFENKO_WB",
+            "locator": "Part I, Ch.1 Music Fundamentals, PDF pp. 13–22",
+            "note": "Written notation plus interval/triad ear-training sequence."
+          }
+        ]
+      }
+    ],
+    "review_items": [
+      {
+        "id": "L01-F01",
+        "front": "Quãng C–E?",
+        "back": "M3",
+        "skill": "interval.naming",
+        "mode": "recall",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "M3"
+        },
+        "grader_config": {
+          "case_sensitive": true
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Intervals",
+            "note": "Interval size/quality and enharmonic interval spelling."
+          }
+        ]
+      },
+      {
+        "id": "L01-F02",
+        "front": "Quãng C–Eb?",
+        "back": "m3",
+        "skill": "interval.naming",
+        "mode": "recall",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "m3"
+        },
+        "grader_config": {
+          "case_sensitive": true
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Intervals",
+            "note": "Interval size/quality and enharmonic interval spelling."
+          }
+        ]
+      },
+      {
+        "id": "L01-F03",
+        "front": "Công thức major triad?",
+        "back": "1–3–5",
+        "skill": "chord.triad_formula",
+        "mode": "recall",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "1-3-5"
+        },
+        "grader_config": {
+          "normalize_dashes": true
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Triads",
+            "note": "Triad structure, qualities, spelling, and listening."
+          }
+        ]
+      },
+      {
+        "id": "L01-F04",
+        "front": "Công thức minor triad?",
+        "back": "1–♭3–5",
+        "skill": "chord.triad_formula",
+        "mode": "recall",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "1-b3-5"
+        },
+        "grader_config": {
+          "normalize_dashes": true
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Triads",
+            "note": "Triad structure, qualities, spelling, and listening."
+          }
+        ]
+      },
+      {
+        "id": "L01-F05",
+        "front": "Build C major",
+        "back": "C–E–G",
+        "skill": "chord.triad_build",
+        "mode": "build",
+        "strategy": "music_engine",
+        "answer_key": {
+          "expected": [
+            "C",
+            "E",
+            "G"
+          ]
+        },
+        "grader_config": {
+          "kind": "build_chord",
+          "symbol": "C"
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Triads",
+            "note": "Triad structure, qualities, spelling, and listening."
+          }
+        ]
+      },
+      {
+        "id": "L01-F06",
+        "front": "Build A minor",
+        "back": "A–C–E",
+        "skill": "chord.triad_build",
+        "mode": "build",
+        "strategy": "music_engine",
+        "answer_key": {
+          "expected": [
+            "A",
+            "C",
+            "E"
+          ]
+        },
+        "grader_config": {
+          "kind": "build_chord",
+          "symbol": "Am"
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Triads",
+            "note": "Triad structure, qualities, spelling, and listening."
+          }
+        ]
+      },
+      {
+        "id": "L01-F07",
+        "front": "Build B diminished",
+        "back": "B–D–F",
+        "skill": "chord.triad_build",
+        "mode": "build",
+        "strategy": "music_engine",
+        "answer_key": {
+          "expected": [
+            "B",
+            "D",
+            "F"
+          ]
+        },
+        "grader_config": {
+          "kind": "build_chord",
+          "symbol": "Bdim"
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Triads",
+            "note": "Triad structure, qualities, spelling, and listening."
+          }
+        ]
+      },
+      {
+        "id": "L01-F08",
+        "front": "Enharmonic: cùng phím đàn có luôn cùng tên nốt?",
+        "back": "Không; spelling phụ thuộc ngữ cảnh ký âm.",
+        "skill": "pitch.spelling",
+        "mode": "context",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "không",
+            "khong"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any",
+          "strip_accents": true
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Intervals",
+            "note": "Interval size/quality and enharmonic interval spelling."
+          },
+          {
+            "source_id": "FANK_WIH",
+            "locator": "Unit 1: Music Fundamentals — scales, intervals, triads",
+            "note": "Current official unit verified; exact current PDF page locators not locked."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "L02",
+    "order": 2,
+    "track": "Foundation",
+    "title": "Âm giai trưởng và hợp âm bảy điệu tính",
+    "status": "reviewed",
+    "objectives": [
+      "Dựng âm giai trưởng đúng thứ tự bậc và spelling.",
+      "Nhận diện chất lượng hợp âm bảy điệu tính trong major key.",
+      "Dùng chord symbol và Roman numeral cơ bản cho seventh chords."
+    ],
+    "skills": [
+      "scale.major",
+      "chord.seventh_quality",
+      "chord.seventh_build",
+      "roman.major_seventh"
+    ],
+    "sources": [
+      {
+        "source_id": "OMT_V2",
+        "locator": "Fundamentals → Seventh Chords",
+        "note": "Seventh-chord structure and diatonic qualities."
+      },
+      {
+        "source_id": "OMT_V2",
+        "locator": "Fundamentals → Roman Numerals",
+        "note": "Relative labeling of diatonic harmony."
+      },
+      {
+        "source_id": "FANK_WIH",
+        "locator": "Unit 1: Music Fundamentals — scales, intervals, triads",
+        "note": "Current official unit verified; exact current PDF page locators not locked."
+      },
+      {
+        "source_id": "FANK_WIH",
+        "locator": "Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading",
+        "note": "Supporting cross-check; exact current PDF pages pending local PDF access."
+      },
+      {
+        "source_id": "TEREFENKO_WB",
+        "locator": "Part I, Chs.4–5 Four-Part/Five-Part Chords, PDF pp. 29–43",
+        "note": "Four/five-part chord construction, voicing, and ear training."
+      }
+    ],
+    "blocks": [
+      [
+        "L02-B01",
+        "objectives",
+        {
+          "title": "Mục tiêu",
+          "items": [
+            "Major scale",
+            "Diatonic seventh chords",
+            "Roman numeral cơ bản"
+          ]
+        }
+      ],
+      [
+        "L02-B02",
+        "theory",
+        {
+          "title": "Từ scale đến seventh chord",
+          "paragraphs": [
+            "Chồng các quãng ba trên từng bậc của major scale tạo ra một mẫu chất lượng seventh chord lặp lại ở mọi major key."
+          ]
+        }
+      ],
+      [
+        "L02-BCP1",
+        "checkpoint",
+        {
+          "title": "Checkpoint · Dựng major scale",
+          "exercise_id": "L02-Q01",
+          "note": "Giữ đúng thứ tự bậc và spelling."
+        }
+      ],
+      [
+        "L02-B03",
+        "theory",
+        {
+          "title": "Mẫu trong major key",
+          "paragraphs": [
+            "Imaj7, ii7, iii7, IVmaj7, V7, vi7, viiø7 là khung thực hành của lesson này."
+          ]
+        }
+      ],
+      [
+        "L02-BCP2",
+        "checkpoint",
+        {
+          "title": "Checkpoint · Roman numeral",
+          "exercise_id": "L02-Q03",
+          "note": "Liên kết chord symbol với vị trí trong key."
+        }
+      ],
+      [
+        "L02-B04",
+        "interactive",
+        {
+          "title": "Thử nhanh",
+          "prompt": "Dựng G major rồi tìm V7 và viiø7 trong giọng."
+        }
+      ],
+      [
+        "L02-B05",
+        "summary",
+        {
+          "title": "Ghi nhớ",
+          "items": [
+            "V7 có dominant-seventh quality",
+            "viiø7 là half-diminished",
+            "Spelling đúng vẫn quan trọng"
+          ]
+        }
+      ]
+    ],
+    "exercises": [
+      {
+        "id": "L02-Q01",
+        "kind": "build",
+        "prompt": "Dựng âm giai G major theo thứ tự đi lên, không lặp lại chủ âm ở cuối.",
+        "skill": "scale.major",
+        "strategy": "music_engine",
+        "answer_key": {
+          "expected": [
+            "G",
+            "A",
+            "B",
+            "C",
+            "D",
+            "E",
+            "F#"
+          ]
+        },
+        "grader_config": {
+          "kind": "build_scale",
+          "tonic": "G",
+          "scale_type": "major"
+        },
+        "options": null,
+        "explanation": "G major dùng F# và mỗi chữ cái xuất hiện một lần.",
+        "provenance": [
+          {
+            "source_id": "FANK_WIH",
+            "locator": "Unit 1: Music Fundamentals — scales, intervals, triads",
+            "note": "Current official unit verified; exact current PDF page locators not locked."
+          }
+        ]
+      },
+      {
+        "id": "L02-Q02",
+        "kind": "build",
+        "prompt": "Dựng Cmaj7 đầy đủ bằng tên nốt.",
+        "skill": "chord.seventh_build",
+        "strategy": "music_engine",
+        "answer_key": {
+          "expected": [
+            "C",
+            "E",
+            "G",
+            "B"
+          ]
+        },
+        "grader_config": {
+          "kind": "build_chord",
+          "symbol": "Cmaj7"
+        },
+        "options": null,
+        "explanation": "Cmaj7 = C–E–G–B.",
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Seventh Chords",
+            "note": "Seventh-chord structure and diatonic qualities."
+          },
+          {
+            "source_id": "TEREFENKO_WB",
+            "locator": "Part I, Chs.4–5 Four-Part/Five-Part Chords, PDF pp. 29–43",
+            "note": "Four/five-part chord construction, voicing, and ear training."
+          }
+        ]
+      },
+      {
+        "id": "L02-Q03",
+        "kind": "active_recall",
+        "prompt": "Trong C major, Dm7 mang Roman numeral nào?",
+        "skill": "roman.major_seventh",
+        "strategy": "music_engine",
+        "answer_key": {
+          "expected": "ii7"
+        },
+        "grader_config": {
+          "kind": "roman_numeral",
+          "key": "C",
+          "chord": "Dm7"
+        },
+        "options": null,
+        "explanation": "Dm7 là seventh chord trên bậc 2 của C major.",
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Roman Numerals",
+            "note": "Relative labeling of diatonic harmony."
+          },
+          {
+            "source_id": "FANK_WIH",
+            "locator": "Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading",
+            "note": "Supporting cross-check; exact current PDF pages pending local PDF access."
+          }
+        ]
+      },
+      {
+        "id": "L02-Q04",
+        "kind": "mcq",
+        "prompt": "Trong C major, hợp âm bảy trên bậc V là gì?",
+        "skill": "chord.seventh_quality",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "G7"
+        },
+        "grader_config": {},
+        "options": [
+          "Gmaj7",
+          "G7",
+          "Gm7",
+          "Gdim7"
+        ],
+        "explanation": "Bậc V của major key tạo dominant seventh.",
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Seventh Chords",
+            "note": "Seventh-chord structure and diatonic qualities."
+          },
+          {
+            "source_id": "FANK_WIH",
+            "locator": "Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading",
+            "note": "Supporting cross-check; exact current PDF pages pending local PDF access."
+          }
+        ]
+      },
+      {
+        "id": "L02-Q05",
+        "kind": "mcq",
+        "prompt": "Trong C major, hợp âm bảy trên bậc vii là gì?",
+        "skill": "chord.seventh_quality",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "Bm7b5"
+        },
+        "grader_config": {},
+        "options": [
+          "Bmaj7",
+          "Bm7",
+          "Bm7b5",
+          "Bdim7"
+        ],
+        "explanation": "Bậc vii trong major key tạo half-diminished seventh chord.",
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Seventh Chords",
+            "note": "Seventh-chord structure and diatonic qualities."
+          }
+        ]
+      },
+      {
+        "id": "L02-Q06",
+        "kind": "build",
+        "prompt": "Dựng G7 đầy đủ bằng tên nốt.",
+        "skill": "chord.seventh_build",
+        "strategy": "music_engine",
+        "answer_key": {
+          "expected": [
+            "G",
+            "B",
+            "D",
+            "F"
+          ]
+        },
+        "grader_config": {
+          "kind": "build_chord",
+          "symbol": "G7"
+        },
+        "options": null,
+        "explanation": "G7 = G–B–D–F.",
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Seventh Chords",
+            "note": "Seventh-chord structure and diatonic qualities."
+          },
+          {
+            "source_id": "TEREFENKO_WB",
+            "locator": "Part I, Chs.4–5 Four-Part/Five-Part Chords, PDF pp. 29–43",
+            "note": "Four/five-part chord construction, voicing, and ear training."
+          }
+        ]
+      }
+    ],
+    "review_items": [
+      {
+        "id": "L02-F01",
+        "front": "G major scale",
+        "back": "G–A–B–C–D–E–F#",
+        "skill": "scale.major",
+        "mode": "build",
+        "strategy": "music_engine",
+        "answer_key": {
+          "expected": [
+            "G",
+            "A",
+            "B",
+            "C",
+            "D",
+            "E",
+            "F#"
+          ]
+        },
+        "grader_config": {
+          "kind": "build_scale",
+          "tonic": "G",
+          "scale_type": "major"
+        },
+        "provenance": [
+          {
+            "source_id": "FANK_WIH",
+            "locator": "Unit 1: Music Fundamentals — scales, intervals, triads",
+            "note": "Current official unit verified; exact current PDF page locators not locked."
+          }
+        ]
+      },
+      {
+        "id": "L02-F02",
+        "front": "Build Cmaj7",
+        "back": "C–E–G–B",
+        "skill": "chord.seventh_build",
+        "mode": "build",
+        "strategy": "music_engine",
+        "answer_key": {
+          "expected": [
+            "C",
+            "E",
+            "G",
+            "B"
+          ]
+        },
+        "grader_config": {
+          "kind": "build_chord",
+          "symbol": "Cmaj7"
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Seventh Chords",
+            "note": "Seventh-chord structure and diatonic qualities."
+          }
+        ]
+      },
+      {
+        "id": "L02-F03",
+        "front": "Build Dm7",
+        "back": "D–F–A–C",
+        "skill": "chord.seventh_build",
+        "mode": "build",
+        "strategy": "music_engine",
+        "answer_key": {
+          "expected": [
+            "D",
+            "F",
+            "A",
+            "C"
+          ]
+        },
+        "grader_config": {
+          "kind": "build_chord",
+          "symbol": "Dm7"
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Seventh Chords",
+            "note": "Seventh-chord structure and diatonic qualities."
+          }
+        ]
+      },
+      {
+        "id": "L02-F04",
+        "front": "V7 in C major",
+        "back": "G7",
+        "skill": "roman.major_seventh",
+        "mode": "context",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "G7"
+        },
+        "grader_config": {},
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Seventh Chords",
+            "note": "Seventh-chord structure and diatonic qualities."
+          }
+        ]
+      },
+      {
+        "id": "L02-F05",
+        "front": "ii7 in C major",
+        "back": "Dm7",
+        "skill": "roman.major_seventh",
+        "mode": "context",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "Dm7"
+        },
+        "grader_config": {},
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Seventh Chords",
+            "note": "Seventh-chord structure and diatonic qualities."
+          }
+        ]
+      },
+      {
+        "id": "L02-F06",
+        "front": "viiø7 in C major",
+        "back": "Bm7b5",
+        "skill": "roman.major_seventh",
+        "mode": "context",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "Bm7b5"
+        },
+        "grader_config": {},
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Seventh Chords",
+            "note": "Seventh-chord structure and diatonic qualities."
+          }
+        ]
+      },
+      {
+        "id": "L02-F07",
+        "front": "Dominant seventh = triad quality + seventh quality?",
+        "back": "Major triad + minor seventh",
+        "skill": "chord.seventh_quality",
+        "mode": "recall",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "major triad + minor seventh",
+            "major + minor seventh",
+            "trưởng + bảy thứ",
+            "truong + bay thu"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any",
+          "strip_accents": true
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Seventh Chords",
+            "note": "Seventh-chord structure and diatonic qualities."
+          }
+        ]
+      },
+      {
+        "id": "L02-F08",
+        "front": "Roman numeral của Dm7 trong C major",
+        "back": "ii7",
+        "skill": "roman.major_seventh",
+        "mode": "recall",
+        "strategy": "music_engine",
+        "answer_key": {
+          "expected": "ii7"
+        },
+        "grader_config": {
+          "kind": "roman_numeral",
+          "key": "C",
+          "chord": "Dm7"
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Roman Numerals",
+            "note": "Relative labeling of diatonic harmony."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "L03",
+    "order": 3,
+    "track": "Harmony Core",
+    "title": "Chức năng hòa âm: Tonic – Predominant/Subdominant – Dominant",
+    "status": "reviewed",
+    "objectives": [
+      "Phân biệt tonic, predominant/subdominant và dominant trong một major-key phrase đơn giản.",
+      "Phân tích chức năng theo ngữ cảnh thay vì chỉ nhìn chord symbol.",
+      "Nhận diện luồng T → PD → D → T trong progression ngắn."
+    ],
+    "skills": [
+      "function.tonic",
+      "function.predominant",
+      "function.dominant",
+      "function.progression"
+    ],
+    "sources": [
+      {
+        "source_id": "OMT_V2",
+        "locator": "Introduction to Harmony, Cadences, and Phrase Endings",
+        "note": "Tonic–predominant–dominant phrase model."
+      },
+      {
+        "source_id": "FANK_WIH",
+        "locator": "Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading",
+        "note": "Supporting cross-check; exact current PDF pages pending local PDF access."
+      },
+      {
+        "source_id": "TEREFENKO_WB",
+        "locator": "Part I, Ch.3 Harmonic Function, PDF pp. 25–28",
+        "note": "Written analysis, keyboard realization, and harmonic-function ear training."
+      },
+      {
+        "source_id": "KHAIHOAN_JAZZ",
+        "locator": "Ch.1, printed pp. 21–37",
+        "note": "Tonic/subdominant/dominant grouping and ii–V–I context."
+      }
+    ],
+    "blocks": [
+      [
+        "L03-B01",
+        "objectives",
+        {
+          "title": "Mục tiêu",
+          "items": [
+            "Tonic",
+            "Predominant/Subdominant",
+            "Dominant",
+            "Functional flow"
+          ]
+        }
+      ],
+      [
+        "L03-B02",
+        "theory",
+        {
+          "title": "Chức năng là quan hệ trong ngữ cảnh",
+          "paragraphs": [
+            "Tonic tạo điểm quy chiếu; predominant/subdominant chuẩn bị dominant; dominant tạo lực hướng về tonic."
+          ]
+        }
+      ],
+      [
+        "L03-BCP1",
+        "checkpoint",
+        {
+          "title": "Checkpoint · Tonic function",
+          "exercise_id": "L03-Q01",
+          "note": "Kiểm tra khái niệm trước khi phân tích progression."
+        }
+      ],
+      [
+        "L03-B03",
+        "progression",
+        {
+          "title": "Ví dụ",
+          "prompt": "Cmaj7 → Dm7 → G7 → Cmaj7  =  T → PD → D → T",
+          "key": "C"
+        }
+      ],
+      [
+        "L03-BCP2",
+        "checkpoint",
+        {
+          "title": "Checkpoint · Dominant trong ngữ cảnh",
+          "exercise_id": "L03-Q03",
+          "note": "Dùng progression ngay phía trên để trả lời."
+        }
+      ],
+      [
+        "L03-B04",
+        "interactive",
+        {
+          "title": "Phân tích",
+          "prompt": "Gán chức năng cho từng chord trước khi nghe progression."
+        }
+      ],
+      [
+        "L03-B05",
+        "summary",
+        {
+          "title": "Ghi nhớ",
+          "items": [
+            "Function phụ thuộc context",
+            "ii thường làm predominant",
+            "V7 thường làm dominant"
+          ]
+        }
+      ]
+    ],
+    "exercises": [
+      {
+        "id": "L03-Q01",
+        "kind": "mcq",
+        "prompt": "Trong C major, Cmaj7 ở vị trí ổn định cuối phrase thuộc chức năng nào?",
+        "skill": "function.tonic",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "Tonic"
+        },
+        "grader_config": {},
+        "options": [
+          "Tonic",
+          "Predominant",
+          "Dominant",
+          "Applied dominant"
+        ],
+        "explanation": "I/Imaj7 là điểm quy chiếu tonic trong ngữ cảnh lesson này.",
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Introduction to Harmony, Cadences, and Phrase Endings",
+            "note": "Tonic–predominant–dominant phrase model."
+          },
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.1, printed pp. 21–37",
+            "note": "Tonic/subdominant/dominant grouping and ii–V–I context."
+          }
+        ]
+      },
+      {
+        "id": "L03-Q02",
+        "kind": "mcq",
+        "prompt": "Trong Dm7 → G7 → Cmaj7 ở C major, Dm7 thường giữ vai trò nào?",
+        "skill": "function.predominant",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "Predominant"
+        },
+        "grader_config": {},
+        "options": [
+          "Tonic",
+          "Predominant",
+          "Dominant",
+          "Modulation"
+        ],
+        "explanation": "ii7 thường chuẩn bị dominant.",
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Introduction to Harmony, Cadences, and Phrase Endings",
+            "note": "Tonic–predominant–dominant phrase model."
+          },
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.1, printed pp. 21–37",
+            "note": "Tonic/subdominant/dominant grouping and ii–V–I context."
+          }
+        ]
+      },
+      {
+        "id": "L03-Q03",
+        "kind": "mcq",
+        "prompt": "Trong Dm7 → G7 → Cmaj7, G7 giữ chức năng nào?",
+        "skill": "function.dominant",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "Dominant"
+        },
+        "grader_config": {},
+        "options": [
+          "Tonic",
+          "Predominant",
+          "Dominant",
+          "Modal"
+        ],
+        "explanation": "V7 tạo dominant function và hướng về tonic.",
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Introduction to Harmony, Cadences, and Phrase Endings",
+            "note": "Tonic–predominant–dominant phrase model."
+          },
+          {
+            "source_id": "TEREFENKO_WB",
+            "locator": "Part I, Ch.3 Harmonic Function, PDF pp. 25–28",
+            "note": "Written analysis, keyboard realization, and harmonic-function ear training."
+          }
+        ]
+      },
+      {
+        "id": "L03-Q04",
+        "kind": "active_recall",
+        "prompt": "Viết thứ tự chức năng cơ bản của progression Cmaj7 → Dm7 → G7 → Cmaj7.",
+        "skill": "function.progression",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "t-pd-d-t",
+            "tonic-predominant-dominant-tonic",
+            "t-subdominant-dominant-t",
+            "tonic-subdominant-dominant-tonic"
+          ]
+        },
+        "grader_config": {
+          "mode": "equals_any",
+          "normalize_dashes": true
+        },
+        "options": null,
+        "explanation": "Flow mục tiêu là T → PD/SD → D → T.",
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Introduction to Harmony, Cadences, and Phrase Endings",
+            "note": "Tonic–predominant–dominant phrase model."
+          },
+          {
+            "source_id": "TEREFENKO_WB",
+            "locator": "Part I, Ch.3 Harmonic Function, PDF pp. 25–28",
+            "note": "Written analysis, keyboard realization, and harmonic-function ear training."
+          }
+        ]
+      },
+      {
+        "id": "L03-Q05",
+        "kind": "context",
+        "prompt": "Vì sao không nên gán chức năng chỉ từ tên hợp âm mà bỏ qua progression xung quanh?",
+        "skill": "function.progression",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "ngữ cảnh",
+            "ngu canh",
+            "context",
+            "chức năng phụ thuộc",
+            "chuc nang phu thuoc"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any",
+          "strip_accents": true
+        },
+        "options": null,
+        "explanation": "Harmonic function là quan hệ hành vi trong ngữ cảnh.",
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Introduction to Harmony, Cadences, and Phrase Endings",
+            "note": "Tonic–predominant–dominant phrase model."
+          },
+          {
+            "source_id": "TEREFENKO_WB",
+            "locator": "Part I, Ch.3 Harmonic Function, PDF pp. 25–28",
+            "note": "Written analysis, keyboard realization, and harmonic-function ear training."
+          }
+        ]
+      },
+      {
+        "id": "L03-Q06",
+        "kind": "applied",
+        "prompt": "Chọn progression thể hiện rõ T → PD → D → T trong C major.",
+        "skill": "function.progression",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "Cmaj7-Dm7-G7-Cmaj7"
+        },
+        "grader_config": {
+          "normalize_dashes": true
+        },
+        "options": [
+          "Cmaj7-Dm7-G7-Cmaj7",
+          "Cmaj7-Am7-Em7-Dm7",
+          "G7-Dm7-Cmaj7-Fmaj7",
+          "Cmaj7-G7-Dm7-Cmaj7"
+        ],
+        "explanation": "Cmaj7–Dm7–G7–Cmaj7 thể hiện rõ tonic → predominant → dominant → tonic.",
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Introduction to Harmony, Cadences, and Phrase Endings",
+            "note": "Tonic–predominant–dominant phrase model."
+          },
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.1, printed pp. 21–37",
+            "note": "Tonic/subdominant/dominant grouping and ii–V–I context."
+          }
+        ]
+      }
+    ],
+    "review_items": [
+      {
+        "id": "L03-F01",
+        "front": "Tonic function",
+        "back": "Ổn định / điểm quy chiếu của giọng.",
+        "skill": "function.tonic",
+        "mode": "recall",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "ổn định",
+            "on dinh",
+            "điểm quy chiếu",
+            "diem quy chieu",
+            "home",
+            "resolution"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any",
+          "strip_accents": true
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Introduction to Harmony, Cadences, and Phrase Endings",
+            "note": "Tonic–predominant–dominant phrase model."
+          }
+        ]
+      },
+      {
+        "id": "L03-F02",
+        "front": "Predominant/Subdominant function",
+        "back": "Rời tonic và chuẩn bị dominant.",
+        "skill": "function.predominant",
+        "mode": "recall",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "chuẩn bị dominant",
+            "chuan bi dominant",
+            "predominant",
+            "subdominant"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any",
+          "strip_accents": true
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Introduction to Harmony, Cadences, and Phrase Endings",
+            "note": "Tonic–predominant–dominant phrase model."
+          }
+        ]
+      },
+      {
+        "id": "L03-F03",
+        "front": "Dominant function",
+        "back": "Tạo lực hướng/giải quyết về tonic.",
+        "skill": "function.dominant",
+        "mode": "recall",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "về tonic",
+            "ve tonic",
+            "resolve tonic",
+            "dominant"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any",
+          "strip_accents": true
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Introduction to Harmony, Cadences, and Phrase Endings",
+            "note": "Tonic–predominant–dominant phrase model."
+          }
+        ]
+      },
+      {
+        "id": "L03-F04",
+        "front": "Cmaj7 trong C major (ổn định cuối phrase)",
+        "back": "Tonic",
+        "skill": "function.tonic",
+        "mode": "context",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "Tonic"
+        },
+        "grader_config": {},
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Introduction to Harmony, Cadences, and Phrase Endings",
+            "note": "Tonic–predominant–dominant phrase model."
+          }
+        ]
+      },
+      {
+        "id": "L03-F05",
+        "front": "Dm7 trong Dm7–G7–Cmaj7",
+        "back": "Predominant/Subdominant",
+        "skill": "function.predominant",
+        "mode": "context",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "predominant",
+            "subdominant"
+          ]
+        },
+        "grader_config": {
+          "mode": "equals_any"
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Introduction to Harmony, Cadences, and Phrase Endings",
+            "note": "Tonic–predominant–dominant phrase model."
+          },
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.1, printed pp. 21–37",
+            "note": "Tonic/subdominant/dominant grouping and ii–V–I context."
+          }
+        ]
+      },
+      {
+        "id": "L03-F06",
+        "front": "G7 trong Dm7–G7–Cmaj7",
+        "back": "Dominant",
+        "skill": "function.dominant",
+        "mode": "context",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "Dominant"
+        },
+        "grader_config": {},
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Introduction to Harmony, Cadences, and Phrase Endings",
+            "note": "Tonic–predominant–dominant phrase model."
+          }
+        ]
+      },
+      {
+        "id": "L03-F07",
+        "front": "Functional flow cơ bản",
+        "back": "T → PD/SD → D → T",
+        "skill": "function.progression",
+        "mode": "recall",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "t-pd-d-t",
+            "t-sd-d-t",
+            "tonic-predominant-dominant-tonic"
+          ]
+        },
+        "grader_config": {
+          "mode": "equals_any",
+          "normalize_dashes": true
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Introduction to Harmony, Cadences, and Phrase Endings",
+            "note": "Tonic–predominant–dominant phrase model."
+          }
+        ]
+      },
+      {
+        "id": "L03-F08",
+        "front": "Function có phải thuộc tính cố định chỉ nhìn chord symbol?",
+        "back": "Không; phải xét key/progression/context.",
+        "skill": "function.progression",
+        "mode": "context",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "không",
+            "khong",
+            "context",
+            "ngữ cảnh",
+            "ngu canh"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any",
+          "strip_accents": true
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Introduction to Harmony, Cadences, and Phrase Endings",
+            "note": "Tonic–predominant–dominant phrase model."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "L04",
+    "order": 4,
+    "track": "Harmony Core",
+    "title": "ii–V–I và guide-tone voice leading trên piano",
+    "status": "reviewed",
+    "objectives": [
+      "Nhận diện và transpose ii–V–I major sang một số giọng.",
+      "Xác định 3rd và 7th như guide tones trọng yếu của seventh chords trong bài.",
+      "Mô tả voice leading mượt bằng common tone và chuyển động gần."
+    ],
+    "skills": [
+      "progression.ii_v_i",
+      "voicing.guide_tones",
+      "voicing.voice_leading"
+    ],
+    "sources": [
+      {
+        "source_id": "OMT_V2",
+        "locator": "Jazz → ii–V–I",
+        "note": "ii–V–I schema and applied ii–V usage."
+      },
+      {
+        "source_id": "OMT_V2",
+        "locator": "Jazz → Jazz Voicings",
+        "note": "Smooth/lazy voice leading and voicing guidelines."
+      },
+      {
+        "source_id": "TEREFENKO_WB",
+        "locator": "Part I, Ch.6 The II–V–I Progression, PDF pp. 44–46",
+        "note": "Guide tones, drop-2 voicings, and functional analysis."
+      },
+      {
+        "source_id": "KHAIHOAN_JAZZ",
+        "locator": "Ch.1, printed pp. 21–37",
+        "note": "Tonic/subdominant/dominant grouping and ii–V–I context."
+      },
+      {
+        "source_id": "KHAIHOAN_JAZZ",
+        "locator": "Ch.11, printed pp. 279–307",
+        "note": "Three-note voicings, guide tones, root-motion voice leading, and advanced voicing families."
+      }
+    ],
+    "blocks": [
+      [
+        "L04-B01",
+        "objectives",
+        {
+          "title": "Mục tiêu",
+          "items": [
+            "ii–V–I",
+            "Guide tones",
+            "Voice leading"
+          ]
+        }
+      ],
+      [
+        "L04-B02",
+        "progression",
+        {
+          "title": "ii–V–I in C",
+          "prompt": "Dm7 → G7 → Cmaj7",
+          "key": "C"
+        }
+      ],
+      [
+        "L04-BCP1",
+        "checkpoint",
+        {
+          "title": "Checkpoint · Nhận diện ii–V–I",
+          "exercise_id": "L04-Q01",
+          "note": "Nhận diện schema trước khi đi vào voice leading."
+        }
+      ],
+      [
+        "L04-B03",
+        "theory",
+        {
+          "title": "Guide tones",
+          "paragraphs": [
+            "Trong seventh-chord voicing, 3rd và 7th chứa nhiều thông tin về chất lượng và lực dẫn. Với G7 → Cmaj7, B có thể giữ thành common tone còn F đi xuống E."
+          ]
+        }
+      ],
+      [
+        "L04-BCP2",
+        "checkpoint",
+        {
+          "title": "Checkpoint · Guide tones",
+          "exercise_id": "L04-Q04",
+          "note": "Tự gọi tên 3rd và 7th của G7."
+        }
+      ],
+      [
+        "L04-B04",
+        "piano",
+        {
+          "title": "Piano task",
+          "prompt": "Chơi Dm7 → G7 → Cmaj7 chậm, ưu tiên nghe đường đi của 3rd/7th."
+        }
+      ],
+      [
+        "L04-B05",
+        "summary",
+        {
+          "title": "Ghi nhớ",
+          "items": [
+            "ii–V–I là schema trung tâm của jazz truyền thống",
+            "Common tone + stepwise motion giúp voicing mượt",
+            "Transpose sau khi nắm một key"
+          ]
+        }
+      ]
+    ],
+    "exercises": [
+      {
+        "id": "L04-Q01",
+        "kind": "mcq",
+        "prompt": "ii–V–I trong C major là progression nào?",
+        "skill": "progression.ii_v_i",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "Dm7-G7-Cmaj7"
+        },
+        "grader_config": {
+          "normalize_dashes": true
+        },
+        "options": [
+          "Dm7-G7-Cmaj7",
+          "Am7-Dm7-G7",
+          "Cmaj7-Fmaj7-G7",
+          "Em7-Am7-Dm7"
+        ],
+        "explanation": "ii7–V7–Imaj7 trong C = Dm7–G7–Cmaj7.",
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → ii–V–I",
+            "note": "ii–V–I schema and applied ii–V usage."
+          },
+          {
+            "source_id": "TEREFENKO_WB",
+            "locator": "Part I, Ch.6 The II–V–I Progression, PDF pp. 44–46",
+            "note": "Guide tones, drop-2 voicings, and functional analysis."
+          }
+        ]
+      },
+      {
+        "id": "L04-Q02",
+        "kind": "active_recall",
+        "prompt": "Viết ii–V–I trong F major bằng chord symbols.",
+        "skill": "progression.ii_v_i",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "Gm7-C7-Fmaj7"
+        },
+        "grader_config": {
+          "normalize_dashes": true
+        },
+        "options": null,
+        "explanation": "Trong F major: ii=Gm7, V=C7, I=Fmaj7.",
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → ii–V–I",
+            "note": "ii–V–I schema and applied ii–V usage."
+          },
+          {
+            "source_id": "TEREFENKO_WB",
+            "locator": "Part I, Ch.6 The II–V–I Progression, PDF pp. 44–46",
+            "note": "Guide tones, drop-2 voicings, and functional analysis."
+          }
+        ]
+      },
+      {
+        "id": "L04-Q03",
+        "kind": "build",
+        "prompt": "Dựng G7 đầy đủ; đây là bài chord inventory, chưa phải voicing.",
+        "skill": "voicing.guide_tones",
+        "strategy": "music_engine",
+        "answer_key": {
+          "expected": [
+            "G",
+            "B",
+            "D",
+            "F"
+          ]
+        },
+        "grader_config": {
+          "kind": "build_chord",
+          "symbol": "G7"
+        },
+        "options": null,
+        "explanation": "G7 = G–B–D–F; guide tones là B và F.",
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Seventh Chords",
+            "note": "Seventh-chord structure and diatonic qualities."
+          },
+          {
+            "source_id": "TEREFENKO_WB",
+            "locator": "Part I, Ch.6 The II–V–I Progression, PDF pp. 44–46",
+            "note": "Guide tones, drop-2 voicings, and functional analysis."
+          }
+        ]
+      },
+      {
+        "id": "L04-Q04",
+        "kind": "active_recall",
+        "prompt": "Guide tones cơ bản của G7 là hai nốt nào?",
+        "skill": "voicing.guide_tones",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "b f",
+            "f b",
+            "b và f",
+            "f và b",
+            "b,f",
+            "f,b"
+          ]
+        },
+        "grader_config": {
+          "mode": "equals_any"
+        },
+        "options": null,
+        "explanation": "3rd = B và ♭7 = F.",
+        "provenance": [
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.11, printed pp. 279–307",
+            "note": "Three-note voicings, guide tones, root-motion voice leading, and advanced voicing families."
+          },
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → Jazz Voicings",
+            "note": "Smooth/lazy voice leading and voicing guidelines."
+          }
+        ]
+      },
+      {
+        "id": "L04-Q05",
+        "kind": "mcq",
+        "prompt": "Guide-tone motion nào mô tả G7 → Cmaj7 mượt trong lesson này?",
+        "skill": "voicing.voice_leading",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "B stays; F moves to E"
+        },
+        "grader_config": {},
+        "options": [
+          "B stays; F moves to E",
+          "B moves to D; F moves to C",
+          "Both voices jump an octave",
+          "F stays; B moves to F"
+        ],
+        "explanation": "Giữ B và hạ F xuống E tạo common tone + stepwise motion.",
+        "provenance": [
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.11, printed pp. 279–307",
+            "note": "Three-note voicings, guide tones, root-motion voice leading, and advanced voicing families."
+          },
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → Jazz Voicings",
+            "note": "Smooth/lazy voice leading and voicing guidelines."
+          }
+        ]
+      },
+      {
+        "id": "L04-Q06",
+        "kind": "applied",
+        "prompt": "Mục tiêu chính của smooth/lazy voice leading giữa hai voicing là gì?",
+        "skill": "voicing.voice_leading",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "di chuyển ít",
+            "di chuyen it",
+            "chuyển động gần",
+            "chuyen dong gan",
+            "common tone",
+            "move each voice as little as possible"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any",
+          "strip_accents": true
+        },
+        "options": null,
+        "explanation": "Ưu tiên giữ common tones và giảm quãng di chuyển của từng voice khi phù hợp.",
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → Jazz Voicings",
+            "note": "Smooth/lazy voice leading and voicing guidelines."
+          },
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.11, printed pp. 279–307",
+            "note": "Three-note voicings, guide tones, root-motion voice leading, and advanced voicing families."
+          }
+        ]
+      }
+    ],
+    "review_items": [
+      {
+        "id": "L04-F01",
+        "front": "ii–V–I in C",
+        "back": "Dm7–G7–Cmaj7",
+        "skill": "progression.ii_v_i",
+        "mode": "context",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "Dm7-G7-Cmaj7"
+        },
+        "grader_config": {
+          "normalize_dashes": true
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → ii–V–I",
+            "note": "ii–V–I schema and applied ii–V usage."
+          }
+        ]
+      },
+      {
+        "id": "L04-F02",
+        "front": "ii–V–I in F",
+        "back": "Gm7–C7–Fmaj7",
+        "skill": "progression.ii_v_i",
+        "mode": "context",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "Gm7-C7-Fmaj7"
+        },
+        "grader_config": {
+          "normalize_dashes": true
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → ii–V–I",
+            "note": "ii–V–I schema and applied ii–V usage."
+          }
+        ]
+      },
+      {
+        "id": "L04-F03",
+        "front": "ii–V–I in Bb",
+        "back": "Cm7–F7–Bbmaj7",
+        "skill": "progression.ii_v_i",
+        "mode": "context",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "Cm7-F7-Bbmaj7"
+        },
+        "grader_config": {
+          "normalize_dashes": true
+        },
+        "provenance": [
+          {
+            "source_id": "TEREFENKO_WB",
+            "locator": "Part I, Ch.6 The II–V–I Progression, PDF pp. 44–46",
+            "note": "Guide tones, drop-2 voicings, and functional analysis."
+          }
+        ]
+      },
+      {
+        "id": "L04-F04",
+        "front": "Guide tones của G7",
+        "back": "B (3rd) và F (♭7)",
+        "skill": "voicing.guide_tones",
+        "mode": "build",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "b f",
+            "f b",
+            "b,f",
+            "f,b",
+            "b và f",
+            "f và b"
+          ]
+        },
+        "grader_config": {
+          "mode": "equals_any"
+        },
+        "provenance": [
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.11, printed pp. 279–307",
+            "note": "Three-note voicings, guide tones, root-motion voice leading, and advanced voicing families."
+          }
+        ]
+      },
+      {
+        "id": "L04-F05",
+        "front": "Guide tones của Dm7",
+        "back": "F (3rd) và C (♭7)",
+        "skill": "voicing.guide_tones",
+        "mode": "build",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "f c",
+            "c f",
+            "f,c",
+            "c,f",
+            "f và c",
+            "c và f"
+          ]
+        },
+        "grader_config": {
+          "mode": "equals_any"
+        },
+        "provenance": [
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.11, printed pp. 279–307",
+            "note": "Three-note voicings, guide tones, root-motion voice leading, and advanced voicing families."
+          }
+        ]
+      },
+      {
+        "id": "L04-F06",
+        "front": "G7 → Cmaj7: B đi đâu trong basic guide-tone example?",
+        "back": "Giữ B như common tone",
+        "skill": "voicing.voice_leading",
+        "mode": "context",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "b",
+            "giữ b",
+            "giu b",
+            "common tone"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any",
+          "strip_accents": true
+        },
+        "provenance": [
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.11, printed pp. 279–307",
+            "note": "Three-note voicings, guide tones, root-motion voice leading, and advanced voicing families."
+          }
+        ]
+      },
+      {
+        "id": "L04-F07",
+        "front": "G7 → Cmaj7: F đi đâu?",
+        "back": "F → E",
+        "skill": "voicing.voice_leading",
+        "mode": "context",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "F-E"
+        },
+        "grader_config": {
+          "normalize_dashes": true
+        },
+        "provenance": [
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.11, printed pp. 279–307",
+            "note": "Three-note voicings, guide tones, root-motion voice leading, and advanced voicing families."
+          }
+        ]
+      },
+      {
+        "id": "L04-F08",
+        "front": "Nguyên tắc smooth jazz voice leading",
+        "back": "Giữ common tones và di chuyển mỗi voice ít nhất có thể khi phù hợp.",
+        "skill": "voicing.voice_leading",
+        "mode": "recall",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "common tone",
+            "di chuyển ít",
+            "di chuyen it",
+            "chuyển động gần",
+            "chuyen dong gan"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any",
+          "strip_accents": true
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → Jazz Voicings",
+            "note": "Smooth/lazy voice leading and voicing guidelines."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "L05",
+    "order": 5,
+    "track": "Functional / Contemporary",
+    "title": "Secondary Dominants",
+    "status": "source_audited",
+    "objectives": [
+      "Nhận diện V7/x theo chord đích tạm thời.",
+      "Dựng secondary dominant bằng dominant seventh của chord đích.",
+      "Phân biệt tonicization ngắn với modulation ở mức nhập môn."
+    ],
+    "skills": [
+      "harmony.secondary_dominant.identify",
+      "harmony.secondary_dominant.build",
+      "harmony.secondary_dominant.apply"
+    ],
+    "sources": [
+      {
+        "source_id": "OMT_V2",
+        "locator": "Diatonic Harmony, Tonicization, and Modulation → Tonicization",
+        "note": "Secondary/applied dominant construction and temporary tonicization."
+      },
+      {
+        "source_id": "FANK_WIH",
+        "locator": "Unit 3: Chromatic Harmony — Secondary Dominants; Mode Mixture",
+        "note": "Supporting cross-check; exact current PDF pages pending local PDF access."
+      },
+      {
+        "source_id": "KHAIHOAN_JAZZ",
+        "locator": "Ch.2, printed pp. 71–102",
+        "note": "Secondary dominants, extended dominants, and related ii."
+      },
+      {
+        "source_id": "TEREFENKO_WB",
+        "locator": "Part II, Ch.13 Idiomatic Jazz Progressions, PDF pp. 82–93",
+        "note": "Applied ii–V/X and multi-key keyboard realization as later application."
+      }
+    ],
+    "blocks": [],
+    "exercises": [
+      {
+        "id": "L05-Q01",
+        "kind": "mcq",
+        "prompt": "Trong C major, V7/ii là hợp âm nào?",
+        "skill": "harmony.secondary_dominant.build",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "A7"
+        },
+        "grader_config": {},
+        "options": [
+          "A7",
+          "D7",
+          "E7",
+          "C7"
+        ],
+        "explanation": null,
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Diatonic Harmony, Tonicization, and Modulation → Tonicization",
+            "note": "Secondary/applied dominant construction and temporary tonicization."
+          },
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.2, printed pp. 71–102",
+            "note": "Secondary dominants, extended dominants, and related ii."
+          }
+        ]
+      },
+      {
+        "id": "L05-Q02",
+        "kind": "mcq",
+        "prompt": "Trong C major, V7/V là hợp âm nào?",
+        "skill": "harmony.secondary_dominant.build",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "D7"
+        },
+        "grader_config": {},
+        "options": [
+          "G7",
+          "D7",
+          "A7",
+          "B7"
+        ],
+        "explanation": null,
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Diatonic Harmony, Tonicization, and Modulation → Tonicization",
+            "note": "Secondary/applied dominant construction and temporary tonicization."
+          },
+          {
+            "source_id": "FANK_WIH",
+            "locator": "Unit 3: Chromatic Harmony — Secondary Dominants; Mode Mixture",
+            "note": "Supporting cross-check; exact current PDF pages pending local PDF access."
+          }
+        ]
+      },
+      {
+        "id": "L05-Q03",
+        "kind": "active_recall",
+        "prompt": "Trong C major, V7/vi là gì?",
+        "skill": "harmony.secondary_dominant.build",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "E7"
+        },
+        "grader_config": {},
+        "options": null,
+        "explanation": null,
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Diatonic Harmony, Tonicization, and Modulation → Tonicization",
+            "note": "Secondary/applied dominant construction and temporary tonicization."
+          },
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.2, printed pp. 71–102",
+            "note": "Secondary dominants, extended dominants, and related ii."
+          }
+        ]
+      },
+      {
+        "id": "L05-Q04",
+        "kind": "context",
+        "prompt": "Trong C major, A7 → Dm7: A7 được phân tích thế nào?",
+        "skill": "harmony.secondary_dominant.identify",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "V7/ii"
+        },
+        "grader_config": {},
+        "options": null,
+        "explanation": null,
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Diatonic Harmony, Tonicization, and Modulation → Tonicization",
+            "note": "Secondary/applied dominant construction and temporary tonicization."
+          },
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.2, printed pp. 71–102",
+            "note": "Secondary dominants, extended dominants, and related ii."
+          }
+        ]
+      },
+      {
+        "id": "L05-Q05",
+        "kind": "applied",
+        "prompt": "Chọn cách thêm secondary dominant để tăng lực đi tới Am trong C major.",
+        "skill": "harmony.secondary_dominant.apply",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "E7-Am"
+        },
+        "grader_config": {
+          "normalize_dashes": true
+        },
+        "options": [
+          "E7-Am",
+          "D7-Am",
+          "C7-Am",
+          "F7-Am"
+        ],
+        "explanation": null,
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Diatonic Harmony, Tonicization, and Modulation → Tonicization",
+            "note": "Secondary/applied dominant construction and temporary tonicization."
+          },
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.2, printed pp. 71–102",
+            "note": "Secondary dominants, extended dominants, and related ii."
+          }
+        ]
+      },
+      {
+        "id": "L05-Q06",
+        "kind": "mcq",
+        "prompt": "Một secondary dominant có bắt buộc thiết lập tonic mới lâu dài không?",
+        "skill": "harmony.secondary_dominant.identify",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "Không"
+        },
+        "grader_config": {
+          "strip_accents": true
+        },
+        "options": [
+          "Có",
+          "Không"
+        ],
+        "explanation": null,
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Diatonic Harmony, Tonicization, and Modulation → Tonicization",
+            "note": "Secondary/applied dominant construction and temporary tonicization."
+          }
+        ]
+      }
+    ],
+    "review_items": [
+      {
+        "id": "L05-F01",
+        "front": "V7/ii in C",
+        "back": "A7",
+        "skill": "harmony.secondary_dominant.build",
+        "mode": "recall",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "A7"
+        },
+        "grader_config": {},
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Diatonic Harmony, Tonicization, and Modulation → Tonicization",
+            "note": "Secondary/applied dominant construction and temporary tonicization."
+          }
+        ]
+      },
+      {
+        "id": "L05-F02",
+        "front": "V7/V in C",
+        "back": "D7",
+        "skill": "harmony.secondary_dominant.build",
+        "mode": "recall",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "D7"
+        },
+        "grader_config": {},
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Diatonic Harmony, Tonicization, and Modulation → Tonicization",
+            "note": "Secondary/applied dominant construction and temporary tonicization."
+          }
+        ]
+      },
+      {
+        "id": "L05-F03",
+        "front": "V7/vi in C",
+        "back": "E7",
+        "skill": "harmony.secondary_dominant.build",
+        "mode": "recall",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "E7"
+        },
+        "grader_config": {},
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Diatonic Harmony, Tonicization, and Modulation → Tonicization",
+            "note": "Secondary/applied dominant construction and temporary tonicization."
+          }
+        ]
+      },
+      {
+        "id": "L05-F04",
+        "front": "A7 → Dm7 in C",
+        "back": "A7 = V7/ii",
+        "skill": "harmony.secondary_dominant.identify",
+        "mode": "context",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "V7/ii"
+        },
+        "grader_config": {},
+        "provenance": [
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.2, printed pp. 71–102",
+            "note": "Secondary dominants, extended dominants, and related ii."
+          }
+        ]
+      },
+      {
+        "id": "L05-F05",
+        "front": "D7 → G7 in C",
+        "back": "D7 = V7/V",
+        "skill": "harmony.secondary_dominant.identify",
+        "mode": "context",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "V7/V"
+        },
+        "grader_config": {},
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Diatonic Harmony, Tonicization, and Modulation → Tonicization",
+            "note": "Secondary/applied dominant construction and temporary tonicization."
+          }
+        ]
+      },
+      {
+        "id": "L05-F06",
+        "front": "E7 → Am7 in C",
+        "back": "E7 = V7/vi",
+        "skill": "harmony.secondary_dominant.identify",
+        "mode": "context",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "V7/vi"
+        },
+        "grader_config": {},
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Diatonic Harmony, Tonicization, and Modulation → Tonicization",
+            "note": "Secondary/applied dominant construction and temporary tonicization."
+          }
+        ]
+      },
+      {
+        "id": "L05-F07",
+        "front": "Secondary dominant làm gì?",
+        "back": "Tạm thời tonicize/emphasize một chord đích bằng dominant-function harmony.",
+        "skill": "harmony.secondary_dominant.identify",
+        "mode": "recall",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "tonicize",
+            "nhấn mạnh",
+            "nhan manh",
+            "dominant"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any",
+          "strip_accents": true
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Diatonic Harmony, Tonicization, and Modulation → Tonicization",
+            "note": "Secondary/applied dominant construction and temporary tonicization."
+          }
+        ]
+      },
+      {
+        "id": "L05-F08",
+        "front": "Secondary dominant = modulation hoàn chỉnh?",
+        "back": "Không nhất thiết; tonicization có thể rất ngắn.",
+        "skill": "harmony.secondary_dominant.identify",
+        "mode": "context",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "không",
+            "khong",
+            "không nhất thiết",
+            "khong nhat thiet"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any",
+          "strip_accents": true
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Diatonic Harmony, Tonicization, and Modulation → Tonicization",
+            "note": "Secondary/applied dominant construction and temporary tonicization."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "L06",
+    "order": 6,
+    "track": "Functional / Contemporary",
+    "title": "Modal Interchange trong Pop/Contemporary",
+    "status": "source_audited",
+    "objectives": [
+      "Nhận biết quan hệ parallel major/minor.",
+      "Nhận diện borrowed chord phổ biến trong major-key context.",
+      "Ứng dụng borrowed chord mà không mặc định đó là modulation."
+    ],
+    "skills": [
+      "scale.parallel_minor",
+      "harmony.modal_interchange.identify",
+      "harmony.modal_interchange.apply"
+    ],
+    "sources": [
+      {
+        "source_id": "OMT_V2",
+        "locator": "Chromaticism → Modal Mixture",
+        "note": "Borrowing from the parallel key; quality/color can change without necessarily changing function."
+      },
+      {
+        "source_id": "FANK_WIH",
+        "locator": "Unit 3: Chromatic Harmony — Secondary Dominants; Mode Mixture",
+        "note": "Supporting cross-check; exact current PDF pages pending local PDF access."
+      },
+      {
+        "source_id": "KHAIHOAN_JAZZ",
+        "locator": "Ch.5, printed pp. 170–188",
+        "note": "Modal interchange and subdominant-minor color."
+      }
+    ],
+    "blocks": [],
+    "exercises": [
+      {
+        "id": "L06-Q01",
+        "kind": "mcq",
+        "prompt": "Trong C major, Fm thường được hiểu là borrowed chord nào?",
+        "skill": "harmony.modal_interchange.identify",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "iv"
+        },
+        "grader_config": {},
+        "options": [
+          "ii",
+          "iv",
+          "V/V",
+          "bII"
+        ],
+        "explanation": null,
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Chromaticism → Modal Mixture",
+            "note": "Borrowing from the parallel key; quality/color can change without necessarily changing function."
+          },
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.5, printed pp. 170–188",
+            "note": "Modal interchange and subdominant-minor color."
+          }
+        ]
+      },
+      {
+        "id": "L06-Q02",
+        "kind": "mcq",
+        "prompt": "Parallel minor của C major là gì?",
+        "skill": "scale.parallel_minor",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "C minor"
+        },
+        "grader_config": {},
+        "options": [
+          "A minor",
+          "C minor",
+          "E minor",
+          "F minor"
+        ],
+        "explanation": null,
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Chromaticism → Modal Mixture",
+            "note": "Borrowing from the parallel key; quality/color can change without necessarily changing function."
+          }
+        ]
+      },
+      {
+        "id": "L06-Q03",
+        "kind": "active_recall",
+        "prompt": "Trong C major, borrowed ♭VI triad từ parallel minor có root nào?",
+        "skill": "harmony.modal_interchange.identify",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "Ab"
+        },
+        "grader_config": {},
+        "options": null,
+        "explanation": null,
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Chromaticism → Modal Mixture",
+            "note": "Borrowing from the parallel key; quality/color can change without necessarily changing function."
+          },
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.5, printed pp. 170–188",
+            "note": "Modal interchange and subdominant-minor color."
+          }
+        ]
+      },
+      {
+        "id": "L06-Q04",
+        "kind": "context",
+        "prompt": "Trong C–F–Fm–C, chord nào tạo modal-mixture color rõ nhất?",
+        "skill": "harmony.modal_interchange.identify",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "Fm"
+        },
+        "grader_config": {},
+        "options": null,
+        "explanation": null,
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Chromaticism → Modal Mixture",
+            "note": "Borrowing from the parallel key; quality/color can change without necessarily changing function."
+          },
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.5, printed pp. 170–188",
+            "note": "Modal interchange and subdominant-minor color."
+          }
+        ]
+      },
+      {
+        "id": "L06-Q05",
+        "kind": "mcq",
+        "prompt": "Modal mixture có nhất thiết đổi harmonic function của chord không?",
+        "skill": "harmony.modal_interchange.identify",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "Không nhất thiết"
+        },
+        "grader_config": {},
+        "options": [
+          "Luôn đổi",
+          "Không nhất thiết",
+          "Luôn thành dominant",
+          "Luôn thành tonic"
+        ],
+        "explanation": null,
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Chromaticism → Modal Mixture",
+            "note": "Borrowing from the parallel key; quality/color can change without necessarily changing function."
+          }
+        ]
+      },
+      {
+        "id": "L06-Q06",
+        "kind": "applied",
+        "prompt": "Chọn progression biến C–G–Am–F thành một phiên bản có borrowed iv.",
+        "skill": "harmony.modal_interchange.apply",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "C-G-Am-Fm"
+        },
+        "grader_config": {
+          "normalize_dashes": true
+        },
+        "options": [
+          "C-G-Am-Fm",
+          "C-G-Am-G",
+          "C-D7-Am-F",
+          "C-G-E7-F"
+        ],
+        "explanation": null,
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Chromaticism → Modal Mixture",
+            "note": "Borrowing from the parallel key; quality/color can change without necessarily changing function."
+          },
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.5, printed pp. 170–188",
+            "note": "Modal interchange and subdominant-minor color."
+          }
+        ]
+      }
+    ],
+    "review_items": [
+      {
+        "id": "L06-F01",
+        "front": "Parallel minor của C major",
+        "back": "C minor",
+        "skill": "scale.parallel_minor",
+        "mode": "recall",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "C minor"
+        },
+        "grader_config": {},
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Chromaticism → Modal Mixture",
+            "note": "Borrowing from the parallel key; quality/color can change without necessarily changing function."
+          }
+        ]
+      },
+      {
+        "id": "L06-F02",
+        "front": "iv borrowed in C major",
+        "back": "Fm",
+        "skill": "harmony.modal_interchange.identify",
+        "mode": "context",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "Fm"
+        },
+        "grader_config": {},
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Chromaticism → Modal Mixture",
+            "note": "Borrowing from the parallel key; quality/color can change without necessarily changing function."
+          }
+        ]
+      },
+      {
+        "id": "L06-F03",
+        "front": "♭VI borrowed triad in C major",
+        "back": "Ab",
+        "skill": "harmony.modal_interchange.identify",
+        "mode": "context",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "Ab"
+        },
+        "grader_config": {},
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Chromaticism → Modal Mixture",
+            "note": "Borrowing from the parallel key; quality/color can change without necessarily changing function."
+          }
+        ]
+      },
+      {
+        "id": "L06-F04",
+        "front": "♭VII borrowed triad in C major",
+        "back": "Bb",
+        "skill": "harmony.modal_interchange.identify",
+        "mode": "context",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "Bb"
+        },
+        "grader_config": {},
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Chromaticism → Modal Mixture",
+            "note": "Borrowing from the parallel key; quality/color can change without necessarily changing function."
+          }
+        ]
+      },
+      {
+        "id": "L06-F05",
+        "front": "C–F–Fm–C: Fm = ?",
+        "back": "Borrowed iv / modal mixture",
+        "skill": "harmony.modal_interchange.identify",
+        "mode": "context",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "borrowed iv",
+            "iv",
+            "modal mixture"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any"
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Chromaticism → Modal Mixture",
+            "note": "Borrowing from the parallel key; quality/color can change without necessarily changing function."
+          },
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.5, printed pp. 170–188",
+            "note": "Modal interchange and subdominant-minor color."
+          }
+        ]
+      },
+      {
+        "id": "L06-F06",
+        "front": "Modal mixture thường vay mượn giữa loại key nào?",
+        "back": "Parallel major/minor",
+        "skill": "scale.parallel_minor",
+        "mode": "recall",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "parallel",
+            "song song"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any"
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Chromaticism → Modal Mixture",
+            "note": "Borrowing from the parallel key; quality/color can change without necessarily changing function."
+          }
+        ]
+      },
+      {
+        "id": "L06-F07",
+        "front": "Borrowed chord có bắt buộc modulation?",
+        "back": "Không.",
+        "skill": "harmony.modal_interchange.identify",
+        "mode": "context",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "không",
+            "khong"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any",
+          "strip_accents": true
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Chromaticism → Modal Mixture",
+            "note": "Borrowing from the parallel key; quality/color can change without necessarily changing function."
+          }
+        ]
+      },
+      {
+        "id": "L06-F08",
+        "front": "Modal mixture chủ yếu thay đổi gì ở chord trong khung OMT?",
+        "back": "Quality/color; function không nhất thiết đổi.",
+        "skill": "harmony.modal_interchange.identify",
+        "mode": "recall",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "quality",
+            "color",
+            "màu",
+            "mau",
+            "chất lượng",
+            "chat luong"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any",
+          "strip_accents": true
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Chromaticism → Modal Mixture",
+            "note": "Borrowing from the parallel key; quality/color can change without necessarily changing function."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "L07",
+    "order": 7,
+    "track": "Jazz",
+    "title": "Jazz Tensions, Modes và Chord-Scale Context",
+    "status": "source_audited",
+    "objectives": [
+      "Phân biệt chord tones với 9/11/13 trong extended-chord vocabulary.",
+      "Nhận diện ba chord-scale quan hệ cơ bản của major ii–V–I.",
+      "Hiểu chord-scale là công cụ theo context/function chứ không phải bảng đáp án tuyệt đối."
+    ],
+    "skills": [
+      "tension.naming",
+      "mode.basic",
+      "chord_scale.basic",
+      "chord_scale.context"
+    ],
+    "sources": [
+      {
+        "source_id": "OMT_V2",
+        "locator": "Jazz → Chord-Scale Theory",
+        "note": "Basic ii–V–I chord-scale relationships and limitations of the approach."
+      },
+      {
+        "source_id": "OMT_V2",
+        "locator": "Jazz → Chord Symbols",
+        "note": "Triad/seventh/extension notation and absolute chord-symbol semantics."
+      },
+      {
+        "source_id": "TEREFENKO_WB",
+        "locator": "Part I, Chs.7–8 Modes and Chord-Scale Theory, PDF pp. 47–53",
+        "note": "Mode construction and contextual chord-scale exercises."
+      },
+      {
+        "source_id": "KHAIHOAN_JAZZ",
+        "locator": "Introduction + Ch.1, printed pp. 12–18 and 45–70",
+        "note": "Chord tones, tensions, avoid-tone discussion, and chord scales."
+      }
+    ],
+    "blocks": [],
+    "exercises": [
+      {
+        "id": "L07-Q01",
+        "kind": "mcq",
+        "prompt": "Các extension/tension number cơ bản phía trên seventh chord là bộ nào?",
+        "skill": "tension.naming",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "9, 11, 13"
+        },
+        "grader_config": {},
+        "options": [
+          "2, 4, 6",
+          "9, 11, 13",
+          "1, 3, 5",
+          "7, 8, 10"
+        ],
+        "explanation": null,
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → Chord Symbols",
+            "note": "Triad/seventh/extension notation and absolute chord-symbol semantics."
+          },
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Introduction + Ch.1, printed pp. 12–18 and 45–70",
+            "note": "Chord tones, tensions, avoid-tone discussion, and chord scales."
+          }
+        ]
+      },
+      {
+        "id": "L07-Q02",
+        "kind": "build",
+        "prompt": "Dựng Cmaj7 chord tones trước khi thêm tension.",
+        "skill": "tension.naming",
+        "strategy": "music_engine",
+        "answer_key": {
+          "expected": [
+            "C",
+            "E",
+            "G",
+            "B"
+          ]
+        },
+        "grader_config": {
+          "kind": "build_chord",
+          "symbol": "Cmaj7"
+        },
+        "options": null,
+        "explanation": null,
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Seventh Chords",
+            "note": "Seventh-chord structure and diatonic qualities."
+          },
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Introduction + Ch.1, printed pp. 12–18 and 45–70",
+            "note": "Chord tones, tensions, avoid-tone discussion, and chord scales."
+          }
+        ]
+      },
+      {
+        "id": "L07-Q03",
+        "kind": "mcq",
+        "prompt": "Trong basic ii–V–I chord-scale model ở C, Dm7 thường liên hệ với mode nào?",
+        "skill": "chord_scale.basic",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "D Dorian"
+        },
+        "grader_config": {},
+        "options": [
+          "D Ionian",
+          "D Dorian",
+          "D Mixolydian",
+          "D Locrian"
+        ],
+        "explanation": null,
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → Chord-Scale Theory",
+            "note": "Basic ii–V–I chord-scale relationships and limitations of the approach."
+          },
+          {
+            "source_id": "TEREFENKO_WB",
+            "locator": "Part I, Chs.7–8 Modes and Chord-Scale Theory, PDF pp. 47–53",
+            "note": "Mode construction and contextual chord-scale exercises."
+          }
+        ]
+      },
+      {
+        "id": "L07-Q04",
+        "kind": "mcq",
+        "prompt": "Trong cùng model, G7 thường liên hệ với mode nào?",
+        "skill": "chord_scale.basic",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "G Mixolydian"
+        },
+        "grader_config": {},
+        "options": [
+          "G Dorian",
+          "G Ionian",
+          "G Mixolydian",
+          "G Aeolian"
+        ],
+        "explanation": null,
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → Chord-Scale Theory",
+            "note": "Basic ii–V–I chord-scale relationships and limitations of the approach."
+          },
+          {
+            "source_id": "TEREFENKO_WB",
+            "locator": "Part I, Chs.7–8 Modes and Chord-Scale Theory, PDF pp. 47–53",
+            "note": "Mode construction and contextual chord-scale exercises."
+          }
+        ]
+      },
+      {
+        "id": "L07-Q05",
+        "kind": "mcq",
+        "prompt": "Trong cùng model, Cmaj7 thường liên hệ với mode nào?",
+        "skill": "chord_scale.basic",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "C Ionian"
+        },
+        "grader_config": {},
+        "options": [
+          "C Ionian",
+          "C Dorian",
+          "C Mixolydian",
+          "C Locrian"
+        ],
+        "explanation": null,
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → Chord-Scale Theory",
+            "note": "Basic ii–V–I chord-scale relationships and limitations of the approach."
+          },
+          {
+            "source_id": "TEREFENKO_WB",
+            "locator": "Part I, Chs.7–8 Modes and Chord-Scale Theory, PDF pp. 47–53",
+            "note": "Mode construction and contextual chord-scale exercises."
+          }
+        ]
+      },
+      {
+        "id": "L07-Q06",
+        "kind": "context",
+        "prompt": "Vì sao không nên coi chord-scale table là một đáp án duy nhất cho mọi chord symbol?",
+        "skill": "chord_scale.context",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "ngữ cảnh",
+            "ngu canh",
+            "function",
+            "chức năng",
+            "chuc nang",
+            "voice leading",
+            "melody"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any",
+          "strip_accents": true
+        },
+        "options": null,
+        "explanation": "OMT nêu rõ các giới hạn của chord-scale approach; context, function, voice leading và idiom vẫn quan trọng.",
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → Chord-Scale Theory",
+            "note": "Basic ii–V–I chord-scale relationships and limitations of the approach."
+          }
+        ]
+      }
+    ],
+    "review_items": [
+      {
+        "id": "L07-F01",
+        "front": "Tension/extension numbers",
+        "back": "9, 11, 13",
+        "skill": "tension.naming",
+        "mode": "recall",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "9, 11, 13"
+        },
+        "grader_config": {},
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → Chord Symbols",
+            "note": "Triad/seventh/extension notation and absolute chord-symbol semantics."
+          }
+        ]
+      },
+      {
+        "id": "L07-F02",
+        "front": "Chord tones của Cmaj7",
+        "back": "C–E–G–B",
+        "skill": "tension.naming",
+        "mode": "build",
+        "strategy": "music_engine",
+        "answer_key": {
+          "expected": [
+            "C",
+            "E",
+            "G",
+            "B"
+          ]
+        },
+        "grader_config": {
+          "kind": "build_chord",
+          "symbol": "Cmaj7"
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Fundamentals → Seventh Chords",
+            "note": "Seventh-chord structure and diatonic qualities."
+          }
+        ]
+      },
+      {
+        "id": "L07-F03",
+        "front": "Dm7 in C major: basic chord-scale",
+        "back": "D Dorian",
+        "skill": "chord_scale.basic",
+        "mode": "context",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "D Dorian"
+        },
+        "grader_config": {},
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → Chord-Scale Theory",
+            "note": "Basic ii–V–I chord-scale relationships and limitations of the approach."
+          }
+        ]
+      },
+      {
+        "id": "L07-F04",
+        "front": "G7 in C major: basic chord-scale",
+        "back": "G Mixolydian",
+        "skill": "chord_scale.basic",
+        "mode": "context",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "G Mixolydian"
+        },
+        "grader_config": {},
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → Chord-Scale Theory",
+            "note": "Basic ii–V–I chord-scale relationships and limitations of the approach."
+          }
+        ]
+      },
+      {
+        "id": "L07-F05",
+        "front": "Cmaj7 in C major: basic chord-scale",
+        "back": "C Ionian",
+        "skill": "chord_scale.basic",
+        "mode": "context",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "C Ionian"
+        },
+        "grader_config": {},
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → Chord-Scale Theory",
+            "note": "Basic ii–V–I chord-scale relationships and limitations of the approach."
+          }
+        ]
+      },
+      {
+        "id": "L07-F06",
+        "front": "Chord-scale choice nên bắt đầu từ điều gì?",
+        "back": "Key center + harmonic function/context",
+        "skill": "chord_scale.context",
+        "mode": "recall",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "key",
+            "function",
+            "context",
+            "ngữ cảnh",
+            "ngu canh",
+            "chức năng",
+            "chuc nang"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any",
+          "strip_accents": true
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → Chord-Scale Theory",
+            "note": "Basic ii–V–I chord-scale relationships and limitations of the approach."
+          }
+        ]
+      },
+      {
+        "id": "L07-F07",
+        "front": "Chord tone vs tension",
+        "back": "Chord tone định hình chord; tension mở rộng màu sắc theo context.",
+        "skill": "tension.naming",
+        "mode": "recall",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "màu",
+            "mau",
+            "extension",
+            "mở rộng",
+            "mo rong",
+            "chord tone"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any",
+          "strip_accents": true
+        },
+        "provenance": [
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Introduction + Ch.1, printed pp. 12–18 and 45–70",
+            "note": "Chord tones, tensions, avoid-tone discussion, and chord scales."
+          }
+        ]
+      },
+      {
+        "id": "L07-F08",
+        "front": "Chord-scale theory có thay thế ear/voice leading không?",
+        "back": "Không; đó là một công cụ, có giới hạn.",
+        "skill": "chord_scale.context",
+        "mode": "context",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "không",
+            "khong",
+            "giới hạn",
+            "gioi han"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any",
+          "strip_accents": true
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → Chord-Scale Theory",
+            "note": "Basic ii–V–I chord-scale relationships and limitations of the approach."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "L08",
+    "order": 8,
+    "track": "Jazz",
+    "title": "Jazz Piano Voicing: shell voicing và guide-tone connection",
+    "status": "source_audited",
+    "objectives": [
+      "Phân biệt full chord inventory với một voicing hợp lệ.",
+      "Dựng shell/3-note voicing root–3rd–7th trong phạm vi lesson.",
+      "Nối voicings bằng common tones và chuyển động gần."
+    ],
+    "skills": [
+      "voicing.shell",
+      "voicing.guide_tones",
+      "voicing.voice_leading"
+    ],
+    "sources": [
+      {
+        "source_id": "OMT_V2",
+        "locator": "Jazz → Jazz Voicings",
+        "note": "Smooth/lazy voice leading and voicing guidelines."
+      },
+      {
+        "source_id": "TEREFENKO_WB",
+        "locator": "Part II, Chs.12–14 Keyboard Textures / Idiomatic Jazz Progressions / Voicings, PDF pp. 78–103",
+        "note": "Keyboard textures, progression realization, upper structures, and rootless formations."
+      },
+      {
+        "source_id": "KHAIHOAN_JAZZ",
+        "locator": "Ch.11, printed pp. 279–307",
+        "note": "Three-note voicings, guide tones, root-motion voice leading, and advanced voicing families."
+      }
+    ],
+    "blocks": [],
+    "exercises": [
+      {
+        "id": "L08-Q01",
+        "kind": "mcq",
+        "prompt": "Trong basic shell/3-note frame của lesson, ba thành phần ưu tiên là gì?",
+        "skill": "voicing.shell",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "Root-3rd-7th"
+        },
+        "grader_config": {
+          "normalize_dashes": true
+        },
+        "options": [
+          "Root-3rd-7th",
+          "Root-5th-9th",
+          "3rd-5th-9th",
+          "Root-2nd-5th"
+        ],
+        "explanation": null,
+        "provenance": [
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.11, printed pp. 279–307",
+            "note": "Three-note voicings, guide tones, root-motion voice leading, and advanced voicing families."
+          }
+        ]
+      },
+      {
+        "id": "L08-Q02",
+        "kind": "mcq",
+        "prompt": "Theo OMT Jazz Voicings, chord tone nào thường có thể lược bỏ an toàn nhất trong nhiều voicing?",
+        "skill": "voicing.shell",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "Fifth"
+        },
+        "grader_config": {},
+        "options": [
+          "Root",
+          "Third",
+          "Fifth",
+          "Seventh"
+        ],
+        "explanation": null,
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → Jazz Voicings",
+            "note": "Smooth/lazy voice leading and voicing guidelines."
+          }
+        ]
+      },
+      {
+        "id": "L08-Q03",
+        "kind": "build",
+        "prompt": "Nêu shell root–3rd–7th cho G7 bằng ba tên nốt.",
+        "skill": "voicing.shell",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "g b f",
+            "g,b,f",
+            "g-b-f"
+          ]
+        },
+        "grader_config": {
+          "mode": "equals_any",
+          "normalize_dashes": true
+        },
+        "options": null,
+        "explanation": "Trong rubric này: G–B–F; đây không phải full chord inventory.",
+        "provenance": [
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.11, printed pp. 279–307",
+            "note": "Three-note voicings, guide tones, root-motion voice leading, and advanced voicing families."
+          }
+        ]
+      },
+      {
+        "id": "L08-Q04",
+        "kind": "mcq",
+        "prompt": "Smooth/lazy voice leading ưu tiên điều gì?",
+        "skill": "voicing.voice_leading",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "Move each voice as little as possible"
+        },
+        "grader_config": {},
+        "options": [
+          "Move each voice as little as possible",
+          "Always jump by fifth",
+          "Always keep root on top",
+          "Always double the third"
+        ],
+        "explanation": null,
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → Jazz Voicings",
+            "note": "Smooth/lazy voice leading and voicing guidelines."
+          }
+        ]
+      },
+      {
+        "id": "L08-Q05",
+        "kind": "context",
+        "prompt": "Trong G7 → Cmaj7, basic guide-tone connection nào phù hợp với lesson?",
+        "skill": "voicing.voice_leading",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "B stays; F moves to E"
+        },
+        "grader_config": {},
+        "options": [
+          "B stays; F moves to E",
+          "B moves to F; F stays",
+          "Both move up an octave",
+          "B moves to C; F moves to G"
+        ],
+        "explanation": null,
+        "provenance": [
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.11, printed pp. 279–307",
+            "note": "Three-note voicings, guide tones, root-motion voice leading, and advanced voicing families."
+          },
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → Jazz Voicings",
+            "note": "Smooth/lazy voice leading and voicing guidelines."
+          }
+        ]
+      },
+      {
+        "id": "L08-Q06",
+        "kind": "applied",
+        "prompt": "Vì sao bài 'dựng đầy đủ G7' và bài 'tạo shell voicing G7' không dùng cùng rubric?",
+        "skill": "voicing.shell",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "voicing",
+            "lược",
+            "luoc",
+            "omit",
+            "full chord",
+            "inventory"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any",
+          "strip_accents": true
+        },
+        "options": null,
+        "explanation": "Voicing có thể cố ý omit/double theo style; chord-inventory exercise kiểm tra đủ chord tones.",
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → Jazz Voicings",
+            "note": "Smooth/lazy voice leading and voicing guidelines."
+          },
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.11, printed pp. 279–307",
+            "note": "Three-note voicings, guide tones, root-motion voice leading, and advanced voicing families."
+          }
+        ]
+      }
+    ],
+    "review_items": [
+      {
+        "id": "L08-F01",
+        "front": "Basic shell frame",
+        "back": "Root–3rd–7th",
+        "skill": "voicing.shell",
+        "mode": "recall",
+        "strategy": "exact",
+        "answer_key": {
+          "expected": "Root-3rd-7th"
+        },
+        "grader_config": {
+          "normalize_dashes": true
+        },
+        "provenance": [
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.11, printed pp. 279–307",
+            "note": "Three-note voicings, guide tones, root-motion voice leading, and advanced voicing families."
+          }
+        ]
+      },
+      {
+        "id": "L08-F02",
+        "front": "G7 shell root–3–7",
+        "back": "G–B–F",
+        "skill": "voicing.shell",
+        "mode": "build",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "g b f",
+            "g,b,f",
+            "g-b-f"
+          ]
+        },
+        "grader_config": {
+          "mode": "equals_any",
+          "normalize_dashes": true
+        },
+        "provenance": [
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.11, printed pp. 279–307",
+            "note": "Three-note voicings, guide tones, root-motion voice leading, and advanced voicing families."
+          }
+        ]
+      },
+      {
+        "id": "L08-F03",
+        "front": "Dm7 shell root–3–7",
+        "back": "D–F–C",
+        "skill": "voicing.shell",
+        "mode": "build",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "d f c",
+            "d,f,c",
+            "d-f-c"
+          ]
+        },
+        "grader_config": {
+          "mode": "equals_any",
+          "normalize_dashes": true
+        },
+        "provenance": [
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.11, printed pp. 279–307",
+            "note": "Three-note voicings, guide tones, root-motion voice leading, and advanced voicing families."
+          }
+        ]
+      },
+      {
+        "id": "L08-F04",
+        "front": "Cmaj7 shell root–3–7",
+        "back": "C–E–B",
+        "skill": "voicing.shell",
+        "mode": "build",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "c e b",
+            "c,e,b",
+            "c-e-b"
+          ]
+        },
+        "grader_config": {
+          "mode": "equals_any",
+          "normalize_dashes": true
+        },
+        "provenance": [
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.11, printed pp. 279–307",
+            "note": "Three-note voicings, guide tones, root-motion voice leading, and advanced voicing families."
+          }
+        ]
+      },
+      {
+        "id": "L08-F05",
+        "front": "Common tone có ích gì trong voice leading?",
+        "back": "Giảm chuyển động và nối voicings mượt hơn.",
+        "skill": "voicing.voice_leading",
+        "mode": "recall",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "mượt",
+            "muot",
+            "giảm chuyển động",
+            "giam chuyen dong",
+            "common tone"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any",
+          "strip_accents": true
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → Jazz Voicings",
+            "note": "Smooth/lazy voice leading and voicing guidelines."
+          }
+        ]
+      },
+      {
+        "id": "L08-F06",
+        "front": "OMT: smooth/lazy voice leading",
+        "back": "Move each voice as little as possible.",
+        "skill": "voicing.voice_leading",
+        "mode": "recall",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "as little as possible",
+            "di chuyển ít",
+            "di chuyen it",
+            "chuyển động gần",
+            "chuyen dong gan"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any",
+          "strip_accents": true
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → Jazz Voicings",
+            "note": "Smooth/lazy voice leading and voicing guidelines."
+          }
+        ]
+      },
+      {
+        "id": "L08-F07",
+        "front": "G7 → Cmaj7: guide-tone pair",
+        "back": "B stays; F → E",
+        "skill": "voicing.voice_leading",
+        "mode": "context",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "b stays",
+            "f-e",
+            "f → e",
+            "giữ b",
+            "giu b"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any",
+          "strip_accents": true,
+          "normalize_dashes": true
+        },
+        "provenance": [
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.11, printed pp. 279–307",
+            "note": "Three-note voicings, guide tones, root-motion voice leading, and advanced voicing families."
+          }
+        ]
+      },
+      {
+        "id": "L08-F08",
+        "front": "Chord formula vs voicing",
+        "back": "Formula = chord-member inventory; voicing = cách phân bố/omit/double các nốt trong context.",
+        "skill": "voicing.shell",
+        "mode": "context",
+        "strategy": "rubric",
+        "answer_key": {
+          "accepted": [
+            "inventory",
+            "voicing",
+            "omit",
+            "lược",
+            "luoc",
+            "phân bố",
+            "phan bo"
+          ]
+        },
+        "grader_config": {
+          "mode": "contains_any",
+          "strip_accents": true
+        },
+        "provenance": [
+          {
+            "source_id": "OMT_V2",
+            "locator": "Jazz → Jazz Voicings",
+            "note": "Smooth/lazy voice leading and voicing guidelines."
+          },
+          {
+            "source_id": "KHAIHOAN_JAZZ",
+            "locator": "Ch.11, printed pp. 279–307",
+            "note": "Three-note voicings, guide tones, root-motion voice leading, and advanced voicing families."
+          }
+        ]
+      }
+    ]
+  }
+]

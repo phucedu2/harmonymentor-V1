@@ -1,0 +1,46 @@
+HarmonyMentor v0.3.1-dev — Phase 0.4B verification
+====================================================
+
+BACKEND TESTS
+109 passed, 1 skipped
+
+CURRICULUM CONTRACT
+8 lessons
+48 quiz items (6 / lesson)
+64 review items (8 / lesson)
+26 skills
+36 prerequisite edges
+Skill graph DAG: PASS
+Every lesson has source locators: PASS
+Every quiz/review item has source provenance: PASS
+
+RUNTIME DATABASE
+L01-L04 migrated: PASS
+  each = 5 blocks / 6 exercises / 8 review items
+L05-L08 spec-only source_audited: PASS
+Audited ExerciseVersion provenance persisted: PASS
+Audited ReviewItem provenance persisted: PASS
+
+SEED CHECK — FRESH DATABASE
+lessons: 8
+skills: 26
+skill_prerequisites: 36
+exercises: 24
+exercise_versions: 24
+review_items: 32
+
+ALEMBIC
+fresh database:
+  upgrade head: PASS
+  alembic check: PASS (no model/schema drift)
+  downgrade base: PASS
+  upgrade head: PASS
+
+legacy v0.3 local SQLite copy:
+  stamp 097c446166e1: PASS
+  upgrade c84d7c4b190a: PASS
+  provenance columns present: PASS
+
+FRONTEND
+Runtime copy updated for Phase 0.4B and Lessons 1-4.
+A full npm production build is not claimed unless dependencies are installed on the target machine.

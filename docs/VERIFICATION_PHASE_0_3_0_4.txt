@@ -1,0 +1,43 @@
+HarmonyMentor v0.3.0-dev — Phase 0.3/0.4 verification
+======================================================
+
+Backend pytest
+--------------
+101 passed, 1 skipped
+
+The skipped test is the pre-existing optional music21 cross-check when music21 is unavailable.
+
+Alembic
+-------
+upgrade head -> downgrade base -> upgrade head: PASS
+alembic check after upgrade: No new upgrade operations detected.
+
+Python
+------
+python -m compileall -q app: PASS
+
+Frontend
+--------
+Syntax transpile with TypeScript compiler API: 11 .ts/.tsx files, 0 syntax errors.
+
+A full npm production build is NOT claimed. `npm ci` did not finish in the execution environment
+and left incomplete @types packages, so `npm run build` could not complete dependency resolution.
+Run locally:
+
+  cd frontend
+  rm -rf node_modules
+  npm install
+  npm run build
+
+Phase-gate contract tests cover
+-------------------------------
+- 8 curriculum lesson metadata records served by backend
+- L01: 5 blocks / 6 exercises / 8 review items
+- quiz answer keys are not exposed by Lesson API
+- exact and Music Engine attempt grading
+- persisted attempt evidence
+- idempotent activation of 8 L01 review states
+- auto success advances 1-day stage to 3 days
+- incorrect review resets to 1 day
+- deterministic ChordInspector response for G7 in C
+- query-form ChordInspector supports slash chord C/E

@@ -1,0 +1,33 @@
+HarmonyMentor Phase 1 verification
+Version: v0.4.0-dev
+
+Backend regression suite (fresh SQLite):
+  113 passed, 1 skipped
+  skipped: optional music21 cross-check when dependency/environment unavailable
+
+Phase 1 tests include:
+  - checkpoint blocks reference audited runtime exercises
+  - lesson start is idempotent
+  - LearningOverview tracks distinct attempted/correct exercises
+  - completion is reflected in overview
+  - review queue counts are aggregated from ReviewState
+  - ChordInspector contract supplies notes/formula/Roman/function
+
+Curriculum/runtime:
+  L01-L04: 7 blocks each (5 content + 2 checkpoint), 6 exercises, 8 review items
+  L05-L08: source-audited specs only
+
+Alembic:
+  existing migrations upgrade to head successfully
+  alembic check: No new upgrade operations detected
+  Phase 1 introduces no schema change
+
+Frontend source syntax:
+  12 TS/TSX files transpiled with TypeScript compiler API
+  0 syntax diagnostics
+
+Frontend production build:
+  NOT CLAIMED in packaging environment.
+  npm dependency installation was interrupted/unavailable and left incomplete package folders.
+  node_modules is excluded from artifact.
+  Developer machine verification: rm -rf node_modules && npm install && npm run build

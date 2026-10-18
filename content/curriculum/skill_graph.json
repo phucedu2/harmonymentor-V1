@@ -1,0 +1,326 @@
+{
+  "skills": [
+    [
+      "pitch.spelling",
+      "Tên nốt và enharmonic spelling",
+      "foundation"
+    ],
+    [
+      "interval.naming",
+      "Nhận diện/gọi tên quãng",
+      "foundation"
+    ],
+    [
+      "chord.triad_formula",
+      "Công thức hợp âm ba",
+      "foundation"
+    ],
+    [
+      "chord.triad_build",
+      "Dựng hợp âm ba",
+      "foundation"
+    ],
+    [
+      "scale.major",
+      "Dựng âm giai trưởng",
+      "foundation"
+    ],
+    [
+      "chord.seventh_quality",
+      "Chất lượng hợp âm bảy",
+      "foundation"
+    ],
+    [
+      "chord.seventh_build",
+      "Dựng hợp âm bảy",
+      "foundation"
+    ],
+    [
+      "roman.major_seventh",
+      "Số La Mã cho hợp âm bảy trong giọng trưởng",
+      "foundation"
+    ],
+    [
+      "function.tonic",
+      "Chức năng tonic",
+      "harmony"
+    ],
+    [
+      "function.predominant",
+      "Chức năng predominant/subdominant",
+      "harmony"
+    ],
+    [
+      "function.dominant",
+      "Chức năng dominant",
+      "harmony"
+    ],
+    [
+      "function.progression",
+      "Luồng chức năng T–PD–D–T",
+      "harmony"
+    ],
+    [
+      "progression.ii_v_i",
+      "Nhận diện và dựng ii–V–I",
+      "jazz_core"
+    ],
+    [
+      "voicing.guide_tones",
+      "Guide tones của hợp âm bảy",
+      "piano"
+    ],
+    [
+      "voicing.voice_leading",
+      "Voice leading giữa voicings",
+      "piano"
+    ],
+    [
+      "voicing.shell",
+      "Shell / 3-note voicing cơ bản",
+      "piano"
+    ],
+    [
+      "harmony.secondary_dominant.identify",
+      "Nhận diện secondary dominant",
+      "chromatic_harmony"
+    ],
+    [
+      "harmony.secondary_dominant.build",
+      "Dựng secondary dominant",
+      "chromatic_harmony"
+    ],
+    [
+      "harmony.secondary_dominant.apply",
+      "Ứng dụng secondary dominant",
+      "chromatic_harmony"
+    ],
+    [
+      "scale.parallel_minor",
+      "Quan hệ major–parallel minor",
+      "chromatic_harmony"
+    ],
+    [
+      "harmony.modal_interchange.identify",
+      "Nhận diện modal interchange",
+      "chromatic_harmony"
+    ],
+    [
+      "harmony.modal_interchange.apply",
+      "Ứng dụng modal interchange",
+      "chromatic_harmony"
+    ],
+    [
+      "tension.naming",
+      "Tên và bậc tension 9/11/13",
+      "jazz"
+    ],
+    [
+      "mode.basic",
+      "Các mode cơ bản dùng trong chord-scale",
+      "jazz"
+    ],
+    [
+      "chord_scale.basic",
+      "Quan hệ chord–scale cơ bản",
+      "jazz"
+    ],
+    [
+      "chord_scale.context",
+      "Chọn chord-scale theo chức năng/ngữ cảnh",
+      "jazz"
+    ]
+  ],
+  "prerequisites": [
+    [
+      "interval.naming",
+      "pitch.spelling"
+    ],
+    [
+      "chord.triad_formula",
+      "interval.naming"
+    ],
+    [
+      "chord.triad_build",
+      "chord.triad_formula"
+    ],
+    [
+      "scale.major",
+      "pitch.spelling"
+    ],
+    [
+      "chord.seventh_quality",
+      "chord.triad_build"
+    ],
+    [
+      "chord.seventh_build",
+      "chord.seventh_quality"
+    ],
+    [
+      "roman.major_seventh",
+      "scale.major"
+    ],
+    [
+      "roman.major_seventh",
+      "chord.seventh_quality"
+    ],
+    [
+      "function.tonic",
+      "roman.major_seventh"
+    ],
+    [
+      "function.predominant",
+      "roman.major_seventh"
+    ],
+    [
+      "function.dominant",
+      "roman.major_seventh"
+    ],
+    [
+      "function.progression",
+      "function.tonic"
+    ],
+    [
+      "function.progression",
+      "function.predominant"
+    ],
+    [
+      "function.progression",
+      "function.dominant"
+    ],
+    [
+      "progression.ii_v_i",
+      "function.progression"
+    ],
+    [
+      "progression.ii_v_i",
+      "chord.seventh_build"
+    ],
+    [
+      "voicing.guide_tones",
+      "chord.seventh_quality"
+    ],
+    [
+      "voicing.guide_tones",
+      "progression.ii_v_i"
+    ],
+    [
+      "voicing.voice_leading",
+      "voicing.guide_tones"
+    ],
+    [
+      "voicing.shell",
+      "voicing.guide_tones"
+    ],
+    [
+      "harmony.secondary_dominant.identify",
+      "function.dominant"
+    ],
+    [
+      "harmony.secondary_dominant.identify",
+      "roman.major_seventh"
+    ],
+    [
+      "harmony.secondary_dominant.build",
+      "harmony.secondary_dominant.identify"
+    ],
+    [
+      "harmony.secondary_dominant.build",
+      "chord.seventh_build"
+    ],
+    [
+      "harmony.secondary_dominant.apply",
+      "harmony.secondary_dominant.build"
+    ],
+    [
+      "harmony.secondary_dominant.apply",
+      "function.progression"
+    ],
+    [
+      "scale.parallel_minor",
+      "scale.major"
+    ],
+    [
+      "harmony.modal_interchange.identify",
+      "scale.parallel_minor"
+    ],
+    [
+      "harmony.modal_interchange.identify",
+      "function.progression"
+    ],
+    [
+      "harmony.modal_interchange.apply",
+      "harmony.modal_interchange.identify"
+    ],
+    [
+      "tension.naming",
+      "chord.seventh_quality"
+    ],
+    [
+      "mode.basic",
+      "scale.major"
+    ],
+    [
+      "chord_scale.basic",
+      "mode.basic"
+    ],
+    [
+      "chord_scale.basic",
+      "tension.naming"
+    ],
+    [
+      "chord_scale.context",
+      "chord_scale.basic"
+    ],
+    [
+      "chord_scale.context",
+      "function.progression"
+    ]
+  ],
+  "lesson_skills": {
+    "L01": [
+      "pitch.spelling",
+      "interval.naming",
+      "chord.triad_formula",
+      "chord.triad_build"
+    ],
+    "L02": [
+      "scale.major",
+      "chord.seventh_quality",
+      "chord.seventh_build",
+      "roman.major_seventh"
+    ],
+    "L03": [
+      "function.tonic",
+      "function.predominant",
+      "function.dominant",
+      "function.progression"
+    ],
+    "L04": [
+      "progression.ii_v_i",
+      "voicing.guide_tones",
+      "voicing.voice_leading"
+    ],
+    "L05": [
+      "harmony.secondary_dominant.identify",
+      "harmony.secondary_dominant.build",
+      "harmony.secondary_dominant.apply"
+    ],
+    "L06": [
+      "scale.parallel_minor",
+      "harmony.modal_interchange.identify",
+      "harmony.modal_interchange.apply"
+    ],
+    "L07": [
+      "tension.naming",
+      "mode.basic",
+      "chord_scale.basic",
+      "chord_scale.context"
+    ],
+    "L08": [
+      "voicing.shell",
+      "voicing.guide_tones",
+      "voicing.voice_leading"
+    ]
+  }
+}
