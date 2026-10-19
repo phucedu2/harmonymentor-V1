@@ -26,8 +26,8 @@ class Settings:
     # Xác thực (ADR-004, NFR-18/19). APP_ENV=production bắt buộc có JWT_SECRET.
     app_env: str = os.getenv("APP_ENV", "development")
     jwt_secret: str = os.getenv("JWT_SECRET", "")
-    access_token_minutes: int = int(os.getenv("ACCESS_TOKEN_MINUTES", "30"))
-    refresh_token_days: int = int(os.getenv("REFRESH_TOKEN_DAYS", "7"))
+    access_token_minutes: int = int(os.getenv("JWT_ACCESS_MINUTES", "30"))
+    refresh_token_days: int = int(os.getenv("JWT_REFRESH_DAYS", "7"))
     cookie_secure: bool = _flag("COOKIE_SECURE", "0")
     # Rỗng → bộ đếm khóa đăng nhập dùng bộ nhớ trong (chỉ hợp với 1 tiến trình: dev, test).
     redis_url: str = os.getenv("REDIS_URL", "")
