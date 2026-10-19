@@ -12,15 +12,17 @@ export function pitchClass(name: string): number | null {
 const WHITE = [0, 2, 4, 5, 7, 9, 11];
 const BLACK_AFTER: Record<number, number> = { 0: 1, 2: 3, 5: 6, 7: 8, 9: 10 };
 
-export default function Piano({ good = [], bad = [] }: { good?: string[]; bad?: string[] }) {
+// active: tô màu chính để minh họa (trang chủ), khác good/bad vốn mang nghĩa đúng/sai.
+export default function Piano({ good = [], bad = [], active = [], label = "Bàn phím piano" }: { good?: string[]; bad?: string[]; active?: string[]; label?: string }) {
   const goodPc = new Set(good.map(pitchClass));
   const badPc = new Set(bad.map(pitchClass));
+  const activePc = new Set(active.map(pitchClass));
   const color = (pc: number, black: boolean) =>
-    goodPc.has(pc) ? "var(--good)" : badPc.has(pc) ? "var(--bad)" : black ? "var(--key-black)" : "var(--key-white)";
+    goodPc.has(pc) ? "var(--good)" : badPc.has(pc) ? "var(--bad)" : activePc.has(pc) ? "var(--accent)" : black ? "var(--key-black)" : "var(--key-white)";
   const whites = [0, 1].flatMap((o) => WHITE.map((pc) => ({ pc, o })));
   const W = 28;
   return (
-    <svg className="piano" viewBox={`0 0 ${whites.length * W} 110`} role="img" aria-label="Bàn phím piano">
+    <svg className="piano" viewBox={`0 0 ${whites.length * W} 110`} role="img" aria-label={label}>
       {whites.map(({ pc, o }, i) => (
         <rect key={`w${o}${pc}`} x={i * W} y={0} width={W} height={110} fill={color(pc, false)} stroke="var(--line)" />
       ))}

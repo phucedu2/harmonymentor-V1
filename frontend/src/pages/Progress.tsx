@@ -12,8 +12,8 @@ export default function ProgressPage() {
     try {
       const [learning, dueRows, allRows] = await Promise.all([
         api.learningOverview(),
-        api.dueReviews("demo-user", false),
-        api.dueReviews("demo-user", true),
+        api.dueReviews(false),
+        api.dueReviews(true),
       ]);
       setOverview(learning);
       setDue(dueRows);

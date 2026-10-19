@@ -23,7 +23,7 @@ Phase 1 giữ nguyên nền curriculum đã audit ở Phase 0.4B và biến Less
 - item-level source provenance trong audited `ExerciseVersion` và `ReviewItem`;
 - flashcard/review state theo mốc 1–3–7–14–30 ngày;
 - backend contract cho `ChordInspector`;
-- frontend `Dashboard / Learn / Practice / Harmony Lab / Progress`;
+- frontend `Dashboard / Learn / Practice / Composition Lab / Progress` (Giai đoạn B: thêm trang chủ, đăng nhập/đăng ký, route `/app/*`);
 - `LearningOverview` tổng hợp LessonProgress + Attempt + ReviewState;
 - ChordInspector UI tái sử dụng trong progression blocks;
 - Dashboard/Learn/Progress đọc state thật từ backend;
@@ -213,6 +213,8 @@ npm run dev
 
 Vite proxy `/api` sang FastAPI ở cổng 8000.
 
+Route frontend (Giai đoạn B): `/` trang chủ, `/dang-nhap`, `/dang-ky`, `/app` (tổng quan), `/app/hoc`, `/app/luyen-tap`, `/app/tien-do`, `/app/composition`, `/app/ho-so`, `/admin`. Mọi trang `/app/*` cần đăng nhập theo hợp đồng `docs/decisions/ADR-004-hop-dong-xac-thuc.md`; khi backend chưa có `/api/v1/auth/*` thì chỉ trang chủ dùng được.
+
 ## PostgreSQL target
 
 Có `docker-compose.yml` ở root.
@@ -256,7 +258,7 @@ Runtime vẫn giữ:
 L01-L04: 7 lesson blocks each, trong đó 2 checkpoint blocks
 ```
 
-Frontend: `cd frontend && npm ci && npm run build` **đạt** (Node 22, kiểm tra ngày 18/10/2026).
+Frontend: `cd frontend && npm ci && npm run build` **đạt** (Node 22, kiểm tra ngày 19/10/2026, nhánh `phase-b-frontend`).
 
 ## Tài liệu phase
 
