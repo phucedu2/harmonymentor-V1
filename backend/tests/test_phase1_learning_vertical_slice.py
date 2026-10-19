@@ -10,6 +10,7 @@ from app.content.curriculum_specs import LESSON_SPECS
 from app.db.models import User
 from app.db.session import SessionLocal
 from app.main import app
+from tests.auth_helpers import auth
 
 
 def make_user() -> str:
@@ -31,14 +32,14 @@ def test_checkpoint_blocks_reference_real_exercises_for_runtime_lessons():
 def test_start_lesson_is_idempotent_and_overview_tracks_attempts():
     with TestClient(app) as client:
         user_id = make_user()
-        first = client.post("/api/v1/lessons/L04/start", json={"user_id": user_id})
+        first = client.post("/api/v1/lessons/L04/start", json={}, headers=auth(user_id))
         assert first.status_code == 200
         assert first.json()["status"] == "started"
-        second = client.post("/api/v1/lessons/L04/start", json={"user_id": user_id})
+        second = client.post("/api/v1/lessons/L04/start", json={}, headers=auth(user_id))
         assert second.status_code == 200
         assert second.json()["started_at"] == first.json()["started_at"]
 
-        before = client.get("/api/v1/learning/overview", params={"user_id": user_id})
+        before = client.get("/api/v1/learning/overview", headers=auth(user_id))
         assert before.status_code == 200
         lesson = next(x for x in before.json()["lessons"] if x["lesson_id"] == "L04")
         assert lesson["status"] == "started"
@@ -48,13 +49,12 @@ def test_start_lesson_is_idempotent_and_overview_tracks_attempts():
         detail = client.get("/api/v1/lessons/L04").json()
         q1 = next(x for x in detail["exercises"] if x["id"] == "L04-Q01")
         attempt = client.post("/api/v1/attempts", json={
-            "user_id": user_id,
             "exercise_version_id": q1["version_id"],
             "answer": "Dm7-G7-Cmaj7",
-        })
+        }, headers=auth(user_id))
         assert attempt.status_code == 200 and attempt.json()["correct"] is True
 
-        after = client.get("/api/v1/learning/overview", params={"user_id": user_id})
+        after = client.get("/api/v1/learning/overview", headers=auth(user_id))
         lesson = next(x for x in after.json()["lessons"] if x["lesson_id"] == "L04")
         assert lesson["attempted_exercises"] == 1
         assert lesson["correct_exercises"] == 1
@@ -66,11 +66,11 @@ def test_start_lesson_is_idempotent_and_overview_tracks_attempts():
 def test_completion_updates_overview_and_review_counts():
     with TestClient(app) as client:
         user_id = make_user()
-        client.post("/api/v1/lessons/L01/start", json={"user_id": user_id})
-        completed = client.post("/api/v1/lessons/L01/complete", json={"user_id": user_id})
+        client.post("/api/v1/lessons/L01/start", json={}, headers=auth(user_id))
+        completed = client.post("/api/v1/lessons/L01/complete", json={}, headers=auth(user_id))
         assert completed.status_code == 200
 
-        overview = client.get("/api/v1/learning/overview", params={"user_id": user_id})
+        overview = client.get("/api/v1/learning/overview", headers=auth(user_id))
         assert overview.status_code == 200
         body = overview.json()
         lesson = next(x for x in body["lessons"] if x["lesson_id"] == "L01")

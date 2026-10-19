@@ -62,7 +62,6 @@ class LessonDetailOut(LessonSummaryOut):
 
 
 class AttemptIn(BaseModel):
-    user_id: str = "demo-user"
     exercise_version_id: str
     answer: Any
 
@@ -83,10 +82,6 @@ class AttemptOut(BaseModel):
     errors: list[AttemptErrorOut] = Field(default_factory=list)
 
 
-class CompleteLessonIn(BaseModel):
-    user_id: str = "demo-user"
-
-
 class CompleteLessonOut(BaseModel):
     lesson_id: str
     user_id: str
@@ -100,7 +95,6 @@ ReviewRating = Literal["again", "hard", "good", "easy", "auto"]
 
 
 class ReviewAnswerIn(BaseModel):
-    user_id: str = "demo-user"
     answer: Any
     rating: ReviewRating = "auto"
     response_time_ms: int | None = Field(default=None, ge=0)

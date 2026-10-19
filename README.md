@@ -201,6 +201,17 @@ uvicorn app.main:app --reload
 
 Nếu chưa có DB, app local tạo schema và seed `demo-user` + curriculum runtime L01–L04.
 
+Đăng nhập (Giai đoạn B): mọi route có dữ liệu cá nhân cần Bearer token (ADR-004); đăng ký tài khoản ở trang `/dang-ky` của frontend. Tạo tài khoản quản trị:
+
+```bash
+cd backend
+python -m app.seed_admin --email admin@example.com   # hỏi mật khẩu, hoặc đặt biến ADMIN_PASSWORD
+```
+
+Biến môi trường xem ở [`.env.example`](.env.example). Không đặt `JWT_SECRET` thì môi trường dev dùng khóa tạm (khởi động lại là access token cũ hết hạn, refresh cookie vẫn lấy lại phiên); `APP_ENV=production` bắt buộc có khóa.
+
+Nếu bạn có file `backend/harmonymentor_dev.db` tạo trước Giai đoạn B, backend sẽ báo thiếu cột `users.email`: xóa file đó để tạo lại.
+
 API docs: `http://127.0.0.1:8000/docs`
 
 **Terminal 2 — frontend**

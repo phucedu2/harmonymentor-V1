@@ -7,7 +7,8 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ..contracts.learning import ReviewAnswerIn, ReviewAnswerOut, ReviewStateOut
-from ..db.models import ReviewItem, ReviewState
+from ..auth.deps import get_current_user
+from ..db.models import ReviewItem, ReviewState, User
 from ..db.session import get_db
 from ..services.learning_service import answer_review
 
@@ -16,12 +17,12 @@ router = APIRouter(prefix="/api/v1/review", tags=["review"])
 
 @router.get("/due", response_model=list[ReviewStateOut])
 def due_reviews(
-    user_id: str = "demo-user",
+    user: User = Depends(get_current_user),
     include_future: bool = Query(False, description="Debug/MVP flag: include active future cards."),
     db: Session = Depends(get_db),
 ):
     stmt = select(ReviewState, ReviewItem).join(ReviewItem, ReviewItem.id == ReviewState.review_item_id).where(
-        ReviewState.user_id == user_id,
+        ReviewState.user_id == user.id,
         ReviewState.status == "active",
     )
     if not include_future:
@@ -35,10 +36,11 @@ def due_reviews(
 
 
 @router.post("/{review_item_id}/answer", response_model=ReviewAnswerOut)
-def submit_review_answer(review_item_id: str, body: ReviewAnswerIn, db: Session = Depends(get_db)):
+def submit_review_answer(review_item_id: str, body: ReviewAnswerIn, user: User = Depends(get_current_user),
+                         db: Session = Depends(get_db)):
     try:
         review_attempt, state, item, outcome, applied = answer_review(
-            db, body.user_id, review_item_id, body.answer, body.rating, body.response_time_ms,
+            db, user.id, review_item_id, body.answer, body.rating, body.response_time_ms,
         )
     except LookupError as exc:
         code = str(exc)
