@@ -1,6 +1,6 @@
 # ADR-004 · Hợp đồng API xác thực giữa frontend và backend
 
-Trạng thái: **Đề xuất** (Giai đoạn B, 19/10/2026). Frontend (Phúc) đã viết theo hợp đồng này; backend (Thắng) cài đặt đúng hợp đồng hoặc sửa ADR này trước khi đổi.
+Trạng thái: **Đã chốt** (Giai đoạn B, 19/10/2026). Frontend (nhánh `phase-b-frontend`) và backend (nhánh `phase-b-backend-auth`) đều cài đặt đúng hợp đồng này; muốn đổi thì sửa ADR trước.
 
 ## Bối cảnh
 
@@ -55,3 +55,6 @@ Mã lỗi frontend đang xử lý:
 - Nhánh frontend chỉ gộp sau (hoặc cùng lúc) nhánh auth của backend, vì `/app/*` cần đăng nhập.
 - Docker (Đạt): dịch vụ `web` phải chuyển `/api` sang `api` cùng origin và trả `index.html` cho mọi đường dẫn khác (SPA).
 - Đăng nhập trên nhiều tab cùng lúc có thể làm một tab dùng refresh token vừa bị xoay; tab đó sẽ bị đăng xuất. Chấp nhận ở MVP.
+- Refresh token là chuỗi ngẫu nhiên 48 byte, CSDL chỉ lưu SHA-256. Xoay vòng bằng một câu `UPDATE … WHERE revoked_at IS NULL`, nên hai request dùng cùng token thì chỉ một cái thành công.
+- Khóa đăng nhập đếm theo cặp IP + email, cửa sổ cố định 15 phút tính từ lần sai đầu. Redis lỗi thì cho đăng nhập tiếp (vẫn kiểm tra mật khẩu) và ghi log, để sự cố Redis không khóa mọi người.
+- Thẻ ôn tập là nội dung bài học công khai: người B trả lời thẻ mà B chưa kích hoạt nhận 409 `REVIEW_STATE_NOT_ACTIVE`, không ảnh hưởng lịch ôn của người A. Dữ liệu cá nhân (lịch ôn, lượt làm, tiến độ) luôn lọc theo người trong token.

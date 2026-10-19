@@ -5,7 +5,6 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ..contracts.learning import (
-    CompleteLessonIn,
     CompleteLessonOut,
     ExerciseOut,
     LessonBlockOut,
@@ -15,7 +14,8 @@ from ..contracts.learning import (
     SourceRefOut,
     StartLessonOut,
 )
-from ..db.models import ExerciseVersion, Lesson, LessonSource, SourceWork
+from ..auth.deps import get_current_user
+from ..db.models import ExerciseVersion, Lesson, LessonSource, SourceWork, User
 from ..db.session import get_db
 from ..services.learning_service import complete_lesson, start_lesson
 
@@ -79,27 +79,27 @@ def get_lesson(lesson_id: str, db: Session = Depends(get_db)):
 
 
 @router.post("/{lesson_id}/start", response_model=StartLessonOut)
-def mark_lesson_started(lesson_id: str, body: CompleteLessonIn, db: Session = Depends(get_db)):
+def mark_lesson_started(lesson_id: str, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     try:
-        progress = start_lesson(db, body.user_id, lesson_id)
+        progress = start_lesson(db, user.id, lesson_id)
     except LookupError as exc:
         code = str(exc)
         raise HTTPException(status_code=404, detail={"code": code}) from exc
     return StartLessonOut(
-        lesson_id=lesson_id, user_id=body.user_id, status=progress.status,
+        lesson_id=lesson_id, user_id=user.id, status=progress.status,
         started_at=progress.started_at, completed_at=progress.completed_at,
     )
 
 
 @router.post("/{lesson_id}/complete", response_model=CompleteLessonOut)
-def mark_lesson_complete(lesson_id: str, body: CompleteLessonIn, db: Session = Depends(get_db)):
+def mark_lesson_complete(lesson_id: str, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     try:
-        progress, states = complete_lesson(db, body.user_id, lesson_id)
+        progress, states = complete_lesson(db, user.id, lesson_id)
     except LookupError as exc:
         code = str(exc)
         raise HTTPException(status_code=404, detail={"code": code}) from exc
     first_due = min((s.due_at for s in states), default=None)
     return CompleteLessonOut(
-        lesson_id=lesson_id, user_id=body.user_id, status=progress.status,
+        lesson_id=lesson_id, user_id=user.id, status=progress.status,
         completed_at=progress.completed_at, activated_review_items=len(states), first_review_due_at=first_due,
     )

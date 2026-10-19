@@ -14,6 +14,7 @@ from app.content.source_registry import SOURCE_REGISTRY
 from app.db.models import ExerciseVersion, ReviewItem, SkillPrerequisite, User
 from app.db.session import SessionLocal
 from app.main import app
+from tests.auth_helpers import auth
 
 
 def make_user() -> str:
@@ -100,27 +101,24 @@ def test_lesson2_scale_and_roman_music_engine_graders_work_end_to_end():
         versions = {x["id"]: x["version_id"] for x in detail["exercises"]}
 
         scale = client.post("/api/v1/attempts", json={
-            "user_id": user_id,
             "exercise_version_id": versions["L02-Q01"],
             "answer": "G A B C D E F#",
-        })
+        }, headers=auth(user_id))
         assert scale.status_code == 200
         assert scale.json()["correct"] is True
 
         wrong_order = client.post("/api/v1/attempts", json={
-            "user_id": user_id,
             "exercise_version_id": versions["L02-Q01"],
             "answer": "G B A C D E F#",
-        })
+        }, headers=auth(user_id))
         assert wrong_order.status_code == 200
         assert wrong_order.json()["correct"] is False
         assert wrong_order.json()["primary_error"] == "WRONG_SCALE_DEGREE_ORDER"
 
         roman = client.post("/api/v1/attempts", json={
-            "user_id": user_id,
             "exercise_version_id": versions["L02-Q03"],
             "answer": "ii7",
-        })
+        }, headers=auth(user_id))
         assert roman.status_code == 200
         assert roman.json()["correct"] is True
 
@@ -135,14 +133,14 @@ def test_lesson3_and_lesson4_contracts_are_live():
 
         l03q2 = next(x for x in l03["exercises"] if x["id"] == "L03-Q02")
         r = client.post("/api/v1/attempts", json={
-            "user_id": user_id, "exercise_version_id": l03q2["version_id"], "answer": "Predominant"
-        })
+            "exercise_version_id": l03q2["version_id"], "answer": "Predominant"
+        }, headers=auth(user_id))
         assert r.status_code == 200 and r.json()["correct"] is True
 
         l04q2 = next(x for x in l04["exercises"] if x["id"] == "L04-Q02")
         r = client.post("/api/v1/attempts", json={
-            "user_id": user_id, "exercise_version_id": l04q2["version_id"], "answer": "Gm7-C7-Fmaj7"
-        })
+            "exercise_version_id": l04q2["version_id"], "answer": "Gm7-C7-Fmaj7"
+        }, headers=auth(user_id))
         assert r.status_code == 200 and r.json()["correct"] is True
 
 

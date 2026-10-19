@@ -9,6 +9,7 @@ from fastapi.testclient import TestClient
 from app.db.models import User
 from app.db.session import SessionLocal
 from app.main import app
+from tests.auth_helpers import auth
 
 
 def make_user() -> str:
@@ -46,26 +47,26 @@ def test_attempt_contract_handles_exact_and_music_engine_grading():
         user_id = make_user()
 
         good_interval = client.post("/api/v1/attempts", json={
-            "user_id": user_id, "exercise_version_id": "L01-Q01-v2", "answer": "M3"
-        })
+            "exercise_version_id": "L01-Q01-v2", "answer": "M3"
+        }, headers=auth(user_id))
         assert good_interval.status_code == 200
         assert good_interval.json()["correct"] is True
 
         wrong_case_is_wrong_quality = client.post("/api/v1/attempts", json={
-            "user_id": user_id, "exercise_version_id": "L01-Q01-v2", "answer": "m3"
-        })
+            "exercise_version_id": "L01-Q01-v2", "answer": "m3"
+        }, headers=auth(user_id))
         assert wrong_case_is_wrong_quality.status_code == 200
         assert wrong_case_is_wrong_quality.json()["correct"] is False
 
         good_chord = client.post("/api/v1/attempts", json={
-            "user_id": user_id, "exercise_version_id": "L01-Q02-v2", "answer": "C E G"
-        })
+            "exercise_version_id": "L01-Q02-v2", "answer": "C E G"
+        }, headers=auth(user_id))
         assert good_chord.status_code == 200
         assert good_chord.json()["correct"] is True
 
         extra_note = client.post("/api/v1/attempts", json={
-            "user_id": user_id, "exercise_version_id": "L01-Q02-v2", "answer": "C E G G#"
-        })
+            "exercise_version_id": "L01-Q02-v2", "answer": "C E G G#"
+        }, headers=auth(user_id))
         assert extra_note.status_code == 200
         assert extra_note.json()["correct"] is False
         assert extra_note.json()["primary_error"] == "EXTRA_TONE"
@@ -74,18 +75,18 @@ def test_attempt_contract_handles_exact_and_music_engine_grading():
 def test_complete_lesson_activates_review_states_idempotently():
     with TestClient(app) as client:
         user_id = make_user()
-        first = client.post("/api/v1/lessons/L01/complete", json={"user_id": user_id})
+        first = client.post("/api/v1/lessons/L01/complete", json={}, headers=auth(user_id))
         assert first.status_code == 200
         body = first.json()
         assert body["status"] == "completed"
         assert body["activated_review_items"] == 8
         assert body["first_review_due_at"] is not None
 
-        second = client.post("/api/v1/lessons/L01/complete", json={"user_id": user_id})
+        second = client.post("/api/v1/lessons/L01/complete", json={}, headers=auth(user_id))
         assert second.status_code == 200
         assert second.json()["activated_review_items"] == 8
 
-        reviews = client.get("/api/v1/review/due", params={"user_id": user_id, "include_future": "true"})
+        reviews = client.get("/api/v1/review/due", params={"include_future": "true"}, headers=auth(user_id))
         assert reviews.status_code == 200
         assert len(reviews.json()) == 8
         assert {x["review_item_id"] for x in reviews.json()} == {f"L01-F{i:02d}" for i in range(1, 9)}
@@ -94,11 +95,11 @@ def test_complete_lesson_activates_review_states_idempotently():
 def test_review_answer_advances_1_3_7_14_30_schedule():
     with TestClient(app) as client:
         user_id = make_user()
-        client.post("/api/v1/lessons/L01/complete", json={"user_id": user_id})
+        client.post("/api/v1/lessons/L01/complete", json={}, headers=auth(user_id))
 
         result = client.post("/api/v1/review/L01-F01/answer", json={
-            "user_id": user_id, "answer": "M3", "rating": "auto", "response_time_ms": 1800
-        })
+            "answer": "M3", "rating": "auto", "response_time_ms": 1800
+        }, headers=auth(user_id))
         assert result.status_code == 200
         body = result.json()
         assert body["correct"] is True
@@ -107,8 +108,8 @@ def test_review_answer_advances_1_3_7_14_30_schedule():
         assert body["interval_days"] == 3
 
         wrong = client.post("/api/v1/review/L01-F01/answer", json={
-            "user_id": user_id, "answer": "m3", "rating": "auto"
-        })
+            "answer": "m3", "rating": "auto"
+        }, headers=auth(user_id))
         assert wrong.status_code == 200
         body = wrong.json()
         assert body["correct"] is False

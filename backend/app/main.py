@@ -13,6 +13,7 @@ from fastapi.responses import JSONResponse
 
 from .api.router import api_router
 from .core.config import settings
+from .core.errors import install_error_handlers
 from .db.seed import seed_database
 from .db.session import SessionLocal, create_schema
 from .music_engine.errors import MusicEngineError
@@ -30,6 +31,7 @@ async def lifespan(_: FastAPI):
 
 app = FastAPI(title=settings.app_name, version=settings.app_version, lifespan=lifespan)
 app.include_router(api_router)
+install_error_handlers(app)
 
 
 @app.exception_handler(MusicEngineError)
