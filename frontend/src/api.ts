@@ -1,8 +1,8 @@
 // Backend contracts. Music theory remains deterministic on the server; frontend is presentation/input only.
-const ENGINE_BASE = "/api/v1/engine";
-const API_BASE = "/api/v1";
+import { http } from "./lib/http";
 
 export type EngineError = { code: string; message: string; details?: Record<string, unknown> };
+// ApiRequestError (lib/http.ts) thỏa kiểu này, nên các trang cũ đọc lỗi như trước.
 export type ApiError = { code: string; message?: string };
 
 export type GradeResult = {
@@ -139,24 +139,9 @@ export type ReviewAnswerResult = {
   feedback?: string | null;
 };
 
-async function request<T>(base: string, path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(base + path, {
-    headers: { "Content-Type": "application/json" },
-    ...init,
-  });
-  const body = await res.json();
-  if (!res.ok) {
-    const detail = body.detail ?? body.error;
-    const err: ApiError = typeof detail === "object" && detail
-      ? { code: detail.code ?? "HTTP_" + res.status, message: detail.message ?? JSON.stringify(detail) }
-      : { code: "HTTP_" + res.status, message: String(detail ?? body) };
-    throw err;
-  }
-  return body as T;
-}
-
-const engineCall = <T,>(path: string, init?: RequestInit) => request<T>(ENGINE_BASE, path, init);
-const apiCall = <T,>(path: string, init?: RequestInit) => request<T>(API_BASE, path, init);
+// Mọi request đi qua lib/http.ts để có access token và lỗi chuẩn SRS 7.4.
+const engineCall = <T,>(path: string, init?: RequestInit) => http<T>("/engine" + path, init, { auth: false });
+const apiCall = <T,>(path: string, init?: RequestInit) => http<T>(path, init);
 const enginePost = <T,>(path: string, data: unknown) => engineCall<T>(path, { method: "POST", body: JSON.stringify(data) });
 const apiPost = <T,>(path: string, data: unknown) => apiCall<T>(path, { method: "POST", body: JSON.stringify(data) });
 
@@ -180,20 +165,20 @@ export const api = {
   // Phase 0.4B source-grounded learning contract.
   listLessons: () => apiCall<LessonSummary[]>("/lessons"),
   getLesson: (lessonId: string) => apiCall<LessonDetail>(`/lessons/${encodeURIComponent(lessonId)}`),
-  startLesson: (lessonId: string, userId = "demo-user") =>
-    apiPost<StartLessonResult>(`/lessons/${encodeURIComponent(lessonId)}/start`, { user_id: userId }),
-  learningOverview: (userId = "demo-user") =>
-    apiCall<LearningOverview>(`/learning/overview?user_id=${encodeURIComponent(userId)}`),
+  // user_id không còn gửi từ client (N3): backend lấy từ token (ADR-004).
+  startLesson: (lessonId: string) =>
+    apiPost<StartLessonResult>(`/lessons/${encodeURIComponent(lessonId)}/start`, {}),
+  learningOverview: () => apiCall<LearningOverview>("/learning/overview"),
   inspectChord: (symbol: string, key?: string) =>
     apiCall<ChordInspection>(`/music/chords/inspect?symbol=${encodeURIComponent(symbol)}${key ? `&key=${encodeURIComponent(key)}` : ""}`),
-  submitAttempt: (exerciseVersionId: string, answer: unknown, userId = "demo-user") =>
-    apiPost<AttemptResult>("/attempts", { user_id: userId, exercise_version_id: exerciseVersionId, answer }),
-  completeLesson: (lessonId: string, userId = "demo-user") =>
-    apiPost<CompleteLessonResult>(`/lessons/${encodeURIComponent(lessonId)}/complete`, { user_id: userId }),
-  dueReviews: (userId = "demo-user", includeFuture = false) =>
-    apiCall<ReviewState[]>(`/review/due?user_id=${encodeURIComponent(userId)}&include_future=${includeFuture}`),
-  answerReview: (reviewItemId: string, answer: unknown, rating = "auto", userId = "demo-user") =>
-    apiPost<ReviewAnswerResult>(`/review/${encodeURIComponent(reviewItemId)}/answer`, { user_id: userId, answer, rating }),
+  submitAttempt: (exerciseVersionId: string, answer: unknown) =>
+    apiPost<AttemptResult>("/attempts", { exercise_version_id: exerciseVersionId, answer }),
+  completeLesson: (lessonId: string) =>
+    apiPost<CompleteLessonResult>(`/lessons/${encodeURIComponent(lessonId)}/complete`, {}),
+  dueReviews: (includeFuture = false) =>
+    apiCall<ReviewState[]>(`/review/due?include_future=${includeFuture}`),
+  answerReview: (reviewItemId: string, answer: unknown, rating = "auto") =>
+    apiPost<ReviewAnswerResult>(`/review/${encodeURIComponent(reviewItemId)}/answer`, { answer, rating }),
 };
 
 // Tách chuỗi người học gõ ("G B D F#" hoặc "G, B, D, F#") thành danh sách nốt.

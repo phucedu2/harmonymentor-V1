@@ -1,39 +1,54 @@
-import { useState } from "react";
-import DashboardPage from "./pages/Dashboard";
-import HarmonyLabPage from "./pages/HarmonyLab";
-import LearnPage from "./pages/Learn";
-import PracticePage from "./pages/Practice";
-import ProgressPage from "./pages/Progress";
+import { lazy, type ReactNode } from "react";
+import { createBrowserRouter, RouterProvider } from "react-router";
+import { RequireAdmin, RequireAuth } from "./auth/guards";
+import AppLayout from "./components/layout/AppLayout";
+import PublicLayout from "./components/layout/PublicLayout";
+import HomePage from "./pages/public/HomePage";
 
-type Page = "dashboard" | "learn" | "practice" | "lab" | "progress";
-const NAV: { id: Page; label: string; short: string }[] = [
-  { id: "dashboard", label: "Tổng quan", short: "Home" },
-  { id: "learn", label: "Học lý thuyết", short: "Learn" },
-  { id: "practice", label: "Luyện tập", short: "Practice" },
-  { id: "lab", label: "Harmony Lab", short: "Create" },
-  { id: "progress", label: "Tiến độ", short: "Progress" },
-];
+// Tách bundle theo route (docs/PHASE_A_PLAN.md mục 3): trang chủ tải ngay, phần còn lại tải khi mở.
+const LoginPage = lazy(() => import("./pages/public/LoginPage"));
+const RegisterPage = lazy(() => import("./pages/public/RegisterPage"));
+const DashboardPage = lazy(() => import("./pages/Dashboard"));
+const LearnPage = lazy(() => import("./pages/Learn"));
+const PracticePage = lazy(() => import("./pages/Practice"));
+const ProgressPage = lazy(() => import("./pages/Progress"));
+const CompositionLabPage = lazy(() => import("./pages/app/CompositionLabPage"));
+const ProfilePage = lazy(() => import("./pages/app/ProfilePage"));
+const AdminHomePage = lazy(() => import("./pages/app/AdminHomePage"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
+
+// Trang có từ v0.4.0 dùng CSS cũ; bọc lại cho tới khi chuyển sang Tailwind ở Giai đoạn C.
+const legacy = (page: ReactNode) => <div className="legacy-page">{page}</div>;
+
+const router = createBrowserRouter([
+  {
+    element: <PublicLayout />,
+    children: [
+      { index: true, element: <HomePage /> },
+      { path: "dang-nhap", element: <LoginPage /> },
+      { path: "dang-ky", element: <RegisterPage /> },
+      { path: "*", element: <NotFoundPage /> },
+    ],
+  },
+  {
+    path: "app",
+    element: <RequireAuth><AppLayout /></RequireAuth>,
+    children: [
+      { index: true, element: legacy(<DashboardPage />) },
+      { path: "hoc", element: legacy(<LearnPage />) },
+      { path: "luyen-tap", element: legacy(<PracticePage />) },
+      { path: "tien-do", element: legacy(<ProgressPage />) },
+      { path: "composition", element: <CompositionLabPage /> },
+      { path: "ho-so", element: <ProfilePage /> },
+    ],
+  },
+  {
+    path: "admin",
+    element: <RequireAuth><AppLayout /></RequireAuth>,
+    children: [{ index: true, element: <RequireAdmin><AdminHomePage /></RequireAdmin> }],
+  },
+]);
 
 export default function App() {
-  const [page, setPage] = useState<Page>("dashboard");
-  return (
-    <div className="app-shell">
-      <aside className="sidebar">
-        <div className="brand"><span className="brand-mark">H</span><div><b>HarmonyMentor</b><small>v0.4.0-dev</small></div></div>
-        <nav className="main-nav" aria-label="Điều hướng chính">
-          {NAV.map((item) => <button key={item.id} className={page === item.id ? "active" : ""} onClick={() => setPage(item.id)}>
-            <small>{item.short}</small><span>{item.label}</span></button>)}
-        </nav>
-        <div className="sidebar-note">Phase 1<br/>learning vertical slice</div>
-      </aside>
-      <main className="workspace">
-        {page === "dashboard" && <DashboardPage onNavigate={(next) => setPage(next)} />}
-        {page === "learn" && <LearnPage />}
-        {page === "practice" && <PracticePage />}
-        {page === "lab" && <HarmonyLabPage />}
-        {page === "progress" && <ProgressPage />}
-        <footer>Phase 1: Learn → checkpoint → quiz → review · Music Engine deterministic · AI chưa nằm trên critical path.</footer>
-      </main>
-    </div>
-  );
+  return <RouterProvider router={router} />;
 }
