@@ -37,7 +37,7 @@ Bảng truy vết đầy đủ 192 FR: [`PHASE_A_TRUY_VET_FR.md`](PHASE_A_TRUY_V
 | N8 | Thư mục `api/ services/ …` ≠ SRS 10.4 | Module mới theo SRS 10.4; code cũ chuyển dần khi chạm vào | B–F |
 | N9 | Đóng gói: build chưa xác nhận, thiếu `.env.example` gốc | Build đã xác nhận ở Giai đoạn A; `.env.example` đủ biến SRS 10.3 làm ở B | A, B |
 
-### Mâu thuẫn mới phát hiện ở Giai đoạn A (đề xuất, chờ nhóm duyệt)
+### Mâu thuẫn mới phát hiện ở Giai đoạn A (nhóm đã duyệt 19/10/2026)
 
 | Mã | Phát hiện | Đề xuất | Ai quyết |
 |---|---|---|---|
@@ -355,6 +355,8 @@ Vì sao C và D chạy song song: CP2 chấm hệ gợi ý, không chấm giao d
 Danh sách cắt (theo thứ tự cắt trước): FR-COM-AI-02..09 (P2) → guitar làm cách trả lời bài tập (giữ hiển thị) → FR-COM-31 đếm vào → quiz bằng LLM (giữ quiz bằng Engine) → admin quản lý module/khóa (giữ nhập YAML) → FR-AI-17 đánh giá câu trả lời.
 
 ## 7. Việc nhóm cần quyết trước khi sang Giai đoạn B
+
+Nhóm đã duyệt cả 4 mục dưới đây ngày 19/10/2026.
 
 1. Duyệt N10–N15 (đặc biệt N10: ai soạn bài nào).
 2. Duyệt khung 12 bài ở mục 1.1.

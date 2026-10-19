@@ -1,6 +1,6 @@
 # ADR-001 · Ánh xạ bảng hiện có sang lược đồ SRS 8.2
 
-Trạng thái: **Đề xuất** (Giai đoạn A, 18/10/2026). Người duyệt: Thắng.
+Trạng thái: **Đã chốt** (nhóm duyệt kế hoạch Giai đoạn A, 19/10/2026). Người duyệt: Thắng.
 
 ## Bối cảnh
 

@@ -1,6 +1,6 @@
 # ADR-003 · Ánh xạ 26 kỹ năng của code sang 10 kỹ năng MVP của SRS 4.3
 
-Trạng thái: **Đã chốt hướng** (nhóm chấp nhận N1, 18/10/2026); danh sách bài cụ thể chờ duyệt. Thực hiện ở Giai đoạn C.
+Trạng thái: **Đã chốt** (nhóm chấp nhận N1 18/10/2026; danh sách 12 bài duyệt 19/10/2026). Thực hiện ở Giai đoạn C.
 
 ## Bối cảnh
 
