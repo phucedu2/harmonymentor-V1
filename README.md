@@ -228,15 +228,15 @@ uvicorn app.main:app --reload
 
 Trong môi trường shared/production-like, dùng Alembic (`AUTO_CREATE_SCHEMA=0`) thay vì `create_all`.
 
-## Kiểm thử Phase 1
+## Kiểm thử (cập nhật Giai đoạn A, 18/10/2026)
 
-Backend trên fresh SQLite:
+Backend trên fresh SQLite, đã cài đủ `requirements.txt` (gồm `music21`):
 
 ```text
-113 passed, 1 skipped
+167 passed
 ```
 
-Skip là optional `music21` cross-check khi dependency không khả dụng.
+Nếu không cài được `music21`, bộ đối chiếu music21 bị bỏ qua và số test sẽ ít hơn (ví dụ 113 passed, 1 skipped ở bản v0.4.0 gốc trước khi thêm test CP1).
 
 Alembic đã kiểm tra:
 
@@ -256,7 +256,7 @@ Runtime vẫn giữ:
 L01-L04: 7 lesson blocks each, trong đó 2 checkpoint blocks
 ```
 
-Frontend full `npm run build` không được tuyên bố pass trong môi trường đóng gói nếu dependencies chưa cài đầy đủ. Trên máy phát triển cần chạy `npm install && npm run build`.
+Frontend: `cd frontend && npm ci && npm run build` **đạt** (Node 22, kiểm tra ngày 18/10/2026).
 
 ## Tài liệu phase
 
@@ -265,17 +265,12 @@ Frontend full `npm run build` không được tuyên bố pass trong môi trư�
 - `docs/LESSON_SPECIFICATIONS.md`
 - `docs/PHASE_0_4B_IMPLEMENTATION.md`
 - `docs/PHASE_1_IMPLEMENTATION.md`
+- `docs/PHASE_A_PLAN.md`, `docs/PHASE_A_TRUY_VET_FR.md` (kế hoạch và truy vết FR hiện hành)
+- `docs/CP1_*.md` (minh chứng CP1)
 - `docs/VERIFICATION_PHASE_1.txt`
 - `docs/VERIFICATION_PHASE_0_4B.txt`
 - các phase trước vẫn giữ để audit lịch sử.
 
 ## Bước tiếp theo
 
-**Phase 2 — Interactive Music Layer**
-
-1. Virtual Piano V2 với pitch + octave-aware input;
-2. Tone.js AudioEngine cho piano playback và metronome;
-3. VexFlow notation blocks;
-4. nối `PIANO` / `AUDIO` / `NOTATION` blocks vào L01–L04;
-5. keyboard exercise evidence tối thiểu;
-6. sau đó mới chuyển sang Harmony Lab và AI Harmony Assistant.
+Kế hoạch hiện hành là **Giai đoạn B–F** trong [`docs/PHASE_A_PLAN.md`](docs/PHASE_A_PLAN.md) (thay cho mục "Phase 2 — Interactive Music Layer" cũ). Hướng dẫn cho Claude Code nằm ở [`CLAUDE.md`](CLAUDE.md).
