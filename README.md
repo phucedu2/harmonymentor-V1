@@ -226,14 +226,29 @@ Vite proxy `/api` sang FastAPI ở cổng 8000.
 
 Route frontend (Giai đoạn B): `/` trang chủ, `/dang-nhap`, `/dang-ky`, `/app` (tổng quan), `/app/hoc`, `/app/luyen-tap`, `/app/tien-do`, `/app/composition`, `/app/ho-so`, `/admin`. Mọi trang `/app/*` cần đăng nhập theo hợp đồng `docs/decisions/ADR-004-hop-dong-xac-thuc.md`; khi backend chưa có `/api/v1/auth/*` thì chỉ trang chủ dùng được.
 
-## PostgreSQL target
+## Chạy toàn bộ bằng Docker (Giai đoạn B)
 
-Có `docker-compose.yml` ở root.
+Cần Docker Desktop (hoặc Docker Engine + Compose v2). Từ thư mục gốc repo:
 
 ```bash
-docker compose up -d postgres
+cp .env.example .env          # rồi điền DB_PASSWORD (chuỗi bất kỳ), các biến khác để mặc định được
+docker compose up --build
+```
+
+- Web: http://localhost:5173 (nginx phục vụ bản build Vite, chuyển `/api` sang dịch vụ `api` cùng origin).
+- API docs: http://127.0.0.1:8000/docs (chỉ mở cho máy đang chạy).
+- Tạo admin: `docker compose exec -e ADMIN_PASSWORD=<mật-khẩu> api python -m app.seed_admin --email admin@example.com`.
+- Bảng độ trễ p95: `docker compose logs api --no-log-prefix | python scripts/p95.py`.
+- Xóa sạch dữ liệu: `docker compose down -v`.
+
+4 dịch vụ theo SRS 10.2: `db` (PostgreSQL 16 + pgvector, CSDL `harmony`), `redis` (bộ đếm khóa đăng nhập), `api` (chạy `alembic upgrade head` rồi uvicorn), `web` (nginx, cổng `5173:80`). `/health` trả 503 khi CSDL hoặc Redis lỗi; compose dùng nó để chờ `api` sẵn sàng rồi mới mở `web`.
+
+## PostgreSQL target (chạy backend ngoài Docker)
+
+```bash
+docker compose up -d db        # cần mở cổng: thêm ports: ["127.0.0.1:5432:5432"] cho dịch vụ db
 cd backend
-export DATABASE_URL='postgresql+psycopg://harmonymentor:harmonymentor@127.0.0.1:5432/harmonymentor'
+export DATABASE_URL='postgresql+psycopg://harmony:<DB_PASSWORD>@127.0.0.1:5432/harmony'
 export AUTO_CREATE_SCHEMA=0
 alembic -c alembic.ini upgrade head
 uvicorn app.main:app --reload
@@ -246,7 +261,7 @@ Trong môi trường shared/production-like, dùng Alembic (`AUTO_CREATE_SCHEMA=
 Backend trên fresh SQLite, đã cài đủ `requirements.txt` (gồm `music21`):
 
 ```text
-167 passed
+191 passed   (Giai đoạn B, 19/10/2026; cũng đạt trên PostgreSQL 16)
 ```
 
 Nếu không cài được `music21`, bộ đối chiếu music21 bị bỏ qua và số test sẽ ít hơn (ví dụ 113 passed, 1 skipped ở bản v0.4.0 gốc trước khi thêm test CP1).

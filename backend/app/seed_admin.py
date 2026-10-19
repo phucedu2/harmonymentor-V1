@@ -35,7 +35,12 @@ def main(argv: list[str] | None = None) -> int:
         user = db.scalar(select(User).where(User.email == email))
         password = os.getenv("ADMIN_PASSWORD")
         if user is None or password:
-            password = password or getpass.getpass("Mật khẩu admin: ")
+            if not password:
+                try:
+                    password = getpass.getpass("Mật khẩu admin: ")
+                except EOFError:  # chạy không có terminal (docker compose exec -T, CI)
+                    print("Không đọc được mật khẩu: đặt biến ADMIN_PASSWORD.", file=sys.stderr)
+                    return 2
             problem = password_problem(password)
             if problem:
                 print(problem, file=sys.stderr)
