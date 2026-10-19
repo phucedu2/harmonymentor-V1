@@ -1,14 +1,59 @@
+# Chạy toàn bộ hệ thống: cp .env.example .env && docker compose up --build
+# Mở http://localhost:5173 (web). API docs: http://localhost:8000/docs
 services:
-  postgres:
-    image: postgres:16
+  db:
+    image: pgvector/pgvector:pg16
     environment:
-      POSTGRES_DB: harmonymentor
-      POSTGRES_USER: harmonymentor
-      POSTGRES_PASSWORD: harmonymentor
-    ports:
-      - "5432:5432"
+      POSTGRES_DB: harmony
+      POSTGRES_USER: harmony
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Đặt DB_PASSWORD trong file .env}
     volumes:
-      - harmonymentor_pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U harmony -d harmony"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    # Không mở cổng ra máy; cần dùng psql từ máy thì thêm: ports: ["127.0.0.1:5432:5432"]
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build: ./backend
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg://harmony:${DB_PASSWORD}@db:5432/harmony
+      REDIS_URL: redis://redis:6379/0
+      AUTO_CREATE_SCHEMA: "0"
+      TRUST_PROXY: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    # Chỉ mở cho máy đang chạy (Swagger); người dùng đi qua web để IP thật được nginx ghi lại.
+    ports:
+      - "127.0.0.1:8000:8000"
+
+  web:
+    build: ./frontend
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "5173:80"
 
 volumes:
-  harmonymentor_pgdata:
+  pgdata:

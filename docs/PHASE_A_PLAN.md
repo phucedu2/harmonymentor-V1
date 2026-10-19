@@ -46,7 +46,7 @@ Bảng truy vết đầy đủ 192 FR: [`PHASE_A_TRUY_VET_FR.md`](PHASE_A_TRUY_V
 | N12 | CP1 G1/G3/G5: hợp âm gạch chéo chưa kiểm bass; bí danh mặc định "extended"; bài quãng nhận đáp án thiếu quãng tám | Trình bày ở CP1 như "hạn chế đã biết". Sau CP1: sửa G1 (mã `WRONG_BASS`, ADR); giữ G3, G5 và ghi vào SRS | Thắng |
 | N13 | Khóa chính đang là chuỗi (`"L01"`, `"demo-user"`); SRS 8.2 ghi `id (PK)` | Giữ chuỗi; người dùng mới dùng UUID. Ghi trong ADR-001 | Thắng |
 | N14 | Chuỗi phiên bản lệch nhau: Engine `0.2.0-dev`, `backend/.env.example` `0.3.1-dev`, app `0.4.0-dev` | Giữ Engine 0.2.0 (Engine không đổi); sửa `.env.example` khi làm B | Đạt (B) |
-| N15 | SRS 10.2: database `harmony`, web cổng `5173:80`; compose hiện tại `harmonymentor`, chỉ có db | Theo SRS 10.2 khi viết compose mới | Đạt (B) |
+| N15 | SRS 10.2: database `harmony`, web cổng `5173:80`; compose hiện tại `harmonymentor`, chỉ có db | Theo SRS 10.2 khi viết compose mới. **Đã làm (19/10)**: tên dịch vụ, CSDL, cổng đúng SRS; khác SRS: cổng `api` chỉ mở `127.0.0.1` để IP trong khóa đăng nhập không bị giả qua cổng trực tiếp | Đạt (B) |
 
 ### 1.1 Ánh xạ kỹ năng (N1)
 

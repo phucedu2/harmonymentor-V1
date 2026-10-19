@@ -33,6 +33,8 @@ class Settings:
     redis_url: str = os.getenv("REDIS_URL", "")
     # Bật khi API đứng sau reverse proxy tin cậy (nginx trong Docker) để lấy IP thật từ X-Forwarded-For.
     trust_proxy: bool = _flag("TRUST_PROXY", "0")
+    # Danh sách origin, phân tách bằng dấu phẩy (NFR-21). Rỗng vì frontend gọi API cùng origin.
+    cors_origins: str = os.getenv("CORS_ORIGINS", "")
 
 
 settings = Settings()
