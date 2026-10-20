@@ -1,0 +1,36 @@
+/* Thứ tự layer: CSS cũ (styles.css) nằm dưới utilities, nên class Tailwind luôn thắng
+   các rule cũ như `button {}` mà không cần !important. */
+@layer theme, base, legacy, components, utilities;
+@import "tailwindcss";
+@import "./styles.css" layer(legacy);
+
+/* Token thiết kế theo docs/PHASE_A_PLAN.md mục 4. */
+@theme {
+  --color-bg: #fafaf7;
+  --color-surface: #ffffff;
+  --color-ink: #1f2328;
+  --color-muted: #5b616b;
+  --color-line: #e3e1da;
+  --color-primary: #3b5bdb;
+  --color-primary-strong: #364fc7;
+  --color-primary-soft: #edf2ff;
+  --color-success: #2b8a3e;
+  --color-success-soft: #ebfbee;
+  --color-danger: #c92a2a;
+  --color-danger-soft: #fff5f5;
+  --color-warning: #e67700;
+  --color-accent: #7048e8;
+  --color-accent-soft: #f3f0ff;
+
+  --font-sans: "Be Vietnam Pro", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+}
+
+@layer base {
+  body {
+    @apply bg-bg font-sans text-ink antialiased;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary;
+  }
+}

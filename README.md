@@ -18,6 +18,29 @@ Lessons 1-4 teach prerequisite vocabulary before assessing it. Phase 2.3 hardens
 - Lesson 3 separates chord structure from harmonic function and defines tonic, predominant/subdominant, dominant, and progression.
 - Lesson 4 defines ii-V-I, guide tones, voice leading, common tone, and voicing before keyboard work.
 
+Nền tảng có từ trước (v0.4.0, CP1, Giai đoạn A–B):
+
+- Music Theory Engine Python thuần (`backend/app/music_engine/`);
+- regression fixes của Phase 0.2;
+- FastAPI modular routers;
+- SQLAlchemy 2 + Alembic;
+- PostgreSQL target qua `DATABASE_URL`, SQLite fallback cho local/test;
+- canonical source registry cho Open Music Theory, Working in Harmony, Terefenko Workbook và Trần Khải Hoàn;
+- **26 skills + 36 prerequisite edges** trong Skill Graph;
+- **8 lesson specifications** đã source-audit;
+- **48 quiz + 64 flashcard/review item** đã viết lại, mỗi item có skill + grader contract + provenance;
+- **Lessons 1–4** chạy thành learning vertical slice: theory blocks → 2 inline checkpoints → final quiz → progress → completion → review queue;
+- Lessons 5–8 giữ ở mức `source_audited` specification, chưa đưa vào runtime exercise bank;
+- versioned `ExerciseVersion` và persisted `Attempt`;
+- item-level source provenance trong audited `ExerciseVersion` và `ReviewItem`;
+- flashcard/review state theo mốc 1–3–7–14–30 ngày;
+- backend contract cho `ChordInspector`;
+- frontend `Dashboard / Learn / Practice / Composition Lab / Progress` (Giai đoạn B: thêm trang chủ, đăng nhập/đăng ký, route `/app/*`);
+- `LearningOverview` tổng hợp LessonProgress + Attempt + ReviewState;
+- ChordInspector UI tái sử dụng trong progression blocks;
+- Dashboard/Learn/Progress đọc state thật từ backend;
+- Learn runtime đọc lesson content từ Content Service thay vì TypeScript draft.
+
 ### 2. Virtual Piano V2
 
 `frontend/src/components/music/VirtualPiano.tsx`
@@ -29,7 +52,7 @@ Lessons 1-4 teach prerequisite vocabulary before assessing it. Phase 2.3 hardens
 - black-key enharmonic labels such as `C#/Db`;
 - explicit separation between sounding pitch and spelling-sensitive grading.
 
-The legacy Practice page now reuses the same piano component through `frontend/src/Piano.tsx`.
+The legacy Practice page now reuses the same piano component. `frontend/src/Piano.tsx` stays as the small display-only SVG keyboard for the public home page.
 
 ### 3. Tone.js AudioEngine
 
@@ -129,7 +152,7 @@ tone 15.1.22
 vexflow 5.0.0
 ```
 
-The stale Phase 1 lockfile is intentionally not shipped because this execution environment could not complete a fresh npm registry install. On the development machine, run `npm install` once and commit the newly generated `package-lock.json` after a successful build.
+`package-lock.json` was regenerated with these dependencies when v0.5.3 was merged into `main` (20/10/2026); use `npm ci`.
 
 ## Run locally
 
@@ -142,6 +165,21 @@ pytest -q
 uvicorn app.main:app --reload
 ```
 
+Nếu chưa có DB, app local tạo schema và seed `demo-user` + curriculum runtime L01–L04.
+
+Đăng nhập (Giai đoạn B): mọi route có dữ liệu cá nhân cần Bearer token (ADR-004); đăng ký tài khoản ở trang `/dang-ky` của frontend. Tạo tài khoản quản trị:
+
+```bash
+cd backend
+python -m app.seed_admin --email admin@example.com   # hỏi mật khẩu, hoặc đặt biến ADMIN_PASSWORD
+```
+
+Biến môi trường xem ở [`.env.example`](.env.example). Không đặt `JWT_SECRET` thì môi trường dev dùng khóa tạm (khởi động lại là access token cũ hết hạn, refresh cookie vẫn lấy lại phiên); `APP_ENV=production` bắt buộc có khóa.
+
+Nếu bạn có file `backend/harmonymentor_dev.db` tạo trước Giai đoạn B, backend sẽ báo thiếu cột `users.email`: xóa file đó để tạo lại.
+
+API docs: `http://127.0.0.1:8000/docs`
+
 Frontend:
 
 ```bash
@@ -153,32 +191,64 @@ npm run dev
 
 The browser must receive a user gesture before Web Audio can start; clicking a piano/audio control provides that gesture.
 
-## Verification status
+Route frontend (Giai đoạn B): `/` trang chủ, `/dang-nhap`, `/dang-ky`, `/app` (tổng quan), `/app/hoc`, `/app/luyen-tap`, `/app/tien-do`, `/app/composition`, `/app/ho-so`, `/admin`. Mọi trang `/app/*` cần đăng nhập theo hợp đồng `docs/decisions/ADR-004-hop-dong-xac-thuc.md`; khi backend chưa có `/api/v1/auth/*` thì chỉ trang chủ dùng được.
 
-Backend test suite in the packaging environment:
+## Chạy toàn bộ bằng Docker (Giai đoạn B)
 
-```text
-120 passed, 1 skipped
+Cần Docker Desktop (hoặc Docker Engine + Compose v2). Từ thư mục gốc repo:
+
+```bash
+cp .env.example .env          # rồi điền DB_PASSWORD (chuỗi bất kỳ), các biến khác để mặc định được
+docker compose up --build
 ```
 
-The skip is the optional `music21` cross-check when that dependency is unavailable.
+- Web: http://localhost:5173 (nginx phục vụ bản build Vite, chuyển `/api` sang dịch vụ `api` cùng origin).
+- API docs: http://127.0.0.1:8000/docs (chỉ mở cho máy đang chạy).
+- Tạo admin: `docker compose exec -e ADMIN_PASSWORD=<mật-khẩu> api python -m app.seed_admin --email admin@example.com`.
+- Bảng độ trễ p95: `docker compose logs api --no-log-prefix | python scripts/p95.py`.
+- Xóa sạch dữ liệu: `docker compose down -v`.
 
-Frontend source syntax transpilation:
+4 dịch vụ theo SRS 10.2: `db` (PostgreSQL 16 + pgvector, CSDL `harmony`), `redis` (bộ đếm khóa đăng nhập), `api` (chạy `alembic upgrade head` rồi uvicorn), `web` (nginx, cổng `5173:80`). `/health` trả 503 khi CSDL hoặc Redis lỗi; compose dùng nó để chờ `api` sẵn sàng rồi mới mở `web`.
 
-```text
-18 TypeScript/TSX files
-0 syntax diagnostics
+## PostgreSQL target (chạy backend ngoài Docker)
+
+```bash
+docker compose up -d db        # cần mở cổng: thêm ports: ["127.0.0.1:5432:5432"] cho dịch vụ db
+cd backend
+export DATABASE_URL='postgresql+psycopg://harmony:<DB_PASSWORD>@127.0.0.1:5432/harmony'
+export AUTO_CREATE_SCHEMA=0
+alembic -c alembic.ini upgrade head
+uvicorn app.main:app --reload
 ```
 
-A complete `npm run build` is NOT claimed in the packaging environment because the npm registry install timed out and Tone/VexFlow were not locally installed there. This is why the stale lockfile was removed. Run the local install/build commands above before demo freeze.
+Trong môi trường shared/production-like, dùng Alembic (`AUTO_CREATE_SCHEMA=0`) thay vì `create_all`.
 
-See:
+## Kiểm thử (cập nhật Giai đoạn A, 18/10/2026)
+
+Backend trên fresh SQLite, đã cài đủ `requirements.txt` (gồm `music21`):
+
+```text
+220 passed   (sau khi gộp v0.5.3 với Giai đoạn B, 20/10/2026; 191 passed trên PostgreSQL 16 ở Giai đoạn B)
+```
+
+Nếu không cài được `music21`, bộ đối chiếu music21 bị bỏ qua và số test sẽ ít hơn (ví dụ 113 passed, 1 skipped ở bản v0.4.0 gốc trước khi thêm test CP1).
+
+Frontend: `cd frontend && npm ci && npm run build` **đạt** (Node 22, 20/10/2026, sau khi gộp v0.5.3 với Giai đoạn B; đã có `package-lock.json` mới gồm Tone.js và VexFlow).
+
+## Tài liệu phase
 
 - `docs/BEGINNER_CONTENT_AUDIT_PHASE_2.md`
 - `docs/PHASE_2_IMPLEMENTATION.md`
 - `docs/VERIFICATION_PHASE_2.txt`
 - `docs/CURRICULUM_SOURCE_MATRIX.md`
 - `docs/LESSON_SPECIFICATIONS.md`
+- `docs/PHASE_0_4B_IMPLEMENTATION.md`
+- `docs/PHASE_1_IMPLEMENTATION.md`
+- `docs/PHASE_A_PLAN.md`, `docs/PHASE_A_TRUY_VET_FR.md` (kế hoạch và truy vết FR hiện hành)
+- `docs/CP1_*.md` (minh chứng CP1)
+- `docs/VERIFICATION_PHASE_1.txt`
+- `docs/VERIFICATION_PHASE_0_4B.txt`
+- các phase trước vẫn giữ để audit lịch sử.
 
 ## Next implementation gate
 
@@ -203,3 +273,5 @@ The interval-quality explanation also avoids treating “bright/dark” as the d
 ## Phase 2.2 Lesson 1 pedagogy rewrite
 
 The Lesson 1 content contract was rewritten from a zero-beginner perspective after usability testing. The rewrite keeps the existing 8-lesson MVP architecture but turns L01 into a scaffolded sequence with continuous section numbering, early piano visualization, explicit spelling rules, interval formulas required by triad construction, parallel-root triad comparison, and format-aware answer inputs. L01 exercise versions are published as `v4` so earlier attempts remain traceable.
+
+Kế hoạch hiện hành là **Giai đoạn B–F** trong [`docs/PHASE_A_PLAN.md`](docs/PHASE_A_PLAN.md) (thay cho mục "Phase 2 — Interactive Music Layer" cũ). Hướng dẫn cho Claude Code nằm ở [`CLAUDE.md`](CLAUDE.md).

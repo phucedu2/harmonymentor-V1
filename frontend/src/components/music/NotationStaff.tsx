@@ -32,7 +32,7 @@ export default function NotationStaff({ groups, clef = "treble", caption }: Prop
     const nextErrors: Record<number, string> = {};
 
     groups.forEach((group, groupIndex) => {
-      const root = document.getElementById(`${elementId}-${groupIndex}`);
+      const root = document.getElementById(`${elementId}-${groupIndex}`) as HTMLDivElement | null;
       if (!root) return;
       root.innerHTML = "";
 

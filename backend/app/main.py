@@ -13,6 +13,9 @@ from fastapi.responses import JSONResponse
 
 from .api.router import api_router
 from .core.config import settings
+from .core.errors import install_error_handlers
+from .core.health import check_db, check_redis
+from .core.middleware import install_middleware
 from .db.seed import seed_database
 from .db.session import SessionLocal, create_schema
 from .music_engine.errors import MusicEngineError
@@ -30,6 +33,8 @@ async def lifespan(_: FastAPI):
 
 app = FastAPI(title=settings.app_name, version=settings.app_version, lifespan=lifespan)
 app.include_router(api_router)
+install_error_handlers(app)
+install_middleware(app, settings.cors_origins)
 
 
 @app.exception_handler(MusicEngineError)
@@ -39,4 +44,8 @@ async def engine_error_handler(_: Request, exc: MusicEngineError):
 
 @app.get("/health", tags=["system"])
 def health():
-    return {"status": "ok", "version": settings.app_version}
+    """Trạng thái CSDL và Redis cho healthcheck của Docker: 200 khi mọi phần sống, 503 kèm phần lỗi."""
+    checks = {"db": check_db(), "redis": check_redis(settings.redis_url)}
+    ok = all(v in ("ok", "not_configured") for v in checks.values())
+    body = {"status": "ok" if ok else "degraded", "version": settings.app_version, "checks": checks}
+    return JSONResponse(status_code=200 if ok else 503, content=body)

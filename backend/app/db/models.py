@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 from typing import Any, Optional
 
 from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, JSON, String, Text, UniqueConstraint
+from sqlalchemy import false as sa_false, true as sa_true
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
@@ -24,6 +25,27 @@ class User(Base):
 
     id: Mapped[str] = mapped_column(String(64), primary_key=True)
     display_name: Mapped[str] = mapped_column(String(160))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    # Cột xác thực (ADR-001, ADR-004). email/hashed_password rỗng với demo-user cũ và người học mô phỏng.
+    email: Mapped[Optional[str]] = mapped_column(String(320), unique=True, index=True, nullable=True)
+    hashed_password: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
+    role: Mapped[str] = mapped_column(String(16), default="learner", server_default="learner")
+    preferred_instrument: Mapped[Optional[str]] = mapped_column(String(16), nullable=True)
+    goal_text: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=sa_true())
+    is_synthetic: Mapped[bool] = mapped_column(Boolean, default=False, server_default=sa_false())
+
+
+class RefreshToken(Base):
+    """Refresh token đã cấp; chỉ lưu SHA-256 để lộ CSDL cũng không dùng lại được (NFR-18)."""
+
+    __tablename__ = "refresh_tokens"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True, index=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    revoked_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
 

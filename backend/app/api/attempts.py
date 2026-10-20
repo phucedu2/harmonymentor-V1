@@ -4,6 +4,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from ..contracts.learning import AttemptErrorOut, AttemptIn, AttemptOut
+from ..auth.deps import get_current_user
+from ..db.models import User
 from ..db.session import get_db
 from ..services.learning_service import submit_attempt
 
@@ -11,9 +13,9 @@ router = APIRouter(prefix="/api/v1/attempts", tags=["attempts"])
 
 
 @router.post("", response_model=AttemptOut)
-def create_attempt(body: AttemptIn, db: Session = Depends(get_db)):
+def create_attempt(body: AttemptIn, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     try:
-        attempt, outcome = submit_attempt(db, body.user_id, body.exercise_version_id, body.answer)
+        attempt, outcome = submit_attempt(db, user.id, body.exercise_version_id, body.answer)
     except LookupError as exc:
         code = str(exc)
         raise HTTPException(status_code=404, detail={"code": code}) from exc

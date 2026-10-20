@@ -192,7 +192,7 @@ export function RandomPracticePanel({ mode }: { mode: "interval" | "triad" }) {
     setAnswer("");
     setFeedback(null);
     setExpectedChord(null);
-    if (mode === "triad" && "symbol" in question) {
+    if (mode === "triad" && "symbol" in question && question.symbol) {
       void api.inspectChord(question.symbol).then(setExpectedChord).catch(() => undefined);
     }
   }, [mode, nonce, question]);
