@@ -164,7 +164,7 @@
         "L01-BCP1",
         "checkpoint",
         {
-          "title": "Checkpoint · Đọc một quãng mới",
+          "title": "Đọc một quãng mới",
           "exercise_id": "L01-Q01",
           "note": "Đừng dựa vào ví dụ C ở phần trên. Hãy đếm chữ cái trước rồi đếm số bước nửa cung.",
           "random_practice": "interval"
@@ -188,7 +188,7 @@
         "triad_explorer",
         {
           "title": "6. Dựng triad trên bất kỳ nốt gốc nào",
-          "prompt": "Đổi nốt gốc để xem hai bước dựng hợp âm tự cập nhật. Major và Minor là trọng tâm của 24 keys; Diminished và Augmented giúp bạn hiểu d5/A5.",
+          "prompt": "Đổi nốt gốc để xem hai bước dựng hợp âm tự cập nhật. Major và Minor là trọng tâm của 24 giọng; Diminished và Augmented giúp bạn hiểu d5/A5.",
           "default_root": "C",
           "qualities": [
             "major",
@@ -204,7 +204,7 @@
         "L01-BCP2",
         "checkpoint",
         {
-          "title": "Checkpoint · Dựng hợp âm ở nốt gốc khác C",
+          "title": "Dựng hợp âm ở nốt gốc khác C",
           "exercise_id": "L01-Q02",
           "note": "Nhập ba tên nốt, ngăn cách bằng dấu -, khoảng trắng hoặc dấu phẩy. Phần gợi ý chỉ mô tả định dạng, không chứa đáp án.",
           "random_practice": "triad"
@@ -232,8 +232,8 @@
         "L01-B12",
         "key_overview",
         {
-          "title": "9. Tổng quan 24 Keys · 12 Major & 12 Minor",
-          "prompt": "Trong Bài 1, ta chỉ nhìn tonic triad (hợp âm chủ) đại diện cho mỗi key. Khái niệm key/âm giai đầy đủ sẽ được học ở Lesson 2. Học theo Tier để không bị ngợp.",
+          "title": "9. Tổng quan 24 giọng · 12 trưởng & 12 thứ",
+          "prompt": "Trong Bài 1, ta chỉ nhìn tonic triad (hợp âm chủ) đại diện cho mỗi key. Khái niệm giọng/âm giai đầy đủ sẽ được học ở Bài 2. Học theo 3 cấp độ để không bị ngợp.",
           "tiers": [
             "tier-1",
             "tier-2",
@@ -253,7 +253,7 @@
             "Bốn quãng trọng tâm: M3 = 4, m3 = 3, P5 = 7, d5 = 6 nửa cung. A5 = 8 nửa cung dùng để hiểu augmented triad.",
             "Triad dựng theo hai bước: chọn đúng khung chữ cái 1–3–5 rồi dùng M3/m3/P5/d5/A5 để đặt dấu hóa.",
             "Major = M3 + P5; Minor = m3 + P5; Diminished = m3 + d5; Augmented = M3 + A5.",
-            "Sau khi hiểu bằng C, hãy đổi root và luyện 12 major + 12 minor tonic triads theo ba Tier."
+            "Sau khi hiểu bằng C, hãy đổi root và luyện hợp âm chủ của 12 giọng trưởng + 12 giọng thứ theo ba cấp độ."
           ]
         }
       ]
@@ -262,6 +262,7 @@
       {
         "id": "L01-Q01",
         "kind": "mcq",
+        "version": null,
         "prompt": "Quãng từ F lên A là gì?",
         "skill": "interval.naming",
         "strategy": "exact",
@@ -294,6 +295,7 @@
       {
         "id": "L01-Q02",
         "kind": "build",
+        "version": null,
         "prompt": "Dựng hợp âm G major bằng tên nốt. Nhập ba nốt theo cùng một định dạng, ví dụ Nốt-Nốt-Nốt.",
         "skill": "chord.triad_build",
         "strategy": "music_engine",
@@ -326,6 +328,7 @@
       {
         "id": "L01-Q03",
         "kind": "active_recall",
+        "version": 5,
         "prompt": "Không nhìn đáp án: công thức minor triad là gì? Nhập theo định dạng như 1-3-5 (dùng chữ b thay cho ♭).",
         "skill": "chord.triad_formula",
         "strategy": "exact",
@@ -334,7 +337,8 @@
         },
         "grader_config": {
           "normalize_dashes": true,
-          "normalize_accidentals": true
+          "normalize_accidentals": true,
+          "sequence": true
         },
         "options": null,
         "explanation": "Minor triad = 1–♭3–5 = m3 + P5 tính từ root.",
@@ -349,6 +353,7 @@
       {
         "id": "L01-Q04",
         "kind": "build",
+        "version": null,
         "prompt": "Dựng hợp âm D minor bằng tên nốt. Nhập ba nốt, có thể ngăn cách bằng dấu -, khoảng trắng hoặc dấu phẩy.",
         "skill": "chord.triad_build",
         "strategy": "music_engine",
@@ -381,22 +386,18 @@
       {
         "id": "L01-Q05",
         "kind": "context",
-        "prompt": "F# và Gb có thể là cùng một phím trên piano. Điều đó có nghĩa chúng luôn được viết cùng một tên trong mọi ngữ cảnh không? Trả lời ngắn: Có hoặc Không.",
+        "version": 5,
+        "prompt": "F# và Gb có thể là cùng một phím trên piano. Điều đó có nghĩa chúng luôn được viết cùng một tên trong mọi ngữ cảnh không? Chọn Có hoặc Không.",
         "skill": "pitch.spelling",
-        "strategy": "rubric",
+        "strategy": "exact",
         "answer_key": {
-          "accepted": [
-            "không",
-            "khong",
-            "không phải",
-            "khong phai"
-          ]
+          "expected": "Không"
         },
-        "grader_config": {
-          "mode": "contains_any",
-          "strip_accents": true
-        },
-        "options": null,
+        "grader_config": {},
+        "options": [
+          "Có",
+          "Không"
+        ],
         "explanation": "Không. Hai tên có thể cùng cao độ nhưng spelling đúng còn phụ thuộc số quãng, khung chữ cái và ngữ cảnh.",
         "provenance": [
           {
@@ -414,6 +415,7 @@
       {
         "id": "L01-Q06",
         "kind": "build",
+        "version": null,
         "prompt": "Dựng hợp âm B diminished. Nhập ba nốt, có thể ngăn cách bằng dấu -, khoảng trắng hoặc dấu phẩy.",
         "skill": "chord.triad_build",
         "strategy": "music_engine",
@@ -531,7 +533,7 @@
       },
       {
         "id": "L01-F05",
-        "front": "Build F major",
+        "front": "Dựng hợp âm F major (F trưởng): gồm những nốt nào?",
         "back": "F–A–C",
         "skill": "chord.triad_build",
         "mode": "build",
@@ -557,7 +559,7 @@
       },
       {
         "id": "L01-F06",
-        "front": "Build A minor",
+        "front": "Dựng hợp âm A minor (A thứ): gồm những nốt nào?",
         "back": "A–C–E",
         "skill": "chord.triad_build",
         "mode": "build",
@@ -583,7 +585,7 @@
       },
       {
         "id": "L01-F07",
-        "front": "Build B diminished",
+        "front": "Dựng hợp âm B diminished (B giảm): gồm những nốt nào?",
         "back": "B–D–F",
         "skill": "chord.triad_build",
         "mode": "build",
@@ -761,7 +763,7 @@
         "L02-BCP1",
         "checkpoint",
         {
-          "title": "Checkpoint · Dựng major scale",
+          "title": "Dựng âm giai trưởng (major scale)",
           "exercise_id": "L02-Q01",
           "note": "Gõ 7 nốt đi lên, không lặp G ở cuối."
         }
@@ -844,7 +846,7 @@
         "L02-BCP2",
         "checkpoint",
         {
-          "title": "Checkpoint · Roman numeral",
+          "title": "Gọi tên bậc bằng số La Mã",
           "exercise_id": "L02-Q03",
           "note": "Trong C major, hãy tìm bậc của Dm7 trước rồi mới chọn ký hiệu."
         }
@@ -880,6 +882,7 @@
       {
         "id": "L02-Q01",
         "kind": "build",
+        "version": null,
         "prompt": "Dựng âm giai G major theo thứ tự đi lên, không lặp lại chủ âm ở cuối.",
         "skill": "scale.major",
         "strategy": "music_engine",
@@ -912,6 +915,7 @@
       {
         "id": "L02-Q02",
         "kind": "build",
+        "version": null,
         "prompt": "Dựng Cmaj7 đầy đủ bằng tên nốt.",
         "skill": "chord.seventh_build",
         "strategy": "music_engine",
@@ -945,6 +949,7 @@
       {
         "id": "L02-Q03",
         "kind": "active_recall",
+        "version": null,
         "prompt": "Trong C major, Dm7 mang Roman numeral nào?",
         "skill": "roman.major_seventh",
         "strategy": "music_engine",
@@ -974,6 +979,7 @@
       {
         "id": "L02-Q04",
         "kind": "mcq",
+        "version": null,
         "prompt": "Trong C major, hợp âm bảy trên bậc V là gì?",
         "skill": "chord.seventh_quality",
         "strategy": "exact",
@@ -1004,6 +1010,7 @@
       {
         "id": "L02-Q05",
         "kind": "mcq",
+        "version": null,
         "prompt": "Trong C major, hợp âm bảy trên bậc vii là gì?",
         "skill": "chord.seventh_quality",
         "strategy": "exact",
@@ -1029,6 +1036,7 @@
       {
         "id": "L02-Q06",
         "kind": "build",
+        "version": null,
         "prompt": "Dựng G7 đầy đủ bằng tên nốt.",
         "skill": "chord.seventh_build",
         "strategy": "music_engine",
@@ -1063,7 +1071,7 @@
     "review_items": [
       {
         "id": "L02-F01",
-        "front": "G major scale",
+        "front": "Viết âm giai G major (G trưởng), đi lên, không lặp chủ âm",
         "back": "G–A–B–C–D–E–F#",
         "skill": "scale.major",
         "mode": "build",
@@ -1094,7 +1102,7 @@
       },
       {
         "id": "L02-F02",
-        "front": "Build Cmaj7",
+        "front": "Dựng hợp âm Cmaj7: gồm những nốt nào?",
         "back": "C–E–G–B",
         "skill": "chord.seventh_build",
         "mode": "build",
@@ -1121,7 +1129,7 @@
       },
       {
         "id": "L02-F03",
-        "front": "Build Dm7",
+        "front": "Dựng hợp âm Dm7: gồm những nốt nào?",
         "back": "D–F–A–C",
         "skill": "chord.seventh_build",
         "mode": "build",
@@ -1148,7 +1156,7 @@
       },
       {
         "id": "L02-F04",
-        "front": "V7 in C major",
+        "front": "Trong giọng C major, hợp âm V7 là hợp âm nào?",
         "back": "G7",
         "skill": "roman.major_seventh",
         "mode": "context",
@@ -1167,7 +1175,7 @@
       },
       {
         "id": "L02-F05",
-        "front": "ii7 in C major",
+        "front": "Trong giọng C major, hợp âm ii7 là hợp âm nào?",
         "back": "Dm7",
         "skill": "roman.major_seventh",
         "mode": "context",
@@ -1186,7 +1194,7 @@
       },
       {
         "id": "L02-F06",
-        "front": "viiø7 in C major",
+        "front": "Trong giọng C major, hợp âm viiø7 là hợp âm nào?",
         "back": "Bm7b5",
         "skill": "roman.major_seventh",
         "mode": "context",
@@ -1205,7 +1213,7 @@
       },
       {
         "id": "L02-F07",
-        "front": "Dominant seventh = triad quality + seventh quality?",
+        "front": "Hợp âm bảy át (dominant seventh) = hợp âm ba loại gì + quãng 7 loại gì?",
         "back": "Major triad + minor seventh",
         "skill": "chord.seventh_quality",
         "mode": "recall",
@@ -1352,7 +1360,7 @@
         "L03-BCP1",
         "checkpoint",
         {
-          "title": "Checkpoint · Tonic function",
+          "title": "Nhận ra chức năng Tonic",
           "exercise_id": "L03-Q01",
           "note": "Hãy trả lời theo ngữ cảnh C major, không chỉ nhìn chữ 'maj7'."
         }
@@ -1386,7 +1394,7 @@
         "L03-BCP2",
         "checkpoint",
         {
-          "title": "Checkpoint · Dominant trong ngữ cảnh",
+          "title": "Dominant trong ngữ cảnh",
           "exercise_id": "L03-Q03",
           "note": "Dùng progression vừa nhìn và vừa nghe để trả lời."
         }
@@ -1417,6 +1425,7 @@
       {
         "id": "L03-Q01",
         "kind": "mcq",
+        "version": null,
         "prompt": "Trong C major, Cmaj7 ở vị trí ổn định cuối phrase thuộc chức năng nào?",
         "skill": "function.tonic",
         "strategy": "exact",
@@ -1447,6 +1456,7 @@
       {
         "id": "L03-Q02",
         "kind": "mcq",
+        "version": null,
         "prompt": "Trong Dm7 → G7 → Cmaj7 ở C major, Dm7 thường giữ vai trò nào?",
         "skill": "function.predominant",
         "strategy": "exact",
@@ -1477,6 +1487,7 @@
       {
         "id": "L03-Q03",
         "kind": "mcq",
+        "version": null,
         "prompt": "Trong Dm7 → G7 → Cmaj7, G7 giữ chức năng nào?",
         "skill": "function.dominant",
         "strategy": "exact",
@@ -1507,6 +1518,7 @@
       {
         "id": "L03-Q04",
         "kind": "active_recall",
+        "version": 2,
         "prompt": "Viết thứ tự chức năng cơ bản của progression Cmaj7 → Dm7 → G7 → Cmaj7.",
         "skill": "function.progression",
         "strategy": "rubric",
@@ -1515,12 +1527,14 @@
             "t-pd-d-t",
             "tonic-predominant-dominant-tonic",
             "t-subdominant-dominant-t",
-            "tonic-subdominant-dominant-tonic"
+            "tonic-subdominant-dominant-tonic",
+            "t-sd-d-t"
           ]
         },
         "grader_config": {
           "mode": "equals_any",
-          "normalize_dashes": true
+          "normalize_dashes": true,
+          "sequence": true
         },
         "options": null,
         "explanation": "Flow mục tiêu là T → PD/SD → D → T.",
@@ -1540,24 +1554,21 @@
       {
         "id": "L03-Q05",
         "kind": "context",
+        "version": 2,
         "prompt": "Vì sao không nên gán chức năng chỉ từ tên hợp âm mà bỏ qua progression xung quanh?",
         "skill": "function.progression",
-        "strategy": "rubric",
+        "strategy": "exact",
         "answer_key": {
-          "accepted": [
-            "ngữ cảnh",
-            "ngu canh",
-            "context",
-            "chức năng phụ thuộc",
-            "chuc nang phu thuoc"
-          ]
+          "expected": "Vì chức năng phụ thuộc vào giọng và các hợp âm đứng trước, đứng sau"
         },
-        "grader_config": {
-          "mode": "contains_any",
-          "strip_accents": true
-        },
-        "options": null,
-        "explanation": "Harmonic function là quan hệ hành vi trong ngữ cảnh.",
+        "grader_config": {},
+        "options": [
+          "Vì chức năng phụ thuộc vào giọng và các hợp âm đứng trước, đứng sau",
+          "Vì tên hợp âm thường bị viết sai",
+          "Vì chỉ hợp âm bảy mới có chức năng",
+          "Vì chức năng chỉ do nốt cao nhất quyết định"
+        ],
+        "explanation": "Harmonic function là quan hệ hành vi trong ngữ cảnh: cùng là G7 nhưng trong giọng C nó là Dominant, trong giọng F nó lại dẫn về C (dominant phụ).",
         "provenance": [
           {
             "source_id": "OMT_V2",
@@ -1574,6 +1585,7 @@
       {
         "id": "L03-Q06",
         "kind": "applied",
+        "version": null,
         "prompt": "Chọn progression thể hiện rõ T → PD → D → T trong C major.",
         "skill": "function.progression",
         "strategy": "exact",
@@ -1607,7 +1619,7 @@
     "review_items": [
       {
         "id": "L03-F01",
-        "front": "Tonic function",
+        "front": "Chức năng Tonic tạo cảm giác gì trong giọng?",
         "back": "Ổn định / điểm quy chiếu của giọng.",
         "skill": "function.tonic",
         "mode": "recall",
@@ -1636,7 +1648,7 @@
       },
       {
         "id": "L03-F02",
-        "front": "Predominant/Subdominant function",
+        "front": "Chức năng Predominant/Subdominant làm nhiệm vụ gì?",
         "back": "Rời tonic và chuẩn bị dominant.",
         "skill": "function.predominant",
         "mode": "recall",
@@ -1663,7 +1675,7 @@
       },
       {
         "id": "L03-F03",
-        "front": "Dominant function",
+        "front": "Chức năng Dominant tạo lực hướng về đâu?",
         "back": "Tạo lực hướng/giải quyết về tonic.",
         "skill": "function.dominant",
         "mode": "recall",
@@ -1757,7 +1769,7 @@
       },
       {
         "id": "L03-F07",
-        "front": "Functional flow cơ bản",
+        "front": "Viết thứ tự chức năng cơ bản (dùng T, PD, D)",
         "back": "T → PD/SD → D → T",
         "skill": "function.progression",
         "mode": "recall",
@@ -1771,7 +1783,8 @@
         },
         "grader_config": {
           "mode": "equals_any",
-          "normalize_dashes": true
+          "normalize_dashes": true,
+          "sequence": true
         },
         "provenance": [
           {
@@ -1938,7 +1951,7 @@
         "L04-BCP1",
         "checkpoint",
         {
-          "title": "Checkpoint · Nhận diện ii–V–I",
+          "title": "Nhận diện ii–V–I",
           "exercise_id": "L04-Q01",
           "note": "Hãy đọc ii = bậc 2, V = bậc 5, I = bậc 1 trước khi chọn."
         }
@@ -1983,7 +1996,7 @@
         "L04-BCP2",
         "checkpoint",
         {
-          "title": "Checkpoint · Guide tones",
+          "title": "Guide tones",
           "exercise_id": "L04-Q04",
           "note": "Tự gọi tên 3rd và ♭7 của G7."
         }
@@ -2042,6 +2055,7 @@
       {
         "id": "L04-Q01",
         "kind": "mcq",
+        "version": null,
         "prompt": "ii–V–I trong C major là progression nào?",
         "skill": "progression.ii_v_i",
         "strategy": "exact",
@@ -2074,6 +2088,7 @@
       {
         "id": "L04-Q02",
         "kind": "active_recall",
+        "version": 2,
         "prompt": "Viết ii–V–I trong F major bằng chord symbols.",
         "skill": "progression.ii_v_i",
         "strategy": "exact",
@@ -2081,7 +2096,8 @@
           "expected": "Gm7-C7-Fmaj7"
         },
         "grader_config": {
-          "normalize_dashes": true
+          "normalize_dashes": true,
+          "sequence": true
         },
         "options": null,
         "explanation": "Trong F major: ii=Gm7, V=C7, I=Fmaj7.",
@@ -2101,6 +2117,7 @@
       {
         "id": "L04-Q03",
         "kind": "build",
+        "version": null,
         "prompt": "Dựng G7 đầy đủ; đây là bài chord inventory, chưa phải voicing.",
         "skill": "voicing.guide_tones",
         "strategy": "music_engine",
@@ -2134,21 +2151,18 @@
       {
         "id": "L04-Q04",
         "kind": "active_recall",
+        "version": 2,
         "prompt": "Guide tones cơ bản của G7 là hai nốt nào?",
         "skill": "voicing.guide_tones",
         "strategy": "rubric",
         "answer_key": {
           "accepted": [
-            "b f",
-            "f b",
-            "b và f",
-            "f và b",
-            "b,f",
-            "f,b"
+            "b f"
           ]
         },
         "grader_config": {
-          "mode": "equals_any"
+          "mode": "equals_any",
+          "unordered": true
         },
         "options": null,
         "explanation": "3rd = B và ♭7 = F.",
@@ -2168,18 +2182,19 @@
       {
         "id": "L04-Q05",
         "kind": "mcq",
-        "prompt": "Guide-tone motion nào mô tả G7 → Cmaj7 mượt trong lesson này?",
+        "version": 2,
+        "prompt": "Khi nối G7 → Cmaj7, hai guide tone di chuyển thế nào thì mượt nhất?",
         "skill": "voicing.voice_leading",
         "strategy": "exact",
         "answer_key": {
-          "expected": "B stays; F moves to E"
+          "expected": "Giữ nguyên B, hạ F xuống E"
         },
         "grader_config": {},
         "options": [
-          "B stays; F moves to E",
-          "B moves to D; F moves to C",
-          "Both voices jump an octave",
-          "F stays; B moves to F"
+          "Giữ nguyên B, hạ F xuống E",
+          "B lên D, F xuống C",
+          "Cả hai nốt nhảy một quãng tám",
+          "Giữ nguyên F, B nhảy lên F"
         ],
         "explanation": "Giữ B và hạ F xuống E tạo common tone + stepwise motion.",
         "provenance": [
@@ -2198,24 +2213,20 @@
       {
         "id": "L04-Q06",
         "kind": "applied",
-        "prompt": "Mục tiêu chính của smooth/lazy voice leading giữa hai voicing là gì?",
+        "version": 2,
+        "prompt": "Mục tiêu chính của cách nối hợp âm mượt (smooth/lazy voice leading) là gì?",
         "skill": "voicing.voice_leading",
-        "strategy": "rubric",
+        "strategy": "exact",
         "answer_key": {
-          "accepted": [
-            "di chuyển ít",
-            "di chuyen it",
-            "chuyển động gần",
-            "chuyen dong gan",
-            "common tone",
-            "move each voice as little as possible"
-          ]
+          "expected": "Mỗi nốt di chuyển ít nhất có thể, giữ lại nốt chung"
         },
-        "grader_config": {
-          "mode": "contains_any",
-          "strip_accents": true
-        },
-        "options": null,
+        "grader_config": {},
+        "options": [
+          "Mỗi nốt di chuyển ít nhất có thể, giữ lại nốt chung",
+          "Mỗi nốt nhảy càng xa càng tốt cho kịch tính",
+          "Luôn chơi hợp âm ở thế gốc",
+          "Chơi mọi nốt trong cùng một quãng tám"
+        ],
         "explanation": "Ưu tiên giữ common tones và giảm quãng di chuyển của từng voice khi phù hợp.",
         "provenance": [
           {
@@ -2234,7 +2245,7 @@
     "review_items": [
       {
         "id": "L04-F01",
-        "front": "ii–V–I in C",
+        "front": "Viết ii–V–I trong giọng C bằng ký hiệu hợp âm",
         "back": "Dm7–G7–Cmaj7",
         "skill": "progression.ii_v_i",
         "mode": "context",
@@ -2243,7 +2254,8 @@
           "expected": "Dm7-G7-Cmaj7"
         },
         "grader_config": {
-          "normalize_dashes": true
+          "normalize_dashes": true,
+          "sequence": true
         },
         "provenance": [
           {
@@ -2255,7 +2267,7 @@
       },
       {
         "id": "L04-F02",
-        "front": "ii–V–I in F",
+        "front": "Viết ii–V–I trong giọng F bằng ký hiệu hợp âm",
         "back": "Gm7–C7–Fmaj7",
         "skill": "progression.ii_v_i",
         "mode": "context",
@@ -2264,7 +2276,8 @@
           "expected": "Gm7-C7-Fmaj7"
         },
         "grader_config": {
-          "normalize_dashes": true
+          "normalize_dashes": true,
+          "sequence": true
         },
         "provenance": [
           {
@@ -2276,7 +2289,7 @@
       },
       {
         "id": "L04-F03",
-        "front": "ii–V–I in Bb",
+        "front": "Viết ii–V–I trong giọng Bb bằng ký hiệu hợp âm",
         "back": "Cm7–F7–Bbmaj7",
         "skill": "progression.ii_v_i",
         "mode": "context",
@@ -2285,7 +2298,8 @@
           "expected": "Cm7-F7-Bbmaj7"
         },
         "grader_config": {
-          "normalize_dashes": true
+          "normalize_dashes": true,
+          "sequence": true
         },
         "provenance": [
           {
@@ -2304,16 +2318,12 @@
         "strategy": "rubric",
         "answer_key": {
           "accepted": [
-            "b f",
-            "f b",
-            "b,f",
-            "f,b",
-            "b và f",
-            "f và b"
+            "b f"
           ]
         },
         "grader_config": {
-          "mode": "equals_any"
+          "mode": "equals_any",
+          "unordered": true
         },
         "provenance": [
           {
@@ -2332,16 +2342,12 @@
         "strategy": "rubric",
         "answer_key": {
           "accepted": [
-            "f c",
-            "c f",
-            "f,c",
-            "c,f",
-            "f và c",
-            "c và f"
+            "f c"
           ]
         },
         "grader_config": {
-          "mode": "equals_any"
+          "mode": "equals_any",
+          "unordered": true
         },
         "provenance": [
           {
@@ -2389,7 +2395,8 @@
           "expected": "F-E"
         },
         "grader_config": {
-          "normalize_dashes": true
+          "normalize_dashes": true,
+          "sequence": true
         },
         "provenance": [
           {
@@ -2401,7 +2408,7 @@
       },
       {
         "id": "L04-F08",
-        "front": "Nguyên tắc smooth jazz voice leading",
+        "front": "Nguyên tắc nối hợp âm mượt (smooth voice leading) là gì?",
         "back": "Giữ common tones và di chuyển mỗi voice ít nhất có thể khi phù hợp.",
         "skill": "voicing.voice_leading",
         "mode": "recall",
@@ -2472,6 +2479,7 @@
       {
         "id": "L05-Q01",
         "kind": "mcq",
+        "version": null,
         "prompt": "Trong C major, V7/ii là hợp âm nào?",
         "skill": "harmony.secondary_dominant.build",
         "strategy": "exact",
@@ -2502,6 +2510,7 @@
       {
         "id": "L05-Q02",
         "kind": "mcq",
+        "version": null,
         "prompt": "Trong C major, V7/V là hợp âm nào?",
         "skill": "harmony.secondary_dominant.build",
         "strategy": "exact",
@@ -2532,6 +2541,7 @@
       {
         "id": "L05-Q03",
         "kind": "active_recall",
+        "version": null,
         "prompt": "Trong C major, V7/vi là gì?",
         "skill": "harmony.secondary_dominant.build",
         "strategy": "exact",
@@ -2557,6 +2567,7 @@
       {
         "id": "L05-Q04",
         "kind": "context",
+        "version": null,
         "prompt": "Trong C major, A7 → Dm7: A7 được phân tích thế nào?",
         "skill": "harmony.secondary_dominant.identify",
         "strategy": "exact",
@@ -2582,6 +2593,7 @@
       {
         "id": "L05-Q05",
         "kind": "applied",
+        "version": null,
         "prompt": "Chọn cách thêm secondary dominant để tăng lực đi tới Am trong C major.",
         "skill": "harmony.secondary_dominant.apply",
         "strategy": "exact",
@@ -2614,6 +2626,7 @@
       {
         "id": "L05-Q06",
         "kind": "mcq",
+        "version": null,
         "prompt": "Một secondary dominant có bắt buộc thiết lập tonic mới lâu dài không?",
         "skill": "harmony.secondary_dominant.identify",
         "strategy": "exact",
@@ -2846,6 +2859,7 @@
       {
         "id": "L06-Q01",
         "kind": "mcq",
+        "version": null,
         "prompt": "Trong C major, Fm thường được hiểu là borrowed chord nào?",
         "skill": "harmony.modal_interchange.identify",
         "strategy": "exact",
@@ -2876,6 +2890,7 @@
       {
         "id": "L06-Q02",
         "kind": "mcq",
+        "version": null,
         "prompt": "Parallel minor của C major là gì?",
         "skill": "scale.parallel_minor",
         "strategy": "exact",
@@ -2901,6 +2916,7 @@
       {
         "id": "L06-Q03",
         "kind": "active_recall",
+        "version": null,
         "prompt": "Trong C major, borrowed ♭VI triad từ parallel minor có root nào?",
         "skill": "harmony.modal_interchange.identify",
         "strategy": "exact",
@@ -2926,6 +2942,7 @@
       {
         "id": "L06-Q04",
         "kind": "context",
+        "version": null,
         "prompt": "Trong C–F–Fm–C, chord nào tạo modal-mixture color rõ nhất?",
         "skill": "harmony.modal_interchange.identify",
         "strategy": "exact",
@@ -2951,6 +2968,7 @@
       {
         "id": "L06-Q05",
         "kind": "mcq",
+        "version": null,
         "prompt": "Modal mixture có nhất thiết đổi harmonic function của chord không?",
         "skill": "harmony.modal_interchange.identify",
         "strategy": "exact",
@@ -2976,6 +2994,7 @@
       {
         "id": "L06-Q06",
         "kind": "applied",
+        "version": null,
         "prompt": "Chọn progression biến C–G–Am–F thành một phiên bản có borrowed iv.",
         "skill": "harmony.modal_interchange.apply",
         "strategy": "exact",
@@ -3237,6 +3256,7 @@
       {
         "id": "L07-Q01",
         "kind": "mcq",
+        "version": null,
         "prompt": "Các extension/tension number cơ bản phía trên seventh chord là bộ nào?",
         "skill": "tension.naming",
         "strategy": "exact",
@@ -3267,6 +3287,7 @@
       {
         "id": "L07-Q02",
         "kind": "build",
+        "version": null,
         "prompt": "Dựng Cmaj7 chord tones trước khi thêm tension.",
         "skill": "tension.naming",
         "strategy": "music_engine",
@@ -3300,6 +3321,7 @@
       {
         "id": "L07-Q03",
         "kind": "mcq",
+        "version": null,
         "prompt": "Trong basic ii–V–I chord-scale model ở C, Dm7 thường liên hệ với mode nào?",
         "skill": "chord_scale.basic",
         "strategy": "exact",
@@ -3330,6 +3352,7 @@
       {
         "id": "L07-Q04",
         "kind": "mcq",
+        "version": null,
         "prompt": "Trong cùng model, G7 thường liên hệ với mode nào?",
         "skill": "chord_scale.basic",
         "strategy": "exact",
@@ -3360,6 +3383,7 @@
       {
         "id": "L07-Q05",
         "kind": "mcq",
+        "version": null,
         "prompt": "Trong cùng model, Cmaj7 thường liên hệ với mode nào?",
         "skill": "chord_scale.basic",
         "strategy": "exact",
@@ -3390,6 +3414,7 @@
       {
         "id": "L07-Q06",
         "kind": "context",
+        "version": null,
         "prompt": "Vì sao không nên coi chord-scale table là một đáp án duy nhất cho mọi chord symbol?",
         "skill": "chord_scale.context",
         "strategy": "rubric",
@@ -3649,6 +3674,7 @@
       {
         "id": "L08-Q01",
         "kind": "mcq",
+        "version": null,
         "prompt": "Trong basic shell/3-note frame của lesson, ba thành phần ưu tiên là gì?",
         "skill": "voicing.shell",
         "strategy": "exact",
@@ -3676,6 +3702,7 @@
       {
         "id": "L08-Q02",
         "kind": "mcq",
+        "version": null,
         "prompt": "Theo OMT Jazz Voicings, chord tone nào thường có thể lược bỏ an toàn nhất trong nhiều voicing?",
         "skill": "voicing.shell",
         "strategy": "exact",
@@ -3701,6 +3728,7 @@
       {
         "id": "L08-Q03",
         "kind": "build",
+        "version": null,
         "prompt": "Nêu shell root–3rd–7th cho G7 bằng ba tên nốt.",
         "skill": "voicing.shell",
         "strategy": "rubric",
@@ -3728,6 +3756,7 @@
       {
         "id": "L08-Q04",
         "kind": "mcq",
+        "version": null,
         "prompt": "Smooth/lazy voice leading ưu tiên điều gì?",
         "skill": "voicing.voice_leading",
         "strategy": "exact",
@@ -3753,6 +3782,7 @@
       {
         "id": "L08-Q05",
         "kind": "context",
+        "version": null,
         "prompt": "Trong G7 → Cmaj7, basic guide-tone connection nào phù hợp với lesson?",
         "skill": "voicing.voice_leading",
         "strategy": "exact",
@@ -3783,6 +3813,7 @@
       {
         "id": "L08-Q06",
         "kind": "applied",
+        "version": null,
         "prompt": "Vì sao bài 'dựng đầy đủ G7' và bài 'tạo shell voicing G7' không dùng cùng rubric?",
         "skill": "voicing.shell",
         "strategy": "rubric",

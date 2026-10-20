@@ -18,12 +18,24 @@ from ..db.models import (
     ReviewState,
     User,
 )
-from .grading_service import GradeOutcome, grade_payload
+from .grading_service import GradeOutcome, grade_payload, is_self_check
 from .review_scheduler import activate_lesson_reviews, apply_review_result
 
 
 def utcnow() -> datetime:
     return datetime.now(timezone.utc)
+
+
+# Sai 2 lần thì hiện lời giải: đủ để người học tự thử lại, chưa đến mức bỏ cuộc.
+EXPLANATION_AFTER_WRONG = 2
+
+
+class LessonNotMastered(Exception):
+    """Còn câu chưa từng trả lời đúng nên chưa thể hoàn thành bài."""
+
+    def __init__(self, remaining: list[str]):
+        super().__init__("LESSON_NOT_MASTERED")
+        self.remaining = remaining
 
 
 def require_user(db: Session, user_id: str) -> User:
@@ -43,10 +55,20 @@ def require_exercise_version(db: Session, version_id: str) -> tuple[ExerciseVers
     return version, exercise
 
 
-def submit_attempt(db: Session, user_id: str, version_id: str, answer) -> tuple[Attempt, GradeOutcome]:
+def wrong_attempt_count(db: Session, user_id: str, exercise_id: str) -> int:
+    return len(db.scalars(
+        select(Attempt.id)
+        .join(ExerciseVersion, ExerciseVersion.id == Attempt.exercise_version_id)
+        .where(Attempt.user_id == user_id, ExerciseVersion.exercise_id == exercise_id, Attempt.correct.is_(False))
+    ).all())
+
+
+def submit_attempt(db: Session, user_id: str, version_id: str, answer,
+                   input_method: str = "text") -> tuple[Attempt, GradeOutcome]:
     require_user(db, user_id)
     version, exercise = require_exercise_version(db, version_id)
-    outcome = grade_payload(exercise.grading_strategy, version.answer_key, version.grader_config, answer)
+    outcome = grade_payload(exercise.grading_strategy, version.answer_key, version.grader_config, answer,
+                            input_method=input_method)
     attempt = Attempt(
         id=str(uuid4()), user_id=user_id, exercise_version_id=version.id, answer=answer,
         correct=outcome.correct, score=outcome.score, primary_error=outcome.primary_error,
@@ -70,6 +92,17 @@ def complete_lesson(db: Session, user_id: str, lesson_id: str) -> tuple[LessonPr
         LessonProgress.user_id == user_id,
         LessonProgress.lesson_id == lesson_id,
     ))
+    if progress is None or progress.status != "completed":
+        # Hoàn thành = mỗi câu đã đúng ít nhất một lần; chỉ "đã thử" thì gõ bừa cũng qua bài.
+        correct_ids = set(db.scalars(
+            select(ExerciseVersion.exercise_id)
+            .join(Attempt, Attempt.exercise_version_id == ExerciseVersion.id)
+            .where(Attempt.user_id == user_id, Attempt.correct.is_(True))
+        ).all())
+        remaining = [e.id for e in sorted(lesson.exercises, key=lambda e: e.position)
+                     if e.active and e.id not in correct_ids]
+        if remaining:
+            raise LessonNotMastered(remaining)
     now = utcnow()
     if progress is None:
         progress = LessonProgress(user_id=user_id, lesson_id=lesson_id, status="completed", started_at=now, completed_at=now)
@@ -93,7 +126,16 @@ def answer_review(db: Session, user_id: str, review_item_id: str, answer, rating
     ))
     if state is None:
         raise LookupError("REVIEW_STATE_NOT_ACTIVE")
-    outcome = grade_payload(item.grading_strategy, item.answer_key, item.grader_config, answer)
+    if is_self_check(item.grading_strategy, item.grader_config) and rating != "auto":
+        # Thẻ ý mở: người học lật thẻ rồi tự đánh giá, máy không đoán nghĩa câu tự luận.
+        correct = rating != "again"
+        outcome = GradeOutcome(correct, 1.0 if correct else 0.0, None if correct else "SELF_REPORTED_MISS",
+                               f"Đáp án: {item.back}", [])
+    else:
+        outcome = grade_payload(item.grading_strategy, item.answer_key, item.grader_config, answer)
+        if not outcome.correct:
+            # Ôn tập khác bài kiểm tra: sai thì cho xem đáp án ngay để lần sau nhớ đúng.
+            outcome.feedback = f"Đáp án: {item.back}."
     applied = apply_review_result(state, outcome.correct, rating)
     review_attempt = ReviewAttempt(
         id=str(uuid4()), review_state_id=state.id, answer=answer, correct=outcome.correct,

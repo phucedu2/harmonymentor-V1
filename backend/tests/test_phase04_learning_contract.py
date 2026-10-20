@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 from app.db.models import User
 from app.db.session import SessionLocal
 from app.main import app
-from tests.auth_helpers import auth
+from tests.auth_helpers import answer_lesson_correctly, auth
 
 
 def make_user() -> str:
@@ -75,6 +75,7 @@ def test_attempt_contract_handles_exact_and_music_engine_grading():
 def test_complete_lesson_activates_review_states_idempotently():
     with TestClient(app) as client:
         user_id = make_user()
+        answer_lesson_correctly(client, "L01", auth(user_id))
         first = client.post("/api/v1/lessons/L01/complete", json={}, headers=auth(user_id))
         assert first.status_code == 200
         body = first.json()
@@ -92,9 +93,10 @@ def test_complete_lesson_activates_review_states_idempotently():
         assert {x["review_item_id"] for x in reviews.json()} == {f"L01-F{i:02d}" for i in range(1, 9)}
 
 
-def test_review_answer_advances_1_3_7_14_30_schedule():
+def test_review_answer_follows_leitner_1_2_4_8_16_schedule():
     with TestClient(app) as client:
         user_id = make_user()
+        answer_lesson_correctly(client, "L01", auth(user_id))
         client.post("/api/v1/lessons/L01/complete", json={}, headers=auth(user_id))
 
         result = client.post("/api/v1/review/L01-F01/answer", json={
@@ -105,7 +107,8 @@ def test_review_answer_advances_1_3_7_14_30_schedule():
         assert body["correct"] is True
         assert body["rating_applied"] == "good"
         assert body["next_stage"] == 1
-        assert body["interval_days"] == 3
+        assert body["leitner_box"] == 2
+        assert body["interval_days"] == 2
 
         wrong = client.post("/api/v1/review/L01-F01/answer", json={
             "answer": "m3", "rating": "auto"

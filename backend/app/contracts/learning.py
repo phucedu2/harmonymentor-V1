@@ -64,6 +64,8 @@ class LessonDetailOut(LessonSummaryOut):
 class AttemptIn(BaseModel):
     exercise_version_id: str
     answer: Any
+    # "piano": đáp án chọn trên phím đàn, chỉ chấm cao độ (phím không mang chính tả tên nốt).
+    input_method: Literal["text", "choice", "piano"] = "text"
 
 
 class AttemptErrorOut(BaseModel):
@@ -80,6 +82,10 @@ class AttemptOut(BaseModel):
     primary_error: str | None = None
     feedback: str | None = None
     errors: list[AttemptErrorOut] = Field(default_factory=list)
+    # Lời giải chỉ trả về khi đã đúng, hoặc sau EXPLANATION_AFTER_WRONG lần sai, để người học
+    # tự nghĩ trước khi được chỉ đáp án.
+    explanation: str | None = None
+    wrong_attempts: int = 0
 
 
 class CompleteLessonOut(BaseModel):
@@ -110,6 +116,10 @@ class ReviewStateOut(BaseModel):
     interval_days: int
     due_at: datetime
     status: str
+    leitner_box: int = 1
+    # Thẻ ý mở: lật thẻ rồi tự đánh giá; chỉ những thẻ này mới gửi kèm mặt sau.
+    self_check: bool = False
+    back: str | None = None
 
 
 class ReviewAnswerOut(BaseModel):
@@ -121,6 +131,7 @@ class ReviewAnswerOut(BaseModel):
     interval_days: int
     next_due_at: datetime
     feedback: str | None = None
+    leitner_box: int = 1
 
 
 class StartLessonOut(BaseModel):

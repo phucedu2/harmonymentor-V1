@@ -10,7 +10,12 @@ from ..contracts.learning import ReviewAnswerIn, ReviewAnswerOut, ReviewStateOut
 from ..auth.deps import get_current_user
 from ..db.models import ReviewItem, ReviewState, User
 from ..db.session import get_db
+from ..services.grading_service import is_self_check
 from ..services.learning_service import answer_review
+from ..services.review_scheduler import leitner_box
+
+# ADR-002: mỗi lượt ôn tối đa 20 thẻ, quá hạn lâu nhất lên trước.
+DUE_QUEUE_LIMIT = 20
 
 router = APIRouter(prefix="/api/v1/review", tags=["review"])
 
@@ -27,12 +32,20 @@ def due_reviews(
     )
     if not include_future:
         stmt = stmt.where(ReviewState.due_at <= datetime.now(timezone.utc))
-    rows = db.execute(stmt.order_by(ReviewState.due_at, ReviewItem.id)).all()
-    return [ReviewStateOut(
-        review_item_id=item.id, lesson_id=item.lesson_id, front=item.front, mode=item.mode,
-        skill_id=item.skill_id, stage=state.stage, interval_days=state.interval_days,
-        due_at=state.due_at, status=state.status,
-    ) for state, item in rows]
+    stmt = stmt.order_by(ReviewState.due_at, ReviewItem.id)
+    if not include_future:
+        stmt = stmt.limit(DUE_QUEUE_LIMIT)
+    rows = db.execute(stmt).all()
+    out = []
+    for state, item in rows:
+        self_check = is_self_check(item.grading_strategy, item.grader_config)
+        out.append(ReviewStateOut(
+            review_item_id=item.id, lesson_id=item.lesson_id, front=item.front, mode=item.mode,
+            skill_id=item.skill_id, stage=state.stage, interval_days=state.interval_days,
+            due_at=state.due_at, status=state.status, leitner_box=leitner_box(state.stage),
+            self_check=self_check, back=item.back if self_check else None,
+        ))
+    return out
 
 
 @router.post("/{review_item_id}/answer", response_model=ReviewAnswerOut)
@@ -49,5 +62,5 @@ def submit_review_answer(review_item_id: str, body: ReviewAnswerIn, user: User =
     return ReviewAnswerOut(
         review_attempt_id=review_attempt.id, review_item_id=item.id, correct=outcome.correct,
         rating_applied=applied, next_stage=state.stage, interval_days=state.interval_days,
-        next_due_at=state.due_at, feedback=outcome.feedback,
+        next_due_at=state.due_at, feedback=outcome.feedback, leitner_box=leitner_box(state.stage),
     )

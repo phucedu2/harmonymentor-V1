@@ -1,7 +1,7 @@
-"""Deterministic spaced-review scheduler for the MVP.
+"""Lịch ôn Leitner 5 hộp (ADR-002, SRS 4.6.1): hộp 1..5 = 1, 2, 4, 8, 16 ngày.
 
-The schedule intentionally remains simple (1-3-7-14-30 days).  It is independent from mastery:
-a learner can have high mastery while a review item is overdue.
+Đúng lên 1 hộp (tối đa hộp 5), sai về hộp 1. Cột `stage` 0..4 chính là hộp - 1 nên không cần
+migration. Lịch ôn độc lập với mastery: mastery cao vẫn có thể có thẻ quá hạn.
 """
 
 from __future__ import annotations
@@ -14,7 +14,11 @@ from sqlalchemy.orm import Session
 from ..db.models import ReviewItem, ReviewState
 
 
-REVIEW_INTERVALS_DAYS = [1, 3, 7, 14, 30]
+REVIEW_INTERVALS_DAYS = [1, 2, 4, 8, 16]
+
+
+def leitner_box(stage: int) -> int:
+    return stage + 1
 
 
 def utcnow() -> datetime:
@@ -58,14 +62,11 @@ def apply_review_result(state: ReviewState, correct: bool, rating: str, now: dat
         state.success_streak = 0
         applied = "again"
     elif applied == "hard":
-        state.interval_days = max(REVIEW_INTERVALS_DAYS[0], state.interval_days)
-        state.success_streak += 1
-    elif applied == "easy":
-        state.stage = min(state.stage + 2, len(REVIEW_INTERVALS_DAYS) - 1)
+        # Đúng nhưng còn chật vật: giữ nguyên hộp, ôn lại sau khoảng của hộp hiện tại.
         state.interval_days = REVIEW_INTERVALS_DAYS[state.stage]
         state.success_streak += 1
-    else:  # good
-        applied = "good"
+    else:  # good, easy: Leitner chỉ lên đúng 1 hộp
+        applied = "easy" if applied == "easy" else "good"
         state.stage = min(state.stage + 1, len(REVIEW_INTERVALS_DAYS) - 1)
         state.interval_days = REVIEW_INTERVALS_DAYS[state.stage]
         state.success_streak += 1
