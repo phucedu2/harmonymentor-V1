@@ -1,6 +1,6 @@
 # ADR-002 · Lịch ôn tập Leitner 5 hộp thay cho 1–3–7–14–30
 
-Trạng thái: **Đã chốt** (nhóm xác nhận M2, 18/10/2026). Thực hiện ở Giai đoạn C, người làm: Thắng.
+Trạng thái: **Đã chốt** (nhóm xác nhận M2, 18/10/2026). **Đã thực hiện 20/10/2026** (nhánh `audit-nguoi-moi-hoc`, chờ Thắng duyệt): dùng lại cột `stage` (= hộp − 1) thay vì thêm cột `leitner_box`, nên không cần migration; API trả thêm `leitner_box`. Hàng đợi giới hạn 20 thẻ theo hạn; ưu tiên kỹ năng yếu (mastery < 0.60) chưa làm vì chưa có mastery EMA.
 
 ## Bối cảnh
 
