@@ -28,7 +28,7 @@ def test_lesson_index_and_lesson1_content_are_served_from_backend():
         l01 = next(x for x in lessons if x["id"] == "L01")
         assert l01["exercise_count"] == 6
         assert l01["review_item_count"] == 8
-        assert l01["block_count"] == 7
+        assert l01["block_count"] == 14
 
         detail = client.get("/api/v1/lessons/L01")
         assert detail.status_code == 200
@@ -46,25 +46,25 @@ def test_attempt_contract_handles_exact_and_music_engine_grading():
         user_id = make_user()
 
         good_interval = client.post("/api/v1/attempts", json={
-            "user_id": user_id, "exercise_version_id": "L01-Q01-v2", "answer": "M3"
+            "user_id": user_id, "exercise_version_id": "L01-Q01-v4", "answer": "M3"
         })
         assert good_interval.status_code == 200
         assert good_interval.json()["correct"] is True
 
         wrong_case_is_wrong_quality = client.post("/api/v1/attempts", json={
-            "user_id": user_id, "exercise_version_id": "L01-Q01-v2", "answer": "m3"
+            "user_id": user_id, "exercise_version_id": "L01-Q01-v4", "answer": "m3"
         })
         assert wrong_case_is_wrong_quality.status_code == 200
         assert wrong_case_is_wrong_quality.json()["correct"] is False
 
         good_chord = client.post("/api/v1/attempts", json={
-            "user_id": user_id, "exercise_version_id": "L01-Q02-v2", "answer": "C E G"
+            "user_id": user_id, "exercise_version_id": "L01-Q02-v4", "answer": "G B D"
         })
         assert good_chord.status_code == 200
         assert good_chord.json()["correct"] is True
 
         extra_note = client.post("/api/v1/attempts", json={
-            "user_id": user_id, "exercise_version_id": "L01-Q02-v2", "answer": "C E G G#"
+            "user_id": user_id, "exercise_version_id": "L01-Q02-v4", "answer": "G B D D#"
         })
         assert extra_note.status_code == 200
         assert extra_note.json()["correct"] is False

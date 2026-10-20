@@ -1,0 +1,74 @@
+HarmonyMentor Phase 2 verification
+Version: v0.5.0-dev
+
+BACKEND
+- pytest: 120 passed, 1 skipped
+- skipped case: optional music21 cross-check when music21 is unavailable
+- fresh Alembic upgrade to head: PASS
+- alembic check: PASS (no new schema operations)
+- /health reports 0.5.0-dev: PASS
+- G7 ChordInspector backend smoke test in C major: PASS
+  notes = G B D F
+  formula = 1 3 5 b7
+  roman = V7
+  function = dominant
+
+FRESH SEEDED RUNTIME
+- lessons: 8
+- lesson blocks: 42
+- skills: 26
+- prerequisite edges: 36
+- runtime exercises: 24 (L01-L04)
+- runtime review items: 32 (L01-L04)
+- L01 blocks: 12
+- L02 blocks: 10
+- L03 blocks: 9
+- L04 blocks: 11
+
+BEGINNER CONTENT GATES
+- interval notation definitions precede the first L01 interval checkpoint: PASS
+- M / m / P / A / d / M3 / m3 / P4 / A4 definitions present: PASS
+- tritone definition present: PASS
+- whole step / half step and key definition present: PASS
+- seventh-chord and Roman-numeral vocabulary present: PASS
+- function vocabulary present: PASS
+- guide-tone / voice-leading / voicing vocabulary present: PASS
+- L01-L04 include explanation + checkpoint + music interaction blocks: PASS
+- L04 piano block is linked to an audited deterministic exercise version: PASS
+
+FRONTEND SOURCE
+- TypeScript/TSX source files syntax-transpiled: 18
+- syntax diagnostics: 0
+- new external dependencies declared: tone 15.1.22, vexflow 5.0.0
+- stale Phase 1 package-lock.json removed intentionally
+
+FULL FRONTEND BUILD
+- NOT CLAIMED in the packaging environment.
+- `npm install --no-audit --no-fund` was attempted but timed out before dependencies were installed.
+- Because Tone.js and VexFlow were not installed locally in this environment, `npm run build` could not be honestly certified here.
+- Required local gate before demo freeze:
+    cd frontend
+    npm install
+    npm run build
+    npm run dev
+  Then visually smoke-test notation, audio, piano layout, metronome, and ChordInspector playback.
+
+PHASE 2 SCOPE IMPLEMENTED
+- beginner exposition hardening for runtime Lessons 1-4
+- reusable Glossary block
+- Virtual Piano V2
+- Tone.js AudioEngine foundation
+- note / chord / progression playback
+- metronome
+- VexFlow notation block
+- ChordInspector audio preview
+- PIANO / AUDIO / NOTATION lesson integration
+- one minimal persisted keyboard-evidence path using backend grading
+
+INTENTIONALLY NOT IMPLEMENTED YET
+- realistic licensed piano sample bundle
+- Web MIDI
+- microphone recognition
+- audio-recognition grading
+- drums / bass backing track
+- Harmony Assistant / LLM composition layer

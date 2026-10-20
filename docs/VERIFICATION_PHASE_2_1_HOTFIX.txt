@@ -1,0 +1,32 @@
+HarmonyMentor Phase 2.1 notation hotfix verification
+Version: v0.5.1-dev
+
+Root cause reproduced from user console:
+- Fatal: VexFlow RuntimeError IncompleteVoice in NotationStaff.tsx during Formatter.joinVoices.
+- Non-fatal: Tone.js AudioContext autoplay-policy warning before user gesture.
+- Non-fatal / external: React DevTools notice and browser-extension messages.
+
+Changes:
+- NotationStaff no longer manually constructs a strict VexFlow Voice.
+- Uses Formatter.FormatAndDraw, whose VexFlow 5 implementation uses Voice.Mode.SOFT.
+- Local try/catch fallback prevents notation rendering failures from blanking the lesson.
+- LessonErrorBoundary prevents a future lesson visualization failure from blanking the app.
+- Invalid notation pitches no longer silently fall back to C4.
+
+Backend/test suite:
+123 passed, 1 skipped
+
+Frontend full npm build:
+NOT RE-VERIFIED in packaging environment because npm install timed out before dependencies were installed.
+Run locally:
+  cd frontend
+  npm install
+  npm run build
+  npm run dev
+
+Manual smoke test after install:
+1. Open Learn -> Lesson 1.
+2. Confirm M3/m3/P4/A4 notation renders without a blank page.
+3. Open Lesson 2 and Lesson 4 notation blocks.
+4. Confirm navigation/back still works.
+5. Click an audio/play control once and confirm browser audio starts after the gesture.

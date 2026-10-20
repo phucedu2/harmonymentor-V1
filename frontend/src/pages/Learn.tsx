@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { api, type ApiError, type LearningOverview, type LessonDetail, type LessonSummary } from "../api";
+import LessonErrorBoundary from "../components/learning/LessonErrorBoundary";
 import LessonRunner from "../components/learning/LessonRunner";
 
 export default function LearnPage() {
@@ -37,12 +38,14 @@ export default function LearnPage() {
   };
 
   if (selected) return (
-    <LessonRunner
-      lesson={selected}
-      initialProgress={progressMap.get(selected.id)}
-      onBack={() => { setSelected(null); void refreshProgress(); }}
-      onProgressChanged={() => { void refreshProgress(); }}
-    />
+    <LessonErrorBoundary key={selected.id} onReset={() => { setSelected(null); void refreshProgress(); }}>
+      <LessonRunner
+        lesson={selected}
+        initialProgress={progressMap.get(selected.id)}
+        onBack={() => { setSelected(null); void refreshProgress(); }}
+        onProgressChanged={() => { void refreshProgress(); }}
+      />
+    </LessonErrorBoundary>
   );
 
   return <section>

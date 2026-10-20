@@ -1,0 +1,47 @@
+HarmonyMentor Phase 2.2 Lesson 1 pedagogy rewrite verification
+Version: v0.5.2-dev
+
+BACKEND / CURRICULUM
+- pytest: 132 passed, 1 skipped
+- skipped test remains the optional music21 cross-check
+- L01 runtime blocks: 14
+- L01 exercises: 6
+- L01 review items: 8
+- L01 exercise versions: L01-Q01-v3 ... L01-Q06-v3
+- Alembic: upgrade head + check passed; no schema migration required
+
+LESSON 1 BEGINNER QA
+- Objectives no longer front-load enharmonic / spelling / triad / octave jargon
+- Piano layout appears before the first interval checkpoint
+- E-F and B-C are explicitly taught as adjacent white keys / one semitone
+- whole tone = two semitones is introduced before interval arithmetic
+- spelling rule is taught before triad construction
+- letter-family rule: third above C must use E-family spelling
+- interval-quality letters M/m/P/A/d are separated from concrete interval examples
+- concrete L01 interval set is M3, m3, P5, d5
+- A4 and tritone are absent from L01 runtime content
+- triad construction explicitly uses two steps: letter frame, then semitone/interval formula
+- diminished shorthand 1-b3-b5 is present
+- notation comparison uses C major / C minor / C diminished on the same root
+- major section numbering is continuous 1 through 9
+- free-response prompts include input-format examples
+
+INPUT / GRADING QA
+- chord input C-E-G accepted
+- chord input C, E, G accepted
+- Unicode accidental input C-E♭-G♭ accepted for C diminished
+- formula input 1-b3-5 accepted
+- formula input 1-♭3-5 accepted
+- formula input 1–♭3–5 accepted
+
+FRONTEND STATIC QA
+- 19 TS/TSX files transpiled with global TypeScript transpileModule
+- syntax diagnostics: 0
+- relative import scan: 0 missing imports (previous Phase 2 check; no import topology changed afterward)
+- NotationStaff now renders each example in its own card so its label stays attached to the correct staff
+- LessonRunner supplies format-aware placeholders/hints for free-response inputs
+- L01 early piano hides octave numbers to avoid introducing C4/D4 before octave notation is taught
+
+LIMITATION
+- Full npm build was not executed in this packaging environment because npm install timed out before dependencies finished installing.
+- On the project machine run: npm install && npm run build && npm run dev

@@ -69,8 +69,10 @@ def _upsert_blocks(db: Session, spec: dict) -> None:
 
 
 def _upsert_exercises(db: Session, spec: dict) -> None:
-    # L01 already existed in Phase 0.3/0.4; the audited contract is explicitly v2.
-    target_version = 2 if spec["id"] == "L01" else 1
+    # L01 was source-audited as v2. The beginner-pedagogy rewrite changes prompts,
+    # answer guidance, and one diminished-triad target, so keep previous attempts traceable
+    # by publishing the revised multi-key lesson exercises as v4.
+    target_version = 4 if spec["id"] == "L01" else 1
     for position, item in enumerate(spec["exercises"], start=1):
         exercise = db.get(Exercise, item["id"])
         if exercise is None:

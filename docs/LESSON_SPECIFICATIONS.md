@@ -1,13 +1,14 @@
-# Lesson Specifications — Phase 0.4B
+# Lesson Specifications — Phase 2.3
 
-Bank chuẩn hóa: **8 lessons / 48 quiz / 64 flashcards**. Quiz phân bố theo recognition, active recall, construction, context và applied practice; flashcards ưu tiên retrieval practice hơn passive flip-only.
+Bank chuẩn hóa: **8 lessons / 48 quiz / 64 flashcards**. `curriculum_specs.py` là canonical source; file này là snapshot phục vụ review.
 
-## L01 — Nốt, quãng và cấu trúc hợp âm
+## L01 — Từ bàn phím đến hợp âm ba nốt
 
 **Objectives**
-- Phân biệt tên nốt với cao độ nghe được trong các trường hợp enharmonic.
-- Nhận diện quãng theo số và tính chất.
-- Dựng major/minor/diminished triad bằng đúng spelling.
+- Nhận biết tên nốt và tự đếm được nửa cung trên bàn phím piano.
+- Hiểu cách đếm số quãng và đọc các ký hiệu M3, m3, P5, d5.
+- Dựng hợp âm trưởng, thứ và giảm bằng đúng tên nốt thay vì học thuộc một hợp âm C.
+- Khám phá hợp âm chủ trên 12 nốt gốc và luyện dần 12 giọng trưởng + 12 giọng thứ.
 
 **Target skills**
 `pitch.spelling`, `interval.naming`, `chord.triad_formula`, `chord.triad_build`
@@ -18,23 +19,39 @@ Bank chuẩn hóa: **8 lessons / 48 quiz / 64 flashcards**. Quiz phân bố theo
 - `FANK_WIH` — Unit 1: Music Fundamentals — scales, intervals, triads
 - `TEREFENKO_WB` — Part I, Ch.1 Music Fundamentals, PDF pp. 13–22
 
+**Runtime block sequence**
+- `L01-B01` [callout] — Bài này bắt đầu từ con số 0
+- `L01-B02` [theory] — 1. Tên nốt và bàn phím piano
+- `L01-B03` [piano] — Thử ngay: đếm số bước chứ không đếm số phím
+- `L01-B04` [theory] — 2. Đếm số quãng và viết đúng tên nốt
+- `L01-B05` [glossary] — 3. Năm chữ cái mô tả chất lượng quãng
+- `L01-B06` [interval_explorer] — 4. Khám phá M3, m3, P5 và d5 trên 12 nốt gốc
+- `L01-BCP1` [checkpoint] — Checkpoint · Đọc một quãng mới
+- `L01-B08` [theory] — 5. Hợp âm ba nốt: dựng bằng hai bước
+- `L01-B09` [triad_explorer] — 6. Dựng triad trên bất kỳ nốt gốc nào
+- `L01-BCP2` [checkpoint] — Checkpoint · Dựng hợp âm ở nốt gốc khác C
+- `L01-B10` [triad_notation_explorer] — 7. So sánh chất lượng hợp âm bằng cùng một nốt gốc
+- `L01-B11` [triad_audio_explorer] — 8. Nghe sự thay đổi khi giữ nguyên nốt gốc
+- `L01-B12` [key_overview] — 9. Tổng quan 24 Keys · 12 Major & 12 Minor
+- `L01-B13` [summary] — 10. Tóm tắt trước khi làm quiz
+
 **Quiz contract**
-- `L01-Q01` [mcq/exact] `interval.naming` — Quãng từ C lên E là gì?
-- `L01-Q02` [build/music_engine] `chord.triad_build` — Dựng hợp âm C trưởng bằng tên nốt.
-- `L01-Q03` [active_recall/exact] `chord.triad_formula` — Không nhìn đáp án: công thức minor triad là gì?
-- `L01-Q04` [build/music_engine] `chord.triad_build` — Dựng hợp âm A minor bằng tên nốt.
-- `L01-Q05` [context/rubric] `pitch.spelling` — G# và Ab có thể cùng cao độ trên đàn. Điều đó có nghĩa chúng luôn cùng spelling không?
-- `L01-Q06` [build/music_engine] `chord.triad_build` — Dựng hợp âm B diminished.
+- `L01-Q01` [mcq/exact] `interval.naming` — Quãng từ F lên A là gì?
+- `L01-Q02` [build/music_engine] `chord.triad_build` — Dựng hợp âm G major bằng tên nốt. Nhập ba nốt theo cùng một định dạng, ví dụ Nốt-Nốt-Nốt.
+- `L01-Q03` [active_recall/exact] `chord.triad_formula` — Không nhìn đáp án: công thức minor triad là gì? Nhập theo định dạng như 1-3-5 (dùng chữ b thay cho ♭).
+- `L01-Q04` [build/music_engine] `chord.triad_build` — Dựng hợp âm D minor bằng tên nốt. Nhập ba nốt, có thể ngăn cách bằng dấu -, khoảng trắng hoặc dấu phẩy.
+- `L01-Q05` [context/rubric] `pitch.spelling` — F# và Gb có thể là cùng một phím trên piano. Điều đó có nghĩa chúng luôn được viết cùng một tên trong mọi ngữ cảnh không? Trả lời ngắn: Có hoặc Không.
+- `L01-Q06` [build/music_engine] `chord.triad_build` — Dựng hợp âm B diminished. Nhập ba nốt, có thể ngăn cách bằng dấu -, khoảng trắng hoặc dấu phẩy.
 
 **Review contract**
-- `L01-F01` [recall/exact] `interval.naming` — Quãng C–E?
-- `L01-F02` [recall/exact] `interval.naming` — Quãng C–Eb?
-- `L01-F03` [recall/exact] `chord.triad_formula` — Công thức major triad?
-- `L01-F04` [recall/exact] `chord.triad_formula` — Công thức minor triad?
-- `L01-F05` [build/music_engine] `chord.triad_build` — Build C major
+- `L01-F01` [recall/exact] `interval.naming` — Quãng F–A?
+- `L01-F02` [recall/exact] `interval.naming` — Quãng D–F?
+- `L01-F03` [recall/exact] `interval.naming` — Quãng G–D?
+- `L01-F04` [recall/exact] `interval.naming` — Quãng B–F?
+- `L01-F05` [build/music_engine] `chord.triad_build` — Build F major
 - `L01-F06` [build/music_engine] `chord.triad_build` — Build A minor
 - `L01-F07` [build/music_engine] `chord.triad_build` — Build B diminished
-- `L01-F08` [context/rubric] `pitch.spelling` — Enharmonic: cùng phím đàn có luôn cùng tên nốt?
+- `L01-F08` [context/rubric] `pitch.spelling` — Muốn viết một quãng 3 phía trên D, nốt trên phải thuộc họ chữ nào?
 
 ## L02 — Âm giai trưởng và hợp âm bảy điệu tính
 
@@ -52,6 +69,18 @@ Bank chuẩn hóa: **8 lessons / 48 quiz / 64 flashcards**. Quiz phân bố theo
 - `FANK_WIH` — Unit 1: Music Fundamentals — scales, intervals, triads
 - `FANK_WIH` — Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading
 - `TEREFENKO_WB` — Part I, Chs.4–5 Four-Part/Five-Part Chords, PDF pp. 29–43
+
+**Runtime block sequence**
+- `L02-B01` [callout] — Trước khi học seventh chord
+- `L02-B02` [theory] — 1. Âm giai trưởng là một chuỗi 7 bậc
+- `L02-B03` [notation] — 2. G major trên khuông
+- `L02-BCP1` [checkpoint] — Checkpoint · Dựng major scale
+- `L02-B04` [theory] — 3. Từ triad đến seventh chord
+- `L02-B05` [glossary] — 4. Giải mã maj7, m7, 7, ø7 và số La Mã
+- `L02-B06` [piano] — 5. Nghe bốn màu seventh chord
+- `L02-BCP2` [checkpoint] — Checkpoint · Roman numeral
+- `L02-B07` [audio] — 6. Nghe Cmaj7 và G7
+- `L02-B08` [summary] — Ghi nhớ
 
 **Quiz contract**
 - `L02-Q01` [build/music_engine] `scale.major` — Dựng âm giai G major theo thứ tự đi lên, không lặp lại chủ âm ở cuối.
@@ -87,6 +116,17 @@ Bank chuẩn hóa: **8 lessons / 48 quiz / 64 flashcards**. Quiz phân bố theo
 - `TEREFENKO_WB` — Part I, Ch.3 Harmonic Function, PDF pp. 25–28
 - `KHAIHOAN_JAZZ` — Ch.1, printed pp. 21–37
 
+**Runtime block sequence**
+- `L03-B01` [callout] — Chức năng hòa âm không phải tên loại hợp âm
+- `L03-B02` [glossary] — 1. Ba chức năng nền tảng
+- `L03-B03` [theory] — 2. Luồng T → PD → D → T
+- `L03-BCP1` [checkpoint] — Checkpoint · Tonic function
+- `L03-B04` [progression] — 3. Ví dụ chức năng
+- `L03-B05` [audio] — 4. Nghe lực đi–về
+- `L03-BCP2` [checkpoint] — Checkpoint · Dominant trong ngữ cảnh
+- `L03-B06` [interactive] — 5. Tự phân tích trước khi xem đáp án
+- `L03-B07` [summary] — Ghi nhớ
+
 **Quiz contract**
 - `L03-Q01` [mcq/exact] `function.tonic` — Trong C major, Cmaj7 ở vị trí ổn định cuối phrase thuộc chức năng nào?
 - `L03-Q02` [mcq/exact] `function.predominant` — Trong Dm7 → G7 → Cmaj7 ở C major, Dm7 thường giữ vai trò nào?
@@ -121,6 +161,19 @@ Bank chuẩn hóa: **8 lessons / 48 quiz / 64 flashcards**. Quiz phân bố theo
 - `TEREFENKO_WB` — Part I, Ch.6 The II–V–I Progression, PDF pp. 44–46
 - `KHAIHOAN_JAZZ` — Ch.1, printed pp. 21–37
 - `KHAIHOAN_JAZZ` — Ch.11, printed pp. 279–307
+
+**Runtime block sequence**
+- `L04-B01` [callout] — Đọc ii–V–I như thế nào?
+- `L04-B02` [glossary] — 1. Guide tones và voice leading
+- `L04-B03` [theory] — 2. Xây ii–V–I trong C major
+- `L04-B04` [progression] — 3. ii–V–I in C
+- `L04-BCP1` [checkpoint] — Checkpoint · Nhận diện ii–V–I
+- `L04-B05` [notation] — 4. Guide tones của G7 giải về Cmaj7
+- `L04-B06` [theory] — 5. Vì sao 3rd và 7th quan trọng?
+- `L04-BCP2` [checkpoint] — Checkpoint · Guide tones
+- `L04-B07` [piano] — 6. Piano task · từ chord inventory tới guide tones
+- `L04-B08` [audio] — 7. Nghe ii–V–I trước và sau khi tăng tempo
+- `L04-B09` [summary] — Ghi nhớ
 
 **Quiz contract**
 - `L04-Q01` [mcq/exact] `progression.ii_v_i` — ii–V–I trong C major là progression nào?

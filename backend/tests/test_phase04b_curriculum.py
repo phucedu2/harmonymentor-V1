@@ -82,10 +82,11 @@ def test_lessons_1_to_4_are_migrated_and_5_to_8_are_specs_only():
     with TestClient(app) as client:
         lessons = {x["id"]: x for x in client.get("/api/v1/lessons").json()}
         assert set(MIGRATED_LESSON_IDS) == {"L01", "L02", "L03", "L04"}
+        expected_block_counts = {"L01": 14, "L02": 10, "L03": 9, "L04": 11}
         for lesson_id in ["L01", "L02", "L03", "L04"]:
             assert lessons[lesson_id]["exercise_count"] == 6
             assert lessons[lesson_id]["review_item_count"] == 8
-            assert lessons[lesson_id]["block_count"] == 7
+            assert lessons[lesson_id]["block_count"] == expected_block_counts[lesson_id]
             assert lessons[lesson_id]["status"] == "reviewed"
         for lesson_id in ["L05", "L06", "L07", "L08"]:
             assert lessons[lesson_id]["exercise_count"] == 0
@@ -149,8 +150,8 @@ def test_lesson3_and_lesson4_contracts_are_live():
 def test_audited_item_provenance_is_persisted_for_runtime_lessons():
     with TestClient(app):
         with SessionLocal() as db:
-            # L01 uses audited v2; L02-L04 use their first audited version.
-            for version_id in ["L01-Q01-v2", "L02-Q01-v1", "L03-Q01-v1", "L04-Q01-v1"]:
+            # L01 multi-key pedagogy rewrite publishes v4; L02-L04 use their first audited version.
+            for version_id in ["L01-Q01-v4", "L02-Q01-v1", "L03-Q01-v1", "L04-Q01-v1"]:
                 version = db.get(ExerciseVersion, version_id)
                 assert version is not None
                 assert version.provenance

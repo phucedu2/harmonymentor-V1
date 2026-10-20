@@ -19,12 +19,12 @@ export default function App() {
   return (
     <div className="app-shell">
       <aside className="sidebar">
-        <div className="brand"><span className="brand-mark">H</span><div><b>HarmonyMentor</b><small>v0.4.0-dev</small></div></div>
+        <div className="brand"><span className="brand-mark">H</span><div><b>HarmonyMentor</b><small>v0.5.3-dev</small></div></div>
         <nav className="main-nav" aria-label="Điều hướng chính">
           {NAV.map((item) => <button key={item.id} className={page === item.id ? "active" : ""} onClick={() => setPage(item.id)}>
             <small>{item.short}</small><span>{item.label}</span></button>)}
         </nav>
-        <div className="sidebar-note">Phase 1<br/>learning vertical slice</div>
+        <div className="sidebar-note">Phase 2.2<br/>Lesson 1 pedagogy rewrite</div>
       </aside>
       <main className="workspace">
         {page === "dashboard" && <DashboardPage onNavigate={(next) => setPage(next)} />}
@@ -32,7 +32,7 @@ export default function App() {
         {page === "practice" && <PracticePage />}
         {page === "lab" && <HarmonyLabPage />}
         {page === "progress" && <ProgressPage />}
-        <footer>Phase 1: Learn → checkpoint → quiz → review · Music Engine deterministic · AI chưa nằm trên critical path.</footer>
+        <footer>Phase 2: Learn -&gt; notation -&gt; piano/audio -&gt; checkpoint -&gt; quiz -&gt; review.</footer>
       </main>
     </div>
   );
