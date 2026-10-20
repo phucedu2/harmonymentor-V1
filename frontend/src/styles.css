@@ -287,3 +287,29 @@
   .interval-choice-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .key-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* Kiểm định người mới học (20/10/2026): bài học chia bước, lời giải, trạng thái bài. */
+.status.ready { background: var(--accent-soft); color: var(--accent); }
+.status.locked { background: #edf0f5; color: #596273; }
+.lesson-stepper { display: grid; gap: 14px; }
+.step-index { border: 1px solid var(--line); border-radius: 12px; background: var(--card); padding: 10px 14px; }
+.step-index summary { cursor: pointer; font-weight: 700; }
+.step-index ol { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 4px; }
+.step-index li button { width: 100%; display: flex; gap: 10px; align-items: center; text-align: left; background: transparent; color: var(--text); border: 1px solid transparent; border-radius: 9px; padding: 6px 8px; }
+.step-index li button:hover { background: var(--accent-soft); }
+.step-index li button.current { border-color: var(--accent); background: var(--accent-soft); }
+.step-index li button > span:last-child { display: flex; flex-direction: column; }
+.step-index li small { color: var(--muted); font-size: 11px; }
+.step-dot { flex: none; width: 26px; height: 26px; border-radius: 999px; display: grid; place-items: center; background: #edf0f5; font-size: 12px; font-weight: 700; }
+.step-nav { position: sticky; bottom: 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 0; background: var(--bg, #f8f8f6); border-top: 1px solid var(--line); }
+.step-nav .muted { font-size: 13px; text-align: center; }
+.explanation { margin-top: 8px; padding-top: 8px; border-top: 1px dashed currentColor; }
+.remaining-list { margin: 8px 0 14px; padding-left: 18px; }
+.remaining-list .text-button { text-align: left; display: inline; padding: 0; }
+.remaining-list li { margin: 4px 0; }
+.level-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 12px; }
+.level-row button.on { background: var(--accent); color: #fff; }
+.level-note { font-size: 13px; color: var(--muted); margin: 0 0 12px; }
+.review-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.review-back { padding: 8px 10px; border-radius: 8px; background: var(--accent-soft); }
+@media (max-width: 560px) { .step-nav .muted { display: none; } }

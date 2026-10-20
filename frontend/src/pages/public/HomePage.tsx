@@ -14,7 +14,7 @@ const DEMO_CHORDS = ["C", "Am", "G7", "Ebm7b5"];
 const FEATURES = [
   { title: "Luyện tập có chẩn đoán", body: "Làm sai không chỉ nhận chữ “Sai”: hệ thống chỉ ra nốt nào lệch và vì sao, ví dụ dùng quãng 7 trưởng thay cho quãng 7 thứ.", ready: true },
   { title: "Ôn tập đúng lúc", body: "Thẻ ghi nhớ tự hẹn ngày ôn lại: nhớ tốt thì giãn ra, quên thì ôn sớm hơn.", ready: true },
-  { title: "AI Tutor có trích dẫn", body: "Hỏi bằng tiếng Việt; câu trả lời dẫn về đúng bài học và nốt nhạc được Music Engine kiểm tra.", ready: false },
+  { title: "AI Tutor có trích dẫn", body: "Hỏi bằng tiếng Việt; câu trả lời dẫn về đúng bài học, nốt nhạc được bộ chấm nhạc lý kiểm tra.", ready: false },
   { title: "Composition Lab", body: "Ghép vòng hợp âm, giai điệu và nhịp trống rồi nghe ngay thành quả của mình.", ready: false },
 ];
 
@@ -41,10 +41,10 @@ function ChordDemo() {
         ))}
       </div>
       <div className="mt-4 min-h-12" aria-live="polite">
-        {chord.isPending && <span className="flex items-center gap-2 text-sm text-muted"><Spinner /> Đang hỏi Music Engine…</span>}
+        {chord.isPending && <span className="flex items-center gap-2 text-sm text-muted"><Spinner /> Đang tính các nốt…</span>}
         {chord.isError && (
           <Alert tone="danger" action={<Button variant="ghost" onClick={() => chord.refetch()}>Thử lại</Button>}>
-            Chưa lấy được nốt từ Music Engine. {chord.error.message}
+            Chưa lấy được các nốt. {chord.error.message}
           </Alert>
         )}
         {chord.data && (
@@ -123,7 +123,7 @@ export default function HomePage() {
         <div>
           <h1 className="text-4xl font-bold leading-tight tracking-tight text-ink sm:text-5xl">Hiểu nhạc lý bằng cách chơi nó.</h1>
           <p className="mt-4 max-w-xl text-lg text-muted">
-            Học → Luyện tập → Chẩn đoán lỗi → Sáng tác. Mỗi đáp án được Music Engine kiểm tra, mỗi lỗi sai đi kèm lời giải thích dễ hiểu.
+            Học → Luyện tập → Chẩn đoán lỗi → Sáng tác. Bắt đầu từ con số 0: chỉ cần nhìn bàn phím piano và đếm. Mỗi đáp án được chấm tự động, làm sai sẽ có lời giải thích dễ hiểu.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             {status === "authenticated"

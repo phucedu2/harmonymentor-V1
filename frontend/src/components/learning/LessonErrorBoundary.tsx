@@ -29,7 +29,7 @@ export default class LessonErrorBoundary extends Component<Props, State> {
     if (!this.state.error) return this.props.children;
 
     return <section className="lesson-crash-fallback" role="alert">
-      <span className="eyebrow">LESSON RECOVERY</span>
+      <span className="eyebrow">CÓ LỖI HIỂN THỊ</span>
       <h2>Không thể hiển thị đầy đủ bài học</h2>
       <p>Một thành phần giao diện của bài học gặp lỗi. HarmonyMentor đã giữ ứng dụng hoạt động thay vì để toàn trang trắng.</p>
       <details>
