@@ -83,7 +83,7 @@ export function TriadExplorer({ root, onRootChange, prompt, note }: { root: stri
   const scientific = toScientificTriad(root, active);
 
   return <article className="lesson-content-block explorer-block triad-explorer">
-    <span className="section-kicker">Triad builder</span>
+    <span className="section-kicker">Dựng hợp âm ba nốt</span>
     <h3>6. Dựng triad trên bất kỳ nốt gốc nào</h3>
     {prompt && <p>{prompt}</p>}
     <RootKeySelector value={root} onChange={onRootChange} />
@@ -144,9 +144,9 @@ export function KeyOverview24({ prompt }: { prompt?: string }) {
   const [tierId, setTierId] = useState(TRIAD_KEY_TIERS[0].id);
   const tier: KeyOverviewTier = TRIAD_KEY_TIERS.find((item) => item.id === tierId) ?? TRIAD_KEY_TIERS[0];
   return <article className="lesson-content-block key-overview-block">
-    <span className="section-kicker">24 keys · tonic triads</span><h3>9. Tổng quan 24 Keys · 12 Major & 12 Minor</h3>
+    <span className="section-kicker">24 giọng · hợp âm chủ</span><h3>9. Tổng quan 24 giọng · 12 trưởng & 12 thứ</h3>
     {prompt && <p>{prompt}</p>}
-    <div className="tier-tabs" role="tablist" aria-label="Cấp độ luyện 24 keys">
+    <div className="tier-tabs" role="tablist" aria-label="Cấp độ luyện 24 giọng">
       {TRIAD_KEY_TIERS.map((item) => <button type="button" role="tab" aria-selected={tier.id === item.id} className={tier.id === item.id ? "selected" : ""} key={item.id} onClick={() => setTierId(item.id)}>{item.title}</button>)}
     </div>
     <p className="muted">{tier.note}</p>
@@ -205,17 +205,17 @@ export function RandomPracticePanel({ mode }: { mode: "interval" | "triad" }) {
     }
     if (mode === "triad" && expectedChord) {
       const correct = sameSpelledNotes(splitAnswerNotes(answer), expectedChord.notes);
-      setFeedback(correct ? `Đúng · ${expectedChord.symbol} = ${expectedChord.notes.join("–")}` : `Chưa đúng. ${expectedChord.symbol} được viết ${expectedChord.notes.join("–")}. Chú ý cả spelling.`);
+      setFeedback(correct ? `Đúng · ${expectedChord.symbol} = ${expectedChord.notes.join("–")}` : `Chưa đúng. ${expectedChord.symbol} được viết ${expectedChord.notes.join("–")}. Chú ý viết đúng tên nốt (spelling).`);
     }
   };
 
   return <div className="random-practice-panel">
-    <div className="random-practice-head"><b>Luyện tập ngẫu nhiên</b><small>{mode === "triad" ? "24 major/minor tonic triads · không tính vào mastery ở bản MVP" : "12 nốt gốc × 4 loại quãng · không tính vào mastery ở bản MVP"}</small></div>
+    <div className="random-practice-head"><b>Luyện tập ngẫu nhiên</b><small>{mode === "triad" ? "Hợp âm chủ của 24 giọng trưởng/thứ · phần luyện thêm, không tính điểm" : "12 nốt gốc × 4 loại quãng · phần luyện thêm, không tính điểm"}</small></div>
     <p>{question.prompt}</p>
     {mode === "interval" ? <div className="option-row">{LESSON1_INTERVAL_CODES.map((code) => <button type="button" key={code} className={answer === code ? "option selected" : "option"} onClick={() => setAnswer(code)}>{code}</button>)}</div> : <input value={answer} onChange={(event) => setAnswer(event.target.value)} placeholder="Ví dụ định dạng: Nốt-Nốt-Nốt" />}
     <div className="actions">
       <button type="button" disabled={!answer.trim() || (mode === "triad" && !expectedChord)} onClick={check}>Kiểm tra nhanh</button>
-      <button type="button" className="text-button" onClick={() => setNonce((value) => value + 1 + Math.floor(Math.random() * 97))}>Đổi câu hỏi / Luyện tập ngẫu nhiên trên {mode === "triad" ? "24 keys" : "12 nốt gốc"}</button>
+      <button type="button" className="text-button" onClick={() => setNonce((value) => value + 1 + Math.floor(Math.random() * 97))}>Đổi câu khác</button>
     </div>
     {feedback && <div className={`result ${feedback.startsWith("Đúng") ? "good" : "bad"}`}>{feedback}</div>}
   </div>;

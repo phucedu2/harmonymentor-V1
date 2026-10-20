@@ -23,6 +23,7 @@ export default function LearnPage() {
   }, []);
 
   const progressMap = useMemo(() => new Map((overview?.lessons ?? []).map((row) => [row.lesson_id, row])), [overview]);
+  const nextLessonId = lessons.find((lesson) => lesson.exercise_count > 0 && progressMap.get(lesson.id)?.status !== "completed")?.id;
 
   const open = async (id: string) => {
     setError(null); setLoading(true);
@@ -49,22 +50,25 @@ export default function LearnPage() {
   );
 
   return <section>
-    <div className="page-heading"><div><span className="eyebrow">LEARN</span><h2>Lộ trình học hòa âm</h2></div>
-      <p>Lessons 1–4 đang chạy thành vertical slice: theory → checkpoint → lesson quiz → review. Lessons 5–8 giữ source-audited specification để không vượt scope.</p></div>
-    {loading && <article className="card">Đang tải Learning Platform…</article>}
-    {error && <article className="result bad">{error}. Hãy kiểm tra FastAPI backend.</article>}
+    <div className="page-heading"><div><span className="eyebrow">HỌC</span><h2>Lộ trình học hòa âm</h2></div>
+      <p>Học theo thứ tự: mỗi bài có lý thuyết ngắn, phần bấm thử trên piano, câu kiểm tra nhanh và bài kiểm tra cuối. Bài sau dùng kiến thức của bài trước.</p></div>
+    {loading && <article className="card">Đang tải bài học…</article>}
+    {error && <article className="result bad">Không tải được bài học: {error}. Hãy thử tải lại trang.</article>}
     <div className="lesson-list">
       {lessons.map((lesson) => {
         const progress = progressMap.get(lesson.id);
         const runnable = lesson.exercise_count > 0;
+        // Gợi ý thứ tự: bài chưa xong đầu tiên là "Học ngay"; bài sau nó vẫn mở nhưng nhắc học bài trước.
+        const isNext = lesson.id === nextLessonId;
+        const label = progress?.status === "completed" ? "Đã xong" : !runnable ? "Sắp có" : progress?.status === "started" ? "Đang học" : isNext ? "Học ngay" : `Nên học sau Bài ${lesson.order - 1}`;
         return <button className={`lesson-row ${!runnable ? "lesson-locked" : ""}`} key={lesson.id} onClick={() => runnable && void open(lesson.id)} disabled={!runnable}>
           <span className="lesson-index">{lesson.order}</span>
           <span className="lesson-main">
             <small>{lesson.track}</small><b>{lesson.title}</b>
-            <span>{lesson.exercise_count} quiz · {lesson.review_item_count} review cards · {lesson.block_count} blocks</span>
-            {runnable && <span className="lesson-progress-inline"><span><i style={{ width: `${progress?.practice_progress_percent ?? 0}%` }} /></span><em>{progress?.status === "completed" ? "Hoàn thành" : progress?.status === "started" ? `Đã làm ${progress.attempted_exercises}/${progress.exercise_count}` : "Chưa bắt đầu"}</em></span>}
+            <span>{runnable ? `${lesson.block_count} phần · ${lesson.exercise_count} câu hỏi · ${lesson.review_item_count} thẻ ôn` : "Nhóm đang soạn nội dung bài này"}</span>
+            {runnable && <span className="lesson-progress-inline"><span><i style={{ width: `${progress?.status === "completed" ? 100 : Math.round((progress?.correct_exercises ?? 0) / Math.max(1, lesson.exercise_count) * 100)}%` }} /></span><em>{progress?.status === "completed" ? "Hoàn thành" : progress?.status === "started" ? `Đã đúng ${progress.correct_exercises}/${progress.exercise_count} câu` : "Chưa bắt đầu"}</em></span>}
           </span>
-          <span className={`status ${progress?.status === "completed" ? "completed" : lesson.status}`}>{progress?.status === "completed" ? "completed" : lesson.status}</span>
+          <span className={`status ${progress?.status === "completed" ? "completed" : runnable && (isNext || progress?.status === "started") ? "ready" : "locked"}`}>{label}</span>
         </button>;
       })}
     </div>

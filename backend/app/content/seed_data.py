@@ -72,8 +72,10 @@ def _upsert_exercises(db: Session, spec: dict) -> None:
     # L01 was source-audited as v2. The beginner-pedagogy rewrite changes prompts,
     # answer guidance, and one diminished-triad target, so keep previous attempts traceable
     # by publishing the revised multi-key lesson exercises as v4.
-    target_version = 4 if spec["id"] == "L01" else 1
+    lesson_version = 4 if spec["id"] == "L01" else 1
     for position, item in enumerate(spec["exercises"], start=1):
+        # Câu được sửa sau khi phát hành mang version riêng (curriculum_specs.q(version=...)).
+        target_version = item.get("version") or lesson_version
         exercise = db.get(Exercise, item["id"])
         if exercise is None:
             exercise = Exercise(

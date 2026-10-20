@@ -10,7 +10,7 @@ from app.content.curriculum_specs import LESSON_SPECS
 from app.db.models import User
 from app.db.session import SessionLocal
 from app.main import app
-from tests.auth_helpers import auth
+from tests.auth_helpers import answer_lesson_correctly, auth
 
 
 def make_user() -> str:
@@ -67,6 +67,7 @@ def test_completion_updates_overview_and_review_counts():
     with TestClient(app) as client:
         user_id = make_user()
         client.post("/api/v1/lessons/L01/start", json={}, headers=auth(user_id))
+        answer_lesson_correctly(client, "L01", auth(user_id))
         completed = client.post("/api/v1/lessons/L01/complete", json={}, headers=auth(user_id))
         assert completed.status_code == 200
 

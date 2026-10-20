@@ -105,7 +105,12 @@ export type AttemptResult = {
   primary_error?: string | null;
   feedback?: string | null;
   errors: { code: string; detail: Record<string, unknown> }[];
+  // Backend chỉ gửi lời giải khi đã đúng hoặc sau 2 lần sai.
+  explanation?: string | null;
+  wrong_attempts: number;
 };
+
+export type InputMethod = "text" | "choice" | "piano";
 
 export type CompleteLessonResult = {
   lesson_id: string;
@@ -126,6 +131,9 @@ export type ReviewState = {
   interval_days: number;
   due_at: string;
   status: string;
+  leitner_box: number;
+  self_check: boolean;
+  back?: string | null;
 };
 
 export type ReviewAnswerResult = {
@@ -137,6 +145,7 @@ export type ReviewAnswerResult = {
   interval_days: number;
   next_due_at: string;
   feedback?: string | null;
+  leitner_box: number;
 };
 
 // Mọi request đi qua lib/http.ts để có access token và lỗi chuẩn SRS 7.4.
@@ -171,8 +180,8 @@ export const api = {
   learningOverview: () => apiCall<LearningOverview>("/learning/overview"),
   inspectChord: (symbol: string, key?: string) =>
     apiCall<ChordInspection>(`/music/chords/inspect?symbol=${encodeURIComponent(symbol)}${key ? `&key=${encodeURIComponent(key)}` : ""}`),
-  submitAttempt: (exerciseVersionId: string, answer: unknown) =>
-    apiPost<AttemptResult>("/attempts", { exercise_version_id: exerciseVersionId, answer }),
+  submitAttempt: (exerciseVersionId: string, answer: unknown, inputMethod: InputMethod = "text") =>
+    apiPost<AttemptResult>("/attempts", { exercise_version_id: exerciseVersionId, answer, input_method: inputMethod }),
   completeLesson: (lessonId: string) =>
     apiPost<CompleteLessonResult>(`/lessons/${encodeURIComponent(lessonId)}/complete`, {}),
   dueReviews: (includeFuture = false) =>
@@ -181,5 +190,5 @@ export const api = {
     apiPost<ReviewAnswerResult>(`/review/${encodeURIComponent(reviewItemId)}/answer`, { answer, rating }),
 };
 
-// Tách chuỗi người học gõ ("G B D F#" hoặc "G, B, D, F#") thành danh sách nốt.
-export const splitNotes = (text: string) => text.split(/[\s,;]+/).filter(Boolean);
+// Tách chuỗi người học gõ ("G B D F#", "G, B, D, F#" hoặc "G-B-D-F#") thành danh sách nốt.
+export const splitNotes = (text: string) => text.split(/[\s,;–—-]+/).filter(Boolean);

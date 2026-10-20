@@ -33,7 +33,7 @@ export type KeyOverviewTier = { id: string; title: string; note: string; keys: K
 export const TRIAD_KEY_TIERS: KeyOverviewTier[] = [
   {
     id: "tier-1",
-    title: "Tier 1 · Chỉ dùng phím trắng",
+    title: "Cấp 1 · Chỉ dùng phím trắng",
     note: "Bắt đầu ở đây để nhìn rõ cấu trúc mà chưa phải xử lý dấu hóa.",
     keys: [
       { symbol: "C", label: "C major" }, { symbol: "Dm", label: "D minor" },
@@ -43,7 +43,7 @@ export const TRIAD_KEY_TIERS: KeyOverviewTier[] = [
   },
   {
     id: "tier-2",
-    title: "Tier 2 · Một phím đen / spelling quen thuộc",
+    title: "Cấp 2 · Bắt đầu có phím đen",
     note: "Mỗi hợp âm bắt đầu yêu cầu ít nhất một dấu hóa hoặc một phím đen.",
     keys: [
       { symbol: "D", label: "D major" }, { symbol: "E", label: "E major" },
@@ -54,8 +54,8 @@ export const TRIAD_KEY_TIERS: KeyOverviewTier[] = [
   },
   {
     id: "tier-3",
-    title: "Tier 3 · Nhiều dấu hóa & enharmonic",
-    note: "Phần còn lại để đủ 12 major + 12 minor. Hãy ưu tiên hiểu nguyên lý trước khi học thuộc.",
+    title: "Cấp 3 · Nhiều dấu hóa, tên đồng âm",
+    note: "Phần còn lại để đủ 12 giọng trưởng + 12 giọng thứ. Hãy ưu tiên hiểu nguyên lý trước khi học thuộc.",
     keys: [
       { symbol: "Db", label: "Db major" }, { symbol: "F#", label: "F# major" },
       { symbol: "Ab", label: "Ab major" }, { symbol: "B", label: "B major" },

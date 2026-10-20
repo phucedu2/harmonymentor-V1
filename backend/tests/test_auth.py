@@ -12,7 +12,7 @@ from app.auth.security import create_access_token
 from app.db.models import User
 from app.db.session import SessionLocal
 from app.main import app
-from tests.auth_helpers import auth
+from tests.auth_helpers import answer_lesson_correctly, auth
 
 PASSWORD = "nhacly2026"
 
@@ -201,6 +201,7 @@ def test_user_cannot_touch_another_users_data(client):
     b_reg = register(b, name="B")
     a_id = a.json()["user"]["id"]
 
+    answer_lesson_correctly(client, "L01", bearer(a))
     assert client.post("/api/v1/lessons/L01/complete", headers=bearer(a)).status_code == 200
     a_due = client.get("/api/v1/review/due", params={"include_future": "true"}, headers=bearer(a)).json()
     assert a_due
@@ -215,12 +216,14 @@ def test_user_cannot_touch_another_users_data(client):
     assert a_after == a_due
 
     # Gửi user_id của A trong body bị bỏ qua: lượt làm vẫn ghi cho B.
+    before_a = client.get("/api/v1/learning/overview", headers=bearer(a)).json()
+    l01_before = next(x for x in before_a["lessons"] if x["lesson_id"] == "L01")["attempt_count"]
     attempt = b.post("/api/v1/attempts", json={"user_id": a_id, "exercise_version_id": "L01-Q01-v4", "answer": "M3"},
                      headers=bearer(b_reg))
     assert attempt.status_code == 200 and attempt.json()["user_id"] == b_reg.json()["user"]["id"]
     overview_a = client.get("/api/v1/learning/overview", headers=bearer(a)).json()
     l01 = next(x for x in overview_a["lessons"] if x["lesson_id"] == "L01")
-    assert l01["attempt_count"] == 0
+    assert l01["attempt_count"] == l01_before
 
 
 def test_synthetic_and_inactive_users_cannot_use_tokens(client):
