@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api, splitNotes, type EngineError, type GradeResult } from "../api";
-import Piano from "../Piano";
+// Practice dùng chung piano tương tác với Learn (v0.5.3); Piano.tsx dạng SVG chỉ còn cho trang chủ.
+import VirtualPiano from "../components/music/VirtualPiano";
 
 const pick = <T,>(xs: T[]) => xs[Math.floor(Math.random() * xs.length)];
 const ROOTS = ["C", "D", "E", "F", "G", "A", "B", "Bb", "Eb", "Ab", "F#", "Db"];
@@ -79,7 +80,7 @@ function Exercise(props: {
           {g.result.convention_verified === false && <p className="codes">Lưu ý: cách viết ký hiệu này chưa có nguồn xác minh.</p>}
         </div>
       )}
-      {props.showPiano && g.result && <Piano good={expected} bad={g.result.correct ? [] : splitNotes(answer)} />}
+      {props.showPiano && g.result && <VirtualPiano highlightedPitchClasses={expected} incorrectPitchClasses={g.result.correct ? [] : splitNotes(answer)} showLabels={false} startMidi={48} endMidi={72} />}
     </section>
   );
 }

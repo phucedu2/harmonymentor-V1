@@ -3,12 +3,13 @@
     "id": "L01",
     "order": 1,
     "track": "Foundation",
-    "title": "Nốt, quãng và cấu trúc hợp âm",
+    "title": "Từ bàn phím đến hợp âm ba nốt",
     "status": "reviewed",
     "objectives": [
-      "Phân biệt tên nốt với cao độ nghe được trong các trường hợp enharmonic.",
-      "Nhận diện quãng theo số và tính chất.",
-      "Dựng major/minor/diminished triad bằng đúng spelling."
+      "Nhận biết tên nốt và tự đếm được nửa cung trên bàn phím piano.",
+      "Hiểu cách đếm số quãng và đọc các ký hiệu M3, m3, P5, d5.",
+      "Dựng hợp âm trưởng, thứ và giảm bằng đúng tên nốt thay vì học thuộc một hợp âm C.",
+      "Khám phá hợp âm chủ trên 12 nốt gốc và luyện dần 12 giọng trưởng + 12 giọng thứ."
     ],
     "skills": [
       "pitch.spelling",
@@ -41,71 +42,218 @@
     "blocks": [
       [
         "L01-B01",
-        "objectives",
+        "callout",
         {
-          "title": "Mục tiêu",
-          "items": [
-            "Gọi tên quãng",
-            "Dựng triad",
-            "Phân biệt enharmonic spelling"
-          ]
+          "title": "Bài này bắt đầu từ con số 0",
+          "prompt": "Bạn chưa cần biết đọc khuông nhạc hay âm giai. Hãy đi theo thứ tự: nhìn bàn phím → đếm bước nửa cung → đếm tên chữ cái của quãng → dựng hợp âm ba nốt → đổi nốt gốc để kiểm tra xem mình đã hiểu nguyên lý hay chưa."
         }
       ],
       [
         "L01-B02",
         "theory",
         {
-          "title": "Quãng có số và tính chất",
+          "title": "1. Tên nốt và bàn phím piano",
           "paragraphs": [
-            "Một quãng được xác định bởi khoảng cách chữ cái và chất lượng như trưởng, thứ, đúng, tăng hoặc giảm."
+            "Bảy tên nốt cơ bản là C, D, E, F, G, A, B. Sau B, chuỗi lại bắt đầu từ C ở vùng cao hơn.",
+            "Trên piano, các phím trắng mang các tên C–D–E–F–G–A–B. Phím đen nằm xen giữa phần lớn các cặp phím trắng.",
+            "Một nửa cung là một bước sang phím sát bên cạnh. Khi đếm nửa cung, phím xuất phát được tính là 0 vì ta đang đếm số bước nhảy: C = 0, C# = 1, D = 2. Vì vậy C→E đi bốn bước: C(0) → C#(1) → D(2) → D#(3) → E(4).",
+            "Giữa E–F và B–C không có phím đen. Vì vậy E→F và B→C chỉ cách nhau 1 nửa cung. Các cặp phím trắng kề nhau còn lại C–D, D–E, F–G, G–A, A–B đều có một phím đen ở giữa nên cách nhau 2 nửa cung, tức 1 cung nguyên.",
+            "Dấu # (thăng) nâng nốt lên 1 nửa cung. Dấu b hoặc ♭ (giáng) hạ nốt xuống 1 nửa cung."
           ]
+        }
+      ],
+      [
+        "L01-B03",
+        "piano",
+        {
+          "title": "Thử ngay: đếm số bước chứ không đếm số phím",
+          "prompt": "Bấm từng cặp và đếm bước nhảy: C→C# = 1; C→D = 2; E→F = 1; B→C = 1. Hãy nhớ: nốt đầu là 0 khi đếm nửa cung.",
+          "highlight": [
+            "B",
+            "C",
+            "C#",
+            "D",
+            "E",
+            "F"
+          ],
+          "selection_mode": false,
+          "show_octave_numbers": false
+        }
+      ],
+      [
+        "L01-B04",
+        "theory",
+        {
+          "title": "2. Đếm số quãng và viết đúng tên nốt",
+          "paragraphs": [
+            "Số quãng được đếm bằng số lượng tên chữ cái và nốt đầu được tính là 1. C→D là quãng 2 vì có C(1)–D(2). C→E là quãng 3 vì có C(1)–D(2)–E(3). C→G là quãng 5 vì có C(1)–D(2)–E(3)–F(4)–G(5).",
+            "Đây là hai kiểu đếm khác nhau: khi đếm tên chữ cái để biết quãng mấy, nốt đầu = 1; khi đếm nửa cung trên piano để biết khoảng cách âm thanh, phím xuất phát = 0.",
+            "Một phím đen có thể có hai tên. Phím giữa C và D có thể gọi là C# hoặc Db. Hai tên khác nhau nhưng cùng cao độ trên piano được gọi là đồng âm (enharmonic).",
+            "Khi viết nhạc, ta không chọn tên tùy ý. Cách chọn đúng tên chữ cái và dấu hóa được gọi là spelling — hiểu đơn giản là 'viết đúng tên nốt'. Muốn tạo quãng 3 từ C, nốt trên phải thuộc họ E: E, Eb hoặc E#. D# có thể cùng cao độ với Eb nhưng thuộc họ D nên C→D# không được viết như một quãng 3.",
+            "Quy tắc chữ cái này cũng chuẩn bị cho hợp âm ba nốt: gốc C dùng khung C–E–G; gốc D dùng D–F–A; gốc B dùng B–D–F. Dấu hóa sẽ được xác định sau bằng số nửa cung."
+          ]
+        }
+      ],
+      [
+        "L01-B05",
+        "glossary",
+        {
+          "title": "3. Năm chữ cái mô tả chất lượng quãng",
+          "kicker": "Ký hiệu quãng",
+          "intro": "Sau khi biết con số của quãng, ta cần mô tả kích thước chính xác của nó. Âm nhạc chia các số quãng thành hai họ. Họ 1–4–5–8 dùng một kích thước chuẩn gọi là Perfect (P). Họ 2–3–6–7 có hai kích thước chuẩn liền nhau: Minor (m) nhỏ hơn và Major (M) lớn hơn đúng 1 nửa cung. Tên Major/Minor trước hết nói về kích thước; cảm giác sáng/tối chỉ là gợi ý khi nghe, đặc biệt rõ với quãng 3, chứ không phải định nghĩa tuyệt đối.",
+          "spectrums": [
+            {
+              "label": "Nhóm quãng 1, 4, 5, 8",
+              "text": "d (Giảm: −1 nửa cung) ← P (Đúng · chuẩn) → A (Tăng: +1 nửa cung)"
+            },
+            {
+              "label": "Nhóm quãng 2, 3, 6, 7",
+              "text": "d (Giảm: thấp hơn m 1 nửa cung) ← m (Thứ) ↔ M (Trưởng) → A (Tăng: cao hơn M 1 nửa cung)"
+            }
+          ],
+          "terms": [
+            {
+              "symbol": "P",
+              "term": "Perfect · đúng",
+              "definition": "Dùng cho quãng 1, 4, 5 và 8 ở kích thước chuẩn của chúng. Nhóm này không có Major hay Minor. Nếu giữ nguyên số quãng nhưng rộng hơn P 1 nửa cung thì thành A; hẹp hơn P 1 nửa cung thì thành d.",
+              "example": "C→G = P5 = 7 nửa cung"
+            },
+            {
+              "symbol": "M",
+              "term": "Major · trưởng · cỡ lớn",
+              "definition": "Dùng cho quãng 2, 3, 6 và 7 ở kích thước lớn hơn trong cặp chuẩn M/m. Với cùng số quãng, M rộng hơn m đúng 1 nửa cung.",
+              "example": "C→E = M3 = 4 nửa cung"
+            },
+            {
+              "symbol": "m",
+              "term": "Minor · thứ · cỡ nhỏ",
+              "definition": "Dùng cho quãng 2, 3, 6 và 7 ở kích thước nhỏ hơn trong cặp chuẩn M/m. Với cùng số quãng, m hẹp hơn M đúng 1 nửa cung.",
+              "example": "C→Eb = m3 = 3 nửa cung"
+            },
+            {
+              "symbol": "A",
+              "term": "Augmented · tăng",
+              "definition": "Giữ nguyên tên chữ cái và số quãng, rồi kéo rộng thêm 1 nửa cung vượt khỏi kích thước chuẩn lớn nhất: P đối với nhóm 1–4–5–8 hoặc M đối với nhóm 2–3–6–7.",
+              "example": "C→G là P5 (7); giữ chữ G và nâng thành G# thì C→G# = A5 (8). Không viết Ab vì đổi sang chữ A sẽ thành quãng 6."
+            },
+            {
+              "symbol": "d",
+              "term": "Diminished · giảm",
+              "definition": "Giữ nguyên tên chữ cái và số quãng, rồi ép hẹp xuống 1 nửa cung dưới kích thước chuẩn nhỏ nhất: P đối với nhóm 1–4–5–8 hoặc m đối với nhóm 2–3–6–7.",
+              "example": "C→G là P5 (7); giữ chữ G và hạ thành Gb thì C→Gb = d5 (6)."
+            }
+          ]
+        }
+      ],
+      [
+        "L01-B06",
+        "interval_explorer",
+        {
+          "title": "4. Khám phá M3, m3, P5 và d5 trên 12 nốt gốc",
+          "prompt": "Mặc định bắt đầu từ C. Hãy đổi nốt gốc và chọn một loại quãng; tên nốt, bàn phím, khuông nhạc và âm thanh sẽ đổi cùng nhau.",
+          "intervals": [
+            "M3",
+            "m3",
+            "P5",
+            "d5"
+          ],
+          "default_root": "C"
         }
       ],
       [
         "L01-BCP1",
         "checkpoint",
         {
-          "title": "Checkpoint · Nhận diện quãng",
+          "title": "Checkpoint · Đọc một quãng mới",
           "exercise_id": "L01-Q01",
-          "note": "Tự trả lời trước khi tiếp tục."
+          "note": "Đừng dựa vào ví dụ C ở phần trên. Hãy đếm chữ cái trước rồi đếm số bước nửa cung.",
+          "random_practice": "interval"
         }
       ],
       [
-        "L01-B03",
+        "L01-B08",
         "theory",
         {
-          "title": "Triad được dựng theo root–third–fifth",
+          "title": "5. Hợp âm ba nốt: dựng bằng hai bước",
           "paragraphs": [
-            "Major, minor và diminished triad khác nhau ở chất lượng quãng 3 và quãng 5 tính từ root."
+            "Một triad (hợp âm ba nốt) gồm nốt gốc, một nốt thuộc họ chữ cái thứ ba và một nốt thuộc họ chữ cái thứ năm.",
+            "Bước 1 — Chọn đúng khung chữ cái 1–3–5: bắt đầu từ nốt gốc rồi bỏ qua một chữ cái mỗi lần. C cho C–E–G; D cho D–F–A; E cho E–G–B. Đây mới là khung spelling, chưa quyết định dấu # hay b; ở bước này bạn chưa cần biết âm giai.",
+            "Bước 2 — Đếm nửa cung từ root để đặt dấu hóa: Major = M3 + P5; Minor = m3 + P5; Diminished = m3 + d5. Nhờ vậy người học có thể dựng hợp âm ở bất kỳ nốt gốc nào thay vì học thuộc riêng C.",
+            "Ví dụ gốc D: khung chữ cái là D–F–A. D major cần M3 nên F phải nâng thành F#: D–F#–A. D minor cần m3 nên giữ F tự nhiên: D–F–A."
           ]
+        }
+      ],
+      [
+        "L01-B09",
+        "triad_explorer",
+        {
+          "title": "6. Dựng triad trên bất kỳ nốt gốc nào",
+          "prompt": "Đổi nốt gốc để xem hai bước dựng hợp âm tự cập nhật. Major và Minor là trọng tâm của 24 keys; Diminished và Augmented giúp bạn hiểu d5/A5.",
+          "default_root": "C",
+          "qualities": [
+            "major",
+            "minor",
+            "diminished",
+            "augmented"
+          ],
+          "show_two_step": true,
+          "note": "d5 tạo Diminished triad: m3 + d5 = 1–♭3–♭5. Nếu dùng A5 cùng M3, ta có Augmented triad: M3 + A5 = 1–3–#5."
         }
       ],
       [
         "L01-BCP2",
         "checkpoint",
         {
-          "title": "Checkpoint · Dựng triad",
+          "title": "Checkpoint · Dựng hợp âm ở nốt gốc khác C",
           "exercise_id": "L01-Q02",
-          "note": "Dựng hợp âm từ trí nhớ, không nhìn đáp án."
+          "note": "Nhập ba tên nốt, ngăn cách bằng dấu -, khoảng trắng hoặc dấu phẩy. Phần gợi ý chỉ mô tả định dạng, không chứa đáp án.",
+          "random_practice": "triad"
         }
       ],
       [
-        "L01-B04",
-        "callout",
+        "L01-B10",
+        "triad_notation_explorer",
         {
-          "title": "Spelling matters",
-          "prompt": "Hai tên nốt có thể cùng phím đàn nhưng không mặc nhiên thay thế nhau trong bài viết nhạc."
+          "title": "7. So sánh chất lượng hợp âm bằng cùng một nốt gốc",
+          "prompt": "Đổi nốt gốc rồi so sánh Major, Minor, Diminished và Augmented. Piano và ký âm dùng cùng nốt gốc đang chọn.",
+          "default_root": "C"
         }
       ],
       [
-        "L01-B05",
+        "L01-B11",
+        "triad_audio_explorer",
+        {
+          "title": "8. Nghe sự thay đổi khi giữ nguyên nốt gốc",
+          "prompt": "Nghe Major → Minor → Diminished → Augmented trên cùng root. Mục tiêu là nối công thức quãng với âm thanh, không bắt buộc mô tả cảm xúc.",
+          "default_root": "C"
+        }
+      ],
+      [
+        "L01-B12",
+        "key_overview",
+        {
+          "title": "9. Tổng quan 24 Keys · 12 Major & 12 Minor",
+          "prompt": "Trong Bài 1, ta chỉ nhìn tonic triad (hợp âm chủ) đại diện cho mỗi key. Khái niệm key/âm giai đầy đủ sẽ được học ở Lesson 2. Học theo Tier để không bị ngợp.",
+          "tiers": [
+            "tier-1",
+            "tier-2",
+            "tier-3"
+          ]
+        }
+      ],
+      [
+        "L01-B13",
         "summary",
         {
-          "title": "Ghi nhớ",
+          "title": "10. Tóm tắt trước khi làm quiz",
           "items": [
-            "M3 khác m3",
-            "C major = C–E–G",
-            "B diminished = B–D–F"
+            "Đếm số quãng: nốt đầu = 1. Đếm nửa cung trên piano: phím xuất phát = 0.",
+            "E–F và B–C không có phím đen ở giữa nên cách nhau 1 nửa cung; các cặp phím trắng kề nhau còn lại cách nhau 2 nửa cung.",
+            "Nhóm 1–4–5–8 dùng P làm kích thước chuẩn; nhóm 2–3–6–7 dùng cặp m/M. A rộng hơn chuẩn 1 nửa cung; d hẹp hơn chuẩn nhỏ nhất 1 nửa cung.",
+            "Bốn quãng trọng tâm: M3 = 4, m3 = 3, P5 = 7, d5 = 6 nửa cung. A5 = 8 nửa cung dùng để hiểu augmented triad.",
+            "Triad dựng theo hai bước: chọn đúng khung chữ cái 1–3–5 rồi dùng M3/m3/P5/d5/A5 để đặt dấu hóa.",
+            "Major = M3 + P5; Minor = m3 + P5; Diminished = m3 + d5; Augmented = M3 + A5.",
+            "Sau khi hiểu bằng C, hãy đổi root và luyện 12 major + 12 minor tonic triads theo ba Tier."
           ]
         }
       ]
@@ -114,7 +262,7 @@
       {
         "id": "L01-Q01",
         "kind": "mcq",
-        "prompt": "Quãng từ C lên E là gì?",
+        "prompt": "Quãng từ F lên A là gì?",
         "skill": "interval.naming",
         "strategy": "exact",
         "answer_key": {
@@ -126,10 +274,10 @@
         "options": [
           "m3",
           "M3",
-          "P4",
-          "A4"
+          "P5",
+          "d5"
         ],
-        "explanation": "C–E là quãng ba trưởng.",
+        "explanation": "F–A dùng ba tên chữ F–G–A và cách nhau 4 nửa cung, nên là M3.",
         "provenance": [
           {
             "source_id": "OMT_V2",
@@ -146,22 +294,22 @@
       {
         "id": "L01-Q02",
         "kind": "build",
-        "prompt": "Dựng hợp âm C trưởng bằng tên nốt.",
+        "prompt": "Dựng hợp âm G major bằng tên nốt. Nhập ba nốt theo cùng một định dạng, ví dụ Nốt-Nốt-Nốt.",
         "skill": "chord.triad_build",
         "strategy": "music_engine",
         "answer_key": {
           "expected": [
-            "C",
-            "E",
-            "G"
+            "G",
+            "B",
+            "D"
           ]
         },
         "grader_config": {
           "kind": "build_chord",
-          "symbol": "C"
+          "symbol": "G"
         },
         "options": null,
-        "explanation": "C major = C–E–G.",
+        "explanation": "G major = G–B–D: M3 + P5 tính từ G.",
         "provenance": [
           {
             "source_id": "OMT_V2",
@@ -178,17 +326,18 @@
       {
         "id": "L01-Q03",
         "kind": "active_recall",
-        "prompt": "Không nhìn đáp án: công thức minor triad là gì?",
+        "prompt": "Không nhìn đáp án: công thức minor triad là gì? Nhập theo định dạng như 1-3-5 (dùng chữ b thay cho ♭).",
         "skill": "chord.triad_formula",
         "strategy": "exact",
         "answer_key": {
           "expected": "1-b3-5"
         },
         "grader_config": {
-          "normalize_dashes": true
+          "normalize_dashes": true,
+          "normalize_accidentals": true
         },
         "options": null,
-        "explanation": "Minor triad = 1–♭3–5.",
+        "explanation": "Minor triad = 1–♭3–5 = m3 + P5 tính từ root.",
         "provenance": [
           {
             "source_id": "OMT_V2",
@@ -200,22 +349,22 @@
       {
         "id": "L01-Q04",
         "kind": "build",
-        "prompt": "Dựng hợp âm A minor bằng tên nốt.",
+        "prompt": "Dựng hợp âm D minor bằng tên nốt. Nhập ba nốt, có thể ngăn cách bằng dấu -, khoảng trắng hoặc dấu phẩy.",
         "skill": "chord.triad_build",
         "strategy": "music_engine",
         "answer_key": {
           "expected": [
-            "A",
-            "C",
-            "E"
+            "D",
+            "F",
+            "A"
           ]
         },
         "grader_config": {
           "kind": "build_chord",
-          "symbol": "Am"
+          "symbol": "Dm"
         },
         "options": null,
-        "explanation": "A minor = A–C–E.",
+        "explanation": "D minor = D–F–A: m3 + P5 tính từ D.",
         "provenance": [
           {
             "source_id": "OMT_V2",
@@ -232,7 +381,7 @@
       {
         "id": "L01-Q05",
         "kind": "context",
-        "prompt": "G# và Ab có thể cùng cao độ trên đàn. Điều đó có nghĩa chúng luôn cùng spelling không?",
+        "prompt": "F# và Gb có thể là cùng một phím trên piano. Điều đó có nghĩa chúng luôn được viết cùng một tên trong mọi ngữ cảnh không? Trả lời ngắn: Có hoặc Không.",
         "skill": "pitch.spelling",
         "strategy": "rubric",
         "answer_key": {
@@ -248,7 +397,7 @@
           "strip_accents": true
         },
         "options": null,
-        "explanation": "Enharmonic pitches có thể cùng cao độ nhưng khác tên viết theo ngữ cảnh.",
+        "explanation": "Không. Hai tên có thể cùng cao độ nhưng spelling đúng còn phụ thuộc số quãng, khung chữ cái và ngữ cảnh.",
         "provenance": [
           {
             "source_id": "OMT_V2",
@@ -265,7 +414,7 @@
       {
         "id": "L01-Q06",
         "kind": "build",
-        "prompt": "Dựng hợp âm B diminished.",
+        "prompt": "Dựng hợp âm B diminished. Nhập ba nốt, có thể ngăn cách bằng dấu -, khoảng trắng hoặc dấu phẩy.",
         "skill": "chord.triad_build",
         "strategy": "music_engine",
         "answer_key": {
@@ -280,7 +429,7 @@
           "symbol": "Bdim"
         },
         "options": null,
-        "explanation": "B diminished = B–D–F.",
+        "explanation": "B diminished = B–D–F: m3 + d5 tính từ B.",
         "provenance": [
           {
             "source_id": "OMT_V2",
@@ -298,8 +447,8 @@
     "review_items": [
       {
         "id": "L01-F01",
-        "front": "Quãng C–E?",
-        "back": "M3",
+        "front": "Quãng F–A?",
+        "back": "M3 · 4 nửa cung",
         "skill": "interval.naming",
         "mode": "recall",
         "strategy": "exact",
@@ -319,8 +468,8 @@
       },
       {
         "id": "L01-F02",
-        "front": "Quãng C–Eb?",
-        "back": "m3",
+        "front": "Quãng D–F?",
+        "back": "m3 · 3 nửa cung",
         "skill": "interval.naming",
         "mode": "recall",
         "strategy": "exact",
@@ -340,63 +489,63 @@
       },
       {
         "id": "L01-F03",
-        "front": "Công thức major triad?",
-        "back": "1–3–5",
-        "skill": "chord.triad_formula",
+        "front": "Quãng G–D?",
+        "back": "P5 · 7 nửa cung",
+        "skill": "interval.naming",
         "mode": "recall",
         "strategy": "exact",
         "answer_key": {
-          "expected": "1-3-5"
+          "expected": "P5"
         },
         "grader_config": {
-          "normalize_dashes": true
+          "case_sensitive": true
         },
         "provenance": [
           {
             "source_id": "OMT_V2",
-            "locator": "Fundamentals → Triads",
-            "note": "Triad structure, qualities, spelling, and listening."
+            "locator": "Fundamentals → Intervals",
+            "note": "Interval size/quality and enharmonic interval spelling."
           }
         ]
       },
       {
         "id": "L01-F04",
-        "front": "Công thức minor triad?",
-        "back": "1–♭3–5",
-        "skill": "chord.triad_formula",
+        "front": "Quãng B–F?",
+        "back": "d5 · 6 nửa cung",
+        "skill": "interval.naming",
         "mode": "recall",
         "strategy": "exact",
         "answer_key": {
-          "expected": "1-b3-5"
+          "expected": "d5"
         },
         "grader_config": {
-          "normalize_dashes": true
+          "case_sensitive": true
         },
         "provenance": [
           {
             "source_id": "OMT_V2",
-            "locator": "Fundamentals → Triads",
-            "note": "Triad structure, qualities, spelling, and listening."
+            "locator": "Fundamentals → Intervals",
+            "note": "Interval size/quality and enharmonic interval spelling."
           }
         ]
       },
       {
         "id": "L01-F05",
-        "front": "Build C major",
-        "back": "C–E–G",
+        "front": "Build F major",
+        "back": "F–A–C",
         "skill": "chord.triad_build",
         "mode": "build",
         "strategy": "music_engine",
         "answer_key": {
           "expected": [
-            "C",
-            "E",
-            "G"
+            "F",
+            "A",
+            "C"
           ]
         },
         "grader_config": {
           "kind": "build_chord",
-          "symbol": "C"
+          "symbol": "F"
         },
         "provenance": [
           {
@@ -460,15 +609,16 @@
       },
       {
         "id": "L01-F08",
-        "front": "Enharmonic: cùng phím đàn có luôn cùng tên nốt?",
-        "back": "Không; spelling phụ thuộc ngữ cảnh ký âm.",
+        "front": "Muốn viết một quãng 3 phía trên D, nốt trên phải thuộc họ chữ nào?",
+        "back": "Họ F (F, Fb hoặc F# tùy chất lượng quãng).",
         "skill": "pitch.spelling",
         "mode": "context",
         "strategy": "rubric",
         "answer_key": {
           "accepted": [
-            "không",
-            "khong"
+            "f",
+            "họ f",
+            "ho f"
           ]
         },
         "grader_config": {
@@ -537,24 +687,74 @@
     "blocks": [
       [
         "L02-B01",
-        "objectives",
+        "callout",
         {
-          "title": "Mục tiêu",
-          "items": [
-            "Major scale",
-            "Diatonic seventh chords",
-            "Roman numeral cơ bản"
-          ]
+          "title": "Trước khi học seventh chord",
+          "prompt": "Bài này dùng các khái niệm đã học ở Lesson 1: nửa cung, công thức bậc và triad. Nếu ký hiệu 1–3–5 còn lạ, hãy ôn Lesson 1 trước."
         }
       ],
       [
         "L02-B02",
         "theory",
         {
-          "title": "Từ scale đến seventh chord",
+          "title": "1. Âm giai trưởng là một chuỗi 7 bậc",
           "paragraphs": [
-            "Chồng các quãng ba trên từng bậc của major scale tạo ra một mẫu chất lượng seventh chord lặp lại ở mọi major key."
+            "Major scale có bảy tên nốt khác nhau trước khi lặp lại tonic ở quãng tám. Ta gọi chúng là bậc 1 đến bậc 7. Tonic là bậc 1 và là nốt làm điểm quy chiếu của scale/key.",
+            "Whole step (cung nguyên) = 2 nửa cung; half step (nửa cung) = 1 nửa cung. Mẫu khoảng cách đi lên của major scale là: whole–whole–half–whole–whole–whole–half, hay 2–2–1–2–2–2–1 nửa cung. Viết đúng scale còn phải giữ đúng thứ tự chữ cái.",
+            "Ví dụ G major: G–A–B–C–D–E–F#. F phải được nâng thành F# để giữ mẫu khoảng cách major scale."
           ]
+        }
+      ],
+      [
+        "L02-B03",
+        "notation",
+        {
+          "title": "2. G major trên khuông",
+          "groups": [
+            {
+              "label": "1 · G",
+              "notes": [
+                "G4"
+              ]
+            },
+            {
+              "label": "2 · A",
+              "notes": [
+                "A4"
+              ]
+            },
+            {
+              "label": "3 · B",
+              "notes": [
+                "B4"
+              ]
+            },
+            {
+              "label": "4 · C",
+              "notes": [
+                "C5"
+              ]
+            },
+            {
+              "label": "5 · D",
+              "notes": [
+                "D5"
+              ]
+            },
+            {
+              "label": "6 · E",
+              "notes": [
+                "E5"
+              ]
+            },
+            {
+              "label": "7 · F#",
+              "notes": [
+                "F#5"
+              ]
+            }
+          ],
+          "caption": "Mỗi bậc dùng một chữ cái khác nhau; vì vậy G major dùng F#, không viết Gb."
         }
       ],
       [
@@ -563,17 +763,81 @@
         {
           "title": "Checkpoint · Dựng major scale",
           "exercise_id": "L02-Q01",
-          "note": "Giữ đúng thứ tự bậc và spelling."
+          "note": "Gõ 7 nốt đi lên, không lặp G ở cuối."
         }
       ],
       [
-        "L02-B03",
+        "L02-B04",
         "theory",
         {
-          "title": "Mẫu trong major key",
+          "title": "3. Từ triad đến seventh chord",
           "paragraphs": [
-            "Imaj7, ii7, iii7, IVmaj7, V7, vi7, viiø7 là khung thực hành của lesson này."
+            "Seventh chord thêm một nốt quãng bảy vào cấu trúc 1–3–5, tạo frame 1–3–5–7.",
+            "Nếu ta chồng các quãng ba trên từng bậc của major scale, các chất lượng seventh chord tạo thành mẫu Imaj7, ii7, iii7, IVmaj7, V7, vi7, viiø7."
           ]
+        }
+      ],
+      [
+        "L02-B05",
+        "glossary",
+        {
+          "title": "4. Giải mã maj7, m7, 7, ø7 và số La Mã",
+          "terms": [
+            {
+              "symbol": "maj7",
+              "term": "Major seventh chord",
+              "definition": "Major triad + major seventh tính từ root.",
+              "example": "Cmaj7 = C–E–G–B"
+            },
+            {
+              "symbol": "m7",
+              "term": "Minor seventh chord",
+              "definition": "Minor triad + minor seventh.",
+              "example": "Dm7 = D–F–A–C"
+            },
+            {
+              "symbol": "7",
+              "term": "Dominant seventh quality",
+              "definition": "Major triad + minor seventh. Khi viết G7, số 7 không có 'maj' nên seventh mặc định là minor trong ký hiệu này.",
+              "example": "G7 = G–B–D–F"
+            },
+            {
+              "symbol": "ø7 / m7♭5",
+              "term": "Half-diminished seventh",
+              "definition": "Diminished triad + minor seventh; hai cách ký hiệu thường gặp là ø7 hoặc m7♭5.",
+              "example": "Bm7♭5 = B–D–F–A"
+            },
+            {
+              "symbol": "I, ii, V",
+              "term": "Roman numeral",
+              "definition": "Số La Mã cho biết bậc của hợp âm trong key. Chữ hoa thường biểu thị chất lượng major; chữ thường biểu thị minor/diminished theo quy ước của bài.",
+              "example": "Trong C major: ii7 = Dm7, V7 = G7"
+            },
+            {
+              "symbol": "Key",
+              "term": "Giọng / trung tâm điệu tính",
+              "definition": "Ngữ cảnh trong đó một nốt/hợp âm tonic làm điểm quy chiếu. Khi nói ‘trong C major’, C là tonic và các bậc/chức năng được tính theo ngữ cảnh đó.",
+              "example": "Key C major: C là bậc I"
+            }
+          ]
+        }
+      ],
+      [
+        "L02-B06",
+        "piano",
+        {
+          "title": "5. Nghe bốn màu seventh chord",
+          "prompt": "Bấm các nốt của Cmaj7, Dm7, G7 và Bm7b5. Chưa cần phân biệt hoàn toàn bằng tai; mục tiêu là nối chord symbol với tập nốt.",
+          "highlight": [
+            "C",
+            "D",
+            "E",
+            "F",
+            "G",
+            "A",
+            "B"
+          ],
+          "selection_mode": true
         }
       ],
       [
@@ -582,26 +846,32 @@
         {
           "title": "Checkpoint · Roman numeral",
           "exercise_id": "L02-Q03",
-          "note": "Liên kết chord symbol với vị trí trong key."
+          "note": "Trong C major, hãy tìm bậc của Dm7 trước rồi mới chọn ký hiệu."
         }
       ],
       [
-        "L02-B04",
-        "interactive",
+        "L02-B07",
+        "audio",
         {
-          "title": "Thử nhanh",
-          "prompt": "Dựng G major rồi tìm V7 và viiø7 trong giọng."
+          "title": "6. Nghe Cmaj7 và G7",
+          "prompt": "Nghe từng chord rồi chú ý: Cmaj7 ổn định hơn trong C major, còn G7 có xu hướng muốn đi về C.",
+          "chords": [
+            "Cmaj7",
+            "G7"
+          ],
+          "key": "C"
         }
       ],
       [
-        "L02-B05",
+        "L02-B08",
         "summary",
         {
           "title": "Ghi nhớ",
           "items": [
-            "V7 có dominant-seventh quality",
-            "viiø7 là half-diminished",
-            "Spelling đúng vẫn quan trọng"
+            "Major scale dùng 7 bậc và giữ đúng thứ tự chữ cái.",
+            "Seventh chord mở rộng triad thành 1–3–5–7.",
+            "Trong major key: Imaj7, ii7, iii7, IVmaj7, V7, vi7, viiø7.",
+            "Trong C major: Dm7 = ii7, G7 = V7, Bm7♭5 = viiø7."
           ]
         }
       ]
@@ -1027,24 +1297,54 @@
     "blocks": [
       [
         "L03-B01",
-        "objectives",
+        "callout",
         {
-          "title": "Mục tiêu",
-          "items": [
-            "Tonic",
-            "Predominant/Subdominant",
-            "Dominant",
-            "Functional flow"
-          ]
+          "title": "Chức năng hòa âm không phải tên loại hợp âm",
+          "prompt": "Một chord symbol cho biết cấu tạo hợp âm; harmonic function mô tả cách hợp âm đó hành xử trong một key/progression cụ thể. Hai khái niệm này liên quan nhưng không đồng nhất."
         }
       ],
       [
         "L03-B02",
+        "glossary",
+        {
+          "title": "1. Ba chức năng nền tảng",
+          "intro": "Trong lesson này, hãy hình dung một câu hòa âm theo hướng: ổn định → rời điểm ổn định → căng hơn → trở về.",
+          "terms": [
+            {
+              "symbol": "T",
+              "term": "Tonic · chủ",
+              "definition": "Vùng ổn định và điểm quy chiếu của key; thường tạo cảm giác đến nơi hoặc nghỉ.",
+              "example": "Cmaj7 trong C major"
+            },
+            {
+              "symbol": "PD / SD",
+              "term": "Predominant / Subdominant",
+              "definition": "Nhóm hợp âm thường rời tonic và chuẩn bị cho dominant. HarmonyMentor dùng PD khi nhấn mạnh vai trò 'chuẩn bị dominant'; SD vẫn xuất hiện trong tài liệu nguồn.",
+              "example": "Dm7 (ii7) trong C major"
+            },
+            {
+              "symbol": "D",
+              "term": "Dominant · át",
+              "definition": "Tạo lực hướng mạnh về tonic. Ví dụ trong C major, G7 chứa B và F; khi về Cmaj7, B có thể tiến lên C hoặc được giữ làm major 7 tùy voicing, còn F thường có xu hướng đi xuống E.",
+              "example": "G7 (V7) trong C major"
+            },
+            {
+              "symbol": "Progression",
+              "term": "Tiến trình hợp âm",
+              "definition": "Chuỗi hợp âm theo thời gian. Function phải được đọc trong chuỗi này, không chỉ nhìn từng chord rời.",
+              "example": "Cmaj7 → Dm7 → G7 → Cmaj7"
+            }
+          ]
+        }
+      ],
+      [
+        "L03-B03",
         "theory",
         {
-          "title": "Chức năng là quan hệ trong ngữ cảnh",
+          "title": "2. Luồng T → PD → D → T",
           "paragraphs": [
-            "Tonic tạo điểm quy chiếu; predominant/subdominant chuẩn bị dominant; dominant tạo lực hướng về tonic."
+            "Một mô hình rất cơ bản là tonic tạo điểm bắt đầu, predominant đưa câu nhạc ra khỏi tonic, dominant tăng lực hướng về tonic, rồi tonic trở lại.",
+            "Đây là một mô hình để học và phân tích, không phải luật cấm mọi progression khác. Trong Pop và Jazz có nhiều cách tổ chức hòa âm không đi theo một đường duy nhất."
           ]
         }
       ],
@@ -1054,16 +1354,32 @@
         {
           "title": "Checkpoint · Tonic function",
           "exercise_id": "L03-Q01",
-          "note": "Kiểm tra khái niệm trước khi phân tích progression."
+          "note": "Hãy trả lời theo ngữ cảnh C major, không chỉ nhìn chữ 'maj7'."
         }
       ],
       [
-        "L03-B03",
+        "L03-B04",
         "progression",
         {
-          "title": "Ví dụ",
+          "title": "3. Ví dụ chức năng",
           "prompt": "Cmaj7 → Dm7 → G7 → Cmaj7  =  T → PD → D → T",
           "key": "C"
+        }
+      ],
+      [
+        "L03-B05",
+        "audio",
+        {
+          "title": "4. Nghe lực đi–về",
+          "prompt": "Phát progression ở tempo chậm. Chú ý G7 tạo cảm giác chưa kết thúc cho tới khi Cmaj7 trở lại.",
+          "progression": [
+            "Cmaj7",
+            "Dm7",
+            "G7",
+            "Cmaj7"
+          ],
+          "key": "C",
+          "bpm": 72
         }
       ],
       [
@@ -1072,26 +1388,27 @@
         {
           "title": "Checkpoint · Dominant trong ngữ cảnh",
           "exercise_id": "L03-Q03",
-          "note": "Dùng progression ngay phía trên để trả lời."
+          "note": "Dùng progression vừa nhìn và vừa nghe để trả lời."
         }
       ],
       [
-        "L03-B04",
+        "L03-B06",
         "interactive",
         {
-          "title": "Phân tích",
-          "prompt": "Gán chức năng cho từng chord trước khi nghe progression."
+          "title": "5. Tự phân tích trước khi xem đáp án",
+          "prompt": "Đọc Cmaj7 → Dm7 → G7 → Cmaj7 và nói thành lời: 'ổn định → chuẩn bị → căng hướng về → trở về'. Sau đó đối chiếu T → PD → D → T."
         }
       ],
       [
-        "L03-B05",
+        "L03-B07",
         "summary",
         {
           "title": "Ghi nhớ",
           "items": [
-            "Function phụ thuộc context",
-            "ii thường làm predominant",
-            "V7 thường làm dominant"
+            "Chord structure và harmonic function là hai lớp thông tin khác nhau.",
+            "Tonic = điểm quy chiếu; Predominant/Subdominant = chuẩn bị; Dominant = lực hướng về tonic.",
+            "Trong C major, Dm7 thường làm PD và G7 thường làm D trong ii–V–I.",
+            "Function phải đọc theo key, vị trí và progression xung quanh."
           ]
         }
       ]
@@ -1540,21 +1857,79 @@
     "blocks": [
       [
         "L04-B01",
-        "objectives",
+        "callout",
         {
-          "title": "Mục tiêu",
-          "items": [
-            "ii–V–I",
-            "Guide tones",
-            "Voice leading"
-          ]
+          "title": "Đọc ii–V–I như thế nào?",
+          "prompt": "ii, V và I là số La Mã chỉ bậc hợp âm trong key. Trong major key, ii7 thường là minor seventh, V7 là dominant seventh, Imaj7 là major seventh."
         }
       ],
       [
         "L04-B02",
+        "glossary",
+        {
+          "title": "1. Guide tones và voice leading",
+          "terms": [
+            {
+              "symbol": "ii–V–I",
+              "term": "Tiến trình ii–V–I",
+              "definition": "Chuỗi hợp âm đi từ bậc 2 sang bậc 5 rồi về bậc 1. Trong C major: Dm7 → G7 → Cmaj7.",
+              "example": "Dm7 → G7 → Cmaj7"
+            },
+            {
+              "symbol": "3rd",
+              "term": "Nốt quãng ba của hợp âm",
+              "definition": "Nốt giúp xác định màu major/minor của chord và thường là guide tone quan trọng.",
+              "example": "B là 3rd của G7"
+            },
+            {
+              "symbol": "7th",
+              "term": "Nốt quãng bảy của hợp âm",
+              "definition": "Trong seventh chord, nốt này cùng với 3rd thường tạo hướng dẫn chuyển mạnh giữa các hợp âm.",
+              "example": "F là ♭7 của G7"
+            },
+            {
+              "symbol": "Guide tones",
+              "term": "Nốt dẫn hướng",
+              "definition": "Trong phạm vi lesson, ta tập trung vào 3rd và 7th để nghe rõ chất lượng chord và đường nối sang chord kế tiếp.",
+              "example": "G7: B và F"
+            },
+            {
+              "symbol": "Voice leading",
+              "term": "Dẫn chuyển bè/nốt",
+              "definition": "Cách từng nốt trong voicing di chuyển sang nốt của chord tiếp theo. Smooth voice leading ưu tiên common tone và chuyển động ngắn khi phù hợp.",
+              "example": "G7 → Cmaj7: B giữ nguyên, F → E"
+            },
+            {
+              "symbol": "Common tone",
+              "term": "Nốt chung",
+              "definition": "Một nốt xuất hiện ở cả hai chord liên tiếp và có thể được giữ nguyên trong cùng voice.",
+              "example": "B thuộc cả G7 và Cmaj7"
+            },
+            {
+              "symbol": "Voicing",
+              "term": "Cách xếp nốt của hợp âm",
+              "definition": "Một chord symbol có thể được chơi bằng nhiều cách xếp nốt khác nhau theo quãng tám, bass và thứ tự bè. Voicing không đồng nghĩa với danh sách chord tones đầy đủ.",
+              "example": "G7 có chord tones G–B–D–F nhưng một shell voicing có thể chỉ nhấn mạnh G–B–F"
+            }
+          ]
+        }
+      ],
+      [
+        "L04-B03",
+        "theory",
+        {
+          "title": "2. Xây ii–V–I trong C major",
+          "paragraphs": [
+            "C major có các bậc C(1), D(2), E(3), F(4), G(5), A(6), B(7). Seventh chord trên bậc 2 là Dm7, trên bậc 5 là G7, và trên bậc 1 là Cmaj7.",
+            "Vì vậy ii7–V7–Imaj7 trong C major được viết Dm7 → G7 → Cmaj7."
+          ]
+        }
+      ],
+      [
+        "L04-B04",
         "progression",
         {
-          "title": "ii–V–I in C",
+          "title": "3. ii–V–I in C",
           "prompt": "Dm7 → G7 → Cmaj7",
           "key": "C"
         }
@@ -1565,16 +1940,42 @@
         {
           "title": "Checkpoint · Nhận diện ii–V–I",
           "exercise_id": "L04-Q01",
-          "note": "Nhận diện schema trước khi đi vào voice leading."
+          "note": "Hãy đọc ii = bậc 2, V = bậc 5, I = bậc 1 trước khi chọn."
         }
       ],
       [
-        "L04-B03",
+        "L04-B05",
+        "notation",
+        {
+          "title": "4. Guide tones của G7 giải về Cmaj7",
+          "groups": [
+            {
+              "label": "G7 guide tones · B–F",
+              "notes": [
+                "B3",
+                "F4"
+              ]
+            },
+            {
+              "label": "Cmaj7 target · B–E",
+              "notes": [
+                "B3",
+                "E4"
+              ]
+            }
+          ],
+          "caption": "Một đường giữ B làm common tone; đường còn lại đi F xuống E một nửa cung."
+        }
+      ],
+      [
+        "L04-B06",
         "theory",
         {
-          "title": "Guide tones",
+          "title": "5. Vì sao 3rd và 7th quan trọng?",
           "paragraphs": [
-            "Trong seventh-chord voicing, 3rd và 7th chứa nhiều thông tin về chất lượng và lực dẫn. Với G7 → Cmaj7, B có thể giữ thành common tone còn F đi xuống E."
+            "Trong G7, B là 3rd và F là ♭7. Hai nốt này giúp tai nhận ra màu dominant seventh rất rõ.",
+            "Khi sang Cmaj7, B có thể giữ nguyên vì Cmaj7 cũng chứa B; F đi xuống E bằng một nửa cung. Đây là ví dụ cụ thể của common tone + stepwise motion.",
+            "Đây là một voicing/voice-leading choice phục vụ lesson, không phải cách duy nhất phải dùng trong mọi phong cách."
           ]
         }
       ],
@@ -1584,26 +1985,55 @@
         {
           "title": "Checkpoint · Guide tones",
           "exercise_id": "L04-Q04",
-          "note": "Tự gọi tên 3rd và 7th của G7."
+          "note": "Tự gọi tên 3rd và ♭7 của G7."
         }
       ],
       [
-        "L04-B04",
+        "L04-B07",
         "piano",
         {
-          "title": "Piano task",
-          "prompt": "Chơi Dm7 → G7 → Cmaj7 chậm, ưu tiên nghe đường đi của 3rd/7th."
+          "title": "6. Piano task · từ chord inventory tới guide tones",
+          "prompt": "Trước hết chọn G–B–D–F trên piano và gửi kiểm tra để chứng minh bạn nhận ra đầy đủ chord tones của G7. Sau đó phát Dm7 → G7 → Cmaj7, tự bấm B và F của G7, rồi giữ B và chuyển F xuống E.",
+          "highlight": [],
+          "selection_mode": true,
+          "progression": [
+            "Dm7",
+            "G7",
+            "Cmaj7"
+          ],
+          "key": "C",
+          "bpm": 68,
+          "exercise_id": "L04-Q03",
+          "evidence_mode": "pitch_class",
+          "submit_label": "Kiểm tra G7 bằng piano"
         }
       ],
       [
-        "L04-B05",
+        "L04-B08",
+        "audio",
+        {
+          "title": "7. Nghe ii–V–I trước và sau khi tăng tempo",
+          "prompt": "Bắt đầu chậm để nghe hướng đi. Khi đã theo được guide tones, tăng BPM từng bước thay vì cố chơi nhanh ngay.",
+          "progression": [
+            "Dm7",
+            "G7",
+            "Cmaj7"
+          ],
+          "key": "C",
+          "bpm": 68
+        }
+      ],
+      [
+        "L04-B09",
         "summary",
         {
           "title": "Ghi nhớ",
           "items": [
-            "ii–V–I là schema trung tâm của jazz truyền thống",
-            "Common tone + stepwise motion giúp voicing mượt",
-            "Transpose sau khi nắm một key"
+            "ii–V–I major = ii7 → V7 → Imaj7.",
+            "Guide tones trong lesson tập trung vào 3rd và 7th của seventh chord.",
+            "G7 → Cmaj7: B có thể giữ; F → E là chuyển động nửa cung.",
+            "Smooth voice leading ưu tiên common tone/chuyển động gần nhưng vẫn phụ thuộc context và voicing.",
+            "Sau khi nắm một key, mới mở rộng dần sang F, Bb, D… thay vì ép 12 keys ngay lập tức."
           ]
         }
       ]

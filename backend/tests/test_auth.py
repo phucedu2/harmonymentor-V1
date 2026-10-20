@@ -187,7 +187,7 @@ def test_personal_routes_require_login_and_public_routes_do_not(client):
                          ("get", "/api/v1/me")]:
         r = getattr(client, method)(path)
         assert r.status_code == 401, path
-    assert client.post("/api/v1/attempts", json={"exercise_version_id": "L01-Q01-v2", "answer": "M3"}).status_code == 401
+    assert client.post("/api/v1/attempts", json={"exercise_version_id": "L01-Q01-v4", "answer": "M3"}).status_code == 401
 
     assert client.get("/api/v1/lessons").status_code == 200
     assert client.get("/api/v1/lessons/L01").status_code == 200
@@ -215,7 +215,7 @@ def test_user_cannot_touch_another_users_data(client):
     assert a_after == a_due
 
     # Gửi user_id của A trong body bị bỏ qua: lượt làm vẫn ghi cho B.
-    attempt = b.post("/api/v1/attempts", json={"user_id": a_id, "exercise_version_id": "L01-Q01-v2", "answer": "M3"},
+    attempt = b.post("/api/v1/attempts", json={"user_id": a_id, "exercise_version_id": "L01-Q01-v4", "answer": "M3"},
                      headers=bearer(b_reg))
     assert attempt.status_code == 200 and attempt.json()["user_id"] == b_reg.json()["user"]["id"]
     overview_a = client.get("/api/v1/learning/overview", headers=bearer(a)).json()

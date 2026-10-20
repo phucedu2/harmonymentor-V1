@@ -18,7 +18,7 @@ export default function DashboardPage() {
 
   return <section>
     <div className="page-heading"><div><span className="eyebrow">DASHBOARD</span><h2>Chào {user?.display_name}</h2></div>
-      <p>Phase 1 nối Content Service, assessment và ReviewState thành một learning loop có tiến độ thật.</p></div>
+      <p>Phase 2 adds beginner-safe explanations, notation, virtual piano, audio playback and metronome to the learning loop.</p></div>
     <div className="metric-grid four-metrics">
       <article className="card metric"><b>{overview?.completed_lessons ?? "–"}/{overview?.total_lessons ?? "–"}</b><span>lesson hoàn thành</span></article>
       <article className="card metric"><b>{overview?.started_lessons ?? "–"}</b><span>lesson đã bắt đầu</span></article>

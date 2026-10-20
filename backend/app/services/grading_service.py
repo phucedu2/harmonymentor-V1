@@ -27,6 +27,8 @@ def _normalize_text(value: Any, config: dict[str, Any]) -> str:
     text = str(value).strip()
     if config.get("normalize_dashes"):
         text = text.replace("–", "-").replace("—", "-").replace("−", "-")
+    if config.get("normalize_accidentals"):
+        text = text.replace("♭", "b").replace("♯", "#")
     if config.get("strip_accents"):
         text = _strip_accents(text)
     text = re.sub(r"\s+", " ", text)

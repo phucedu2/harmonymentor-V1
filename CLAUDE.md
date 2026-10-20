@@ -16,7 +16,7 @@ Phân công: **Thắng** Backend/Engine · **Phúc** Frontend/Audio · **Đạt*
 ```bash
 # Backend (Python 3.11+)
 cd backend && pip install -r requirements.txt
-pytest -q                          # hiện: 191 passed (có music21)
+pytest -q                          # hiện: 220 passed (có music21)
 uvicorn app.main:app --reload      # http://127.0.0.1:8000/docs
 
 # Frontend (Node 18+)

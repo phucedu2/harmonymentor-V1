@@ -18,7 +18,7 @@ def _flag(name: str, default: str) -> bool:
 @dataclass(frozen=True)
 class Settings:
     app_name: str = os.getenv("APP_NAME", "HarmonyMentor API")
-    app_version: str = os.getenv("APP_VERSION", "0.4.0-dev")
+    app_version: str = os.getenv("APP_VERSION", "0.5.3-dev")
     database_url: str = os.getenv("DATABASE_URL", "sqlite:///./harmonymentor_dev.db")
     auto_create_schema: bool = os.getenv("AUTO_CREATE_SCHEMA", "1").lower() not in {"0", "false", "no"}
     seed_demo_content: bool = os.getenv("SEED_DEMO_CONTENT", "1").lower() not in {"0", "false", "no"}

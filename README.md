@@ -1,12 +1,24 @@
-# HarmonyMentor AI — Phase 1 Learning Vertical Slice (`v0.4.0-dev`)
+# HarmonyMentor AI - Phase 2 Interactive Music Layer (`v0.5.3-dev`)
 
-HarmonyMentor đang được chuyển từ Music Engine prototype sang learning platform có **source-grounded curriculum**, persistence và assessment/review contract có thể truy nguyên.
+HarmonyMentor is evolving from a deterministic music-theory prototype into a source-grounded learning platform. Phase 2 adds the first interactive music layer and also fixes a pedagogical problem found during Phase 1 testing: Lessons 1-4 were structurally complete but too compressed for a true beginner.
 
-Phase 1 giữ nguyên nền curriculum đã audit ở Phase 0.4B và biến Lessons 1–4 thành một learning vertical slice: **lesson renderer → inline checkpoints → persisted quiz attempts → lesson progress → ChordInspector → completion → spaced review queue**.
+## What changed in Phase 2
 
-## Trạng thái hiện tại
+### 1. Beginner content hardening
 
-Đã có:
+Lessons 1-4 teach prerequisite vocabulary before assessing it. Phase 2.3 hardens Lesson 1 after browser testing showed that the previous version still over-relied on C-only examples and did not make interval-quality relationships explicit enough.
+
+- Lesson 1 now begins with the physical piano layout, explicitly teaches that **E-F and B-C have no black key between them**, and defines semitone / whole tone before interval arithmetic.
+- The spelling section first explains the everyday idea (one piano key can have two names) and only then introduces the terms `enharmonic` and `spelling`.
+- Interval quality is taught as two families: `P` for 1/4/5/8 and the `m↔M` pair for 2/3/6/7, with an explicit `d ← standard → A` visual spectrum. Lesson 1 still practices only `M3`, `m3`, `P5`, `d5`, while `A5` appears only to explain augmented triads.
+- Triads are built in two steps: choose the correct letter frame (C-E-G, D-F-A...) and then apply interval formulas. A shared 12-root selector updates interval examples, triad spelling, piano highlighting, notation, and audio; the lesson adds a tiered overview of 12 major + 12 minor tonic triads.
+- The parallel comparison now keeps root C throughout: C major, C minor, C diminished.
+- Free-response placeholders show format only and never reveal the current answer. Checkpoints use non-C examples and provide optional randomized practice across 12 roots / 24 major-minor tonic triads.
+- Lesson 2 defines whole step vs half step, major-scale pattern, seventh-chord symbols, Roman numerals, and key/tonic context.
+- Lesson 3 separates chord structure from harmonic function and defines tonic, predominant/subdominant, dominant, and progression.
+- Lesson 4 defines ii-V-I, guide tones, voice leading, common tone, and voicing before keyboard work.
+
+Nền tảng có từ trước (v0.4.0, CP1, Giai đoạn A–B):
 
 - Music Theory Engine Python thuần (`backend/app/music_engine/`);
 - regression fixes của Phase 0.2;
@@ -29,168 +41,122 @@ Phase 1 giữ nguyên nền curriculum đã audit ở Phase 0.4B và biến Less
 - Dashboard/Learn/Progress đọc state thật từ backend;
 - Learn runtime đọc lesson content từ Content Service thay vì TypeScript draft.
 
-Chưa có:
+### 2. Virtual Piano V2
 
-- mastery/recommendation aggregation;
-- runtime migration của Lessons 5–8;
-- interactive Piano, Tone.js, VexFlow;
-- audio-recognition exercise implementation;
-- Harmony Assistant/LLM;
-- production auth.
+`frontend/src/components/music/VirtualPiano.tsx`
 
-## Nguồn curriculum
+- click/tap playback;
+- octave-aware scientific pitch names;
+- optional note selection;
+- target/error highlighting;
+- black-key enharmonic labels such as `C#/Db`;
+- explicit separation between sounding pitch and spelling-sensitive grading.
 
-Canonical registry: `backend/app/content/source_registry.py`.
+The legacy Practice page now reuses the same piano component. `frontend/src/Piano.tsx` stays as the small display-only SVG keyboard for the public home page.
 
-- `OMT_V2` — Open Music Theory v2: foundation, tonicization/modal mixture, jazz basics, Pop concepts.
-- `FANK_WIH` — Working in Harmony: academic cross-check cho fundamentals/diatonic/chromatic harmony/voice leading. Exact current PDF page locators chưa khóa trong Phase 0.4B.
-- `TEREFENKO_WB` — Jazz Theory Workbook: pedagogical reference cho keyboard realization, ear training, ii–V–I, chord-scale, voicing và progression practice.
-- `KHAIHOAN_JAZZ` — Trần Khải Hoàn: Vietnamese reference cho function, tensions, secondary dominants, modal interchange và jazz voicing.
+### 3. Tone.js AudioEngine
 
-Các quiz/flashcard trong source là **nội dung biên soạn mới**. Không copy nguyên proprietary exercise, score hoặc answer key.
+`frontend/src/audio/AudioEngine.ts`
 
-## Source of truth
+Current MVP capabilities:
 
-Từ Phase 0.4B:
+- play a single note;
+- play a chord;
+- schedule chord progressions;
+- BPM control;
+- metronome;
+- shared transport cleanup.
 
-```text
-backend/app/content/source_registry.py   # source policy/registry
-backend/app/content/skill_graph.py       # 26 skills + prerequisite DAG
-backend/app/content/curriculum_specs.py  # canonical 8 lessons / 48 quiz / 64 review items
-backend/app/content/seed_data.py         # runtime DB migration/seed
-content/curriculum/*.json                # generated reviewable snapshots
-```
+The current sound source is a Tone.js `PolySynth` fallback so the interaction works without shipping unverified audio assets. A self-hosted licensed piano sample set can replace this through a later sampler increment without changing lesson contracts.
 
-`frontend/src/content/lessons.ts` đã được deprecate và **không còn là source of truth**.
+### 4. VexFlow notation blocks
 
-## Runtime migration status
+`frontend/src/components/music/NotationStaff.tsx`
 
-```text
-L01 Foundation                         reviewed / DB runtime
-L02 Major Scale & Seventh Chords      reviewed / DB runtime
-L03 Harmonic Function                 reviewed / DB runtime
-L04 ii–V–I & Voice Leading            reviewed / DB runtime
-L05 Secondary Dominants               source_audited spec only
-L06 Modal Interchange                 source_audited spec only
-L07 Tensions / Modes / Chord-Scale    source_audited spec only
-L08 Jazz Piano Voicing                source_audited spec only
-```
+Phase 2 supports simple SVG notation examples for:
 
-Mỗi lesson runtime L01–L04 có:
+- intervals;
+- triads/seventh-chord examples;
+- guide-tone examples.
 
-- 7 blocks (5 content + 2 checkpoint);
-- 6 quiz/exercises;
-- 8 review items;
-- source locators;
-- skill mapping.
+The renderer is intentionally narrow. It is not a score editor.
 
-L01 audited exercise versions là `v2` để không giả mạo provenance cho version cũ. L02–L04 bắt đầu ở audited `v1`.
+### 5. Reusable music lesson blocks
 
-## Learning contract
-
-Flow hiện chạy được cho Lessons 1–4:
+`LessonRunner` now understands:
 
 ```text
-GET lesson content
-  ↓
-POST quiz attempt
-  ↓
-ExerciseVersion + source provenance
-  ↓
-persist Attempt + AttemptError
-  ↓
-complete lesson
-  ↓
-activate 8 ReviewState
-  ↓
-answer review
-  ↓
-1 → 3 → 7 → 14 → 30 days
+THEORY
+CALLOUT
+GLOSSARY
+NOTATION
+PROGRESSION
+PIANO
+AUDIO
+CHECKPOINT
+SUMMARY
 ```
 
-`mastery` và `review due` vẫn là hai khái niệm riêng. Mastery aggregation sẽ chỉ bật sau khi skill evidence đủ tin cậy.
+This keeps interactive music features data-driven instead of hard-coding a unique React page for every lesson.
 
-## Database schema
+### 6. ChordInspector audio
 
-Các bảng hiện tại:
+ChordInspector still obtains deterministic chord facts from the backend Music Theory Engine. Phase 2 adds audio preview while retaining:
+
+- chord tones;
+- formula;
+- slash-bass information;
+- Roman numeral/function when a key is provided.
+
+## Runtime curriculum status
 
 ```text
-users
-skills
-skill_prerequisites
-lessons
-lesson_blocks
-source_works
-lesson_sources
-exercises
-exercise_versions
-attempts
-attempt_errors
-lesson_progress
-review_items
-review_states
-review_attempts
+L01 Foundation                    reviewed / runtime / Phase 2 enriched
+L02 Major Scale & Seventh Chords reviewed / runtime / Phase 2 enriched
+L03 Harmonic Function            reviewed / runtime / Phase 2 enriched
+L04 ii-V-I & Voice Leading       reviewed / runtime / Phase 2 enriched
+L05 Secondary Dominants          source_audited spec only
+L06 Modal Interchange            source_audited spec only
+L07 Tensions / Chord-Scale       source_audited spec only
+L08 Jazz Piano Voicing           source_audited spec only
 ```
 
-Migration:
+Current block counts for the runtime lessons:
 
 ```text
-097c446166e1  initial learning contract
-c84d7c4b190a  item-level source provenance
+L01 12 blocks
+L02 10 blocks
+L03  9 blocks
+L04 11 blocks
 ```
 
-Nếu bạn đã chạy bản v0.3.0 bằng SQLite `AUTO_CREATE_SCHEMA=1`, DB local cũ có thể chưa có bảng `alembic_version`. Cách đơn giản nhất trong development là xóa `backend/harmonymentor_dev.db` và chạy lại. Nếu cần giữ dữ liệu local cũ, xác nhận schema đúng với migration đầu rồi chạy:
+The assessment bank remains 48 quiz items and 64 review items across the eight audited specifications. Only L01-L04 are runtime-migrated.
 
-```bash
-alembic -c alembic.ini stamp 097c446166e1
-alembic -c alembic.ini upgrade head
-```
+## Curriculum sources
 
-Không dùng `stamp` mù trên database production không rõ lịch sử.
+Canonical source policy remains in `backend/app/content/source_registry.py`.
 
-## API chính
+- Open Music Theory v2: foundation, functional basics, jazz basics, and Pop concepts.
+- Working in Harmony: academic cross-check for fundamentals, diatonic/chromatic harmony, and voice leading.
+- Terefenko Jazz Theory Workbook: keyboard, ear-training, ii-V-I, chord-scale, voicing, and practice design.
+- Tran Khai Hoan: Vietnamese jazz-harmony reference for function, tensions, secondary dominants, modal interchange, and voicing.
 
-### Curriculum / Learning
+The canonical lesson data is `backend/app/content/curriculum_specs.py`. `content/curriculum/lesson_specs.json` is a generated review snapshot.
+
+## Dependencies added in Phase 2
+
+Frontend `package.json` now includes:
 
 ```text
-GET  /api/v1/lessons
-GET  /api/v1/lessons/{lesson_id}
-POST /api/v1/lessons/{lesson_id}/start
-POST /api/v1/lessons/{lesson_id}/complete
-GET  /api/v1/learning/overview?user_id=demo-user
+tone 15.1.22
+vexflow 5.0.0
 ```
 
-### Assessment evidence
+`package-lock.json` was regenerated with these dependencies when v0.5.3 was merged into `main` (20/10/2026); use `npm ci`.
 
-```text
-POST /api/v1/attempts
-```
+## Run locally
 
-Attempt luôn trỏ tới `exercise_version_id`, không chỉ `exercise_id`.
-
-### Review
-
-```text
-GET  /api/v1/review/due
-POST /api/v1/review/{review_item_id}/answer
-```
-
-### Music / ChordInspector contract
-
-```text
-GET /api/v1/music/chords/inspect?symbol=G7&key=C
-GET /api/v1/music/chords/inspect?symbol=C%2FE&key=C
-```
-
-### Legacy Practice API
-
-Các endpoint cũ vẫn giữ dưới `/api/v1/engine/*` trong quá trình migration.
-
-## Chạy nhanh — SQLite local
-
-Python 3.11+ và Node.js 18+.
-
-**Terminal 1 — backend**
+Backend:
 
 ```bash
 cd backend
@@ -214,15 +180,16 @@ Nếu bạn có file `backend/harmonymentor_dev.db` tạo trước Giai đoạn 
 
 API docs: `http://127.0.0.1:8000/docs`
 
-**Terminal 2 — frontend**
+Frontend:
 
 ```bash
 cd frontend
 npm install
+npm run build
 npm run dev
 ```
 
-Vite proxy `/api` sang FastAPI ở cổng 8000.
+The browser must receive a user gesture before Web Audio can start; clicking a piano/audio control provides that gesture.
 
 Route frontend (Giai đoạn B): `/` trang chủ, `/dang-nhap`, `/dang-ky`, `/app` (tổng quan), `/app/hoc`, `/app/luyen-tap`, `/app/tien-do`, `/app/composition`, `/app/ho-so`, `/admin`. Mọi trang `/app/*` cần đăng nhập theo hợp đồng `docs/decisions/ADR-004-hop-dong-xac-thuc.md`; khi backend chưa có `/api/v1/auth/*` thì chỉ trang chủ dùng được.
 
@@ -261,35 +228,19 @@ Trong môi trường shared/production-like, dùng Alembic (`AUTO_CREATE_SCHEMA=
 Backend trên fresh SQLite, đã cài đủ `requirements.txt` (gồm `music21`):
 
 ```text
-191 passed   (Giai đoạn B, 19/10/2026; cũng đạt trên PostgreSQL 16)
+220 passed   (sau khi gộp v0.5.3 với Giai đoạn B, 20/10/2026; 191 passed trên PostgreSQL 16 ở Giai đoạn B)
 ```
 
 Nếu không cài được `music21`, bộ đối chiếu music21 bị bỏ qua và số test sẽ ít hơn (ví dụ 113 passed, 1 skipped ở bản v0.4.0 gốc trước khi thêm test CP1).
 
-Alembic đã kiểm tra:
-
-```text
-fresh DB: upgrade head → alembic check → downgrade base → upgrade head  PASS
-legacy v0.3 local schema: stamp initial → upgrade provenance migration   PASS
-```
-
-Runtime vẫn giữ:
-
-```text
-8 lessons
-26 skills
-36 prerequisite edges
-24 runtime exercises (L01–L04)
-32 runtime review items (L01–L04)
-L01-L04: 7 lesson blocks each, trong đó 2 checkpoint blocks
-```
-
-Frontend: `cd frontend && npm ci && npm run build` **đạt** (Node 22, kiểm tra ngày 19/10/2026, nhánh `phase-b-frontend`).
+Frontend: `cd frontend && npm ci && npm run build` **đạt** (Node 22, 20/10/2026, sau khi gộp v0.5.3 với Giai đoạn B; đã có `package-lock.json` mới gồm Tone.js và VexFlow).
 
 ## Tài liệu phase
 
+- `docs/BEGINNER_CONTENT_AUDIT_PHASE_2.md`
+- `docs/PHASE_2_IMPLEMENTATION.md`
+- `docs/VERIFICATION_PHASE_2.txt`
 - `docs/CURRICULUM_SOURCE_MATRIX.md`
-- `docs/SKILL_GRAPH.md`
 - `docs/LESSON_SPECIFICATIONS.md`
 - `docs/PHASE_0_4B_IMPLEMENTATION.md`
 - `docs/PHASE_1_IMPLEMENTATION.md`
@@ -299,6 +250,28 @@ Frontend: `cd frontend && npm ci && npm run build` **đạt** (Node 22, kiểm t
 - `docs/VERIFICATION_PHASE_0_4B.txt`
 - các phase trước vẫn giữ để audit lịch sử.
 
-## Bước tiếp theo
+## Next implementation gate
+
+Do not move directly to the AI assistant until Phase 2 receives a local browser smoke test. The next gate is:
+
+1. `npm install && npm run build` on the project machine;
+2. visually verify VexFlow notation and Virtual Piano layout;
+3. verify browser audio + metronome interaction;
+4. only then proceed to Harmony Lab and the composition/backing-track layer.
+
+
+## Phase 2.1 hotfix
+
+Fixed a VexFlow 5 `IncompleteVoice` crash in lesson notation blocks by using `Formatter.FormatAndDraw`, added local notation fallback handling, and wrapped the lesson runtime in a React error boundary so a visualization failure cannot blank the entire app.
+
+## Phase 2.3 Multi-key Lesson 1 hardening
+
+Lesson 1 now uses one shared root selection across its interval, triad, notation, piano, and audio explorers. The selector exposes all 12 pitch positions and an explicit enharmonic spelling choice for black-key roots. The new 24-key overview is deliberately presented as **tonic triads representing 12 major + 12 minor keys**; the full concept of key/scale remains Lesson 2 material. Random practice is formative only and does not update mastery in this MVP.
+
+The interval-quality explanation also avoids treating “bright/dark” as the definition of Major/Minor. `Major` and `Minor` are taught first as interval sizes, with any listening-color description framed only as a tendency.
+
+## Phase 2.2 Lesson 1 pedagogy rewrite
+
+The Lesson 1 content contract was rewritten from a zero-beginner perspective after usability testing. The rewrite keeps the existing 8-lesson MVP architecture but turns L01 into a scaffolded sequence with continuous section numbering, early piano visualization, explicit spelling rules, interval formulas required by triad construction, parallel-root triad comparison, and format-aware answer inputs. L01 exercise versions are published as `v4` so earlier attempts remain traceable.
 
 Kế hoạch hiện hành là **Giai đoạn B–F** trong [`docs/PHASE_A_PLAN.md`](docs/PHASE_A_PLAN.md) (thay cho mục "Phase 2 — Interactive Music Layer" cũ). Hướng dẫn cho Claude Code nằm ở [`CLAUDE.md`](CLAUDE.md).
