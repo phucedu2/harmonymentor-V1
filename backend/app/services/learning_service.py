@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from uuid import uuid4
 
 from sqlalchemy import select
+from sqlalchemy.dialects import postgresql, sqlite
 from sqlalchemy.orm import Session
 
 from ..db.models import (
@@ -88,11 +89,14 @@ def complete_lesson(db: Session, user_id: str, lesson_id: str) -> tuple[LessonPr
     lesson = db.get(Lesson, lesson_id)
     if lesson is None:
         raise LookupError("LESSON_NOT_FOUND")
+    now = utcnow()
+    _insert_progress_if_missing(db, user_id, lesson_id, now)
+    # Khóa dòng tiến độ: các lượt "Hoàn thành" song song chạy lần lượt, nên thẻ ôn không bị chèn trùng (HM-010).
     progress = db.scalar(select(LessonProgress).where(
         LessonProgress.user_id == user_id,
         LessonProgress.lesson_id == lesson_id,
-    ))
-    if progress is None or progress.status != "completed":
+    ).with_for_update())
+    if progress.status != "completed":
         # Hoàn thành = mỗi câu đã đúng ít nhất một lần; chỉ "đã thử" thì gõ bừa cũng qua bài.
         correct_ids = set(db.scalars(
             select(ExerciseVersion.exercise_id)
@@ -102,14 +106,11 @@ def complete_lesson(db: Session, user_id: str, lesson_id: str) -> tuple[LessonPr
         remaining = [e.id for e in sorted(lesson.exercises, key=lambda e: e.position)
                      if e.active and e.id not in correct_ids]
         if remaining:
+            db.rollback()
             raise LessonNotMastered(remaining)
-    now = utcnow()
-    if progress is None:
-        progress = LessonProgress(user_id=user_id, lesson_id=lesson_id, status="completed", started_at=now, completed_at=now)
-        db.add(progress)
-    else:
         progress.status = "completed"
         progress.completed_at = now
+    # Bài đã hoàn thành thì giữ nguyên completed_at: bấm lại không được viết lại lịch sử học.
     states = activate_lesson_reviews(db, user_id, lesson_id, now)
     db.commit()
     return progress, states
@@ -151,16 +152,28 @@ def start_lesson(db: Session, user_id: str, lesson_id: str) -> LessonProgress:
     lesson = db.get(Lesson, lesson_id)
     if lesson is None:
         raise LookupError("LESSON_NOT_FOUND")
-    progress = db.scalar(select(LessonProgress).where(
+    # Frontend có thể gọi start nhiều lần cùng lúc (StrictMode, mở lại bài); "đọc rồi thêm" sẽ đụng
+    # uq_user_lesson_progress trên PostgreSQL (HM-010), nên chèn kiểu "có rồi thì bỏ qua".
+    _insert_progress_if_missing(db, user_id, lesson_id, utcnow())
+    db.commit()
+    return db.scalar(select(LessonProgress).where(
         LessonProgress.user_id == user_id,
         LessonProgress.lesson_id == lesson_id,
     ))
-    if progress is None:
-        progress = LessonProgress(user_id=user_id, lesson_id=lesson_id, status="started", started_at=utcnow())
-        db.add(progress)
-        db.commit()
-        db.refresh(progress)
-    return progress
+
+
+def _insert_progress_if_missing(db: Session, user_id: str, lesson_id: str, now: datetime) -> None:
+    """Tạo dòng tiến độ "started" nếu chưa có; dòng đã có (kể cả đã hoàn thành) giữ nguyên."""
+    values = dict(user_id=user_id, lesson_id=lesson_id, status="started", started_at=now)
+    dialect = db.get_bind().dialect.name
+    if dialect == "postgresql":
+        insert = postgresql.insert
+    elif dialect == "sqlite":
+        insert = sqlite.insert
+    else:  # dự án chỉ chạy PostgreSQL (Docker) và SQLite (dev/test)
+        raise RuntimeError(f"Chưa hỗ trợ chèn tiến độ an toàn cho CSDL {dialect}")
+    db.execute(insert(LessonProgress).values(**values)
+               .on_conflict_do_nothing(index_elements=["user_id", "lesson_id"]))
 
 
 def learning_overview(db: Session, user_id: str) -> dict:

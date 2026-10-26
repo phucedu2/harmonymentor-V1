@@ -30,7 +30,8 @@ export default function LearnPage() {
     try {
       const detail = await api.getLesson(id);
       setSelected(detail);
-      await api.startLesson(id);
+      // Không gọi startLesson ở đây: LessonRunner tự gọi khi mở bài. Gọi ở cả hai nơi tạo 2 request
+      // song song và từng làm PostgreSQL trả 500 (HM-010).
       await refreshProgress();
     } catch (e) {
       const err = e as ApiError;
