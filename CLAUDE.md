@@ -1,11 +1,12 @@
 # HarmonyMentor AI — hướng dẫn cho Claude Code
 
-Nền tảng học nhạc lý thích ứng (Học → Luyện tập → Chẩn đoán → Sáng tác → Chơi nhạc), có AI Tutor và Composition Lab. Đồ án nhóm 3 người, bám **SRS v1.3** (`docs/SRS/`). Hạn nộp **04/12/2026**; CP1 20/10 (Engine + phân loại bài tập), CP2 03/11 (HitRate@5/Precision@5), CP3 10/11 (AI Tutor có trích dẫn).
+Nền tảng học nhạc lý thích ứng (Học → Luyện tập → Chẩn đoán → Sáng tác → Chơi nhạc), có AI Tutor và Composition Lab. Đồ án nhóm 3 người, bám **bộ tài liệu thiết kế bản 2.1** (`docs/SRS/`: 01 SRS, 02 Đặc tả chức năng và nghiệp vụ, 03 Thiết kế tổng quan, 04 Thiết kế chi tiết; mỗi file có bản `.docx` gốc và bản `.md` để trích dẫn). Hạn nộp **04/12/2026**; CP1 20/10 (Engine + phân loại bài tập), CP2 03/11 (HitRate@5/Precision@5), CP3 10/11 (AI Tutor có trích dẫn).
 
 Phân công: **Thắng** Backend/Engine · **Phúc** Frontend/Audio · **Đạt** AI/NLP/DevOps.
 
 ## Đọc trước khi làm
 
+0. `docs/SRS/01..04_*.md`: bộ tài liệu 2.1, nguồn sự thật. Tài liệu khác code thì tài liệu thắng, trừ Music Engine (đổi Engine cần test mới + ADR).
 1. `docs/PROMPT_CLAUDE_CODE.md`: prompt chính (vai trò, mâu thuẫn N1–N9, lộ trình Giai đoạn A–F).
 2. `docs/PHASE_A_PLAN.md`: hiện trạng, quyết định N1–N15, ERD, route, thiết kế, lịch.
 3. `docs/PHASE_A_TRUY_VET_FR.md`: trạng thái từng FR.
