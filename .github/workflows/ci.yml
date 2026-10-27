@@ -55,10 +55,10 @@ jobs:
       - name: Chạy pytest
         run: pytest -q -m "not postgres" --junitxml=../ket-qua-sqlite.xml
 
-      # Mức tối thiểu = số test đạt trên main 9babc11 ngày 27/10/2026; ai xóa test thì CI đỏ.
-      - name: Kiểm số test (0 skip, ít nhất 281 đạt)
+      # Mức tối thiểu = số test đạt sau PR-3 (27/10/2026): 281 cũ + 38 test phiên bản câu hỏi; ai xóa test thì CI đỏ.
+      - name: Kiểm số test (0 skip, ít nhất 319 đạt)
         if: ${{ !cancelled() }}
-        run: python ../scripts/ci/kiem_junit.py ../ket-qua-sqlite.xml --min-passed 281 --title "Backend SQLite"
+        run: python ../scripts/ci/kiem_junit.py ../ket-qua-sqlite.xml --min-passed 319 --title "Backend SQLite"
 
       - name: Lưu kết quả JUnit
         if: ${{ !cancelled() }}
@@ -131,13 +131,14 @@ jobs:
           psql -d harmony_ci_migrate -v ON_ERROR_STOP=1 -c "SELECT version_num FROM alembic_version;"
           test "$(psql -d harmony_ci_migrate -tAc "SELECT count(*) FROM pg_extension WHERE extname = 'vector'")" = "1"
 
-      - name: Chạy test đồng thời HM-010
+      # Nhóm postgres: 9 test đồng thời HM-010 + 12 test migration PR-3 trên dữ liệu kế thừa và trigger chặn sửa phiên bản.
+      - name: Chạy test PostgreSQL (HM-010, migration PR-3)
         run: pytest -m postgres -v --junitxml=../ket-qua-postgres.xml
 
-      # pytest vẫn trả mã 0 khi 9 test này bị skip, nên phải đếm riêng.
-      - name: Kiểm số test (0 skip, ít nhất 9 đạt)
+      # pytest vẫn trả mã 0 khi các test này bị skip, nên phải đếm riêng.
+      - name: Kiểm số test (0 skip, ít nhất 21 đạt)
         if: ${{ !cancelled() }}
-        run: python ../scripts/ci/kiem_junit.py ../ket-qua-postgres.xml --min-passed 9 --title "PostgreSQL HM-010"
+        run: python ../scripts/ci/kiem_junit.py ../ket-qua-postgres.xml --min-passed 21 --title "PostgreSQL HM-010 + PR-3"
 
       # Test tự xóa schema hm_pgtest_* của mình; còn sót là lớp dọn dẹp của PR-1 hỏng.
       - name: Không còn schema test sót lại
