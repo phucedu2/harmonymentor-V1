@@ -46,6 +46,12 @@ export default function LearnPage() {
         initialProgress={progressMap.get(selected.id)}
         onBack={() => { setSelected(null); void refreshProgress(); }}
         onProgressChanged={() => { void refreshProgress(); }}
+        onLessonOutdated={async () => {
+          // Lỗi tải lại để LessonRunner báo cho người học, không thay bằng màn hình lỗi chung.
+          const detail = await api.getLesson(selected.id);
+          setSelected(detail);
+          await refreshProgress();
+        }}
       />
     </LessonErrorBoundary>
   );
