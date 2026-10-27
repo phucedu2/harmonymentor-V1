@@ -15,7 +15,8 @@ from ..contracts.learning import (
     StartLessonOut,
 )
 from ..auth.deps import get_current_user
-from ..db.models import ExerciseVersion, Lesson, LessonSource, SourceWork, User
+from ..content.versioning import current_version
+from ..db.models import Lesson, LessonSource, SourceWork, User
 from ..db.session import get_db
 from ..core.errors import AppError
 from ..services.learning_service import LessonNotMastered, complete_lesson, start_lesson
@@ -23,17 +24,12 @@ from ..services.learning_service import LessonNotMastered, complete_lesson, star
 router = APIRouter(prefix="/api/v1/lessons", tags=["lessons"])
 
 
-def _latest_version(exercise) -> ExerciseVersion | None:
-    if not exercise.versions:
-        return None
-    return max(exercise.versions, key=lambda v: v.version)
-
-
 def _summary(lesson: Lesson) -> LessonSummaryOut:
     return LessonSummaryOut(
         id=lesson.id, order=lesson.order_index, track=lesson.track, title=lesson.title,
         status=lesson.status, objectives=lesson.objectives or [], block_count=len(lesson.blocks),
-        exercise_count=len([x for x in lesson.exercises if x.active]), review_item_count=len(lesson.review_items),
+        exercise_count=len([x for x in lesson.exercises if current_version(x) is not None]),
+        review_item_count=len(lesson.review_items),
     )
 
 
@@ -56,14 +52,15 @@ def get_lesson(lesson_id: str, db: Session = Depends(get_db)):
         .order_by(LessonSource.id)
     ).all()
     exercises = []
-    for exercise in sorted((x for x in lesson.exercises if x.active), key=lambda x: x.position):
-        version = _latest_version(exercise)
+    for exercise in sorted(lesson.exercises, key=lambda x: x.position):
+        version = current_version(exercise)
         if version is None:
             continue
+        # Đề, lựa chọn và cách chấm lấy từ ảnh chụp của phiên bản hiện hành (ADR-006).
         exercises.append(ExerciseOut(
             id=exercise.id, version_id=version.id, version=version.version, position=exercise.position,
-            kind=exercise.kind, prompt=exercise.prompt, options=exercise.options,
-            grading_strategy=exercise.grading_strategy, skill_id=exercise.skill_id,
+            kind=version.kind, prompt=version.prompt, options=version.options,
+            grading_strategy=version.grading_strategy, skill_id=exercise.skill_id,
         ))
 
     base = _summary(lesson).model_dump()

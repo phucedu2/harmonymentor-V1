@@ -19,6 +19,7 @@ from ..db.models import (
     ReviewState,
     User,
 )
+from ..content import versioning
 from .grading_service import GradeOutcome, grade_payload, is_self_check
 from .review_scheduler import activate_lesson_reviews, apply_review_result
 
@@ -46,13 +47,27 @@ def require_user(db: Session, user_id: str) -> User:
     return user
 
 
+class ExerciseVersionSuperseded(Exception):
+    """Người học gửi bài vào phiên bản đã bị thay (trang cũ còn mở); không chấm theo đề cũ nữa (ADR-006)."""
+
+    def __init__(self, version_id: str, current_version_id: str):
+        super().__init__("EXERCISE_VERSION_SUPERSEDED")
+        self.version_id = version_id
+        self.current_version_id = current_version_id
+
+
 def require_exercise_version(db: Session, version_id: str) -> tuple[ExerciseVersion, Exercise]:
     version = db.get(ExerciseVersion, version_id)
-    if version is None:
+    statuses = versioning.visible_statuses()
+    if version is None or version.status not in statuses:
         raise LookupError("EXERCISE_VERSION_NOT_FOUND")
     exercise = db.get(Exercise, version.exercise_id)
-    if exercise is None or not exercise.active:
+    current = versioning.current_version(exercise, statuses) if exercise is not None else None
+    if current is None:
+        # Câu đã xóa mềm, hoặc bản hiện hành không có ảnh chụp hợp lệ: không hiển thị và không chấm.
         raise LookupError("EXERCISE_NOT_FOUND")
+    if current.id != version.id:
+        raise ExerciseVersionSuperseded(version.id, current.id)
     return version, exercise
 
 
@@ -68,7 +83,8 @@ def submit_attempt(db: Session, user_id: str, version_id: str, answer,
                    input_method: str = "text") -> tuple[Attempt, GradeOutcome]:
     require_user(db, user_id)
     version, exercise = require_exercise_version(db, version_id)
-    outcome = grade_payload(exercise.grading_strategy, version.answer_key, version.grader_config, answer,
+    # Cách chấm lấy từ ảnh chụp của phiên bản, không lấy từ exercises (HM-003: bản cũ rubric từng bị chấm bằng exact).
+    outcome = grade_payload(version.grading_strategy, version.answer_key, version.grader_config, answer,
                             input_method=input_method)
     attempt = Attempt(
         id=str(uuid4()), user_id=user_id, exercise_version_id=version.id, answer=answer,
@@ -103,8 +119,9 @@ def complete_lesson(db: Session, user_id: str, lesson_id: str) -> tuple[LessonPr
             .join(Attempt, Attempt.exercise_version_id == ExerciseVersion.id)
             .where(Attempt.user_id == user_id, Attempt.correct.is_(True))
         ).all())
+        # Chỉ tính câu đang hiện cho người học; đúng ở bất kỳ phiên bản nào của câu cũng được tính (6A).
         remaining = [e.id for e in sorted(lesson.exercises, key=lambda e: e.position)
-                     if e.active and e.id not in correct_ids]
+                     if versioning.current_version(e) is not None and e.id not in correct_ids]
         if remaining:
             db.rollback()
             raise LessonNotMastered(remaining)
@@ -207,7 +224,7 @@ def learning_overview(db: Session, user_id: str) -> dict:
 
     lesson_rows = []
     for lesson in lessons:
-        active_exercises = [exercise for exercise in lesson.exercises if exercise.active]
+        active_exercises = [exercise for exercise in lesson.exercises if versioning.current_version(exercise) is not None]
         rows = by_lesson.get(lesson.id, [])
         attempted_ids = sorted({exercise.id for _, _, exercise in rows})
         correct_ids = sorted({exercise.id for attempt, _, exercise in rows if attempt.correct})
