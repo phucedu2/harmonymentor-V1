@@ -62,7 +62,7 @@ jobs:
 
       - name: Lưu kết quả JUnit
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: junit-backend-sqlite
           path: ket-qua-sqlite.xml
@@ -146,7 +146,7 @@ jobs:
 
       - name: Lưu kết quả JUnit
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: junit-backend-postgres
           path: ket-qua-postgres.xml
