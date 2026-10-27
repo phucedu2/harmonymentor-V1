@@ -96,7 +96,7 @@ jobs:
       # test HM-010 chạy ở harmony_test. Như vậy lớp bảo vệ của PR-1 (tên kết thúc _test, khác DATABASE_URL)
       # được kiểm thật chứ không bị lách.
       DATABASE_URL: postgresql+psycopg://hm_ci:ci_only_not_secret@127.0.0.1:5432/harmony_ci_migrate
-      TEST_DATABASE_URL: postgresql+psycopg://hm_ci:ci_only_not_secret@127.0.0.1:5432/harmony_test
+      # PR phụ chứng minh CI đỏ: bỏ TEST_DATABASE_URL để 9 test HM-010 bị skip.
     defaults:
       run:
         working-directory: backend
