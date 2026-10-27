@@ -109,13 +109,18 @@ export default function LessonRunner({
   const [correct, setCorrect] = useState<Set<string>>(new Set(initialProgress?.correct_exercise_ids ?? []));
   const [completion, setCompletion] = useState<string | null>(null);
   const [completeError, setCompleteError] = useState<string | null>(null);
+  const [startError, setStartError] = useState(false);
   const [lesson1Root, setLesson1Root] = useState("C");
   const [stepIndex, setStepIndex] = useState(() => readStoredStep(lesson.id));
   const topRef = useRef<HTMLDivElement>(null);
   const indexRef = useRef<HTMLDetailsElement>(null);
 
   useEffect(() => {
-    void api.startLesson(lesson.id).then(() => onProgressChanged?.()).catch(() => undefined);
+    // Lưu "đã bắt đầu" thất bại không chặn việc học (bài đã tải, câu trả lời vẫn được lưu), nhưng phải báo
+    // cho người học thay vì im lặng. Không tự gửi lại; lần gọi nào thành công thì ẩn thông báo.
+    void api.startLesson(lesson.id)
+      .then(() => { setStartError(false); onProgressChanged?.(); })
+      .catch(() => setStartError(true));
   }, [lesson.id]);
 
   const exerciseMap = useMemo(() => new Map(lesson.exercises.map((exercise) => [exercise.id, exercise])), [lesson.exercises]);
@@ -144,6 +149,7 @@ export default function LessonRunner({
       const result = await api.completeLesson(lesson.id);
       const due = result.first_review_due_at ? new Date(result.first_review_due_at).toLocaleDateString("vi-VN") : "chưa có";
       setCompletion(`Bạn đã hoàn thành bài! ${result.activated_review_items} thẻ ôn đã vào lịch, lượt ôn đầu tiên vào ngày ${due}.`);
+      setStartError(false); // hoàn thành đã tạo dòng tiến độ, cảnh báo lúc mở bài không còn đúng
       onProgressChanged?.();
     } catch (e) {
       const err = e as ApiError;
@@ -226,6 +232,7 @@ export default function LessonRunner({
       <div className="progress-track" aria-label={`Đã đúng ${masteryPercent}% câu hỏi`}><span style={{ width: `${masteryPercent}%` }} /></div>
       <strong>{masteryPercent}%</strong>
     </article>
+    {startError && <div className="result bad" role="alert">Chưa lưu được trạng thái bắt đầu bài. Bạn vẫn học bình thường; tiến độ sẽ được lưu khi bạn hoàn thành bài.</div>}
 
     <div className="lesson-stepper">
       <details className="step-index" ref={indexRef}>
