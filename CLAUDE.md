@@ -17,10 +17,10 @@ Phân công: **Thắng** Backend/Engine · **Phúc** Frontend/Audio · **Đạt*
 ```bash
 # Backend (Python 3.11+)
 cd backend && pip install -r requirements.txt
-pytest -q                          # hiện: 220 passed (có music21)
+pytest -q                          # 27/10/2026: 281 passed + 9 skipped (9 test PostgreSQL cần TEST_DATABASE_URL)
 uvicorn app.main:app --reload      # http://127.0.0.1:8000/docs
 
-# Frontend (Node 18+)
+# Frontend (Node 22, giống Dockerfile và CI)
 cd frontend && npm ci
 npm run dev                        # http://localhost:5173, proxy /api → :8000
 npm run build                      # phải đạt trước khi gộp
@@ -31,6 +31,8 @@ cp .env.example .env && docker compose up --build   # http://localhost:5173
 # Alembic
 cd backend && alembic -c alembic.ini upgrade head && alembic -c alembic.ini check
 ```
+
+CI (`.github/workflows/ci.yml`, xem `docs/CI.md`) chạy trên mọi PR vào `main`: pytest SQLite (0 skip, ≥ 281 đạt), PostgreSQL 16 + pgvector (`alembic upgrade head` + `check`, 9 test HM-010, 0 skip), `npm ci && npm run build`. Thêm test mới thì nâng mức `--min-passed` trong `ci.yml`.
 
 ## Cấu trúc
 
