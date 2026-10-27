@@ -1,6 +1,6 @@
 # ADR-006 · Phiên bản câu hỏi bất biến (HM-003)
 
-Trạng thái: **Đã thực hiện 27/10/2026** trên PR-3 (Draft, chờ nhóm duyệt). Phúc chốt 8 câu thiết kế và 7 câu triển khai (đều chọn phương án A), Astra phê duyệt có điều kiện phương án "B rút gọn cho Giai đoạn 1". Số ADR-005 để dành cho Retriever (GĐ3).
+Trạng thái: **Chấp nhận 27/10/2026**, gộp qua PR #11. Phúc xác nhận thay nhóm ADR này và D-1..D-4; Thắng và Đạt ký bổ sung. Phúc chốt 8 câu thiết kế và 7 câu triển khai (đều chọn phương án A), Astra phê duyệt có điều kiện phương án "B rút gọn cho Giai đoạn 1". Số ADR-005 để dành cho Retriever (GĐ3).
 
 ## Bối cảnh
 
@@ -22,14 +22,14 @@ Seed chạy mỗi lần API khởi động và ghi đè tại chỗ cả `exerci
 10. **Draft/published.** `exercise_versions.status`. Bản nháp sửa tại chỗ được khi chưa có lượt làm. `SHOW_DRAFT_CONTENT` mặc định tắt; bật khi `APP_ENV=production` thì API từ chối khởi động. Chỉ Đạt được đổi `draft` thành `published` (nguyên tắc 17).
 11. **Phiên bản hiện hành** là bản có số lớn nhất trong các bản được phép hiện. Nếu bản đó `snapshot_origin='missing'` thì ẩn cả câu, không lùi về bản cũ hơn.
 
-## Quyết định nghiệp vụ D-1..D-4 (Phúc xác nhận thay nhóm 27/10, chờ chữ ký)
+## Quyết định nghiệp vụ D-1..D-4 (Phúc xác nhận thay nhóm 27/10/2026)
 
-| Mã | Nội dung | Người ký |
-|---|---|---|
-| D-1 | `provenance` nằm trong ảnh chụp: sửa nguồn của bản đã phát hành phải tăng version, không sửa âm thầm | Đạt |
-| D-2 | Đếm "sai 2 lần thì hiện lời giải" theo câu, cộng dồn qua các phiên bản (có test) | Thắng |
-| D-3 | 24 phiên bản đang chạy để `published` khi migration. Đây là **dữ liệu kế thừa, chưa qua quy trình duyệt mới**, không có nghĩa Đạt đã duyệt từng câu | Đạt |
-| D-4 | Dùng số ADR-006 | Thắng |
+| Mã | Nội dung | Người ký | Trạng thái |
+|---|---|---|---|
+| D-1 | `provenance` nằm trong ảnh chụp: sửa nguồn của bản đã phát hành phải tăng version, không sửa âm thầm | Đạt | Phúc xác nhận thay 27/10; Đạt ký bổ sung: ____ |
+| D-2 | Đếm "sai 2 lần thì hiện lời giải" theo câu, cộng dồn qua các phiên bản (có test) | Thắng | Phúc xác nhận thay 27/10; Thắng ký bổ sung: ____ |
+| D-3 | 24 phiên bản đang chạy để `published` khi migration. Đây là **dữ liệu kế thừa, chưa qua quy trình duyệt mới**, không có nghĩa Đạt đã duyệt từng câu | Đạt | Phúc xác nhận thay 27/10; Đạt ký bổ sung: ____ |
+| D-4 | Dùng số ADR-006 | Thắng | Phúc xác nhận thay 27/10; Thắng ký bổ sung: ____ |
 
 ## Migration `d3a7f1c2e905` (nối vào `b2c4e6f80a13`)
 

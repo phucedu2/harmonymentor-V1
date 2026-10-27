@@ -5,7 +5,7 @@
 | Ngày | 27/10/2026 |
 | Baseline | `main` = `f0d3dac1f7b11b9c9bb7236d14a3c74f0762c782` |
 | Branch | `claude/project-thread-3z96i1` (branch được giao cho phiên làm việc; Phúc chọn 3A) |
-| Draft PR | https://github.com/phucedu2/harmonymentor-V1/pull/11 (**không gộp**; chờ nhóm duyệt) |
+| PR | https://github.com/phucedu2/harmonymentor-V1/pull/11 (gộp 27/10/2026 theo xác nhận của Phúc, mục 10) |
 | Thiết kế | `PR3_DESIGN_REVIEW.md` (thư mục chung của dự án), phê duyệt có điều kiện của Astra, ADR-006 |
 | Quyết định | 8 câu thiết kế + 7 câu triển khai, Phúc chọn A hết (27/10, 07:15 và 08:52) |
 
@@ -188,7 +188,7 @@ Backend thật (SQLite tạm) + Vite, Playwright, tài khoản đăng ký mới.
 
 ## 7. Kế hoạch rollback an toàn
 
-1. **Trước khi gộp hay triển khai:** chụp bản sao lưu bằng `docker compose exec db pg_dump -U harmony harmony > truoc_pr3.sql`.
+1. **Trước khi chạy code mới trên máy có dữ liệu:** sao lưu và thử migration trên bản sao theo mục 10. Không dùng `> file.sql` trong PowerShell (ghi UTF-16, khôi phục lỗi).
 2. **Gộp PR-3:** container `api` tự chạy `alembic upgrade head` khi khởi động. Nếu seed báo `SeedConflictError`, API không lên; đọc log để biết id câu cần tăng version.
 3. **Nếu phải quay lại:**
    - dừng `api`;
@@ -228,3 +228,52 @@ Không đụng migration `d3a7f1c2e905`, versioning, ảnh chụp, seed, Music E
 - Mức CI nâng 319 → 325 (SQLite); PostgreSQL giữ 21.
 
 **Giới hạn:** 6 test mới chạy trên SQLite, vì chúng dùng chung bộ dựng CSDL tạm của `test_pr3_exercise_version.py`. Logic sửa chỉ là lọc trong Python, không có câu SQL riêng theo CSDL.
+
+## 10. Phê duyệt và gộp (27/10/2026)
+
+Astra kiểm diff sửa sau review trên `c12cf3b`, xác nhận 2 lỗi tiến độ đã sửa và CI đạt (325 SQLite, 21 PostgreSQL, build frontend). Phúc chọn A cả 6 câu: Phúc xác nhận thay nhóm ADR-006 và D-1..D-4 (Thắng, Đạt ký bổ sung ở ADR-006), phê duyệt bằng comment trên PR (GitHub không cho tác giả tự approve; ruleset `bao-ve-main` yêu cầu 0 approval), Claude chuyển Ready for Review và gộp bằng merge commit.
+
+**Thử lại migration trước khi gộp** (log `50-thu-lai-truoc-merge.log`, PostgreSQL 16 + pgvector, CSDL kế thừa dựng bằng code cũ):
+
+| Bước | Kết quả |
+|---|---|
+| Trước migration | `alembic_version` = `b2c4e6f80a13`; 8 lượt làm (7 đúng); 33 phiên bản; 24 câu |
+| Sao lưu | `pg_dump` 109 035 byte |
+| `alembic upgrade head` + `check` | lên `d3a7f1c2e905`; "No new upgrade operations detected" |
+| Sau migration | 8 lượt làm (7 đúng); 32 `git_history` + 1 `missing`, đều `published` |
+| Seed 2 lần | 33 → 33 phiên bản, seed không tạo bản nào |
+| Chấm lại theo ảnh chụp | 7/7 khớp; `L01-Q01-v1` (`missing`) không chấm lại, giữ kết quả đã lưu |
+| Nộp vào `L03-Q05-v1` | `EXERCISE_VERSION_SUPERSEDED`, bản hiện hành `L03-Q05-v2` |
+| SQL sửa/xóa trực tiếp | 5/5 bị trigger chặn |
+| `alembic downgrade -1` | từ chối, CSDL giữ `d3a7f1c2e905`, 8 lượt làm |
+| Khôi phục bản sao lưu vào CSDL mới | `b2c4e6f80a13`, 8 lượt làm, 33 phiên bản |
+
+**Máy có dữ liệu thật (Docker trên máy Phúc): làm TRƯỚC khi `docker compose up` bằng code mới.** Container `api` tự chạy `alembic upgrade head` lúc khởi động, nên bật lên là CSDL chính bị nâng cấp ngay.
+
+```powershell
+# 0. Vẫn đang ở code cũ, chỉ bật CSDL
+docker compose up -d db
+
+# 1. Sao lưu CSDL chính (định dạng custom, ghi trong container rồi chép ra máy để tránh lỗi mã hóa PowerShell)
+docker compose exec -T db pg_dump -U harmony -d harmony -Fc -f /tmp/truoc_pr3.dump
+docker compose cp db:/tmp/truoc_pr3.dump .\truoc_pr3.dump
+
+# 2. Tạo bản sao để thử
+docker compose exec -T db createdb -U harmony harmony_ban_sao
+docker compose exec -T db pg_restore -U harmony -d harmony_ban_sao /tmp/truoc_pr3.dump
+
+# 3. Lấy code mới và build api, CHƯA up
+git pull origin main
+docker compose build api
+
+# 4. Chạy migration trên BẢN SAO (đổi tên CSDL ngay trong container, không cần gõ mật khẩu)
+docker compose run --rm --no-deps api sh -c 'DATABASE_URL=${DATABASE_URL%/harmony}/harmony_ban_sao alembic -c alembic.ini upgrade head && DATABASE_URL=${DATABASE_URL%/harmony}/harmony_ban_sao alembic -c alembic.ini check'
+
+# 5. So số liệu: bản chính (chưa đổi) và bản sao (đã nâng cấp)
+docker compose exec -T db psql -U harmony -d harmony -c "select version_num from alembic_version" -c "select count(*), count(*) filter (where correct) from attempts"
+docker compose exec -T db psql -U harmony -d harmony_ban_sao -c "select version_num from alembic_version" -c "select count(*), count(*) filter (where correct) from attempts" -c "select snapshot_origin, status, count(*) from exercise_versions group by 1, 2"
+```
+
+Đạt khi: bản sao ở `d3a7f1c2e905`, số lượt làm (và số đúng) bằng bản chính, không có lỗi. Khi đó mới `docker compose up -d`. Nếu bước 4 lỗi: giữ code cũ (`git checkout f0d3dac`), gửi log cho Claude; CSDL chính chưa bị đổi.
+
+Quay lại sau khi đã nâng cấp CSDL chính: `docker compose stop api`, `docker compose exec -T db dropdb -U harmony harmony`, `docker compose exec -T db createdb -U harmony harmony`, `docker compose exec -T db pg_restore -U harmony -d harmony /tmp/truoc_pr3.dump` (hoặc chép `truoc_pr3.dump` vào lại container), rồi chạy code `f0d3dac`.
