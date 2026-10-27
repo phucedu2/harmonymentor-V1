@@ -6,13 +6,15 @@ learning/content/review contracts are introduced incrementally.
 
 from __future__ import annotations
 
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from .api.router import api_router
-from .core.config import settings
+from .content.versioning import SeedConflictError
+from .core.config import check_runtime_settings, settings
 from .core.errors import install_error_handlers
 from .core.health import check_db, check_redis
 from .core.middleware import install_middleware
@@ -20,14 +22,22 @@ from .db.seed import seed_database
 from .db.session import SessionLocal, create_schema
 from .music_engine.errors import MusicEngineError
 
+logger = logging.getLogger("harmonymentor.seed")
+
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
+    check_runtime_settings(settings)
     if settings.auto_create_schema:
         create_schema()
     if settings.seed_demo_content:
         with SessionLocal() as db:
-            seed_database(db)
+            try:
+                seed_database(db)
+            except SeedConflictError as exc:
+                # Dừng khởi động có chủ ý (ADR-006): chạy tiếp với nội dung lệch phiên bản là âm thầm đổi nghĩa lượt làm cũ.
+                logger.error("%s", exc)
+                raise
     yield
 
 

@@ -99,17 +99,21 @@ export default function LessonRunner({
   initialProgress,
   onBack,
   onProgressChanged,
+  onLessonOutdated,
 }: {
   lesson: LessonDetail;
   initialProgress?: LessonLearningProgress;
   onBack: () => void;
   onProgressChanged?: () => void;
+  // Gọi khi máy chủ báo câu hỏi đã có phiên bản mới (409 EXERCISE_VERSION_SUPERSEDED): trang tải lại bài.
+  onLessonOutdated?: () => Promise<void>;
 }) {
   const [attempted, setAttempted] = useState<Set<string>>(new Set(initialProgress?.attempted_exercise_ids ?? []));
   const [correct, setCorrect] = useState<Set<string>>(new Set(initialProgress?.correct_exercise_ids ?? []));
   const [completion, setCompletion] = useState<string | null>(null);
   const [completeError, setCompleteError] = useState<string | null>(null);
   const [startError, setStartError] = useState(false);
+  const [outdatedNotice, setOutdatedNotice] = useState<string | null>(null);
   const [lesson1Root, setLesson1Root] = useState("C");
   const [stepIndex, setStepIndex] = useState(() => readStoredStep(lesson.id));
   const topRef = useRef<HTMLDivElement>(null);
@@ -157,7 +161,19 @@ export default function LessonRunner({
     }
   };
 
-  const blockProps = { exerciseMap, attempted, correct, onAttempt: noteAttempt, lesson1Root, onLesson1RootChange: setLesson1Root };
+  // Không tự nộp lại câu trả lời cũ: đề có thể đã đổi, người học phải đọc đề mới rồi trả lời lại (ADR-006).
+  const handleOutdated = async () => {
+    setOutdatedNotice("Câu hỏi này vừa được cập nhật. Đang tải lại đề mới…");
+    try {
+      if (!onLessonOutdated) throw new Error("LESSON_RELOAD_UNAVAILABLE");
+      await onLessonOutdated();
+      setOutdatedNotice("Câu hỏi vừa được cập nhật nên bài đã tải lại đề mới. Câu trả lời trước chưa được chấm, hãy đọc lại đề và trả lời lại.");
+    } catch {
+      setOutdatedNotice("Câu hỏi vừa được cập nhật nhưng chưa tải lại được đề mới. Hãy quay lại danh sách bài rồi mở lại bài này.");
+    }
+  };
+
+  const blockProps = { exerciseMap, attempted, correct, onAttempt: noteAttempt, onOutdated: handleOutdated, lesson1Root, onLesson1RootChange: setLesson1Root };
   const steps: Step[] = [
     {
       id: "intro", label: "Mở đầu", title: "Bài này giúp bạn làm được gì",
@@ -180,7 +196,7 @@ export default function LessonRunner({
         <div className="section-heading"><div><span className="section-kicker">Kiểm tra cuối bài</span><h3>Tự làm, không nhìn lại lý thuyết</h3></div><span className="muted">{finalQuiz.length} câu · sai 2 lần sẽ có lời giải</span></div>
         {finalQuiz.length === 0 && <p className="muted">Các câu của bài này nằm ở phần kiểm tra nhanh trong bài.</p>}
         <div className="quiz-stack">{finalQuiz.map((exercise) => (
-          <ExerciseCard key={exercise.id} exercise={exercise} attempted={attempted.has(exercise.id)} correct={correct.has(exercise.id)} onAttempt={noteAttempt} />
+          <ExerciseCard key={exercise.version_id} exercise={exercise} attempted={attempted.has(exercise.id)} correct={correct.has(exercise.id)} onAttempt={noteAttempt} onOutdated={handleOutdated} />
         ))}</div>
       </article>,
     },
@@ -232,6 +248,7 @@ export default function LessonRunner({
       <div className="progress-track" aria-label={`Đã đúng ${masteryPercent}% câu hỏi`}><span style={{ width: `${masteryPercent}%` }} /></div>
       <strong>{masteryPercent}%</strong>
     </article>
+    {outdatedNotice && <div className="result bad" role="status">{outdatedNotice}</div>}
     {startError && <div className="result bad" role="alert">Chưa lưu được trạng thái bắt đầu bài. Bạn vẫn học bình thường; tiến độ sẽ được lưu khi bạn hoàn thành bài.</div>}
 
     <div className="lesson-stepper">
@@ -262,6 +279,7 @@ function BlockRenderer({
   attempted,
   correct,
   onAttempt,
+  onOutdated,
   lesson1Root,
   onLesson1RootChange,
 }: {
@@ -270,6 +288,7 @@ function BlockRenderer({
   attempted: Set<string>;
   correct: Set<string>;
   onAttempt: (exerciseId: string, result: AttemptResult) => void;
+  onOutdated: () => Promise<void>;
   lesson1Root: string;
   onLesson1RootChange: (root: string) => void;
 }) {
@@ -296,7 +315,7 @@ function BlockRenderer({
       <div className="checkpoint-label"><span>Kiểm tra nhanh</span>{attempted.has(exercise.id) && <b className={correct.has(exercise.id) ? "done-good" : "done-tried"}>{correct.has(exercise.id) ? "✓ Đã đúng" : "↻ Đã thử"}</b>}</div>
       <h3>{title}</h3>
       {note && <p className="muted">{note}</p>}
-      <ExerciseCard exercise={exercise} attempted={attempted.has(exercise.id)} correct={correct.has(exercise.id)} onAttempt={onAttempt} inline />
+      <ExerciseCard key={exercise.version_id} exercise={exercise} attempted={attempted.has(exercise.id)} correct={correct.has(exercise.id)} onAttempt={onAttempt} onOutdated={onOutdated} inline />
       {(block.payload.random_practice === "interval" || block.payload.random_practice === "triad") && <RandomPracticePanel mode={block.payload.random_practice} />}
     </article>;
   }
@@ -391,6 +410,12 @@ function BlockRenderer({
         onAttempt(exercise.id, response);
       } catch (e) {
         const err = e as ApiError;
+        if (err.code === "EXERCISE_VERSION_SUPERSEDED") {
+          setPianoSelection([]);
+          setPianoEvidenceResult(null);
+          await onOutdated();
+          return;
+        }
         setPianoEvidenceError(err.message ?? err.code);
       } finally {
         setPianoEvidenceBusy(false);
@@ -444,12 +469,14 @@ function ExerciseCard({
   attempted,
   correct,
   onAttempt,
+  onOutdated,
   inline = false,
 }: {
   exercise: LessonExercise;
   attempted: boolean;
   correct: boolean;
   onAttempt: (exerciseId: string, result: AttemptResult) => void;
+  onOutdated: () => Promise<void>;
   inline?: boolean;
 }) {
   const [answer, setAnswer] = useState("");
@@ -467,6 +494,11 @@ function ExerciseCard({
     } catch (e) {
       const err = e as ApiError;
       setResult(null);
+      if (err.code === "EXERCISE_VERSION_SUPERSEDED") {
+        // Thẻ câu hỏi có key là version_id nên tải lại xong sẽ dựng thẻ mới với ô trả lời trống.
+        await onOutdated();
+        return;
+      }
       setError(`${err.message ?? err.code}. Hãy dùng tên chữ cái C D E F G A B (có thể gõ Đô Rê Mi), thêm # hoặc b cho dấu thăng/giáng.`);
     } finally { setBusy(false); }
   };

@@ -9,7 +9,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any, Optional
 
-from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, JSON, String, Text, UniqueConstraint
+from sqlalchemy import Boolean, CheckConstraint, DateTime, Float, ForeignKey, Integer, JSON, String, Text, UniqueConstraint
 from sqlalchemy import false as sa_false, true as sa_true
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -128,6 +128,10 @@ class Exercise(Base):
     grading_strategy: Mapped[str] = mapped_column(String(40))
     position: Mapped[int] = mapped_column(Integer, default=0)
     active: Mapped[bool] = mapped_column(Boolean, default=True)
+    # Xóa mềm (nguyên tắc 7): câu retired vẫn giữ phiên bản và lượt làm, chỉ không hiện cho người học.
+    deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    # kind/prompt/options/grading_strategy ở đây chỉ là bản sao của phiên bản mới nhất trong nguồn (ERD 04 Bảng 5).
+    # Chấm bài và hiển thị luôn đọc từ ExerciseVersion (ADR-006).
 
     lesson: Mapped[Lesson] = relationship(back_populates="exercises")
     versions: Mapped[list["ExerciseVersion"]] = relationship(back_populates="exercise", cascade="all, delete-orphan")
@@ -135,15 +139,35 @@ class Exercise(Base):
 
 class ExerciseVersion(Base):
     __tablename__ = "exercise_versions"
-    __table_args__ = (UniqueConstraint("exercise_id", "version", name="uq_exercise_version"),)
+    __table_args__ = (
+        UniqueConstraint("exercise_id", "version", name="uq_exercise_version"),
+        CheckConstraint("status IN ('draft', 'published')", name="ck_exercise_versions_status"),
+        CheckConstraint("snapshot_origin IN ('seed', 'git_history', 'missing')", name="ck_exercise_versions_origin"),
+        # Chỉ bản cũ không khôi phục được (missing) mới được thiếu ảnh chụp; mọi bản khác phải đủ để chấm lại.
+        CheckConstraint(
+            "snapshot_origin = 'missing' OR (kind IS NOT NULL AND prompt IS NOT NULL "
+            "AND grading_strategy IS NOT NULL AND content_hash IS NOT NULL)",
+            name="ck_exercise_versions_snapshot",
+        ),
+    )
 
     id: Mapped[str] = mapped_column(String(80), primary_key=True)
     exercise_id: Mapped[str] = mapped_column(ForeignKey("exercises.id", ondelete="CASCADE"), index=True)
     version: Mapped[int] = mapped_column(Integer, default=1)
+    # Ảnh chụp bất biến (HM-003): lượt làm cũ luôn hiển thị và chấm lại được theo đúng bản đã làm.
+    kind: Mapped[Optional[str]] = mapped_column(String(40), nullable=True)
+    prompt: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    options: Mapped[Optional[list[str]]] = mapped_column(JSON, nullable=True)
+    grading_strategy: Mapped[Optional[str]] = mapped_column(String(40), nullable=True)
     answer_key: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
     grader_config: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
     explanation: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     provenance: Mapped[Optional[list[dict[str, Any]]]] = mapped_column(JSON, nullable=True)
+    # Mặc định phía CSDL là giá trị an toàn: dòng chèn tay thiếu thông tin thì bị ẩn (draft) và không được chấm (missing).
+    status: Mapped[str] = mapped_column(String(16), server_default="draft")
+    published_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    content_hash: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    snapshot_origin: Mapped[str] = mapped_column(String(16), server_default="missing")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
     exercise: Mapped[Exercise] = relationship(back_populates="versions")
@@ -227,3 +251,76 @@ class ReviewAttempt(Base):
     rating: Mapped[str] = mapped_column(String(16), default="auto")
     response_time_ms: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+
+
+# --- Bảo vệ phiên bản đã khóa ở tầng ORM (HM-003, ADR-006) ---------------------------------------
+# Lưới này chặn mọi đường ghi qua SQLAlchemy (seed, Admin sau này). Câu SQL viết tay thì không đi qua đây:
+# trên PostgreSQL có thêm trigger do migration PR-3 tạo; trên SQLite chỉ có lưới này.
+
+from sqlalchemy import event, inspect as sa_inspect, select  # noqa: E402
+
+_LOCKED_VERSION_COLUMNS = (
+    "id", "exercise_id", "version", "kind", "prompt", "options", "grading_strategy", "answer_key",
+    "grader_config", "explanation", "provenance", "content_hash", "snapshot_origin",
+)
+
+
+def _has_attempts(connection, version_id: str) -> bool:
+    return connection.execute(
+        select(Attempt.id).where(Attempt.exercise_version_id == version_id).limit(1)
+    ).first() is not None
+
+
+def _really_changed(state, name: str) -> bool:
+    # Gán lại đúng giá trị cũ vẫn để lại history; chỉ tính là đổi khi giá trị khác thật.
+    history = state.attrs[name].history
+    if not history.has_changes():
+        return False
+    if history.deleted and history.added:
+        return history.deleted[0] != history.added[0]
+    return True
+
+
+def _old_value(state, name: str):
+    history = state.attrs[name].history
+    if history.deleted:
+        return history.deleted[0]
+    return getattr(state.object, name)
+
+
+@event.listens_for(ExerciseVersion, "before_update")
+def _guard_version_update(_mapper, connection, target: ExerciseVersion) -> None:
+    from ..content.versioning import ImmutableVersionError
+
+    state = sa_inspect(target)
+    changed = [name for name in _LOCKED_VERSION_COLUMNS if _really_changed(state, name)]
+    old_status = _old_value(state, "status")
+    if old_status == "published" and target.status != "published":
+        raise ImmutableVersionError(f"Phiên bản {target.id} đã phát hành, không được chuyển về {target.status}.")
+    if changed and (old_status == "published" or _has_attempts(connection, _old_value(state, "id"))):
+        raise ImmutableVersionError(
+            f"Phiên bản {target.id} đã khóa (đã phát hành hoặc đã có lượt làm); không sửa {', '.join(changed)}. "
+            "Hãy phát hành phiên bản mới."
+        )
+
+
+@event.listens_for(ExerciseVersion, "before_delete")
+def _guard_version_delete(_mapper, connection, target: ExerciseVersion) -> None:
+    from ..content.versioning import ImmutableVersionError
+
+    if target.status == "published" or _has_attempts(connection, target.id):
+        raise ImmutableVersionError(f"Không xóa phiên bản {target.id}: đã phát hành hoặc đã có lượt làm. Dùng xóa mềm câu hỏi.")
+
+
+@event.listens_for(Exercise, "before_update")
+def _guard_exercise_identity(_mapper, connection, target: Exercise) -> None:
+    from ..content.versioning import ImmutableVersionError
+
+    state = sa_inspect(target)
+    moved = [name for name in ("lesson_id", "skill_id") if _really_changed(state, name)]
+    if moved:
+        has_versions = connection.execute(
+            select(ExerciseVersion.id).where(ExerciseVersion.exercise_id == target.id).limit(1)
+        ).first() is not None
+        if has_versions:
+            raise ImmutableVersionError(f"Câu {target.id} đã có phiên bản; đổi {', '.join(moved)} thì phải tạo câu mới với id mới.")

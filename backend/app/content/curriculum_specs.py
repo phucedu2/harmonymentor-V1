@@ -29,13 +29,19 @@ def q(
     explanation: str | None = None,
     provenance: list[dict[str, Any]] | None = None,
     version: int | None = None,
+    status: str = "published",
+    retired: bool = False,
 ) -> dict[str, Any]:
     # version: chỉ đặt khi câu hỏi/đáp án/cách chấm đổi so với bản đã phát hành, để lượt làm cũ
-    # vẫn trỏ về đúng phiên bản đã chấm chúng.
+    # vẫn trỏ về đúng phiên bản đã chấm chúng. Quy tắc phát hành: docs/decisions/ADR-006-phien-ban-bai-tap.md.
+    # status: câu Claude soạn mới để "draft"; chỉ Đạt đổi thành "published" sau khi duyệt.
+    # retired: bỏ câu khỏi bài mà vẫn giữ lịch sử (seed xóa mềm); không xóa mục khỏi file này.
     return {
         "id": item_id,
         "kind": kind,
         "version": version,
+        "status": status,
+        "retired": retired,
         "prompt": prompt,
         "skill": skill,
         "strategy": strategy,

@@ -19,6 +19,7 @@ from ..db.models import (
     ReviewState,
     User,
 )
+from ..content import versioning
 from .grading_service import GradeOutcome, grade_payload, is_self_check
 from .review_scheduler import activate_lesson_reviews, apply_review_result
 
@@ -39,6 +40,13 @@ class LessonNotMastered(Exception):
         self.remaining = remaining
 
 
+class LessonHasNoExercises(Exception):
+    """Bài không có câu nào đang hiện: không có gì để chứng minh đã học nên không cho hoàn thành."""
+
+    def __init__(self):
+        super().__init__("LESSON_HAS_NO_EXERCISES")
+
+
 def require_user(db: Session, user_id: str) -> User:
     user = db.get(User, user_id)
     if user is None:
@@ -46,13 +54,27 @@ def require_user(db: Session, user_id: str) -> User:
     return user
 
 
+class ExerciseVersionSuperseded(Exception):
+    """Người học gửi bài vào phiên bản đã bị thay (trang cũ còn mở); không chấm theo đề cũ nữa (ADR-006)."""
+
+    def __init__(self, version_id: str, current_version_id: str):
+        super().__init__("EXERCISE_VERSION_SUPERSEDED")
+        self.version_id = version_id
+        self.current_version_id = current_version_id
+
+
 def require_exercise_version(db: Session, version_id: str) -> tuple[ExerciseVersion, Exercise]:
     version = db.get(ExerciseVersion, version_id)
-    if version is None:
+    statuses = versioning.visible_statuses()
+    if version is None or version.status not in statuses:
         raise LookupError("EXERCISE_VERSION_NOT_FOUND")
     exercise = db.get(Exercise, version.exercise_id)
-    if exercise is None or not exercise.active:
+    current = versioning.current_version(exercise, statuses) if exercise is not None else None
+    if current is None:
+        # Câu đã xóa mềm, hoặc bản hiện hành không có ảnh chụp hợp lệ: không hiển thị và không chấm.
         raise LookupError("EXERCISE_NOT_FOUND")
+    if current.id != version.id:
+        raise ExerciseVersionSuperseded(version.id, current.id)
     return version, exercise
 
 
@@ -68,7 +90,8 @@ def submit_attempt(db: Session, user_id: str, version_id: str, answer,
                    input_method: str = "text") -> tuple[Attempt, GradeOutcome]:
     require_user(db, user_id)
     version, exercise = require_exercise_version(db, version_id)
-    outcome = grade_payload(exercise.grading_strategy, version.answer_key, version.grader_config, answer,
+    # Cách chấm lấy từ ảnh chụp của phiên bản, không lấy từ exercises (HM-003: bản cũ rubric từng bị chấm bằng exact).
+    outcome = grade_payload(version.grading_strategy, version.answer_key, version.grader_config, answer,
                             input_method=input_method)
     attempt = Attempt(
         id=str(uuid4()), user_id=user_id, exercise_version_id=version.id, answer=answer,
@@ -103,8 +126,15 @@ def complete_lesson(db: Session, user_id: str, lesson_id: str) -> tuple[LessonPr
             .join(Attempt, Attempt.exercise_version_id == ExerciseVersion.id)
             .where(Attempt.user_id == user_id, Attempt.correct.is_(True))
         ).all())
-        remaining = [e.id for e in sorted(lesson.exercises, key=lambda e: e.position)
-                     if e.active and e.id not in correct_ids]
+        # Chỉ tính câu đang hiện cho người học; đúng ở bất kỳ phiên bản nào của câu cũng được tính (6A).
+        active_ids = [e.id for e in sorted(lesson.exercises, key=lambda e: e.position)
+                      if versioning.current_version(e) is not None]
+        if not active_ids:
+            # Bài chưa có câu, toàn nháp, toàn retired hoặc bản hiện hành missing: danh sách "còn thiếu"
+            # rỗng không có nghĩa là đã học xong.
+            db.rollback()
+            raise LessonHasNoExercises()
+        remaining = [exercise_id for exercise_id in active_ids if exercise_id not in correct_ids]
         if remaining:
             db.rollback()
             raise LessonNotMastered(remaining)
@@ -207,13 +237,15 @@ def learning_overview(db: Session, user_id: str) -> dict:
 
     lesson_rows = []
     for lesson in lessons:
-        active_exercises = [exercise for exercise in lesson.exercises if exercise.active]
+        active_ids = {exercise.id for exercise in lesson.exercises if versioning.current_version(exercise) is not None}
         rows = by_lesson.get(lesson.id, [])
-        attempted_ids = sorted({exercise.id for _, _, exercise in rows})
-        correct_ids = sorted({exercise.id for attempt, _, exercise in rows if attempt.correct})
+        # Số đếm theo câu chỉ tính câu đang hiện, để không vượt exercise_count khi câu bị retired/ẩn.
+        # Tổng số lượt làm bên dưới vẫn tính mọi lượt: đó là lịch sử, không phải tiến độ.
+        attempted_ids = sorted({exercise.id for _, _, exercise in rows if exercise.id in active_ids})
+        correct_ids = sorted({exercise.id for attempt, _, exercise in rows if attempt.correct and exercise.id in active_ids})
         progress = progresses.get(lesson.id)
         status = progress.status if progress is not None else "not_started"
-        exercise_count = len(active_exercises)
+        exercise_count = len(active_ids)
         attempted_count = len(attempted_ids)
         practice_percent = 0 if exercise_count == 0 else round(attempted_count / exercise_count * 100)
         if status == "completed":

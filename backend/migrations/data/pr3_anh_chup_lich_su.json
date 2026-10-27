@@ -1,0 +1,1284 @@
+{
+ "_cach_tao": "Chạy curriculum_specs ở từng commit 3a809e4, 5cd49d4, 5c31dc4, f0d3dac; mỗi id phiên bản lấy ở commit đầu tiên có nó. Đã kiểm: không id nào đổi nội dung giữa các commit.",
+ "_mo_ta": "Ảnh chụp nội dung câu hỏi trích từ lịch sử git (backend/app/content/curriculum_specs.py), dùng một lần cho migration PR-3 (HM-003). Không sửa file này: migration kiểm SHA-256.",
+ "versions": {
+  "L01-Q01-v2": {
+   "answer_key": {
+    "expected": "M3"
+   },
+   "exercise_id": "L01-Q01",
+   "explanation": "C–E là quãng ba trưởng.",
+   "grader_config": {
+    "case_sensitive": true
+   },
+   "grading_strategy": "exact",
+   "kind": "mcq",
+   "lesson_id": "L01",
+   "options": [
+    "m3",
+    "M3",
+    "P4",
+    "A4"
+   ],
+   "prompt": "Quãng từ C lên E là gì?",
+   "provenance": [
+    {
+     "locator": "Fundamentals → Intervals",
+     "note": "Interval size/quality and enharmonic interval spelling.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Unit 1: Music Fundamentals — scales, intervals, triads",
+     "note": "Current official unit verified; exact current PDF page locators not locked.",
+     "source_id": "FANK_WIH"
+    }
+   ],
+   "skill_id": "interval.naming",
+   "source_commit": "3a809e4d4d458e4a9a9336054e5422e5829ea8e2",
+   "version": 2
+  },
+  "L01-Q01-v4": {
+   "answer_key": {
+    "expected": "M3"
+   },
+   "exercise_id": "L01-Q01",
+   "explanation": "F–A dùng ba tên chữ F–G–A và cách nhau 4 nửa cung, nên là M3.",
+   "grader_config": {
+    "case_sensitive": true
+   },
+   "grading_strategy": "exact",
+   "kind": "mcq",
+   "lesson_id": "L01",
+   "options": [
+    "m3",
+    "M3",
+    "P5",
+    "d5"
+   ],
+   "prompt": "Quãng từ F lên A là gì?",
+   "provenance": [
+    {
+     "locator": "Fundamentals → Intervals",
+     "note": "Interval size/quality and enharmonic interval spelling.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Unit 1: Music Fundamentals — scales, intervals, triads",
+     "note": "Current official unit verified; exact current PDF page locators not locked.",
+     "source_id": "FANK_WIH"
+    }
+   ],
+   "skill_id": "interval.naming",
+   "source_commit": "5cd49d44074e4b6ddf5921def58411a52921e9bd",
+   "version": 4
+  },
+  "L01-Q02-v2": {
+   "answer_key": {
+    "expected": [
+     "C",
+     "E",
+     "G"
+    ]
+   },
+   "exercise_id": "L01-Q02",
+   "explanation": "C major = C–E–G.",
+   "grader_config": {
+    "kind": "build_chord",
+    "symbol": "C"
+   },
+   "grading_strategy": "music_engine",
+   "kind": "build",
+   "lesson_id": "L01",
+   "options": null,
+   "prompt": "Dựng hợp âm C trưởng bằng tên nốt.",
+   "provenance": [
+    {
+     "locator": "Fundamentals → Triads",
+     "note": "Triad structure, qualities, spelling, and listening.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Unit 1: Music Fundamentals — scales, intervals, triads",
+     "note": "Current official unit verified; exact current PDF page locators not locked.",
+     "source_id": "FANK_WIH"
+    }
+   ],
+   "skill_id": "chord.triad_build",
+   "source_commit": "3a809e4d4d458e4a9a9336054e5422e5829ea8e2",
+   "version": 2
+  },
+  "L01-Q02-v4": {
+   "answer_key": {
+    "expected": [
+     "G",
+     "B",
+     "D"
+    ]
+   },
+   "exercise_id": "L01-Q02",
+   "explanation": "G major = G–B–D: M3 + P5 tính từ G.",
+   "grader_config": {
+    "kind": "build_chord",
+    "symbol": "G"
+   },
+   "grading_strategy": "music_engine",
+   "kind": "build",
+   "lesson_id": "L01",
+   "options": null,
+   "prompt": "Dựng hợp âm G major bằng tên nốt. Nhập ba nốt theo cùng một định dạng, ví dụ Nốt-Nốt-Nốt.",
+   "provenance": [
+    {
+     "locator": "Fundamentals → Triads",
+     "note": "Triad structure, qualities, spelling, and listening.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Unit 1: Music Fundamentals — scales, intervals, triads",
+     "note": "Current official unit verified; exact current PDF page locators not locked.",
+     "source_id": "FANK_WIH"
+    }
+   ],
+   "skill_id": "chord.triad_build",
+   "source_commit": "5cd49d44074e4b6ddf5921def58411a52921e9bd",
+   "version": 4
+  },
+  "L01-Q03-v2": {
+   "answer_key": {
+    "expected": "1-b3-5"
+   },
+   "exercise_id": "L01-Q03",
+   "explanation": "Minor triad = 1–♭3–5.",
+   "grader_config": {
+    "normalize_dashes": true
+   },
+   "grading_strategy": "exact",
+   "kind": "active_recall",
+   "lesson_id": "L01",
+   "options": null,
+   "prompt": "Không nhìn đáp án: công thức minor triad là gì?",
+   "provenance": [
+    {
+     "locator": "Fundamentals → Triads",
+     "note": "Triad structure, qualities, spelling, and listening.",
+     "source_id": "OMT_V2"
+    }
+   ],
+   "skill_id": "chord.triad_formula",
+   "source_commit": "3a809e4d4d458e4a9a9336054e5422e5829ea8e2",
+   "version": 2
+  },
+  "L01-Q03-v4": {
+   "answer_key": {
+    "expected": "1-b3-5"
+   },
+   "exercise_id": "L01-Q03",
+   "explanation": "Minor triad = 1–♭3–5 = m3 + P5 tính từ root.",
+   "grader_config": {
+    "normalize_accidentals": true,
+    "normalize_dashes": true
+   },
+   "grading_strategy": "exact",
+   "kind": "active_recall",
+   "lesson_id": "L01",
+   "options": null,
+   "prompt": "Không nhìn đáp án: công thức minor triad là gì? Nhập theo định dạng như 1-3-5 (dùng chữ b thay cho ♭).",
+   "provenance": [
+    {
+     "locator": "Fundamentals → Triads",
+     "note": "Triad structure, qualities, spelling, and listening.",
+     "source_id": "OMT_V2"
+    }
+   ],
+   "skill_id": "chord.triad_formula",
+   "source_commit": "5cd49d44074e4b6ddf5921def58411a52921e9bd",
+   "version": 4
+  },
+  "L01-Q03-v5": {
+   "answer_key": {
+    "expected": "1-b3-5"
+   },
+   "exercise_id": "L01-Q03",
+   "explanation": "Minor triad = 1–♭3–5 = m3 + P5 tính từ root.",
+   "grader_config": {
+    "normalize_accidentals": true,
+    "normalize_dashes": true,
+    "sequence": true
+   },
+   "grading_strategy": "exact",
+   "kind": "active_recall",
+   "lesson_id": "L01",
+   "options": null,
+   "prompt": "Không nhìn đáp án: công thức minor triad là gì? Nhập theo định dạng như 1-3-5 (dùng chữ b thay cho ♭).",
+   "provenance": [
+    {
+     "locator": "Fundamentals → Triads",
+     "note": "Triad structure, qualities, spelling, and listening.",
+     "source_id": "OMT_V2"
+    }
+   ],
+   "skill_id": "chord.triad_formula",
+   "source_commit": "5c31dc4463edd3ac1cfcffcd569f426c5c0c4fd3",
+   "version": 5
+  },
+  "L01-Q04-v2": {
+   "answer_key": {
+    "expected": [
+     "A",
+     "C",
+     "E"
+    ]
+   },
+   "exercise_id": "L01-Q04",
+   "explanation": "A minor = A–C–E.",
+   "grader_config": {
+    "kind": "build_chord",
+    "symbol": "Am"
+   },
+   "grading_strategy": "music_engine",
+   "kind": "build",
+   "lesson_id": "L01",
+   "options": null,
+   "prompt": "Dựng hợp âm A minor bằng tên nốt.",
+   "provenance": [
+    {
+     "locator": "Fundamentals → Triads",
+     "note": "Triad structure, qualities, spelling, and listening.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Part I, Ch.1 Music Fundamentals, PDF pp. 13–22",
+     "note": "Written notation plus interval/triad ear-training sequence.",
+     "source_id": "TEREFENKO_WB"
+    }
+   ],
+   "skill_id": "chord.triad_build",
+   "source_commit": "3a809e4d4d458e4a9a9336054e5422e5829ea8e2",
+   "version": 2
+  },
+  "L01-Q04-v4": {
+   "answer_key": {
+    "expected": [
+     "D",
+     "F",
+     "A"
+    ]
+   },
+   "exercise_id": "L01-Q04",
+   "explanation": "D minor = D–F–A: m3 + P5 tính từ D.",
+   "grader_config": {
+    "kind": "build_chord",
+    "symbol": "Dm"
+   },
+   "grading_strategy": "music_engine",
+   "kind": "build",
+   "lesson_id": "L01",
+   "options": null,
+   "prompt": "Dựng hợp âm D minor bằng tên nốt. Nhập ba nốt, có thể ngăn cách bằng dấu -, khoảng trắng hoặc dấu phẩy.",
+   "provenance": [
+    {
+     "locator": "Fundamentals → Triads",
+     "note": "Triad structure, qualities, spelling, and listening.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Part I, Ch.1 Music Fundamentals, PDF pp. 13–22",
+     "note": "Written notation plus interval/triad ear-training sequence.",
+     "source_id": "TEREFENKO_WB"
+    }
+   ],
+   "skill_id": "chord.triad_build",
+   "source_commit": "5cd49d44074e4b6ddf5921def58411a52921e9bd",
+   "version": 4
+  },
+  "L01-Q05-v2": {
+   "answer_key": {
+    "accepted": [
+     "không",
+     "khong",
+     "không phải",
+     "khong phai"
+    ]
+   },
+   "exercise_id": "L01-Q05",
+   "explanation": "Enharmonic pitches có thể cùng cao độ nhưng khác tên viết theo ngữ cảnh.",
+   "grader_config": {
+    "mode": "contains_any",
+    "strip_accents": true
+   },
+   "grading_strategy": "rubric",
+   "kind": "context",
+   "lesson_id": "L01",
+   "options": null,
+   "prompt": "G# và Ab có thể cùng cao độ trên đàn. Điều đó có nghĩa chúng luôn cùng spelling không?",
+   "provenance": [
+    {
+     "locator": "Fundamentals → Intervals",
+     "note": "Interval size/quality and enharmonic interval spelling.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Unit 1: Music Fundamentals — scales, intervals, triads",
+     "note": "Current official unit verified; exact current PDF page locators not locked.",
+     "source_id": "FANK_WIH"
+    }
+   ],
+   "skill_id": "pitch.spelling",
+   "source_commit": "3a809e4d4d458e4a9a9336054e5422e5829ea8e2",
+   "version": 2
+  },
+  "L01-Q05-v4": {
+   "answer_key": {
+    "accepted": [
+     "không",
+     "khong",
+     "không phải",
+     "khong phai"
+    ]
+   },
+   "exercise_id": "L01-Q05",
+   "explanation": "Không. Hai tên có thể cùng cao độ nhưng spelling đúng còn phụ thuộc số quãng, khung chữ cái và ngữ cảnh.",
+   "grader_config": {
+    "mode": "contains_any",
+    "strip_accents": true
+   },
+   "grading_strategy": "rubric",
+   "kind": "context",
+   "lesson_id": "L01",
+   "options": null,
+   "prompt": "F# và Gb có thể là cùng một phím trên piano. Điều đó có nghĩa chúng luôn được viết cùng một tên trong mọi ngữ cảnh không? Trả lời ngắn: Có hoặc Không.",
+   "provenance": [
+    {
+     "locator": "Fundamentals → Intervals",
+     "note": "Interval size/quality and enharmonic interval spelling.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Unit 1: Music Fundamentals — scales, intervals, triads",
+     "note": "Current official unit verified; exact current PDF page locators not locked.",
+     "source_id": "FANK_WIH"
+    }
+   ],
+   "skill_id": "pitch.spelling",
+   "source_commit": "5cd49d44074e4b6ddf5921def58411a52921e9bd",
+   "version": 4
+  },
+  "L01-Q05-v5": {
+   "answer_key": {
+    "expected": "Không"
+   },
+   "exercise_id": "L01-Q05",
+   "explanation": "Không. Hai tên có thể cùng cao độ nhưng spelling đúng còn phụ thuộc số quãng, khung chữ cái và ngữ cảnh.",
+   "grader_config": {},
+   "grading_strategy": "exact",
+   "kind": "context",
+   "lesson_id": "L01",
+   "options": [
+    "Có",
+    "Không"
+   ],
+   "prompt": "F# và Gb có thể là cùng một phím trên piano. Điều đó có nghĩa chúng luôn được viết cùng một tên trong mọi ngữ cảnh không? Chọn Có hoặc Không.",
+   "provenance": [
+    {
+     "locator": "Fundamentals → Intervals",
+     "note": "Interval size/quality and enharmonic interval spelling.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Unit 1: Music Fundamentals — scales, intervals, triads",
+     "note": "Current official unit verified; exact current PDF page locators not locked.",
+     "source_id": "FANK_WIH"
+    }
+   ],
+   "skill_id": "pitch.spelling",
+   "source_commit": "5c31dc4463edd3ac1cfcffcd569f426c5c0c4fd3",
+   "version": 5
+  },
+  "L01-Q06-v2": {
+   "answer_key": {
+    "expected": [
+     "B",
+     "D",
+     "F"
+    ]
+   },
+   "exercise_id": "L01-Q06",
+   "explanation": "B diminished = B–D–F.",
+   "grader_config": {
+    "kind": "build_chord",
+    "symbol": "Bdim"
+   },
+   "grading_strategy": "music_engine",
+   "kind": "build",
+   "lesson_id": "L01",
+   "options": null,
+   "prompt": "Dựng hợp âm B diminished.",
+   "provenance": [
+    {
+     "locator": "Fundamentals → Triads",
+     "note": "Triad structure, qualities, spelling, and listening.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Part I, Ch.1 Music Fundamentals, PDF pp. 13–22",
+     "note": "Written notation plus interval/triad ear-training sequence.",
+     "source_id": "TEREFENKO_WB"
+    }
+   ],
+   "skill_id": "chord.triad_build",
+   "source_commit": "3a809e4d4d458e4a9a9336054e5422e5829ea8e2",
+   "version": 2
+  },
+  "L01-Q06-v4": {
+   "answer_key": {
+    "expected": [
+     "B",
+     "D",
+     "F"
+    ]
+   },
+   "exercise_id": "L01-Q06",
+   "explanation": "B diminished = B–D–F: m3 + d5 tính từ B.",
+   "grader_config": {
+    "kind": "build_chord",
+    "symbol": "Bdim"
+   },
+   "grading_strategy": "music_engine",
+   "kind": "build",
+   "lesson_id": "L01",
+   "options": null,
+   "prompt": "Dựng hợp âm B diminished. Nhập ba nốt, có thể ngăn cách bằng dấu -, khoảng trắng hoặc dấu phẩy.",
+   "provenance": [
+    {
+     "locator": "Fundamentals → Triads",
+     "note": "Triad structure, qualities, spelling, and listening.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Part I, Ch.1 Music Fundamentals, PDF pp. 13–22",
+     "note": "Written notation plus interval/triad ear-training sequence.",
+     "source_id": "TEREFENKO_WB"
+    }
+   ],
+   "skill_id": "chord.triad_build",
+   "source_commit": "5cd49d44074e4b6ddf5921def58411a52921e9bd",
+   "version": 4
+  },
+  "L02-Q01-v1": {
+   "answer_key": {
+    "expected": [
+     "G",
+     "A",
+     "B",
+     "C",
+     "D",
+     "E",
+     "F#"
+    ]
+   },
+   "exercise_id": "L02-Q01",
+   "explanation": "G major dùng F# và mỗi chữ cái xuất hiện một lần.",
+   "grader_config": {
+    "kind": "build_scale",
+    "scale_type": "major",
+    "tonic": "G"
+   },
+   "grading_strategy": "music_engine",
+   "kind": "build",
+   "lesson_id": "L02",
+   "options": null,
+   "prompt": "Dựng âm giai G major theo thứ tự đi lên, không lặp lại chủ âm ở cuối.",
+   "provenance": [
+    {
+     "locator": "Unit 1: Music Fundamentals — scales, intervals, triads",
+     "note": "Current official unit verified; exact current PDF page locators not locked.",
+     "source_id": "FANK_WIH"
+    }
+   ],
+   "skill_id": "scale.major",
+   "source_commit": "3a809e4d4d458e4a9a9336054e5422e5829ea8e2",
+   "version": 1
+  },
+  "L02-Q02-v1": {
+   "answer_key": {
+    "expected": [
+     "C",
+     "E",
+     "G",
+     "B"
+    ]
+   },
+   "exercise_id": "L02-Q02",
+   "explanation": "Cmaj7 = C–E–G–B.",
+   "grader_config": {
+    "kind": "build_chord",
+    "symbol": "Cmaj7"
+   },
+   "grading_strategy": "music_engine",
+   "kind": "build",
+   "lesson_id": "L02",
+   "options": null,
+   "prompt": "Dựng Cmaj7 đầy đủ bằng tên nốt.",
+   "provenance": [
+    {
+     "locator": "Fundamentals → Seventh Chords",
+     "note": "Seventh-chord structure and diatonic qualities.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Part I, Chs.4–5 Four-Part/Five-Part Chords, PDF pp. 29–43",
+     "note": "Four/five-part chord construction, voicing, and ear training.",
+     "source_id": "TEREFENKO_WB"
+    }
+   ],
+   "skill_id": "chord.seventh_build",
+   "source_commit": "3a809e4d4d458e4a9a9336054e5422e5829ea8e2",
+   "version": 1
+  },
+  "L02-Q03-v1": {
+   "answer_key": {
+    "expected": "ii7"
+   },
+   "exercise_id": "L02-Q03",
+   "explanation": "Dm7 là seventh chord trên bậc 2 của C major.",
+   "grader_config": {
+    "chord": "Dm7",
+    "key": "C",
+    "kind": "roman_numeral"
+   },
+   "grading_strategy": "music_engine",
+   "kind": "active_recall",
+   "lesson_id": "L02",
+   "options": null,
+   "prompt": "Trong C major, Dm7 mang Roman numeral nào?",
+   "provenance": [
+    {
+     "locator": "Fundamentals → Roman Numerals",
+     "note": "Relative labeling of diatonic harmony.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading",
+     "note": "Supporting cross-check; exact current PDF pages pending local PDF access.",
+     "source_id": "FANK_WIH"
+    }
+   ],
+   "skill_id": "roman.major_seventh",
+   "source_commit": "3a809e4d4d458e4a9a9336054e5422e5829ea8e2",
+   "version": 1
+  },
+  "L02-Q04-v1": {
+   "answer_key": {
+    "expected": "G7"
+   },
+   "exercise_id": "L02-Q04",
+   "explanation": "Bậc V của major key tạo dominant seventh.",
+   "grader_config": {},
+   "grading_strategy": "exact",
+   "kind": "mcq",
+   "lesson_id": "L02",
+   "options": [
+    "Gmaj7",
+    "G7",
+    "Gm7",
+    "Gdim7"
+   ],
+   "prompt": "Trong C major, hợp âm bảy trên bậc V là gì?",
+   "provenance": [
+    {
+     "locator": "Fundamentals → Seventh Chords",
+     "note": "Seventh-chord structure and diatonic qualities.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading",
+     "note": "Supporting cross-check; exact current PDF pages pending local PDF access.",
+     "source_id": "FANK_WIH"
+    }
+   ],
+   "skill_id": "chord.seventh_quality",
+   "source_commit": "3a809e4d4d458e4a9a9336054e5422e5829ea8e2",
+   "version": 1
+  },
+  "L02-Q05-v1": {
+   "answer_key": {
+    "expected": "Bm7b5"
+   },
+   "exercise_id": "L02-Q05",
+   "explanation": "Bậc vii trong major key tạo half-diminished seventh chord.",
+   "grader_config": {},
+   "grading_strategy": "exact",
+   "kind": "mcq",
+   "lesson_id": "L02",
+   "options": [
+    "Bmaj7",
+    "Bm7",
+    "Bm7b5",
+    "Bdim7"
+   ],
+   "prompt": "Trong C major, hợp âm bảy trên bậc vii là gì?",
+   "provenance": [
+    {
+     "locator": "Fundamentals → Seventh Chords",
+     "note": "Seventh-chord structure and diatonic qualities.",
+     "source_id": "OMT_V2"
+    }
+   ],
+   "skill_id": "chord.seventh_quality",
+   "source_commit": "3a809e4d4d458e4a9a9336054e5422e5829ea8e2",
+   "version": 1
+  },
+  "L02-Q06-v1": {
+   "answer_key": {
+    "expected": [
+     "G",
+     "B",
+     "D",
+     "F"
+    ]
+   },
+   "exercise_id": "L02-Q06",
+   "explanation": "G7 = G–B–D–F.",
+   "grader_config": {
+    "kind": "build_chord",
+    "symbol": "G7"
+   },
+   "grading_strategy": "music_engine",
+   "kind": "build",
+   "lesson_id": "L02",
+   "options": null,
+   "prompt": "Dựng G7 đầy đủ bằng tên nốt.",
+   "provenance": [
+    {
+     "locator": "Fundamentals → Seventh Chords",
+     "note": "Seventh-chord structure and diatonic qualities.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Part I, Chs.4–5 Four-Part/Five-Part Chords, PDF pp. 29–43",
+     "note": "Four/five-part chord construction, voicing, and ear training.",
+     "source_id": "TEREFENKO_WB"
+    }
+   ],
+   "skill_id": "chord.seventh_build",
+   "source_commit": "3a809e4d4d458e4a9a9336054e5422e5829ea8e2",
+   "version": 1
+  },
+  "L03-Q01-v1": {
+   "answer_key": {
+    "expected": "Tonic"
+   },
+   "exercise_id": "L03-Q01",
+   "explanation": "I/Imaj7 là điểm quy chiếu tonic trong ngữ cảnh lesson này.",
+   "grader_config": {},
+   "grading_strategy": "exact",
+   "kind": "mcq",
+   "lesson_id": "L03",
+   "options": [
+    "Tonic",
+    "Predominant",
+    "Dominant",
+    "Applied dominant"
+   ],
+   "prompt": "Trong C major, Cmaj7 ở vị trí ổn định cuối phrase thuộc chức năng nào?",
+   "provenance": [
+    {
+     "locator": "Introduction to Harmony, Cadences, and Phrase Endings",
+     "note": "Tonic–predominant–dominant phrase model.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Ch.1, printed pp. 21–37",
+     "note": "Tonic/subdominant/dominant grouping and ii–V–I context.",
+     "source_id": "KHAIHOAN_JAZZ"
+    }
+   ],
+   "skill_id": "function.tonic",
+   "source_commit": "3a809e4d4d458e4a9a9336054e5422e5829ea8e2",
+   "version": 1
+  },
+  "L03-Q02-v1": {
+   "answer_key": {
+    "expected": "Predominant"
+   },
+   "exercise_id": "L03-Q02",
+   "explanation": "ii7 thường chuẩn bị dominant.",
+   "grader_config": {},
+   "grading_strategy": "exact",
+   "kind": "mcq",
+   "lesson_id": "L03",
+   "options": [
+    "Tonic",
+    "Predominant",
+    "Dominant",
+    "Modulation"
+   ],
+   "prompt": "Trong Dm7 → G7 → Cmaj7 ở C major, Dm7 thường giữ vai trò nào?",
+   "provenance": [
+    {
+     "locator": "Introduction to Harmony, Cadences, and Phrase Endings",
+     "note": "Tonic–predominant–dominant phrase model.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Ch.1, printed pp. 21–37",
+     "note": "Tonic/subdominant/dominant grouping and ii–V–I context.",
+     "source_id": "KHAIHOAN_JAZZ"
+    }
+   ],
+   "skill_id": "function.predominant",
+   "source_commit": "3a809e4d4d458e4a9a9336054e5422e5829ea8e2",
+   "version": 1
+  },
+  "L03-Q03-v1": {
+   "answer_key": {
+    "expected": "Dominant"
+   },
+   "exercise_id": "L03-Q03",
+   "explanation": "V7 tạo dominant function và hướng về tonic.",
+   "grader_config": {},
+   "grading_strategy": "exact",
+   "kind": "mcq",
+   "lesson_id": "L03",
+   "options": [
+    "Tonic",
+    "Predominant",
+    "Dominant",
+    "Modal"
+   ],
+   "prompt": "Trong Dm7 → G7 → Cmaj7, G7 giữ chức năng nào?",
+   "provenance": [
+    {
+     "locator": "Introduction to Harmony, Cadences, and Phrase Endings",
+     "note": "Tonic–predominant–dominant phrase model.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Part I, Ch.3 Harmonic Function, PDF pp. 25–28",
+     "note": "Written analysis, keyboard realization, and harmonic-function ear training.",
+     "source_id": "TEREFENKO_WB"
+    }
+   ],
+   "skill_id": "function.dominant",
+   "source_commit": "3a809e4d4d458e4a9a9336054e5422e5829ea8e2",
+   "version": 1
+  },
+  "L03-Q04-v1": {
+   "answer_key": {
+    "accepted": [
+     "t-pd-d-t",
+     "tonic-predominant-dominant-tonic",
+     "t-subdominant-dominant-t",
+     "tonic-subdominant-dominant-tonic"
+    ]
+   },
+   "exercise_id": "L03-Q04",
+   "explanation": "Flow mục tiêu là T → PD/SD → D → T.",
+   "grader_config": {
+    "mode": "equals_any",
+    "normalize_dashes": true
+   },
+   "grading_strategy": "rubric",
+   "kind": "active_recall",
+   "lesson_id": "L03",
+   "options": null,
+   "prompt": "Viết thứ tự chức năng cơ bản của progression Cmaj7 → Dm7 → G7 → Cmaj7.",
+   "provenance": [
+    {
+     "locator": "Introduction to Harmony, Cadences, and Phrase Endings",
+     "note": "Tonic–predominant–dominant phrase model.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Part I, Ch.3 Harmonic Function, PDF pp. 25–28",
+     "note": "Written analysis, keyboard realization, and harmonic-function ear training.",
+     "source_id": "TEREFENKO_WB"
+    }
+   ],
+   "skill_id": "function.progression",
+   "source_commit": "3a809e4d4d458e4a9a9336054e5422e5829ea8e2",
+   "version": 1
+  },
+  "L03-Q04-v2": {
+   "answer_key": {
+    "accepted": [
+     "t-pd-d-t",
+     "tonic-predominant-dominant-tonic",
+     "t-subdominant-dominant-t",
+     "tonic-subdominant-dominant-tonic",
+     "t-sd-d-t"
+    ]
+   },
+   "exercise_id": "L03-Q04",
+   "explanation": "Flow mục tiêu là T → PD/SD → D → T.",
+   "grader_config": {
+    "mode": "equals_any",
+    "normalize_dashes": true,
+    "sequence": true
+   },
+   "grading_strategy": "rubric",
+   "kind": "active_recall",
+   "lesson_id": "L03",
+   "options": null,
+   "prompt": "Viết thứ tự chức năng cơ bản của progression Cmaj7 → Dm7 → G7 → Cmaj7.",
+   "provenance": [
+    {
+     "locator": "Introduction to Harmony, Cadences, and Phrase Endings",
+     "note": "Tonic–predominant–dominant phrase model.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Part I, Ch.3 Harmonic Function, PDF pp. 25–28",
+     "note": "Written analysis, keyboard realization, and harmonic-function ear training.",
+     "source_id": "TEREFENKO_WB"
+    }
+   ],
+   "skill_id": "function.progression",
+   "source_commit": "5c31dc4463edd3ac1cfcffcd569f426c5c0c4fd3",
+   "version": 2
+  },
+  "L03-Q05-v1": {
+   "answer_key": {
+    "accepted": [
+     "ngữ cảnh",
+     "ngu canh",
+     "context",
+     "chức năng phụ thuộc",
+     "chuc nang phu thuoc"
+    ]
+   },
+   "exercise_id": "L03-Q05",
+   "explanation": "Harmonic function là quan hệ hành vi trong ngữ cảnh.",
+   "grader_config": {
+    "mode": "contains_any",
+    "strip_accents": true
+   },
+   "grading_strategy": "rubric",
+   "kind": "context",
+   "lesson_id": "L03",
+   "options": null,
+   "prompt": "Vì sao không nên gán chức năng chỉ từ tên hợp âm mà bỏ qua progression xung quanh?",
+   "provenance": [
+    {
+     "locator": "Introduction to Harmony, Cadences, and Phrase Endings",
+     "note": "Tonic–predominant–dominant phrase model.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Part I, Ch.3 Harmonic Function, PDF pp. 25–28",
+     "note": "Written analysis, keyboard realization, and harmonic-function ear training.",
+     "source_id": "TEREFENKO_WB"
+    }
+   ],
+   "skill_id": "function.progression",
+   "source_commit": "3a809e4d4d458e4a9a9336054e5422e5829ea8e2",
+   "version": 1
+  },
+  "L03-Q05-v2": {
+   "answer_key": {
+    "expected": "Vì chức năng phụ thuộc vào giọng và các hợp âm đứng trước, đứng sau"
+   },
+   "exercise_id": "L03-Q05",
+   "explanation": "Harmonic function là quan hệ hành vi trong ngữ cảnh: cùng là G7 nhưng trong giọng C nó là Dominant, trong giọng F nó lại dẫn về C (dominant phụ).",
+   "grader_config": {},
+   "grading_strategy": "exact",
+   "kind": "context",
+   "lesson_id": "L03",
+   "options": [
+    "Vì chức năng phụ thuộc vào giọng và các hợp âm đứng trước, đứng sau",
+    "Vì tên hợp âm thường bị viết sai",
+    "Vì chỉ hợp âm bảy mới có chức năng",
+    "Vì chức năng chỉ do nốt cao nhất quyết định"
+   ],
+   "prompt": "Vì sao không nên gán chức năng chỉ từ tên hợp âm mà bỏ qua progression xung quanh?",
+   "provenance": [
+    {
+     "locator": "Introduction to Harmony, Cadences, and Phrase Endings",
+     "note": "Tonic–predominant–dominant phrase model.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Part I, Ch.3 Harmonic Function, PDF pp. 25–28",
+     "note": "Written analysis, keyboard realization, and harmonic-function ear training.",
+     "source_id": "TEREFENKO_WB"
+    }
+   ],
+   "skill_id": "function.progression",
+   "source_commit": "5c31dc4463edd3ac1cfcffcd569f426c5c0c4fd3",
+   "version": 2
+  },
+  "L03-Q06-v1": {
+   "answer_key": {
+    "expected": "Cmaj7-Dm7-G7-Cmaj7"
+   },
+   "exercise_id": "L03-Q06",
+   "explanation": "Cmaj7–Dm7–G7–Cmaj7 thể hiện rõ tonic → predominant → dominant → tonic.",
+   "grader_config": {
+    "normalize_dashes": true
+   },
+   "grading_strategy": "exact",
+   "kind": "applied",
+   "lesson_id": "L03",
+   "options": [
+    "Cmaj7-Dm7-G7-Cmaj7",
+    "Cmaj7-Am7-Em7-Dm7",
+    "G7-Dm7-Cmaj7-Fmaj7",
+    "Cmaj7-G7-Dm7-Cmaj7"
+   ],
+   "prompt": "Chọn progression thể hiện rõ T → PD → D → T trong C major.",
+   "provenance": [
+    {
+     "locator": "Introduction to Harmony, Cadences, and Phrase Endings",
+     "note": "Tonic–predominant–dominant phrase model.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Ch.1, printed pp. 21–37",
+     "note": "Tonic/subdominant/dominant grouping and ii–V–I context.",
+     "source_id": "KHAIHOAN_JAZZ"
+    }
+   ],
+   "skill_id": "function.progression",
+   "source_commit": "3a809e4d4d458e4a9a9336054e5422e5829ea8e2",
+   "version": 1
+  },
+  "L04-Q01-v1": {
+   "answer_key": {
+    "expected": "Dm7-G7-Cmaj7"
+   },
+   "exercise_id": "L04-Q01",
+   "explanation": "ii7–V7–Imaj7 trong C = Dm7–G7–Cmaj7.",
+   "grader_config": {
+    "normalize_dashes": true
+   },
+   "grading_strategy": "exact",
+   "kind": "mcq",
+   "lesson_id": "L04",
+   "options": [
+    "Dm7-G7-Cmaj7",
+    "Am7-Dm7-G7",
+    "Cmaj7-Fmaj7-G7",
+    "Em7-Am7-Dm7"
+   ],
+   "prompt": "ii–V–I trong C major là progression nào?",
+   "provenance": [
+    {
+     "locator": "Jazz → ii–V–I",
+     "note": "ii–V–I schema and applied ii–V usage.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Part I, Ch.6 The II–V–I Progression, PDF pp. 44–46",
+     "note": "Guide tones, drop-2 voicings, and functional analysis.",
+     "source_id": "TEREFENKO_WB"
+    }
+   ],
+   "skill_id": "progression.ii_v_i",
+   "source_commit": "3a809e4d4d458e4a9a9336054e5422e5829ea8e2",
+   "version": 1
+  },
+  "L04-Q02-v1": {
+   "answer_key": {
+    "expected": "Gm7-C7-Fmaj7"
+   },
+   "exercise_id": "L04-Q02",
+   "explanation": "Trong F major: ii=Gm7, V=C7, I=Fmaj7.",
+   "grader_config": {
+    "normalize_dashes": true
+   },
+   "grading_strategy": "exact",
+   "kind": "active_recall",
+   "lesson_id": "L04",
+   "options": null,
+   "prompt": "Viết ii–V–I trong F major bằng chord symbols.",
+   "provenance": [
+    {
+     "locator": "Jazz → ii–V–I",
+     "note": "ii–V–I schema and applied ii–V usage.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Part I, Ch.6 The II–V–I Progression, PDF pp. 44–46",
+     "note": "Guide tones, drop-2 voicings, and functional analysis.",
+     "source_id": "TEREFENKO_WB"
+    }
+   ],
+   "skill_id": "progression.ii_v_i",
+   "source_commit": "3a809e4d4d458e4a9a9336054e5422e5829ea8e2",
+   "version": 1
+  },
+  "L04-Q02-v2": {
+   "answer_key": {
+    "expected": "Gm7-C7-Fmaj7"
+   },
+   "exercise_id": "L04-Q02",
+   "explanation": "Trong F major: ii=Gm7, V=C7, I=Fmaj7.",
+   "grader_config": {
+    "normalize_dashes": true,
+    "sequence": true
+   },
+   "grading_strategy": "exact",
+   "kind": "active_recall",
+   "lesson_id": "L04",
+   "options": null,
+   "prompt": "Viết ii–V–I trong F major bằng chord symbols.",
+   "provenance": [
+    {
+     "locator": "Jazz → ii–V–I",
+     "note": "ii–V–I schema and applied ii–V usage.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Part I, Ch.6 The II–V–I Progression, PDF pp. 44–46",
+     "note": "Guide tones, drop-2 voicings, and functional analysis.",
+     "source_id": "TEREFENKO_WB"
+    }
+   ],
+   "skill_id": "progression.ii_v_i",
+   "source_commit": "5c31dc4463edd3ac1cfcffcd569f426c5c0c4fd3",
+   "version": 2
+  },
+  "L04-Q03-v1": {
+   "answer_key": {
+    "expected": [
+     "G",
+     "B",
+     "D",
+     "F"
+    ]
+   },
+   "exercise_id": "L04-Q03",
+   "explanation": "G7 = G–B–D–F; guide tones là B và F.",
+   "grader_config": {
+    "kind": "build_chord",
+    "symbol": "G7"
+   },
+   "grading_strategy": "music_engine",
+   "kind": "build",
+   "lesson_id": "L04",
+   "options": null,
+   "prompt": "Dựng G7 đầy đủ; đây là bài chord inventory, chưa phải voicing.",
+   "provenance": [
+    {
+     "locator": "Fundamentals → Seventh Chords",
+     "note": "Seventh-chord structure and diatonic qualities.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Part I, Ch.6 The II–V–I Progression, PDF pp. 44–46",
+     "note": "Guide tones, drop-2 voicings, and functional analysis.",
+     "source_id": "TEREFENKO_WB"
+    }
+   ],
+   "skill_id": "voicing.guide_tones",
+   "source_commit": "3a809e4d4d458e4a9a9336054e5422e5829ea8e2",
+   "version": 1
+  },
+  "L04-Q04-v1": {
+   "answer_key": {
+    "accepted": [
+     "b f",
+     "f b",
+     "b và f",
+     "f và b",
+     "b,f",
+     "f,b"
+    ]
+   },
+   "exercise_id": "L04-Q04",
+   "explanation": "3rd = B và ♭7 = F.",
+   "grader_config": {
+    "mode": "equals_any"
+   },
+   "grading_strategy": "rubric",
+   "kind": "active_recall",
+   "lesson_id": "L04",
+   "options": null,
+   "prompt": "Guide tones cơ bản của G7 là hai nốt nào?",
+   "provenance": [
+    {
+     "locator": "Ch.11, printed pp. 279–307",
+     "note": "Three-note voicings, guide tones, root-motion voice leading, and advanced voicing families.",
+     "source_id": "KHAIHOAN_JAZZ"
+    },
+    {
+     "locator": "Jazz → Jazz Voicings",
+     "note": "Smooth/lazy voice leading and voicing guidelines.",
+     "source_id": "OMT_V2"
+    }
+   ],
+   "skill_id": "voicing.guide_tones",
+   "source_commit": "3a809e4d4d458e4a9a9336054e5422e5829ea8e2",
+   "version": 1
+  },
+  "L04-Q04-v2": {
+   "answer_key": {
+    "accepted": [
+     "b f"
+    ]
+   },
+   "exercise_id": "L04-Q04",
+   "explanation": "3rd = B và ♭7 = F.",
+   "grader_config": {
+    "mode": "equals_any",
+    "unordered": true
+   },
+   "grading_strategy": "rubric",
+   "kind": "active_recall",
+   "lesson_id": "L04",
+   "options": null,
+   "prompt": "Guide tones cơ bản của G7 là hai nốt nào?",
+   "provenance": [
+    {
+     "locator": "Ch.11, printed pp. 279–307",
+     "note": "Three-note voicings, guide tones, root-motion voice leading, and advanced voicing families.",
+     "source_id": "KHAIHOAN_JAZZ"
+    },
+    {
+     "locator": "Jazz → Jazz Voicings",
+     "note": "Smooth/lazy voice leading and voicing guidelines.",
+     "source_id": "OMT_V2"
+    }
+   ],
+   "skill_id": "voicing.guide_tones",
+   "source_commit": "5c31dc4463edd3ac1cfcffcd569f426c5c0c4fd3",
+   "version": 2
+  },
+  "L04-Q05-v1": {
+   "answer_key": {
+    "expected": "B stays; F moves to E"
+   },
+   "exercise_id": "L04-Q05",
+   "explanation": "Giữ B và hạ F xuống E tạo common tone + stepwise motion.",
+   "grader_config": {},
+   "grading_strategy": "exact",
+   "kind": "mcq",
+   "lesson_id": "L04",
+   "options": [
+    "B stays; F moves to E",
+    "B moves to D; F moves to C",
+    "Both voices jump an octave",
+    "F stays; B moves to F"
+   ],
+   "prompt": "Guide-tone motion nào mô tả G7 → Cmaj7 mượt trong lesson này?",
+   "provenance": [
+    {
+     "locator": "Ch.11, printed pp. 279–307",
+     "note": "Three-note voicings, guide tones, root-motion voice leading, and advanced voicing families.",
+     "source_id": "KHAIHOAN_JAZZ"
+    },
+    {
+     "locator": "Jazz → Jazz Voicings",
+     "note": "Smooth/lazy voice leading and voicing guidelines.",
+     "source_id": "OMT_V2"
+    }
+   ],
+   "skill_id": "voicing.voice_leading",
+   "source_commit": "3a809e4d4d458e4a9a9336054e5422e5829ea8e2",
+   "version": 1
+  },
+  "L04-Q05-v2": {
+   "answer_key": {
+    "expected": "Giữ nguyên B, hạ F xuống E"
+   },
+   "exercise_id": "L04-Q05",
+   "explanation": "Giữ B và hạ F xuống E tạo common tone + stepwise motion.",
+   "grader_config": {},
+   "grading_strategy": "exact",
+   "kind": "mcq",
+   "lesson_id": "L04",
+   "options": [
+    "Giữ nguyên B, hạ F xuống E",
+    "B lên D, F xuống C",
+    "Cả hai nốt nhảy một quãng tám",
+    "Giữ nguyên F, B nhảy lên F"
+   ],
+   "prompt": "Khi nối G7 → Cmaj7, hai guide tone di chuyển thế nào thì mượt nhất?",
+   "provenance": [
+    {
+     "locator": "Ch.11, printed pp. 279–307",
+     "note": "Three-note voicings, guide tones, root-motion voice leading, and advanced voicing families.",
+     "source_id": "KHAIHOAN_JAZZ"
+    },
+    {
+     "locator": "Jazz → Jazz Voicings",
+     "note": "Smooth/lazy voice leading and voicing guidelines.",
+     "source_id": "OMT_V2"
+    }
+   ],
+   "skill_id": "voicing.voice_leading",
+   "source_commit": "5c31dc4463edd3ac1cfcffcd569f426c5c0c4fd3",
+   "version": 2
+  },
+  "L04-Q06-v1": {
+   "answer_key": {
+    "accepted": [
+     "di chuyển ít",
+     "di chuyen it",
+     "chuyển động gần",
+     "chuyen dong gan",
+     "common tone",
+     "move each voice as little as possible"
+    ]
+   },
+   "exercise_id": "L04-Q06",
+   "explanation": "Ưu tiên giữ common tones và giảm quãng di chuyển của từng voice khi phù hợp.",
+   "grader_config": {
+    "mode": "contains_any",
+    "strip_accents": true
+   },
+   "grading_strategy": "rubric",
+   "kind": "applied",
+   "lesson_id": "L04",
+   "options": null,
+   "prompt": "Mục tiêu chính của smooth/lazy voice leading giữa hai voicing là gì?",
+   "provenance": [
+    {
+     "locator": "Jazz → Jazz Voicings",
+     "note": "Smooth/lazy voice leading and voicing guidelines.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Ch.11, printed pp. 279–307",
+     "note": "Three-note voicings, guide tones, root-motion voice leading, and advanced voicing families.",
+     "source_id": "KHAIHOAN_JAZZ"
+    }
+   ],
+   "skill_id": "voicing.voice_leading",
+   "source_commit": "3a809e4d4d458e4a9a9336054e5422e5829ea8e2",
+   "version": 1
+  },
+  "L04-Q06-v2": {
+   "answer_key": {
+    "expected": "Mỗi nốt di chuyển ít nhất có thể, giữ lại nốt chung"
+   },
+   "exercise_id": "L04-Q06",
+   "explanation": "Ưu tiên giữ common tones và giảm quãng di chuyển của từng voice khi phù hợp.",
+   "grader_config": {},
+   "grading_strategy": "exact",
+   "kind": "applied",
+   "lesson_id": "L04",
+   "options": [
+    "Mỗi nốt di chuyển ít nhất có thể, giữ lại nốt chung",
+    "Mỗi nốt nhảy càng xa càng tốt cho kịch tính",
+    "Luôn chơi hợp âm ở thế gốc",
+    "Chơi mọi nốt trong cùng một quãng tám"
+   ],
+   "prompt": "Mục tiêu chính của cách nối hợp âm mượt (smooth/lazy voice leading) là gì?",
+   "provenance": [
+    {
+     "locator": "Jazz → Jazz Voicings",
+     "note": "Smooth/lazy voice leading and voicing guidelines.",
+     "source_id": "OMT_V2"
+    },
+    {
+     "locator": "Ch.11, printed pp. 279–307",
+     "note": "Three-note voicings, guide tones, root-motion voice leading, and advanced voicing families.",
+     "source_id": "KHAIHOAN_JAZZ"
+    }
+   ],
+   "skill_id": "voicing.voice_leading",
+   "source_commit": "5c31dc4463edd3ac1cfcffcd569f426c5c0c4fd3",
+   "version": 2
+  }
+ }
+}

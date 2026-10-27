@@ -228,11 +228,11 @@ Trong môi trường shared/production-like, dùng Alembic (`AUTO_CREATE_SCHEMA=
 Backend trên fresh SQLite, đã cài đủ `requirements.txt` (gồm `music21`):
 
 ```text
-281 passed, 9 skipped   (27/10/2026, main 9babc11; 9 test PostgreSQL HM-010 chạy khi có TEST_DATABASE_URL)
+325 passed, 21 skipped   (27/10/2026, PR-3; 21 test PostgreSQL (HM-010 + migration PR-3) chạy khi có TEST_DATABASE_URL)
 220 passed   (cũ: sau khi gộp v0.5.3 với Giai đoạn B, 20/10/2026; 191 passed trên PostgreSQL 16 ở Giai đoạn B)
 ```
 
-CI GitHub Actions chạy lại toàn bộ trên mỗi PR, kể cả 9 test PostgreSQL; xem `docs/CI.md`.
+CI GitHub Actions chạy lại toàn bộ trên mỗi PR, kể cả 21 test PostgreSQL; xem `docs/CI.md`.
 
 Nếu không cài được `music21`, bộ đối chiếu music21 bị bỏ qua và số test sẽ ít hơn (ví dụ 113 passed, 1 skipped ở bản v0.4.0 gốc trước khi thêm test CP1).
 

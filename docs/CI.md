@@ -6,8 +6,8 @@ File: `.github/workflows/ci.yml`. CI chạy khi mở hoặc cập nhật PR vào
 
 | Job | Các bước | Đỏ khi |
 |---|---|---|
-| Backend (SQLite, toàn bộ test) | Python 3.11 → `pip install -r requirements.txt` → `pip freeze` → `python -m compileall` → `pytest -m "not postgres"` → `scripts/ci/kiem_junit.py` | có test sai/lỗi, có test bị skip, hoặc ít hơn 281 test đạt |
-| Backend (PostgreSQL 16 + pgvector) | container tạm `pgvector/pgvector:pg16` → tạo CSDL `harmony_ci_migrate` → `alembic upgrade head` → `alembic check` → kiểm tra extension `vector` → `pytest -m postgres` → `kiem_junit.py` → kiểm tra không còn schema `hm_pgtest_*` | migration lỗi, model lệch migration, test HM-010 sai, **bị skip**, ít hơn 9 test đạt, hoặc còn schema test sót lại |
+| Backend (SQLite, toàn bộ test) | Python 3.11 → `pip install -r requirements.txt` → `pip freeze` → `python -m compileall` → `pytest -m "not postgres"` → `scripts/ci/kiem_junit.py` | có test sai/lỗi, có test bị skip, hoặc ít hơn 325 test đạt |
+| Backend (PostgreSQL 16 + pgvector) | container tạm `pgvector/pgvector:pg16` → tạo CSDL `harmony_ci_migrate` → `alembic upgrade head` → `alembic check` → kiểm tra extension `vector` → `pytest -m postgres` → `kiem_junit.py` → kiểm tra không còn schema `hm_pgtest_*` | migration lỗi, model lệch migration, test HM-010 hoặc migration PR-3 sai, **bị skip**, ít hơn 21 test đạt, hoặc còn schema test sót lại |
 | Frontend (npm ci + build) | Node 22 → `npm ci` → `npm run build` (`tsc -b` + `vite build`) | lỗi kiểu TypeScript hoặc lỗi build |
 
 ### Vì sao phải đếm skip
@@ -22,20 +22,20 @@ Test PostgreSQL tự bỏ qua khi thiếu `TEST_DATABASE_URL` hoặc khi URL kh�
 
 ## Khi thêm hoặc xóa test
 
-Mức tối thiểu (`--min-passed 281` và `--min-passed 9` trong `ci.yml`) là số test đạt trên `main` ngày 27/10/2026. Khi thêm test thì nâng mức này trong cùng PR, để sau đó lỡ xóa test thì CI đỏ. Mức này không bao giờ được hạ để CI xanh.
+Mức tối thiểu (`--min-passed 325` và `--min-passed 21` trong `ci.yml`) là số test đạt sau PR-3 ngày 27/10/2026, gồm 6 test sửa sau review (trước PR-3 là 281 và 9). Khi thêm test thì nâng mức này trong cùng PR, để sau đó lỡ xóa test thì CI đỏ. Mức này không bao giờ được hạ để CI xanh.
 
 ## Chạy giống CI trên máy
 
 ```bash
 cd backend
 pytest -q -m "not postgres" --junitxml=../ket-qua-sqlite.xml
-python ../scripts/ci/kiem_junit.py ../ket-qua-sqlite.xml --min-passed 281 --title "Backend SQLite"
+python ../scripts/ci/kiem_junit.py ../ket-qua-sqlite.xml --min-passed 325 --title "Backend SQLite"
 
 # Cần PostgreSQL có pgvector, ví dụ: docker run -d -p 55432:5432 -e POSTGRES_USER=hm_ci \
 #   -e POSTGRES_PASSWORD=ci_only_not_secret -e POSTGRES_DB=harmony_test pgvector/pgvector:pg16
 TEST_DATABASE_URL=postgresql+psycopg://hm_ci:ci_only_not_secret@127.0.0.1:55432/harmony_test \
   pytest -m postgres -v --junitxml=../ket-qua-postgres.xml
-python ../scripts/ci/kiem_junit.py ../ket-qua-postgres.xml --min-passed 9 --title "PostgreSQL HM-010"
+python ../scripts/ci/kiem_junit.py ../ket-qua-postgres.xml --min-passed 21 --title "PostgreSQL HM-010 + PR-3"
 ```
 
 ## Bắt buộc CI xanh trước khi gộp (Phúc làm trên GitHub)

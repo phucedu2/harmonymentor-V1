@@ -35,6 +35,14 @@ class Settings:
     trust_proxy: bool = _flag("TRUST_PROXY", "0")
     # Danh sách origin, phân tách bằng dấu phẩy (NFR-21). Rỗng vì frontend gọi API cùng origin.
     cors_origins: str = os.getenv("CORS_ORIGINS", "")
+    # Hiện câu hỏi bản nháp (status=draft) cho người học. Chỉ bật tường minh ở dev/test (HM-003, ADR-006).
+    show_draft_content: bool = _flag("SHOW_DRAFT_CONTENT", "0")
+
+
+def check_runtime_settings(cfg: Settings) -> None:
+    """Chặn cấu hình nguy hiểm ngay lúc khởi động thay vì để lộ ra khi người học đang dùng."""
+    if cfg.app_env == "production" and cfg.show_draft_content:
+        raise RuntimeError("SHOW_DRAFT_CONTENT=1 không được dùng khi APP_ENV=production: người học sẽ thấy câu hỏi chưa duyệt.")
 
 
 settings = Settings()
