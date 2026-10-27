@@ -16,7 +16,7 @@ File này ghi lại việc đã xong, việc đang dở, lệnh để chạy l�
 
 **Lệnh chạy lại**
 ```bash
-cd backend && pytest -q                                   # 319 passed, 21 skipped
+cd backend && pytest -q                                   # 325 passed, 21 skipped
 TEST_DATABASE_URL=postgresql+psycopg://hm_ci:ci_only_not_secret@127.0.0.1:5432/harmony_test pytest -m postgres   # 21 passed
 alembic -c alembic.ini upgrade head && alembic -c alembic.ini check
 cd frontend && npm ci && npm run build

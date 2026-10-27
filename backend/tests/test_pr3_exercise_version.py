@@ -22,12 +22,13 @@ from app.content.seed_data import seed_initial_data
 from app.content.versioning import ImmutableVersionError, SeedConflictError, content_hash, current_version
 from app.core.config import Settings, _flag, check_runtime_settings
 from app.db.base import Base
-from app.db.models import Attempt, Exercise, ExerciseVersion, LessonProgress, User
+from app.db.models import Attempt, Exercise, ExerciseVersion, LessonProgress, ReviewState, User
 from app.db.session import get_db
 from app.main import app
 from app.services.grading_service import grade_payload
 from app.services.learning_service import (
     ExerciseVersionSuperseded,
+    LessonHasNoExercises,
     LessonNotMastered,
     complete_lesson,
     submit_attempt,
@@ -496,3 +497,123 @@ def test_orm_guard_blocks_edits_and_deletes(factory):
         version = db.get(ExerciseVersion, "L01-Q01-v4")
         version.answer_key = dict(version.answer_key)  # cùng giá trị: không phải sửa thật
         db.flush()
+
+
+# --- Tiến độ chỉ tính câu đang hiện; bài 0 câu không hoàn thành được (sửa sau review PR #11) ----------
+
+def overview_row(factory, user: str, lesson_id: str) -> dict:
+    overview = client_for(factory).get("/api/v1/learning/overview", headers=auth(user)).json()
+    return next(r for r in overview["lessons"] if r["lesson_id"] == lesson_id)
+
+
+def test_overview_counts_only_visible_exercises_after_retire(factory):
+    seed(factory)
+    user = new_user(factory)
+    assert not answer(factory, user, "L01-Q06-v4", "C D E").correct
+    answer_all(factory, user, "L01")  # 6 câu đúng, tổng 7 lượt
+    partial = new_user(factory)
+    assert not answer(factory, partial, "L01-Q06-v4", "C D E").correct
+    answer(factory, partial, "L01-Q02-v4", correct_answer(item_of(LESSON_SPECS, "L01-Q02")))
+    changed = specs()
+    item_of(changed, "L01-Q06")["retired"] = True
+    item = item_of(changed, "L01-Q01")
+    item["prompt"] += " (bản 5)"
+    item["version"] = 5
+    seed(factory, changed)
+
+    row = overview_row(factory, user, "L01")
+    assert row["exercise_count"] == 5
+    # L01-Q01 đúng ở v4 vẫn được tính sau khi có v5 (6A); L01-Q06 đã retired không còn trong số đếm theo câu.
+    assert row["attempted_exercises"] == row["correct_exercises"] == 5
+    assert "L01-Q06" not in row["attempted_exercise_ids"] and "L01-Q06" not in row["correct_exercise_ids"]
+    assert "L01-Q01" in row["correct_exercise_ids"]
+    assert row["practice_progress_percent"] == 100 and row["status"] != "completed"
+    # Tổng số lượt làm là lịch sử nên giữ nguyên, kể cả lượt trên câu đã retired.
+    assert (row["attempt_count"], row["correct_attempt_count"]) == (7, 6)
+    lessons = client_for(factory).get("/api/v1/lessons").json()
+    assert next(x for x in lessons if x["id"] == "L01")["exercise_count"] == 5
+
+    other = overview_row(factory, partial, "L01")
+    assert (other["attempted_exercises"], other["correct_exercises"], other["practice_progress_percent"]) == (1, 1, 20)
+    assert other["attempt_count"] == 2
+
+    with factory() as db:
+        assert complete_lesson(db, user, "L01")[0].status == "completed"
+    with factory() as db:
+        assert db.scalar(select(func.count()).select_from(Attempt).where(Attempt.user_id == user)) == 7
+
+
+def _seed_l02_without_visible_exercises(factory, case: str) -> None:
+    changed = specs()
+    l02 = next(s for s in changed if s["id"] == "L02")["exercises"]
+    if case == "all_draft":
+        for item in l02:
+            item["status"] = "draft"
+        seed(factory, changed)
+    elif case == "all_retired":
+        seed(factory)
+        for item in l02:
+            item["retired"] = True
+        seed(factory, changed)
+    elif case == "missing_snapshot":
+        seed(factory)
+        with factory() as db:
+            for item in l02:
+                db.add(ExerciseVersion(id=f'{item["id"]}-v2', exercise_id=item["id"], version=2,
+                                       answer_key={"expected": "?"}, grader_config={},
+                                       status="published", snapshot_origin="missing"))
+            db.commit()
+    else:
+        raise AssertionError(case)
+
+
+@pytest.mark.parametrize("case", ["no_exercises", "all_draft", "all_retired", "missing_snapshot"])
+def test_complete_rejected_when_lesson_has_no_visible_exercises(factory, case):
+    if case == "no_exercises":
+        seed(factory)
+        lesson_id = "L05"  # bài chưa chuyển sang hệ câu hỏi runtime nên không có câu nào
+    else:
+        _seed_l02_without_visible_exercises(factory, case)
+        lesson_id = "L02"
+    user = new_user(factory)
+    with factory() as db:
+        assert not [e for e in db.scalars(select(Exercise).where(Exercise.lesson_id == lesson_id)).all()
+                    if current_version(e) is not None]
+        with pytest.raises(LessonHasNoExercises):
+            complete_lesson(db, user, lesson_id)
+    response = client_for(factory).post(f"/api/v1/lessons/{lesson_id}/complete", headers=auth(user))
+    assert response.status_code == 409
+    error = response.json()["error"]
+    assert error["code"] == "LESSON_HAS_NO_EXERCISES" and "chưa có câu hỏi" in error["message"]
+    with factory() as db:
+        assert db.scalar(select(func.count()).select_from(LessonProgress).where(
+            LessonProgress.user_id == user, LessonProgress.status == "completed")) == 0
+        assert db.scalar(select(func.count()).select_from(ReviewState).where(ReviewState.user_id == user)) == 0
+    row = overview_row(factory, user, lesson_id)
+    assert row["status"] != "completed" and row["exercise_count"] == 0 and row["practice_progress_percent"] == 0
+
+
+def test_completed_lesson_keeps_completed_at_and_reviews_when_no_exercises_left(factory):
+    seed(factory)
+    user = new_user(factory)
+    answer_all(factory, user, "L02")
+    with factory() as db:
+        progress, states = complete_lesson(db, user, "L02")
+        completed_at = progress.completed_at.replace(tzinfo=None)
+        before = sorted((s.review_item_id, s.due_at.replace(tzinfo=None)) for s in states)
+    assert before, "L02 phải có thẻ ôn để kiểm tra việc giữ nguyên"
+    changed = specs()
+    for item in next(s for s in changed if s["id"] == "L02")["exercises"]:
+        item["retired"] = True
+    seed(factory, changed)
+    response = client_for(factory).post("/api/v1/lessons/L02/complete", headers=auth(user))
+    assert response.status_code == 200 and response.json()["status"] == "completed"
+    with factory() as db:
+        progress = db.scalar(select(LessonProgress).where(LessonProgress.user_id == user, LessonProgress.lesson_id == "L02"))
+        assert progress.status == "completed" and progress.completed_at.replace(tzinfo=None) == completed_at
+        after = sorted((s.review_item_id, s.due_at.replace(tzinfo=None)) for s in db.scalars(
+            select(ReviewState).where(ReviewState.user_id == user)).all())
+    assert after == before
+    row = overview_row(factory, user, "L02")
+    assert row["exercise_count"] == 0 and row["attempted_exercises"] == 0 and row["practice_progress_percent"] == 100
+    assert row["attempt_count"] == 6

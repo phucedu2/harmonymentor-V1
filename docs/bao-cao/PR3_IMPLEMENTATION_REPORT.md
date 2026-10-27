@@ -203,3 +203,28 @@ Backend thật (SQLite tạm) + Vite, Playwright, tài khoản đăng ký mới.
 - **Phúc:** mở lại kịch bản 409 trên máy, xem 4 ảnh. Người kiểm: ________
 - **Đạt:** đọc quy tắc sửa câu trong `docs/LESSON_SPECIFICATIONS.md`. Ký D-1, D-3 (24 bản `published` là dữ liệu kế thừa chưa qua duyệt mới). Người kiểm: ________
 - **Astra:** duyệt tổng thể Draft PR #11. **Không gộp** trước khi nhóm ký.
+
+## 9. Bổ sung sau review (27/10/2026)
+
+Astra duyệt PR #11 trên commit `1e654fb`, kết luận phần cốt lõi HM-003 đạt và yêu cầu sửa 2 lỗi về tiến độ học trước khi gộp. Phúc chọn A cả 6 câu làm rõ.
+
+| # | Lỗi | Cách sửa | Test |
+|---|---|---|---|
+| 1 | `learning_overview()`: `exercise_count` chỉ đếm câu đang hiện, nhưng `attempted_exercises`, `correct_exercises`, hai danh sách id và `practice_progress_percent` vẫn đếm câu đã retired hoặc bị ẩn, nên phần trăm có thể vượt 100% (ví dụ 6/5 = 120%) | Số đếm theo câu chỉ tính câu có phiên bản hiện hành (cùng quy tắc `current_version`, nên khi bật `SHOW_DRAFT_CONTENT` thì câu nháp cũng tính). Đúng ở bản cũ của câu còn hợp lệ vẫn tính (6A). `attempt_count`, `correct_attempt_count` giữ là lịch sử, đếm mọi lượt. Bài đã hoàn thành vẫn 100% | `test_overview_counts_only_visible_exercises_after_retire`: làm 6 câu L01 (7 lượt), retired L01-Q06 và nâng L01-Q01 lên v5, tổng còn 5 → 5/5 câu, 100%, 7 lượt; người làm 1 câu hợp lệ → 20% |
+| 2 | `complete_lesson()`: bài có 0 câu hợp lệ thì danh sách câu còn thiếu rỗng nên vẫn được đánh dấu hoàn thành và kích hoạt thẻ ôn | Bài chưa hoàn thành mà không có câu hợp lệ: rollback, trả `409 LESSON_HAS_NO_EXERCISES` ("Bài này hiện chưa có câu hỏi nào để làm, nên chưa thể hoàn thành."). Không tạo completed, không tạo thẻ ôn. Bài đã hoàn thành trước đó: vẫn 200, giữ `completed_at` và thẻ ôn | `test_complete_rejected_when_lesson_has_no_visible_exercises` × 4 (bài chưa có câu L05, toàn nháp, toàn retired, bản hiện hành missing); `test_completed_lesson_keeps_completed_at_and_reviews_when_no_exercises_left` |
+
+Frontend không cần sửa: `LessonRunner` đã hiện `message` của lỗi khi bấm "Hoàn thành".
+
+Không đụng migration `d3a7f1c2e905`, versioning, ảnh chụp, seed, Music Engine, Mastery hay Recommender.
+
+**Kết quả chạy thật:**
+
+- Trước khi sửa: 6/6 test mới **đỏ** khi chạy với logic cũ.
+- Sau khi sửa:
+  - `pytest -q` cho 325 passed, 21 skipped.
+  - `pytest -m postgres` với `TEST_DATABASE_URL` cho 21 passed.
+  - Cả bộ chạy trên PostgreSQL cho 346 passed.
+  - `npm run build` đạt.
+- Mức CI nâng 319 → 325 (SQLite); PostgreSQL giữ 21.
+
+**Giới hạn:** 6 test mới chạy trên SQLite, vì chúng dùng chung bộ dựng CSDL tạm của `test_pr3_exercise_version.py`. Logic sửa chỉ là lọc trong Python, không có câu SQL riêng theo CSDL.

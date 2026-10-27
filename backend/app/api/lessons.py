@@ -19,7 +19,7 @@ from ..content.versioning import current_version
 from ..db.models import Lesson, LessonSource, SourceWork, User
 from ..db.session import get_db
 from ..core.errors import AppError
-from ..services.learning_service import LessonNotMastered, complete_lesson, start_lesson
+from ..services.learning_service import LessonHasNoExercises, LessonNotMastered, complete_lesson, start_lesson
 
 router = APIRouter(prefix="/api/v1/lessons", tags=["lessons"])
 
@@ -97,6 +97,9 @@ def mark_lesson_complete(lesson_id: str, user: User = Depends(get_current_user),
         raise AppError(409, "LESSON_NOT_MASTERED",
                        f"Còn {len(exc.remaining)} câu chưa trả lời đúng. Hãy làm đúng tất cả các câu rồi hoàn thành bài.",
                        fields={"remaining": ",".join(exc.remaining)}) from exc
+    except LessonHasNoExercises as exc:
+        raise AppError(409, "LESSON_HAS_NO_EXERCISES",
+                       "Bài này hiện chưa có câu hỏi nào để làm, nên chưa thể hoàn thành.") from exc
     except LookupError as exc:
         code = str(exc)
         raise HTTPException(status_code=404, detail={"code": code}) from exc

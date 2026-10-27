@@ -228,7 +228,7 @@ Trong môi trường shared/production-like, dùng Alembic (`AUTO_CREATE_SCHEMA=
 Backend trên fresh SQLite, đã cài đủ `requirements.txt` (gồm `music21`):
 
 ```text
-319 passed, 21 skipped   (27/10/2026, PR-3; 21 test PostgreSQL (HM-010 + migration PR-3) chạy khi có TEST_DATABASE_URL)
+325 passed, 21 skipped   (27/10/2026, PR-3; 21 test PostgreSQL (HM-010 + migration PR-3) chạy khi có TEST_DATABASE_URL)
 220 passed   (cũ: sau khi gộp v0.5.3 với Giai đoạn B, 20/10/2026; 191 passed trên PostgreSQL 16 ở Giai đoạn B)
 ```
 

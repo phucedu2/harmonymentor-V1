@@ -40,6 +40,13 @@ class LessonNotMastered(Exception):
         self.remaining = remaining
 
 
+class LessonHasNoExercises(Exception):
+    """Bài không có câu nào đang hiện: không có gì để chứng minh đã học nên không cho hoàn thành."""
+
+    def __init__(self):
+        super().__init__("LESSON_HAS_NO_EXERCISES")
+
+
 def require_user(db: Session, user_id: str) -> User:
     user = db.get(User, user_id)
     if user is None:
@@ -120,8 +127,14 @@ def complete_lesson(db: Session, user_id: str, lesson_id: str) -> tuple[LessonPr
             .where(Attempt.user_id == user_id, Attempt.correct.is_(True))
         ).all())
         # Chỉ tính câu đang hiện cho người học; đúng ở bất kỳ phiên bản nào của câu cũng được tính (6A).
-        remaining = [e.id for e in sorted(lesson.exercises, key=lambda e: e.position)
-                     if versioning.current_version(e) is not None and e.id not in correct_ids]
+        active_ids = [e.id for e in sorted(lesson.exercises, key=lambda e: e.position)
+                      if versioning.current_version(e) is not None]
+        if not active_ids:
+            # Bài chưa có câu, toàn nháp, toàn retired hoặc bản hiện hành missing: danh sách "còn thiếu"
+            # rỗng không có nghĩa là đã học xong.
+            db.rollback()
+            raise LessonHasNoExercises()
+        remaining = [exercise_id for exercise_id in active_ids if exercise_id not in correct_ids]
         if remaining:
             db.rollback()
             raise LessonNotMastered(remaining)
@@ -224,13 +237,15 @@ def learning_overview(db: Session, user_id: str) -> dict:
 
     lesson_rows = []
     for lesson in lessons:
-        active_exercises = [exercise for exercise in lesson.exercises if versioning.current_version(exercise) is not None]
+        active_ids = {exercise.id for exercise in lesson.exercises if versioning.current_version(exercise) is not None}
         rows = by_lesson.get(lesson.id, [])
-        attempted_ids = sorted({exercise.id for _, _, exercise in rows})
-        correct_ids = sorted({exercise.id for attempt, _, exercise in rows if attempt.correct})
+        # Số đếm theo câu chỉ tính câu đang hiện, để không vượt exercise_count khi câu bị retired/ẩn.
+        # Tổng số lượt làm bên dưới vẫn tính mọi lượt: đó là lịch sử, không phải tiến độ.
+        attempted_ids = sorted({exercise.id for _, _, exercise in rows if exercise.id in active_ids})
+        correct_ids = sorted({exercise.id for attempt, _, exercise in rows if attempt.correct and exercise.id in active_ids})
         progress = progresses.get(lesson.id)
         status = progress.status if progress is not None else "not_started"
-        exercise_count = len(active_exercises)
+        exercise_count = len(active_ids)
         attempted_count = len(attempted_ids)
         practice_percent = 0 if exercise_count == 0 else round(attempted_count / exercise_count * 100)
         if status == "completed":
