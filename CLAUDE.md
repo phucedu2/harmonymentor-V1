@@ -17,7 +17,7 @@ Phân công: **Thắng** Backend/Engine · **Phúc** Frontend/Audio · **Đạt*
 ```bash
 # Backend (Python 3.11+)
 cd backend && pip install -r requirements.txt
-pytest -q                          # 27/10/2026: 281 passed + 9 skipped (9 test PostgreSQL cần TEST_DATABASE_URL)
+pytest -q                          # 27/10/2026 (PR-3): 319 passed + 21 skipped (21 test PostgreSQL cần TEST_DATABASE_URL)
 uvicorn app.main:app --reload      # http://127.0.0.1:8000/docs
 
 # Frontend (Node 22, giống Dockerfile và CI)
@@ -32,7 +32,7 @@ cp .env.example .env && docker compose up --build   # http://localhost:5173
 cd backend && alembic -c alembic.ini upgrade head && alembic -c alembic.ini check
 ```
 
-CI (`.github/workflows/ci.yml`, xem `docs/CI.md`) chạy trên mọi PR vào `main`: pytest SQLite (0 skip, ≥ 281 đạt), PostgreSQL 16 + pgvector (`alembic upgrade head` + `check`, 9 test HM-010, 0 skip), `npm ci && npm run build`. Thêm test mới thì nâng mức `--min-passed` trong `ci.yml`.
+CI (`.github/workflows/ci.yml`, xem `docs/CI.md`) chạy trên mọi PR vào `main`: pytest SQLite (0 skip, ≥ 319 đạt), PostgreSQL 16 + pgvector (`alembic upgrade head` + `check`, 21 test HM-010 + migration PR-3, 0 skip), `npm ci && npm run build`. Thêm test mới thì nâng mức `--min-passed` trong `ci.yml`.
 
 ## Cấu trúc
 
@@ -60,6 +60,7 @@ Module mới đặt theo SRS 10.4: `backend/app/{auth,learning,recommender,nlp,e
 5. AI chỉ gợi ý (xem trước → chấp nhận/từ chối), không tự sửa dự án.
 6. Sáng tác lưu dạng ký hiệu, thời gian theo phách.
 7. Xóa mềm (`deleted_at`) cho nội dung và dự án.
+   Phiên bản câu hỏi đã phát hành là bất biến: sửa đề/đáp án/cách chấm/nguồn thì tăng `version` trong `curriculum_specs.q()`, bỏ câu thì `retired=True` (ADR-006).
 8. Lượt làm của Admin có `is_test=true`, không tính mastery/thống kê.
 9. Người học mô phỏng có `is_synthetic=true`, không đăng nhập, loại khỏi dashboard.
 10. Không `TODO`, code giả, dữ liệu cứng để "trông như chạy". Chưa xong thì ghi rõ.

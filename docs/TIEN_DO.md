@@ -2,6 +2,29 @@
 
 File này ghi lại việc đã xong, việc đang dở, lệnh để chạy lại và việc tiếp theo. Cập nhật sau mỗi phiên việc. Lịch sử trước 27/10/2026 xem `docs/AI_USAGE.md` và các báo cáo `docs/PHASE_*`.
 
+## 27/10/2026: PR-3, bảo vệ phiên bản câu hỏi (HM-003)
+
+**Đã xong** (nhánh `claude/project-thread-3z96i1`, Draft PR, chưa gộp)
+- Migration `d3a7f1c2e905` (nối vào `b2c4e6f80a13`): ảnh chụp đề/lựa chọn/loại câu/cách chấm trên `exercise_versions`, `status` draft/published, `content_hash`, `snapshot_origin`, `exercises.deleted_at`; khôi phục ảnh chụp bản cũ từ git khi khớp nguồn; trigger PostgreSQL; `downgrade` từ chối chạy.
+- Seed không ghi đè, không tự tăng version, báo `SeedConflictError` và rollback; `q(status=, retired=)`; `SHOW_DRAFT_CONTENT`.
+- Chấm theo ảnh chụp của phiên bản; nộp vào bản cũ trả 409 `EXERCISE_VERSION_SUPERSEDED`; frontend tải lại bài.
+- 50 test mới: 38 chạy trên SQLite, 12 chỉ chạy trên PostgreSQL (bị bỏ qua khi không có TEST_DATABASE_URL). ADR-006. Báo cáo `docs/bao-cao/PR3_IMPLEMENTATION_REPORT.md`.
+
+**Đang dở / chờ**
+- Nhóm duyệt Draft PR. Thắng ký D-2, D-4; Đạt ký D-1, D-3 (ADR-006).
+- SQLite dev cũ (`backend/harmonymentor_dev.db`) thiếu cột mới: xóa file để tạo lại. CSDL Docker: `alembic upgrade head` tự chạy khi khởi động; nên `pg_dump` trước.
+
+**Lệnh chạy lại**
+```bash
+cd backend && pytest -q                                   # 319 passed, 21 skipped
+TEST_DATABASE_URL=postgresql+psycopg://hm_ci:ci_only_not_secret@127.0.0.1:5432/harmony_test pytest -m postgres   # 21 passed
+alembic -c alembic.ini upgrade head && alembic -c alembic.ini check
+cd frontend && npm ci && npm run build
+```
+
+**Việc tiếp theo**
+- PR-4 (14 nhóm kỹ năng + 12 bài), PR-5 (mastery EMA đọc `attempts.correct` đã lưu, không chấm lại), PR-6 (câu nháp `status="draft"`).
+
 ## 27/10/2026: PR-2, CI GitHub Actions
 
 **Đã xong**

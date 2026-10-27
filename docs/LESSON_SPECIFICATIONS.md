@@ -2,6 +2,13 @@
 
 Bank chuẩn hóa: **8 lessons / 48 quiz / 64 flashcards**. `curriculum_specs.py` là canonical source; file này là snapshot phục vụ review.
 
+> **Quy tắc sửa câu hỏi (PR-3, ADR-006).** Phiên bản đã phát hành là bất biến; seed gặp nội dung lệch sẽ dừng và báo `SeedConflictError`.
+> - Sửa đề, lựa chọn (kể cả thứ tự), loại câu, cách chấm, đáp án, cấu hình chấm, lời giải hoặc nguồn: tăng `version=n+1` trong `q(...)`.
+> - Đổi kỹ năng hoặc chuyển bài: tạo id câu mới, câu cũ đặt `retired=True`.
+> - Bỏ câu: đặt `retired=True`, không xóa mục khỏi file. Đổi thứ tự câu trong bài thì sửa thẳng.
+> - Câu mới do Claude soạn: `status="draft"`; chỉ Đạt đổi thành `"published"`. Bản nháp chưa ai làm thì sửa thẳng được.
+> - Đáp án bản cũ sai: phát hành bản sửa; lượt làm cũ giữ nguyên kết quả.
+
 ## L01 — Từ bàn phím đến hợp âm ba nốt
 
 **Objectives**
