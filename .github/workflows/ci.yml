@@ -56,9 +56,9 @@ jobs:
         run: pytest -q -m "not postgres" --junitxml=../ket-qua-sqlite.xml
 
       # Mức tối thiểu = số test đạt sau PR-3 (27/10/2026): 281 cũ + 38 test phiên bản câu hỏi; ai xóa test thì CI đỏ.
-      - name: Kiểm số test (0 skip, ít nhất 325 đạt)
+      - name: Kiểm số test (0 skip, ít nhất 330 đạt)
         if: ${{ !cancelled() }}
-        run: python ../scripts/ci/kiem_junit.py ../ket-qua-sqlite.xml --min-passed 325 --title "Backend SQLite"
+        run: python ../scripts/ci/kiem_junit.py ../ket-qua-sqlite.xml --min-passed 330 --title "Backend SQLite"
 
       - name: Lưu kết quả JUnit
         if: ${{ !cancelled() }}
@@ -171,6 +171,10 @@ jobs:
 
       - name: npm ci
         run: npm ci
+
+      # Vitest: test đơn vị frontend (HM-001 so ký âm/MIDI L01 với bảng sinh từ Music Engine).
+      - name: npm test
+        run: npm test
 
       # build = tsc -b (kiểm kiểu TypeScript) + vite build; lỗi nào cũng làm bước này đỏ.
       - name: npm run build
