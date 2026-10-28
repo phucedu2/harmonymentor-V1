@@ -103,22 +103,26 @@ export function buildTriad(root: string, quality: TriadQuality) {
   };
 }
 
-export function toScientificInterval(root: string, code: IntervalCode, rootOctave = 4): string[] {
+// Quãng tám theo ASPN đổi khi chữ cái vượt qua B → C, không phải khi pitch class vượt 12:
+// B#4 vẫn ở quãng tám 4 dù cùng phím với C5, Cb5 ở quãng tám 5 dù cùng phím với B4 (HM-001).
+// Cùng công thức với transpose() của Music Engine (octave_shift = chỉ số chữ cái // 7).
+function scientificAbove(root: string, code: IntervalCode, rootOctave: number): string {
   const parsed = parseSpelledPitch(root);
-  const spec = INTERVALS[code];
-  const upper = spellInterval(root, code);
-  const upperOctave = rootOctave + Math.floor((parsed.pc + spec.semitones) / 12);
-  return [`${root}${rootOctave}`, `${upper}${upperOctave}`];
+  const rootLetterIndex = LETTERS.indexOf(parsed.letter as (typeof LETTERS)[number]);
+  const octaveShift = Math.floor((rootLetterIndex + INTERVALS[code].number - 1) / 7);
+  return `${spellInterval(root, code)}${rootOctave + octaveShift}`;
+}
+
+export function toScientificInterval(root: string, code: IntervalCode, rootOctave = 4): string[] {
+  return [`${root}${rootOctave}`, scientificAbove(root, code, rootOctave)];
 }
 
 export function toScientificTriad(root: string, quality: TriadQuality, rootOctave = 4): string[] {
-  const parsed = parseSpelledPitch(root);
   const spec = TRIADS[quality];
-  const triad = buildTriad(root, quality);
   return [
-    `${triad.notes[0]}${rootOctave}`,
-    `${triad.notes[1]}${rootOctave + Math.floor((parsed.pc + INTERVALS[spec.third].semitones) / 12)}`,
-    `${triad.notes[2]}${rootOctave + Math.floor((parsed.pc + INTERVALS[spec.fifth].semitones) / 12)}`,
+    `${root}${rootOctave}`,
+    scientificAbove(root, spec.third, rootOctave),
+    scientificAbove(root, spec.fifth, rootOctave),
   ];
 }
 

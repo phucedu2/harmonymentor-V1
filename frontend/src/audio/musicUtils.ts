@@ -27,14 +27,13 @@ export function normalizePitchClass(note: string): string {
   return PITCH_CLASSES[parsed.pc];
 }
 
+// Không quy về pitch class trước (không % 12): số quãng tám đi theo chữ cái, nên
+// B#4 = 72 và Cb5 = 71, giống Note.midi của Music Engine (SRS 4.4.1, HM-001).
 export function scientificToMidi(note: string): number | null {
   const match = note.trim().match(/^([A-Ga-g])((?:#{1,2}|b{1,2}|x|♯{1,2}|♭{1,2})?)(-?\d+)$/);
   if (!match) return null;
-  const pc = normalizePitchClass(`${match[1]}${match[2] ?? ""}`);
-  const index = PITCH_CLASSES.indexOf(pc);
-  if (index < 0) return null;
   const octave = Number(match[3]);
-  return (octave + 1) * 12 + index;
+  return (octave + 1) * 12 + NATURAL_PC[match[1].toUpperCase()] + accidentalOffset(match[2] ?? "");
 }
 
 export function midiToScientific(midi: number): string {
