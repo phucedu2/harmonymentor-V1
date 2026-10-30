@@ -5,7 +5,7 @@ Dán toàn bộ khối dưới vào Claude Code, chạy ở thư mục gốc rep
 ```text
 Bạn là kỹ sư DevOps/backend cho dự án HarmonyMentor AI. Tôi là Đạt, phụ trách AI/NLP/DevOps.
 
-ĐỌC TRƯỚC: CLAUDE.md, docs/PHASE_A_PLAN.md (mục 1 N15, mục 5), docs/decisions/ADR-004-hop-dong-xac-thuc.md,
+ĐỌC TRƯỚC: CLAUDE.md, docs/giai-doan/phase-A/PHASE_A_PLAN.md (mục 1 N15, mục 5), docs/decisions/ADR-004-hop-dong-xac-thuc.md,
 docker-compose.yml, backend/app/main.py, backend/app/core/config.py, frontend/vite.config.ts.
 
 NHÁNH: tạo `phase-b-devops` từ main. Commit nhỏ kiểu `feat(devops): ...`. Không commit .env hay API key.

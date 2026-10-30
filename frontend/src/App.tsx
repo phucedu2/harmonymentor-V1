@@ -5,7 +5,7 @@ import AppLayout from "./components/layout/AppLayout";
 import PublicLayout from "./components/layout/PublicLayout";
 import HomePage from "./pages/public/HomePage";
 
-// Tách bundle theo route (docs/PHASE_A_PLAN.md mục 3): trang chủ tải ngay, phần còn lại tải khi mở.
+// Tách bundle theo route (docs/giai-doan/phase-A/PHASE_A_PLAN.md mục 3): trang chủ tải ngay, phần còn lại tải khi mở.
 const LoginPage = lazy(() => import("./pages/public/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/public/RegisterPage"));
 const DashboardPage = lazy(() => import("./pages/Dashboard"));

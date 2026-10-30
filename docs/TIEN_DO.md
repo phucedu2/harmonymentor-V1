@@ -1,6 +1,15 @@
 # Tiến độ
 
-File này ghi lại việc đã xong, việc đang dở, lệnh để chạy lại và việc tiếp theo. Cập nhật sau mỗi phiên việc. Lịch sử trước 27/10/2026 xem `docs/AI_USAGE.md` và các báo cáo `docs/PHASE_*`.
+File này ghi lại việc đã xong, việc đang dở, lệnh để chạy lại và việc tiếp theo. Cập nhật sau mỗi phiên việc. Lịch sử trước 27/10/2026 xem `docs/AI_USAGE.md` và các báo cáo trong `docs/giai-doan/`.
+
+## 30/10/2026: gom tài liệu phase vào `docs/giai-doan/`
+
+**Đã xong** (nhánh `claude/project-thread-ng2frm`, PR vào `main`, chưa gộp)
+- Theo góp ý của thầy: 10 file `PHASE_*.md`, 7 file `VERIFICATION_PHASE_*.txt` và 2 bản kiểm định chuyển bằng `git mv` vào `docs/giai-doan/<giai đoạn>/`, giữ nguyên tên. Mục lục `docs/giai-doan/README.md`.
+- Sửa mọi đường dẫn cũ trong CLAUDE.md, README, AI_USAGE, ADR-003, `docs/prompts/`, `PROMPT_CLAUDE_CODE.md`, 1 test backend và 2 comment frontend. Không đổi code chạy.
+
+**Việc tiếp theo**
+- Giai đoạn mới đặt báo cáo + kiểm chứng vào `docs/giai-doan/<giai đoạn>/` và thêm một dòng vào mục lục.
 
 ## 28/10/2026: HM-001 / NL-L01-01, ký âm và MIDI cho B#/Cb ở Bài 1
 
