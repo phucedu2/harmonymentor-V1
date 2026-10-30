@@ -1,4 +1,4 @@
-# ADR-007 · Nhóm kỹ năng 14 chiều cho KNN, thay phần vector của ADR-003
+# ADR-008 · Nhóm kỹ năng 14 chiều cho KNN, thay phần vector của ADR-003
 
 Trạng thái: **Đề xuất 30/10/2026, chưa có hiệu lực.** Bản này cần Thắng và nhóm duyệt rồi mới làm PR-4 hoặc PR-5. Phúc đã chốt hướng đi (các phương án A ngày 30/10), còn Astra yêu cầu xử lý mâu thuẫn này bằng một quyết định chính thức. Bảng ánh xạ chi tiết vẫn ở trạng thái **DRAFT**.
 
