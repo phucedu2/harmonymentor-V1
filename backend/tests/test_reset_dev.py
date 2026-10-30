@@ -22,4 +22,9 @@ def test_needs_rebuild_only_for_create_all_db(tmp_path):
     with closing(sqlite3.connect(db)) as conn:
         conn.execute("CREATE TABLE alembic_version (version_num TEXT)")
         conn.commit()
+    assert reset_dev.needs_rebuild(db)  # create_all cũng tạo bảng này nhưng để rỗng
+
+    with closing(sqlite3.connect(db)) as conn:
+        conn.execute("INSERT INTO alembic_version VALUES ('d3a7f1c2e905')")
+        conn.commit()
     assert not reset_dev.needs_rebuild(db)  # Alembic quản lý: giữ dữ liệu, chỉ upgrade

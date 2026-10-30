@@ -156,16 +156,24 @@ vexflow 5.0.0
 
 ## Run locally
 
+Lần đầu clone và **sau mỗi lần `git pull`** (tắt uvicorn trước), từ thư mục gốc repo:
+
+```bash
+python scripts/reset_dev.py           # pip install, alembic upgrade head, npm ci
+python scripts/reset_dev.py --fresh   # sao lưu DB dev rồi tạo mới hoàn toàn
+```
+
+Script giữ dữ liệu trong `backend/harmonymentor_dev.db` nếu DB do Alembic quản lý. DB tạo bằng `create_all` (không có version trong `alembic_version`) thì không nâng cấp được, nội dung bài học kẹt ở bản cũ: script sao lưu thành `harmonymentor_dev.db.bak-<thời điểm>` rồi tạo lại.
+
 Backend:
 
 ```bash
 cd backend
-pip install -r requirements.txt
-pytest -q
+pytest -q                          # chạy trên SQLite tạm riêng, không đụng DB dev
 uvicorn app.main:app --reload
 ```
 
-Nếu chưa có DB, app local tạo schema và seed `demo-user` + curriculum runtime L01–L04.
+Schema chỉ do Alembic tạo (`AUTO_CREATE_SCHEMA` mặc định `0`); khi khởi động, app seed curriculum runtime vào DB đã migrate.
 
 Đăng nhập (Giai đoạn B): mọi route có dữ liệu cá nhân cần Bearer token (ADR-004); đăng ký tài khoản ở trang `/dang-ky` của frontend. Tạo tài khoản quản trị:
 
@@ -176,7 +184,7 @@ python -m app.seed_admin --email admin@example.com   # hỏi mật khẩu, hoặ
 
 Biến môi trường xem ở [`.env.example`](.env.example). Không đặt `JWT_SECRET` thì môi trường dev dùng khóa tạm (khởi động lại là access token cũ hết hạn, refresh cookie vẫn lấy lại phiên); `APP_ENV=production` bắt buộc có khóa.
 
-Nếu bạn có file `backend/harmonymentor_dev.db` tạo trước Giai đoạn B, backend sẽ báo thiếu cột `users.email`: xóa file đó để tạo lại.
+Nếu backend báo thiếu bảng/cột (ví dụ `users.email`) hoặc nội dung bài học cũ hơn code: chạy `python scripts/reset_dev.py`.
 
 API docs: `http://127.0.0.1:8000/docs`
 
@@ -184,7 +192,6 @@ Frontend:
 
 ```bash
 cd frontend
-npm install
 npm run build
 npm run dev
 ```
@@ -228,7 +235,7 @@ Trong môi trường shared/production-like, dùng Alembic (`AUTO_CREATE_SCHEMA=
 Backend trên fresh SQLite, đã cài đủ `requirements.txt` (gồm `music21`):
 
 ```text
-325 passed, 21 skipped   (27/10/2026, PR-3; 21 test PostgreSQL (HM-010 + migration PR-3) chạy khi có TEST_DATABASE_URL)
+326 passed, 21 skipped   (30/10/2026, thêm test reset_dev; 21 test PostgreSQL (HM-010 + migration PR-3) chạy khi có TEST_DATABASE_URL)
 220 passed   (cũ: sau khi gộp v0.5.3 với Giai đoạn B, 20/10/2026; 191 passed trên PostgreSQL 16 ở Giai đoạn B)
 ```
 

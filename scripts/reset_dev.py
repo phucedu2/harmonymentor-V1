@@ -27,11 +27,15 @@ DEV_DB = BACKEND / "harmonymentor_dev.db"
 
 
 def needs_rebuild(db: Path) -> bool:
-    """True khi DB có sẵn nhưng không do Alembic quản lý (thiếu bảng alembic_version)."""
+    """True khi DB có sẵn nhưng không do Alembic quản lý: thiếu bảng alembic_version, hoặc bảng rỗng
+    (create_all cũng tạo bảng này vì nó nằm trong metadata, nhưng không ghi version)."""
     if not db.exists():
         return False
     with closing(sqlite3.connect(db)) as conn:
-        row = conn.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='alembic_version'").fetchone()
+        try:
+            row = conn.execute("SELECT version_num FROM alembic_version").fetchone()
+        except sqlite3.OperationalError:
+            return True
     return row is None
 
 
@@ -44,6 +48,8 @@ def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Đưa môi trường dev về khớp code hiện tại.")
     parser.add_argument("--fresh", action="store_true", help="luôn sao lưu DB dev rồi tạo mới")
     args = parser.parse_args(argv)
+    for stream in (sys.stdout, sys.stderr):
+        stream.reconfigure(encoding="utf-8")  # console Windows mặc định cp1252, vỡ dấu tiếng Việt
 
     if os.environ.get("DATABASE_URL"):
         print("DATABASE_URL đã đặt: chỉ chạy migration, không sao lưu hay tạo lại DB.")
