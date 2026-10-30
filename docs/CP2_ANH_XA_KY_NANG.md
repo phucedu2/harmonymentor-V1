@@ -1,6 +1,6 @@
 # CP2 · Ánh xạ kỹ năng → mã SRS → nhóm KNN
 
-Trạng thái: **DRAFT, chờ Thắng duyệt cuối cùng** cùng với [ADR-008](decisions/ADR-008-vector-14-nhom.md). Chưa có code. PR-4 và PR-5 chưa được làm.
+Trạng thái: **DRAFT**, đi cùng [ADR-008](decisions/ADR-008-vector-14-nhom.md) bản 3. Bảng ánh xạ đã có đủ quyết định của Thắng (30/10). Chưa có code. PR-4, PR-5, PR-7 và PR-8 chưa được làm. Hợp đồng test nằm ở [`CP2_HOP_DONG_TEST.md`](CP2_HOP_DONG_TEST.md).
 
 Phạm vi: đối chiếu với `main` 58a6f52, cập nhật ngày 30/10/2026. Đây là bản thống nhất duy nhất. Claude Doc và file `.md` trong thư mục project chỉ là bản sao sinh ra từ file này.
 
@@ -45,7 +45,7 @@ Số câu chỉ đếm câu `published`, chưa `retired`, trong L01–L04 (4 bà
 | 17 | `harmony.secondary_dominant.identify` | L05 | post_mvp | 11 `chromatic_harmony` | 0 | Không | |
 | 18 | `harmony.secondary_dominant.build` | L05 | post_mvp | 11 `chromatic_harmony` | 0 | Không | |
 | 19 | `harmony.secondary_dominant.apply` | L05 | post_mvp | 11 `chromatic_harmony` | 0 | Không | |
-| 20 | `scale.parallel_minor` | L06 | post_mvp | 11 `chromatic_harmony` | 0 | Không | **Chờ Thắng xác nhận** (ADR-003 cũ xếp vào `minor_scales`) |
+| 20 | `scale.parallel_minor` | L06 | post_mvp | 11 `chromatic_harmony` | 0 | Không | Thắng chốt 30/10 (ADR-003 cũ xếp vào `minor_scales`) |
 | 21 | `harmony.modal_interchange.identify` | L06 | post_mvp | 11 `chromatic_harmony` | 0 | Không | |
 | 22 | `harmony.modal_interchange.apply` | L06 | post_mvp | 11 `chromatic_harmony` | 0 | Không | |
 | 23 | `tension.naming` | L07 | post_mvp | 14 `jazz_scales_tensions` | 0 | Không | |
@@ -53,13 +53,15 @@ Số câu chỉ đếm câu `published`, chưa `retired`, trong L01–L04 (4 bà
 | 25 | `chord_scale.basic` | L07 | post_mvp | 14 `jazz_scales_tensions` | 0 | Không | |
 | 26 | `chord_scale.context` | L07 | post_mvp | 14 `jazz_scales_tensions` | 0 | Không | |
 
-Quyết định của Thắng (30/10): hai kỹ năng `voicing.guide_tones` và `voicing.voice_leading` của L04 giữ `post_mvp` và không cộng Mastery trước CP2. Các câu của hai kỹ năng này, trong đó có L04-Q03, vẫn được chấm và vẫn được dùng để xét hoàn thành bài.
+Tổng: 26 kỹ năng, 13 MVP, 13 `post_mvp`. Con số này chỉ để đối chiếu, test không khóa cứng (mục 4).
+
+Quyết định của Thắng (30/10): `scale.parallel_minor` chuyển sang `post_mvp`, nhóm 11. Hai kỹ năng `voicing.guide_tones` và `voicing.voice_leading` của L04 giữ `post_mvp` và không cộng Mastery trước CP2. Các câu của hai kỹ năng này, trong đó có L04-Q03, vẫn được chấm và vẫn được dùng để xét hoàn thành bài.
 
 Cột thứ ba của `SKILLS` trong `skill_graph.py` (`foundation`, `harmony`, `jazz_core`, `piano`, `chromatic_harmony`, `jazz`) là "domain" cũ. Nó **không phải** `group_code`.
 
 ## 3. 14 chiều của vector KNN
 
-Thứ tự các chiều là cố định. Muốn đổi thứ tự hay tên chiều thì phải có ADR mới. Tên 4 nhóm 11–14 **đang chờ Thắng xác nhận**.
+Thứ tự các chiều là cố định. Muốn đổi thứ tự hay tên chiều thì phải có ADR mới. Thắng đã chốt giữ nguyên tên 4 nhóm 11–14 (30/10).
 
 | Chiều | `group_code` | Kỹ năng MVP | Có thể được đánh giá với dữ liệu L01–L04 |
 |---|---|---|---|
@@ -94,52 +96,9 @@ Các quy tắc này phải đúng dù số kỹ năng tăng hay giảm, nên tes
 6. Mọi tiên quyết của một kỹ năng MVP cũng phải là kỹ năng MVP. Hiện điều này đúng.
 7. Đồ thị tiên quyết không có chu trình.
 
-## 5. Đặc tả test (viết trước, đỏ trước, xanh sau)
+## 5. Đặc tả test
 
-### A. Mapping (`tests/test_cp2_skill_mapping.py`)
-
-Gồm 7 quy tắc ở mục 4, cộng thêm 2 ca kiểm tra chính bộ kiểm:
-
-- Thêm vào `SKILLS` một kỹ năng giả mà chưa có ánh xạ: bộ kiểm phải báo thiếu.
-- Thêm một dòng ánh xạ trùng: bộ kiểm phải báo trùng.
-
-### B. Vector `(value, assessed)` (`tests/test_cp2_mastery_vector.py`, hàm thuần, không đọc CSDL)
-
-| Ca | Đầu vào (mastery theo kỹ năng, chỉ ghi kỹ năng đã đánh giá) | Kết quả mong đợi |
-|---|---|---|
-| B1. Người chưa có dữ liệu | {} | `value` = 14 số 0, `assessed` = 14 giá trị false |
-| B2. Đã đánh giá nhưng toàn 0 | `pitch.spelling` = 0, `interval.naming` = 0 | Chiều 2 và 3: `value` 0, `assessed` true. Các chiều khác: `assessed` false |
-| B3. Chỉ lấy trung bình kỹ năng đã đánh giá | `chord.triad_formula` = 0,51, `chord.triad_build` chưa đánh giá | Chiều 6 = **0,51**, không phải 0,255 |
-| B4. Trung bình nhiều kỹ năng | `function.tonic` = 0,30, `function.dominant` = 0,66 | Chiều 9 = 0,48 |
-| B5. Kỹ năng `post_mvp` bị bỏ qua | `voicing.guide_tones` = 0,9 | Vector giống ca B1 |
-| B6. Độ dài và thứ tự | bất kỳ | Luôn 14 phần tử, theo thứ tự `GROUP_CODES` |
-| B7. Lượt `is_test` | chỉ có lượt `is_test` | Giống ca B1 |
-
-### C. Độ tương đồng và láng giềng (`tests/test_cp2_knn_similarity.py`, hàm thuần)
-
-Độ tương đồng là cosine, chỉ tính trên các chiều mà **cả hai** người cùng `assessed = true`. Quy ước cho vector độ dài 0 trên các chiều chung: nếu cả hai đều toàn 0 thì độ tương đồng là 1. Nếu chỉ một bên toàn 0 thì độ tương đồng là 0.
-
-Ví dụ dùng chung cho các ca dưới đây (số trong ngoặc là chiều):
-
-- A = {(2) 0,30; (3) 0,51; (6) 0,66}
-- B = {(2) 0,30; (3) 0,51; (6) 0,66; (7) 0,51; (9) 0,30}
-- C = {(2) 0,66; (3) 0,30; (4) 0,51; (6) 0,30; (7) 0,83}
-
-| Ca | Mong đợi |
-|---|---|
-| C1. Hai cặp có số chiều chung khác nhau | A–B: chung {2, 3, 6}, tương đồng 1,0000. B–C: chung {2, 3, 6, 7}, tương đồng 0,8324. A–C: chung {2, 3, 6}, tương đồng 0,7894. Mỗi cặp chỉ dùng chiều chung của riêng cặp đó |
-| C2. Cả hai toàn 0 trên chiều chung | Tương đồng 1 |
-| C3. Một bên toàn 0 | Tương đồng 0 |
-| C4. Số chiều chung nhỏ hơn ngưỡng | Không được tính là láng giềng. Ngưỡng là tham số, **chưa chốt** (ADR-008 mục 4) |
-| C5. Không có láng giềng hợp lệ nào | Đi vào nhánh dự phòng (ADR-008 mục 4), và trả lý do `no_valid_neighbors` |
-| C6. Người học chưa có chiều nào được đánh giá | Không tìm láng giềng. Dùng công thức người học mới của tài liệu 04 mục 6.5 |
-| C7. Người `is_synthetic` | Vẫn có vector, dùng cho mô phỏng |
-
-### D. Phạm vi Mastery (`tests/test_cp2_mastery_scope.py`, gọi qua API)
-
-1. Làm đúng L04-Q03 (`voicing.guide_tones`): lượt làm được ghi và vẫn được tính để hoàn thành bài, nhưng **không** tạo dòng mastery.
-2. Làm đúng L04-Q01 (`progression.ii_v_i`): mastery tăng từ 0 lên 0,30.
-3. `GET /me/mastery` chỉ trả kỹ năng MVP, kèm `group_code`.
+Đã tách sang [`CP2_HOP_DONG_TEST.md`](CP2_HOP_DONG_TEST.md). Mỗi test có mã, PR phụ trách và file test: M (PR-4, mapping), S (PR-5, phạm vi Mastery), V và K (PR-7, vector và láng giềng), E (PR-8, thử nghiệm).
 
 ## 6. Mục QA
 
@@ -153,6 +112,6 @@ Ví dụ dùng chung cho các ca dưới đây (số trong ngoặc là chiều):
 
 ## 7. Còn chờ Thắng
 
-1. Tên 4 nhóm 11–14.
-2. Chuyển `scale.parallel_minor` sang `post_mvp`, nhóm 11.
-3. Duyệt kế hoạch thử ngưỡng và phương án dự phòng trong ADR-008 mục 4. Ngưỡng chỉ chốt sau khi có kết quả thử.
+1. **Q-5:** quy ước cho vector độ dài 0 (ADR-008 mục 3). Chỉ chặn PR-7, không chặn bảng ánh xạ này.
+
+Đã chốt ngày 30/10: tên 4 nhóm 11–14, `scale.parallel_minor`, kỹ năng voicing L04.

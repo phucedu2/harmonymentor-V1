@@ -17,3 +17,8 @@ Skill Graph trong code có 26 kỹ năng (gồm secondary dominant, modal interc
 
 - Vector mastery cho KNN (CP2) có đúng 10 chiều, dễ giải thích.
 - L05–L08 giữ dạng đặc tả cho bản sau MVP.
+
+## Bổ sung 30/10/2026
+
+- Thắng chốt chuyển `scale.parallel_minor` từ `minor_scales` sang `post_mvp`, vì kỹ năng này không chứng minh được việc dựng âm giai thứ. Mã `minor_scales` tạm chưa có kỹ năng nào. Bảng ở `PHASE_A_PLAN` mục 1.1 là bản lịch sử, không sửa. Bảng hiện hành nằm ở `docs/CP2_ANH_XA_KY_NANG.md`.
+- Phần "vector 10 chiều" ở mục Hệ quả sẽ bị thay bằng vector 14 chiều theo `group_code` khi [ADR-008](ADR-008-vector-14-nhom.md) được duyệt. Phần phạm vi MVP giữ nguyên.
