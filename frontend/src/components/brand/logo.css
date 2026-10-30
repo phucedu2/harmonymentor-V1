@@ -1,0 +1,37 @@
+/* Màu logo Harmony Mentor (ADR-007).
+   App chưa có chế độ tối, nên logo KHÔNG tự đổi theo prefers-color-scheme (chữ ngà sẽ chìm trên nền sáng).
+   Khi app làm chế độ tối bằng <html data-theme="dark">, khối bên dưới tự áp dụng. */
+:root {
+  --hm-logo-ink: #0C231F;
+  --hm-logo-deep: #006D61;
+  --hm-logo-sig: #45C2AB;
+  --hm-logo-brass: #E0A53E;
+  --hm-logo-brass-text: #7C5502;
+  --hm-logo-felt: #B4343B;
+  --hm-logo-tint: #E8BA70;
+  --hm-logo-hole: #0C231F;
+  --hm-logo-soft: #9AB0AC;
+  --hm-logo-knock: #F2F3EA;
+  --hm-logo-lacquer: #0C231F;
+  --hm-logo-edge: #0C231F;
+  --hm-logo-text: #0C231F;
+}
+:root[data-theme="dark"] {
+  --hm-logo-ink: #F2F3EA;
+  --hm-logo-deep: #45C2AB;
+  --hm-logo-sig: #7DD6C2;
+  --hm-logo-brass: #E8B458;
+  --hm-logo-brass-text: #E8B458;
+  --hm-logo-felt: #EF7E7C;
+  --hm-logo-tint: #D5A149;
+  --hm-logo-hole: #081613;
+  --hm-logo-soft: #4F625F;
+  --hm-logo-knock: #081613;
+  --hm-logo-lacquer: #101F1C;
+  --hm-logo-edge: #45C2AB;
+  --hm-logo-text: #F2F3EA;
+}
+/* Chuyển động (thêm prop animate). Tắt hẳn khi người dùng bật "giảm chuyển động". */
+.hm-logo.play[data-logo="cuon-tien-trinh"] .roll{animation:hm-roll 2.4s cubic-bezier(.3,.1,.3,1) both}
+@keyframes hm-roll{from{transform:translateY(-88px)}to{transform:none}}
+@media (prefers-reduced-motion: reduce) { .hm-logo * { animation: none !important; } }
