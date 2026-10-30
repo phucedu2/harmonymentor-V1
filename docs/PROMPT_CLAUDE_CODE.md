@@ -6,7 +6,7 @@ Bạn là Senior Full-stack Engineer kiêm Tech Lead (FastAPI, PostgreSQL/pgvect
 
 Đưa **HarmonyMentor AI** (nền tảng học nhạc lý thích ứng có AI Tutor và Composition Lab) thành sản phẩm full-stack chạy bằng một lệnh `docker compose up`, bám SRS v1.3. Bạn **xây tiếp** trên mã nguồn `v0.4.0-dev` (kết quả "Phase 1 Learning Vertical Slice", giải nén từ `harmonymentor-code-v0.4.0-dev-phase1.zip`) trong thư mục hiện tại. KHÔNG viết lại từ đầu.
 
-Lưu ý quan trọng: "Phase 1" trong tài liệu của zip (`docs/PHASE_1_IMPLEMENTATION.md`) là lộ trình riêng của bản code đó, KHÔNG phải "Giai đoạn 1" của prompt này. Trong prompt này luôn dùng tên **Giai đoạn A–F** bên dưới để khỏi nhầm.
+Lưu ý quan trọng: "Phase 1" trong tài liệu của zip (`docs/giai-doan/phase-1/PHASE_1_IMPLEMENTATION.md`) là lộ trình riêng của bản code đó, KHÔNG phải "Giai đoạn 1" của prompt này. Trong prompt này luôn dùng tên **Giai đoạn A–F** bên dưới để khỏi nhầm.
 
 Bạn chạy trong **Claude Code** tại thư mục gốc dự án; được đọc/sửa file và chạy lệnh (python, pytest, npm, docker). Giảng viên cho phép dùng AI viết code, miễn ghi rõ.
 
@@ -24,7 +24,7 @@ Hạn nộp **04/12/2026**. Mốc: CP1 **20/10** (trình bày đặc tả Music 
 # TÀI LIỆU VÀ THỨ TỰ ƯU TIÊN
 
 1. `docs/srs/SRS_v1.3.md`: nguồn yêu cầu chính. Đọc toàn bộ, nhất là 2.1, 4.3, 4.4.1, 4.5, 4.6/4.6.1, 4.7, 4.8, 4.9, 4.10–4.15, Phần 6 (FR), 6.14 (Given/When/Then), Phần 7 (API), Phần 8 (CSDL), Phần 9 (NFR), Phần 10 (Docker/.env/module), 11.2, 11.6.
-2. Mã nguồn hiện tại. Đọc theo thứ tự: `README.md`, `docs/PHASE_1_IMPLEMENTATION.md`, `docs/VERIFICATION_PHASE_1.txt`, `docs/SKILL_GRAPH.md`, `docs/LESSON_SPECIFICATIONS.md`, `backend/app/db/models.py`, `backend/app/services/*`, `backend/app/api/*`.
+2. Mã nguồn hiện tại. Đọc theo thứ tự: `README.md`, `docs/giai-doan/phase-1/PHASE_1_IMPLEMENTATION.md`, `docs/giai-doan/phase-1/VERIFICATION_PHASE_1.txt`, `docs/SKILL_GRAPH.md`, `docs/LESSON_SPECIFICATIONS.md`, `backend/app/db/models.py`, `backend/app/services/*`, `backend/app/api/*`.
 3. Mâu thuẫn SRS vs code: SRS thắng, **trừ** Music Engine (hành vi Engine hiện tại thắng, mọi thay đổi cần test + ADR). Mâu thuẫn mới ngoài danh sách N1–N9 dưới đây: KHÔNG tự quyết im lặng, liệt kê và hỏi.
 4. Làm hết **P0** rồi P1. P2 và SRS 5.2 ("Ngoài phạm vi") thì không làm.
 
@@ -56,7 +56,7 @@ Nhóm ĐÃ CHỐT trước đây (áp dụng nguyên văn):
 - Không có wireframe: bạn tự đề xuất hệ thống thiết kế + 6 wireframe ở Giai đoạn A.
 - AI viết code được phép, ghi `docs/AI_USAGE.md`. Gemini key chỉ ở `.env`.
 
-Mâu thuẫn MỚI do code v0.4.0 (đề xuất mặc định; làm theo đề xuất trừ khi nhóm đổi, và ghi kết quả vào `docs/PHASE_A_PLAN.md`):
+Mâu thuẫn MỚI do code v0.4.0 (đề xuất mặc định; làm theo đề xuất trừ khi nhóm đổi, và ghi kết quả vào `docs/giai-doan/phase-A/PHASE_A_PLAN.md`):
 - N1. **Kỹ năng/bài học:** code có 26 kỹ năng, 8 bài (gồm Secondary Dominants, Modal Interchange, Tensions, Jazz Voicing); SRS 4.3 chốt 10 kỹ năng MVP. *Đề xuất:* giữ hạ tầng + L01–L04 đã audit; thêm trường ánh xạ mỗi kỹ năng của code → kỹ năng SRS 4.3 (hoặc `post_mvp`); nội dung MVP phủ đủ 10 kỹ năng SRS (≥ 12 bài); L05–L08 và kỹ năng ngoài MVP chuyển sang trạng thái `later` (không xóa, không đưa vào runtime/gợi ý).
 - N2. **Lịch ôn 1–3–7–14–30** trong `review_scheduler.py` (nhảy 2 hộp khi đúng) ≠ SRS. *Đề xuất:* viết lại thành Leitner 1–2–4–8–16 (đúng lên 1 hộp, sai về hộp 1), sửa test, migration nếu đổi cột.
 - N3. **Không có xác thực:** mọi endpoint nhận `user_id` từ client (vi phạm nguyên tắc 4). *Đề xuất:* bỏ `user_id` khỏi body/query, lấy từ JWT; tài nguyên của người khác → 404.
@@ -99,7 +99,7 @@ Mâu thuẫn MỚI do code v0.4.0 (đề xuất mặc định; làm theo đề x
 # LỘ TRÌNH
 
 ## Giai đoạn A — Ổn định nền và kế hoạch (không viết tính năng mới)
-Làm "Chuẩn bị repo". Chạy `pytest` (xác nhận 113 passed, 1 skipped) và `npm install && npm run build` (sửa lỗi build nếu có, báo cáo thật). Đọc SRS + code. Viết `docs/PHASE_A_PLAN.md`: (a) bảng truy vết FR P0/P1 → đã có / thiếu / mâu thuẫn; (b) xử lý N1–N9 và mâu thuẫn mới; (c) ERD vật lý (Mermaid) cho SRS 8.2 đối chiếu 15 bảng hiện có; (d) sơ đồ route frontend; (e) hệ thống thiết kế (màu, chữ, khoảng cách, component) + wireframe chữ/ASCII cho 6 màn hình (trang chủ, dashboard, bài học, bài tập + phản hồi, AI Tutor, Composition Lab); (f) kế hoạch Giai đoạn B–F có ngày, khớp CP2/CP3, chia 3 hướng việc, nêu giai đoạn nào chạy song song; (g) rủi ro lớn nhất + phương án cắt giảm. Cho **CP1 (20/10)**: tạo `docs/CP1_music_engine_va_bai_tap.md` tóm tắt đặc tả Engine (SRS 4.4.1, đối chiếu code thật, có ví dụ) và bảng phân loại bài tập SRS 4.9 ↔ 7 dạng chấm đang có.
+Làm "Chuẩn bị repo". Chạy `pytest` (xác nhận 113 passed, 1 skipped) và `npm install && npm run build` (sửa lỗi build nếu có, báo cáo thật). Đọc SRS + code. Viết `docs/giai-doan/phase-A/PHASE_A_PLAN.md`: (a) bảng truy vết FR P0/P1 → đã có / thiếu / mâu thuẫn; (b) xử lý N1–N9 và mâu thuẫn mới; (c) ERD vật lý (Mermaid) cho SRS 8.2 đối chiếu 15 bảng hiện có; (d) sơ đồ route frontend; (e) hệ thống thiết kế (màu, chữ, khoảng cách, component) + wireframe chữ/ASCII cho 6 màn hình (trang chủ, dashboard, bài học, bài tập + phản hồi, AI Tutor, Composition Lab); (f) kế hoạch Giai đoạn B–F có ngày, khớp CP2/CP3, chia 3 hướng việc, nêu giai đoạn nào chạy song song; (g) rủi ro lớn nhất + phương án cắt giảm. Cho **CP1 (20/10)**: tạo `docs/CP1_music_engine_va_bai_tap.md` tóm tắt đặc tả Engine (SRS 4.4.1, đối chiếu code thật, có ví dụ) và bảng phân loại bài tập SRS 4.9 ↔ 7 dạng chấm đang có.
 
 ## Giai đoạn B — Hoàn thiện nền tảng (phần còn thiếu của hạ tầng)
 Docker Compose 4 service (db pgvector, redis, api, web) + `.env.example`; migration cộng thêm cho các bảng SRS 8.2 còn thiếu (gồm `vector(384)`, chỉ mục HNSW); auth đầy đủ: đăng ký/đăng nhập/đăng xuất/refresh, bcrypt, mật khẩu ≥ 8 ký tự có chữ và số, khóa 5 lần sai/15 phút bằng Redis (lần 6 → 429), vai trò learner/admin, `python -m app.seed_admin`, `GET/PATCH /me`; **bỏ `user_id` do client gửi trên mọi endpoint (N3)** và thêm test ownership 404 + role 403; middleware `X-Response-Time` + log cấu trúc + p95; lỗi chuẩn SRS 7.4; CORS theo `CORS_ORIGINS`. Frontend: Tailwind, React Router, TanStack Query, trang chủ công khai, đăng ký/đăng nhập, route bảo vệ (FR-VIS-07), layout chính; đổi tên Composition Lab (M3). Xong thì nhắc push GitHub.
@@ -143,4 +143,4 @@ Mọi mục SRS 5.2 (chấm qua micro, luyện tai, DAW, piano-roll kéo thả, 
 5. Giải thích cho nhóm: 3–5 ý quan trọng nhất, dễ hiểu, kèm ví dụ cụ thể, đủ để trả lời giảng viên.
 6. Chưa xong / rủi ro / câu hỏi cần nhóm quyết định.
 
-Giai đoạn A đã xong (xem `docs/PHASE_A_PLAN.md`, đọc cả mục 1 "Mâu thuẫn mới" N10–N15 và lịch ở mục 5). Bắt đầu bằng **Giai đoạn B** theo phần việc của người đang dùng prompt (Thắng, Phúc hoặc Đạt). Nếu thiếu thông tin để làm tốt, hỏi trước khi viết code.
+Giai đoạn A đã xong (xem `docs/giai-doan/phase-A/PHASE_A_PLAN.md`, đọc cả mục 1 "Mâu thuẫn mới" N10–N15 và lịch ở mục 5). Bắt đầu bằng **Giai đoạn B** theo phần việc của người đang dùng prompt (Thắng, Phúc hoặc Đạt). Nếu thiếu thông tin để làm tốt, hỏi trước khi viết code.
