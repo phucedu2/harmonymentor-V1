@@ -8,8 +8,8 @@ Phân công: **Thắng** Backend/Engine · **Phúc** Frontend/Audio · **Đạt*
 
 0. `docs/SRS/01..04_*.md`: bộ tài liệu 2.1, nguồn sự thật. Tài liệu khác code thì tài liệu thắng, trừ Music Engine (đổi Engine cần test mới + ADR).
 1. `docs/PROMPT_CLAUDE_CODE.md`: prompt chính (vai trò, mâu thuẫn N1–N9, lộ trình Giai đoạn A–F).
-2. `docs/PHASE_A_PLAN.md`: hiện trạng, quyết định N1–N15, ERD, route, thiết kế, lịch.
-3. `docs/PHASE_A_TRUY_VET_FR.md`: trạng thái từng FR.
+2. `docs/giai-doan/phase-A/PHASE_A_PLAN.md`: hiện trạng, quyết định N1–N15, ERD, route, thiết kế, lịch.
+3. `docs/giai-doan/phase-A/PHASE_A_TRUY_VET_FR.md`: trạng thái từng FR.
 4. `docs/decisions/ADR-*.md`: quyết định đã ghi.
 
 ## Lệnh
@@ -47,6 +47,7 @@ backend/tests/              pytest
 content/                    nội dung bài học (đích: YAML + Markdown, FR-ADM-39)
 frontend/src/               React 18 + TS + Vite (pages/, components/learning/)
 docs/                       SRS, kế hoạch, ADR, minh chứng CP
+docs/giai-doan/             báo cáo + kiểm chứng theo từng giai đoạn (mục lục: README.md)
 ```
 
 Module mới đặt theo SRS 10.4: `backend/app/{auth,learning,recommender,nlp,exercise,ai,composition,admin}/` (N8).
@@ -71,6 +72,7 @@ Module mới đặt theo SRS 10.4: `backend/app/{auth,learning,recommender,nlp,e
 - Mỗi giai đoạn một nhánh `phase-<chữ>-<ten-ngan>`, commit nhỏ kiểu `feat(auth): …`, gộp vào `main` qua PR khi nhóm duyệt. Không commit `.env` hay API key.
 - Đọc file trước khi sửa. Không đổi hành vi Engine nếu không có test mới + ADR.
 - Chạy `pytest` và `npm run build` thật, dán kết quả; không chạy được thì ghi "chưa chạy" và lý do.
+- Báo cáo triển khai và file kiểm chứng của giai đoạn đặt ở `docs/giai-doan/<giai-doan>/`, thêm một dòng vào `docs/giai-doan/README.md`.
 - Quyết định không hiển nhiên ghi `docs/decisions/ADR-xxx.md`. Ghi việc dùng AI vào `docs/AI_USAGE.md`.
 - Comment/docstring tiếng Việt, ngắn, giải thích "vì sao". Giao diện tiếng Việt, ký hiệu nhạc quốc tế.
 - Cuối mỗi giai đoạn: dừng và báo cáo (đã làm gì theo FR, file, lệnh, kết quả test, giải thích cho nhóm, rủi ro/câu hỏi).

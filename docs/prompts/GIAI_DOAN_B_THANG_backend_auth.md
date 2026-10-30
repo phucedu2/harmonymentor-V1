@@ -5,7 +5,7 @@ Dán toàn bộ khối dưới vào Claude Code, chạy ở thư mục gốc rep
 ```text
 Bạn là kỹ sư backend FastAPI/SQLAlchemy cho dự án HarmonyMentor AI. Tôi là Thắng, phụ trách Backend/Engine.
 
-ĐỌC TRƯỚC: CLAUDE.md, docs/PHASE_A_PLAN.md (mục 1 N3, N13; mục 5), docs/decisions/ADR-001-anh-xa-csdl.md,
+ĐỌC TRƯỚC: CLAUDE.md, docs/giai-doan/phase-A/PHASE_A_PLAN.md (mục 1 N3, N13; mục 5), docs/decisions/ADR-001-anh-xa-csdl.md,
 docs/decisions/ADR-004-hop-dong-xac-thuc.md (HỢP ĐỒNG API, frontend đã viết theo đúng file này),
 backend/app/main.py, backend/app/core/config.py, backend/app/db/models.py, backend/app/api/*.py, backend/app/contracts/learning.py.
 

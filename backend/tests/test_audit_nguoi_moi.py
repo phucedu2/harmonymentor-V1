@@ -1,7 +1,7 @@
 """Kiểm định trải nghiệm người mới học (20/10/2026): chấm điểm, luật hoàn thành bài, lịch Leitner.
 
 Mỗi test ứng với một lỗ hổng tìm được khi chạy thử web bằng tài khoản học sinh mới
-(docs/AUDIT_NGUOI_MOI_HOC.md).
+(docs/giai-doan/phase-2.3/AUDIT_NGUOI_MOI_HOC.md).
 """
 
 from __future__ import annotations

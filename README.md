@@ -240,18 +240,14 @@ Frontend: `cd frontend && npm ci && npm run build` **đạt** (Node 22, 20/10/20
 
 ## Tài liệu phase
 
-- `docs/BEGINNER_CONTENT_AUDIT_PHASE_2.md`
-- `docs/PHASE_2_IMPLEMENTATION.md`
-- `docs/VERIFICATION_PHASE_2.txt`
+Báo cáo và nhật ký kiểm chứng của từng giai đoạn nằm trong [`docs/giai-doan/`](docs/giai-doan/), mỗi giai đoạn một thư mục con; mục lục ở [`docs/giai-doan/README.md`](docs/giai-doan/README.md). Kế hoạch và truy vết FR của Giai đoạn A: `docs/giai-doan/phase-A/PHASE_A_PLAN.md`, `docs/giai-doan/phase-A/PHASE_A_TRUY_VET_FR.md`.
+
+Đặc tả dùng chung giữ ở `docs/`:
+
 - `docs/CURRICULUM_SOURCE_MATRIX.md`
 - `docs/LESSON_SPECIFICATIONS.md`
-- `docs/PHASE_0_4B_IMPLEMENTATION.md`
-- `docs/PHASE_1_IMPLEMENTATION.md`
-- `docs/PHASE_A_PLAN.md`, `docs/PHASE_A_TRUY_VET_FR.md` (kế hoạch và truy vết FR hiện hành)
+- `docs/SKILL_GRAPH.md`
 - `docs/CP1_*.md` (minh chứng CP1)
-- `docs/VERIFICATION_PHASE_1.txt`
-- `docs/VERIFICATION_PHASE_0_4B.txt`
-- các phase trước vẫn giữ để audit lịch sử.
 
 ## Next implementation gate
 
@@ -277,4 +273,4 @@ The interval-quality explanation also avoids treating “bright/dark” as the d
 
 The Lesson 1 content contract was rewritten from a zero-beginner perspective after usability testing. The rewrite keeps the existing 8-lesson MVP architecture but turns L01 into a scaffolded sequence with continuous section numbering, early piano visualization, explicit spelling rules, interval formulas required by triad construction, parallel-root triad comparison, and format-aware answer inputs. L01 exercise versions are published as `v4` so earlier attempts remain traceable.
 
-Kế hoạch hiện hành là **Giai đoạn B–F** trong [`docs/PHASE_A_PLAN.md`](docs/PHASE_A_PLAN.md) (thay cho mục "Phase 2 — Interactive Music Layer" cũ). Hướng dẫn cho Claude Code nằm ở [`CLAUDE.md`](CLAUDE.md).
+Kế hoạch hiện hành là **Giai đoạn B–F** trong [`docs/giai-doan/phase-A/PHASE_A_PLAN.md`](docs/giai-doan/phase-A/PHASE_A_PLAN.md) (thay cho mục "Phase 2 — Interactive Music Layer" cũ). Hướng dẫn cho Claude Code nằm ở [`CLAUDE.md`](CLAUDE.md).

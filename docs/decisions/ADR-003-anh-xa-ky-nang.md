@@ -10,7 +10,7 @@ Skill Graph trong code có 26 kỹ năng (gồm secondary dominant, modal interc
 
 - Thêm cột `skills.srs_code`: một trong 10 mã SRS hoặc `post_mvp`.
 - Kỹ năng `post_mvp` vẫn giữ trong đồ thị (không xóa, không mất nguồn), nhưng không vào lộ trình, gợi ý hay mastery của MVP.
-- Bảng ánh xạ chi tiết ở `docs/PHASE_A_PLAN.md` mục 1.1.
+- Bảng ánh xạ chi tiết ở `docs/giai-doan/phase-A/PHASE_A_PLAN.md` mục 1.1.
 - Kỹ năng SRS chưa có trong code (note_names, minor_scales, rhythm_basics) được thêm mới.
 
 ## Hệ quả
