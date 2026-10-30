@@ -20,7 +20,8 @@ class Settings:
     app_name: str = os.getenv("APP_NAME", "HarmonyMentor API")
     app_version: str = os.getenv("APP_VERSION", "0.5.4-dev")
     database_url: str = os.getenv("DATABASE_URL", "sqlite:///./harmonymentor_dev.db")
-    auto_create_schema: bool = os.getenv("AUTO_CREATE_SCHEMA", "1").lower() not in {"0", "false", "no"}
+    # Mặc định tắt: schema chỉ do Alembic tạo. create_all sinh DB không có alembic_version, kẹt nội dung cũ.
+    auto_create_schema: bool = os.getenv("AUTO_CREATE_SCHEMA", "0").lower() not in {"0", "false", "no"}
     seed_demo_content: bool = os.getenv("SEED_DEMO_CONTENT", "1").lower() not in {"0", "false", "no"}
 
     # Xác thực (ADR-004, NFR-18/19). APP_ENV=production bắt buộc có JWT_SECRET.
