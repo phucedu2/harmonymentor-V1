@@ -11,6 +11,24 @@ File này ghi lại việc đã xong, việc đang dở, lệnh để chạy l�
 **Việc tiếp theo**
 - Giai đoạn mới đặt báo cáo + kiểm chứng vào `docs/giai-doan/<giai đoạn>/` và thêm một dòng vào mục lục.
 
+## 28/10/2026: HM-001 / NL-L01-01, ký âm và MIDI cho B#/Cb ở Bài 1
+
+**Đã xong** (nhánh `claude/project-thread-qdcaej`, Draft PR #12, chưa gộp)
+- `toScientificInterval/toScientificTriad` tính quãng tám theo chữ cái; `scientificToMidi` không quy về pitch class. Engine không đổi.
+- Vitest (182 test) so 17 nốt gốc × 5 quãng + 4 hợp âm với bảng do Music Engine sinh (`scripts/sinh_bang_l01_engine.py`); 5 pytest giữ bảng khớp Engine; CI thêm bước `npm test`, mức SQLite 330.
+- Chứng minh đỏ trước/xanh sau: CI run 40734235986 đỏ ở `npm test` trên commit chỉ có test. Ảnh và log MIDI trước/sau trên giao diện: `docs/minh-chung/anh/hm001/`, `docs/minh-chung/hm001/`. Báo cáo `docs/bao-cao/HM-001.md`.
+
+**Đang dở / chờ**
+- Astra và nhóm review PR #12. Không merge tự động.
+- Lỗi lân cận tách ticket riêng: `pitchClassesToAscendingNotes` đổi Eb → D# trước khi phát (chỉ sai tên, cao độ đúng).
+
+**Lệnh chạy lại**
+```bash
+cd frontend && npm ci && npm test && npm run build   # 182 passed, build đạt
+cd backend && pytest -q                              # 330 passed, 21 skipped
+python scripts/sinh_bang_l01_engine.py && git diff --exit-code frontend/tests/fixtures
+```
+
 ## 27/10/2026: PR-3, bảo vệ phiên bản câu hỏi (HM-003)
 
 **Đã xong** (nhánh `claude/project-thread-3z96i1`, Draft PR, chưa gộp)
