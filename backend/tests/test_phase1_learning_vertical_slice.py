@@ -78,7 +78,8 @@ def test_completion_updates_overview_and_review_counts():
         assert lesson["status"] == "completed"
         assert lesson["practice_progress_percent"] == 100
         assert body["completed_lessons"] >= 1
-        assert body["upcoming_reviews"] >= 8
+        # 04 mục 6.4 (HM-012): thẻ mới đến hạn ngay, nên 8 thẻ L01 nằm ở "cần ôn", không ở "sắp tới".
+        assert body["due_reviews"] >= 8
 
 
 def test_chord_inspector_supports_phase1_progression_ui_contract():

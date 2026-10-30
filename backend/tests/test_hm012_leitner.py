@@ -94,7 +94,7 @@ def test_box_5_stays_box_5():
 
 
 def test_hard_when_due_keeps_box_and_reschedules():
-    # "hard" không có trong 04 mục 6.4; nhóm chốt 30/10: đúng nhưng chật vật thì giữ hộp (ADR-010).
+    # "hard" không có trong 04 mục 6.4; nhóm chốt 30/10: đúng nhưng chật vật thì giữ hộp (ADR-002, phần bổ sung 30/10).
     state = card(3, T0)
     apply_review_result(state, True, "hard", now=T0)
     assert leitner_box(state.stage) == 3 and state.due_at == T0 + timedelta(days=4)
