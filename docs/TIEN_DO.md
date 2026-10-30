@@ -2,6 +2,19 @@
 
 File này ghi lại việc đã xong, việc đang dở, lệnh để chạy lại và việc tiếp theo. Cập nhật sau mỗi phiên việc. Lịch sử trước 27/10/2026 xem `docs/AI_USAGE.md` và các báo cáo trong `docs/giai-doan/`.
 
+## 30/10/2026: HM-012, lịch ôn Leitner theo tài liệu 04 mục 6.4
+
+**Đã xong** (nhánh `claude/project-thread-9x7tky`, Draft PR #14, chưa gộp)
+- Thẻ mới đến hạn ngay; đúng trước hạn giữ hộp và ngày hẹn; sai về hộp 1 hẹn 1 ngày; đúng khi đến hạn lên 1 hộp, tối đa hộp 5. "hard" giữ hộp. Ghi ở ADR-002 phần bổ sung 30/10.
+- 12 test mới `backend/tests/test_hm012_leitner.py`; commit chỉ có test (f3bd6a4) đỏ 5 test trước khi sửa. Viết lại 2 test cũ mặc định luật cũ. Mức CI SQLite 337.
+- Không migration: thẻ đã kích hoạt trước bản sửa giữ ngày hẹn cũ.
+
+**Lệnh chạy lại**
+```bash
+cd backend && pytest -q tests/test_hm012_leitner.py   # 12 passed
+cd backend && pytest -q                               # 337 passed, 21 skipped
+```
+
 ## 30/10/2026: gom tài liệu phase vào `docs/giai-doan/`
 
 **Đã xong** (nhánh `claude/project-thread-ng2frm`, PR vào `main`, chưa gộp)
