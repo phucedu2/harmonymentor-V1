@@ -5,7 +5,7 @@ File này ghi lại việc đã xong, việc đang dở, lệnh để chạy l�
 ## 30/10/2026: gom tài liệu phase vào `docs/giai-doan/`
 
 **Đã xong** (nhánh `claude/project-thread-ng2frm`, PR vào `main`, chưa gộp)
-- Theo góp ý của thầy: 9 file `PHASE_*.md`, 7 file `VERIFICATION_PHASE_*.txt` và 2 bản kiểm định chuyển bằng `git mv` vào `docs/giai-doan/<giai đoạn>/`, giữ nguyên tên. Mục lục `docs/giai-doan/README.md`.
+- Theo góp ý của thầy: 10 file `PHASE_*.md`, 7 file `VERIFICATION_PHASE_*.txt` và 2 bản kiểm định chuyển bằng `git mv` vào `docs/giai-doan/<giai đoạn>/`, giữ nguyên tên. Mục lục `docs/giai-doan/README.md`.
 - Sửa mọi đường dẫn cũ trong CLAUDE.md, README, AI_USAGE, ADR-003, `docs/prompts/`, `PROMPT_CLAUDE_CODE.md`, 1 test backend và 2 comment frontend. Không đổi code chạy.
 
 **Việc tiếp theo**
