@@ -1,6 +1,6 @@
 # CP2 · Ánh xạ kỹ năng → mã SRS → nhóm KNN
 
-Trạng thái: **DRAFT**, đi cùng [ADR-008](decisions/ADR-008-vector-14-nhom.md) bản 3. Bảng ánh xạ đã có đủ quyết định của Thắng (30/10). Chưa có code. PR-4, PR-5, PR-7 và PR-8 chưa được làm. Hợp đồng test nằm ở [`CP2_HOP_DONG_TEST.md`](CP2_HOP_DONG_TEST.md).
+Trạng thái: **DRAFT**, đi cùng [ADR-008](decisions/ADR-008-vector-14-nhom.md) bản 4. Bảng ánh xạ đã có đủ quyết định của Thắng (30/10). Chưa có code. PR-4, PR-5, PR-7 và PR-8 chưa được làm. Hợp đồng test nằm ở [`CP2_HOP_DONG_TEST.md`](CP2_HOP_DONG_TEST.md).
 
 Phạm vi: đối chiếu với `main` 58a6f52, cập nhật ngày 30/10/2026. Đây là bản thống nhất duy nhất. Claude Doc và file `.md` trong thư mục project chỉ là bản sao sinh ra từ file này.
 
@@ -110,8 +110,8 @@ Các quy tắc này phải đúng dù số kỹ năng tăng hay giảm, nên tes
 - **Không làm:** không đổi `skill_id`, `ExerciseVersion` hay lịch sử bài làm.
 - **Hướng để Astra và nhóm cân nhắc:** (1) đổi kỹ năng của câu sang `chord.seventh_build`, bằng phiên bản mới theo ADR-006; hoặc (2) giữ nguyên kỹ năng và sửa đề để thật sự kiểm tra guide tones. Cách nào cũng phải qua ticket Astra.
 
-## 7. Còn chờ Thắng
+## 7. Trạng thái quyết định
 
-1. **Q-5:** quy ước cho vector độ dài 0 (ADR-008 mục 3). Chỉ chặn PR-7, không chặn bảng ánh xạ này.
+Bảng ánh xạ không còn điểm nào chờ quyết định. Thắng đã chốt ngày 30/10: tên 4 nhóm 11–14, `scale.parallel_minor`, kỹ năng voicing L04, và quy ước vector độ dài 0 (Q-5, phương án A).
 
-Đã chốt ngày 30/10: tên 4 nhóm 11–14, `scale.parallel_minor`, kỹ năng voicing L04.
+Các điểm còn chờ (D-1..D-3, R-1..R-4) thuộc về Mastery và hệ gợi ý, không thuộc bảng ánh xạ. Xem ADR-008, mục "Cần quyết định".
