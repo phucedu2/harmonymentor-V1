@@ -1,86 +1,111 @@
-# HM-011 · Đề xuất hợp đồng API: quyền nhập bằng piano theo phiên bản câu hỏi
+# HM-011 · Hợp đồng API: cách nhập bài làm do phiên bản câu hỏi quyết định
 
-Trạng thái: **chờ Thắng duyệt**. Chưa sửa code production. Draft PR này chỉ có test, viết trước để CI đỏ có chủ đích (Phúc chốt phương án A ngày 30/10/2026).
+Trạng thái: **bản 2, chờ Thắng duyệt**. Chưa sửa code production. Draft PR #15 hiện chỉ có test, và CI đang đỏ có chủ đích.
+
+| Bản | Ngày | Thay đổi |
+|---|---|---|
+| 1 | 30/10 | Đề xuất `allowed_input_methods` trong `grader_config`, 422 `INPUT_METHOD_NOT_ALLOWED` |
+| 2 | 30/10 | Sửa theo góp ý Astra và quyết định của Phúc (A cả 8 câu). Xem mục 6 "Khác gì bản 1" |
 
 ## 1. Lỗi
 
-`POST /api/v1/attempts` nhận `input_method` từ client (`text | choice | piano`). Khi giá trị là `piano`, `grading_service._grading_mode` chuyển sang `pitch_class_only` cho mọi câu `music_engine`, bất kể câu đó có khối piano hay không. Hậu quả: chỉ cần tự gửi `"input_method": "piano"` là chính tả không còn được chấm.
+`POST /api/v1/attempts` nhận `input_method` (`text | choice | piano`) từ client. Khi client gửi `piano`, máy chủ chuyển sang chấm `pitch_class_only` cho mọi câu `music_engine`, tức là bỏ qua phần chính tả. Ví dụ trên `main` 58a6f52: L01-Q04 (dựng D minor) chấm `D E# A` gửi kèm `piano` là **đúng**.
 
-Tái hiện trên `main` 58a6f52:
+## 2. Quy tắc
 
-```bash
-curl -X POST /api/v1/attempts -H "Authorization: Bearer …" \
-  -d '{"exercise_version_id": "L01-Q04-v4", "answer": "D E# A", "input_method": "piano"}'
-# → 200, "correct": true   (gửi "text" → "correct": false)
-```
+### 2.1 Cách nhập nào hợp lệ
 
-`L01-Q04` (dựng D minor) là câu dạy chính tả, nên `D E# A` phải sai. Lượt sai này còn được tính là "đã làm đúng" để hoàn thành bài và cộng vào mastery.
+Máy chủ suy ra danh sách cách nhập hợp lệ từ **ảnh chụp phiên bản** mà client gửi (`exercise_version_id`). Máy chủ không đọc danh sách này từ bảng `exercises`, cũng không tin client.
 
-## 2. Test viết trước (`backend/tests/test_hm011_input_method.py`)
-
-| Test | Hiện tại | Sau khi sửa |
-|---|---|---|
-| `D E# A` trên L01-Q04 gửi `text` hoặc không gửi `input_method` thì sai | đạt | đạt |
-| `D E# A` gửi `piano` trên L01-Q04 → 422 `INPUT_METHOD_NOT_ALLOWED` | **đỏ** (200, đúng) | đạt |
-| Lượt bị từ chối không ghi `attempts` | **đỏ** (ghi 1 lượt) | đạt |
-| Đáp án đúng `D F A` gửi `piano` vẫn bị từ chối, vì quyền do câu hỏi quyết định, không phụ thuộc đáp án | **đỏ** | đạt |
-| `GET /lessons/{id}` trả `allowed_input_methods` cho từng câu: L01-Q04 không có `piano`, L04-Q03 có | **đỏ** (thiếu trường) | đạt |
-| L04-Q03 (câu duy nhất có khối piano gửi bài) đã tăng version, chấm cao độ khi nhập piano (`G B D E#` đúng) nhưng gõ chữ thì vẫn chấm chính tả | **đỏ** | đạt |
-
-## 3. Hợp đồng đề xuất
-
-### 3.1 Lưu quyền ở đâu
-
-Quyền được lưu trong `grader_config` của **ảnh chụp phiên bản** (`exercise_versions.grader_config`, cột JSON):
-
-```json
-{"kind": "build_chord", "symbol": "G7", "allowed_input_methods": ["text", "piano"]}
-```
-
-Lý do chọn chỗ này:
-- Quyền nhập là một phần của "cách chấm", nên theo ADR-006 đổi quyền phải tăng `version`. Lượt làm cũ vẫn trỏ về đúng bản đã chấm chúng.
-- Không cần migration: cột JSON đã có, và trigger bất biến của PR-3 đã bảo vệ ảnh chụp.
-- Máy chủ đọc quyền từ chính phiên bản mà client gửi `exercise_version_id`, không đọc từ bảng `exercises` hay từ client.
-
-Mặc định khi thiếu khóa này: chỉ nhập bằng chữ. `text` và `choice` luôn được nhận và luôn chấm chính tả, vì hai cách này không đổi cách chấm. Riêng `piano` là quyền đặc biệt và phải được khai báo.
-
-### 3.2 `POST /api/v1/attempts`
-
-| Trường hợp | Kết quả |
+| Phiên bản câu hỏi | `allowed_input_methods` |
 |---|---|
-| `input_method` ∈ {`text`, `choice`} hoặc bỏ trống | Chấm như cũ, `grading_mode` lấy từ `grader_config` (mặc định `strict_spelling`) |
-| `input_method = piano` và phiên bản có `piano` trong `allowed_input_methods` | Chấm `pitch_class_only` |
-| `input_method = piano` nhưng phiên bản không cho phép | **422** `{"error": {"code": "INPUT_METHOD_NOT_ALLOWED", …}}`. Không ghi `attempts`, không đổi mastery |
+| Có `options` (mcq, context, applied có lựa chọn) | `["choice"]` |
+| Không có `options` | `["text"]` |
+| `grader_config.allowed_input_methods` được khai báo | đúng danh sách đã khai báo |
 
-Thứ tự kiểm tra là: phiên bản tồn tại và là bản hiện hành (409 `EXERCISE_VERSION_SUPERSEDED` như PR-3), sau đó mới kiểm quyền nhập. Nhờ vậy client cũ đang giữ L04-Q03-v1 sẽ nhận 409 và tải lại bài, không nhận 422.
+Hiện chỉ L04-Q03 khai báo `["text", "piano"]`. Đây cũng là câu duy nhất có khối piano gửi bài (`L04-B07`). Theo quyết định A của Thắng, câu này được tính điểm khi làm bằng piano.
 
-### 3.3 `GET /api/v1/lessons/{id}`
+Vì quy tắc được suy ra từ dữ liệu sẵn có trong ảnh chụp, 47 câu còn lại **không phải tăng version**. Riêng L04-Q03 phải lên v2, vì đổi cách chấm của câu đã phát hành (ADR-006). Đề, đáp án và nguồn của L04-Q03 giữ nguyên.
 
-`ExerciseOut` có thêm `allowed_input_methods: list[str]`, luôn có `"text"`, và có `"piano"` khi phiên bản cho phép. Frontend chỉ hiện nút "Kiểm tra bằng piano" khi danh sách có `piano`, và hiện thông báo khi nhận 422.
+### 2.2 `POST /api/v1/attempts`
 
-### 3.4 Thay đổi code dự kiến (sau khi duyệt)
+Thứ tự kiểm tra:
+
+1. Phiên bản tồn tại và là bản hiện hành. Nếu không, trả 409 `EXERCISE_VERSION_SUPERSEDED` như PR-3. Nhờ vậy client cũ còn giữ L04-Q03-v1 sẽ tải lại bài, thay vì nhận 422.
+2. `input_method` bị bỏ trống thì máy chủ dùng phần tử đầu của `allowed_input_methods`. Câu có `options` thành `choice`, câu không có thành `text`.
+3. `input_method` không nằm trong `allowed_input_methods` → **422 `INPUT_METHOD_NOT_ALLOWED`**.
+4. Với `choice`: `answer` phải trùng **chính xác** một phần tử của `options`. Nếu không → **422 `ANSWER_NOT_IN_OPTIONS`**.
+5. Với `piano`: `answer` là các tên cách nhau bởi khoảng trắng. Mỗi tên phải thuộc đúng 12 tên VirtualPiano gửi: `C C# D D# E F F# G G# A A# B`. Không có quãng tám, không lặp, không rỗng. Sai một trong các điều kiện đó → **422 `INVALID_PIANO_PAYLOAD`**.
+6. Chấm bài. `piano` chấm `pitch_class_only`. `text` và `choice` chấm theo `grader_config` như hiện nay, mặc định là `strict_spelling`.
+
+Mọi trường hợp 422 đều **không ghi `attempts`**, không đổi mastery và không tính vào "đã làm đúng" của bài.
+
+Chỉ cần payload piano hợp lệ thì sai cao độ vẫn là một lượt làm **sai** hợp lệ: trả 200, `correct: false`, có ghi lượt. Ví dụ `G B D F#` cho G7.
+
+### 2.3 `GET /api/v1/lessons/{id}`
+
+`ExerciseOut` có thêm trường `allowed_input_methods: list[str]`, tính theo đúng quy tắc 2.1. Frontend chỉ hiện nút "Kiểm tra bằng piano" khi danh sách này có `piano`. Khi nhận 422, frontend hiện thông báo thay vì chấm.
+
+## 3. Test (`backend/tests/test_hm011_input_method.py`, 22 ca)
+
+| Nhóm | Ca | `main` hiện tại | Sau khi sửa |
+|---|---|---|---|
+| L01-Q04 gõ chữ | `D E# A` gửi kèm `text` hoặc không gửi → sai | đạt | đạt |
+| L01-Q04 gửi `piano` | `D E# A` và `D F A` → 422 `INPUT_METHOD_NOT_ALLOWED`, 0 lượt | **đỏ** (200) | đạt |
+| L01-Q04 gửi `choice` | → 422 `INPUT_METHOD_NOT_ALLOWED` | **đỏ** | đạt |
+| L04-Q01 (mcq) | `choice` hoặc không gửi → chấm bình thường | đạt | đạt |
+| L04-Q01 gửi `text` | → 422 `INPUT_METHOD_NOT_ALLOWED` | **đỏ** | đạt |
+| L04-Q01 `choice` không thuộc options | `Dm7 G7 Cmaj7`, `dm7-g7-cmaj7`, `ii-V-I`, rỗng → 422 `ANSWER_NOT_IN_OPTIONS` | **đỏ** | đạt |
+| API bài học | `allowed_input_methods`: L01-Q04 `["text"]`, L04-Q01 `["choice"]`, L04-Q03 `["text","piano"]` | **đỏ** | đạt |
+| L04-Q03 version | khác `L04-Q03-v1` | **đỏ** | đạt |
+| L04-Q03 piano hợp lệ | `G B D F`, `F D B G` → đúng | đạt | đạt |
+| L04-Q03 piano sai cao độ | `G B D F#` → 200 sai, ghi 1 lượt | đạt | đạt |
+| L04-Q03 piano sai định dạng | `G B D E#`, `G B D Gb`, `G4 B4 D5 F5`, `G B D F F`, `G B D H`, rỗng → 422 `INVALID_PIANO_PAYLOAD`, 0 lượt | **đỏ** | đạt |
+| L04-Q03 gõ chữ | `G B D E#` gửi kèm `text` hoặc không gửi → sai (vẫn chấm chính tả) | đạt | đạt |
+
+Trên `main`: 16 đỏ, 6 đạt.
+
+## 4. Thay đổi code dự kiến (chỉ làm sau khi được duyệt)
 
 | File | Thay đổi |
 |---|---|
-| `services/grading_service.py` | `_grading_mode` nhận `grader_config` + `input_method` và chỉ trả `pitch_class_only` khi `piano` ∈ `allowed_input_methods` |
-| `services/learning_service.py` | `submit_attempt` kiểm quyền trước khi chấm, ném `InputMethodNotAllowed` |
-| `api/attempts.py` | Đổi lỗi đó thành `AppError(422, "INPUT_METHOD_NOT_ALLOWED")` |
-| `contracts/learning.py`, `api/lessons.py` | Thêm `allowed_input_methods` vào `ExerciseOut` |
-| `content/curriculum_specs.py` | L04-Q03: thêm `"allowed_input_methods": ["text", "piano"]`, `version=2`. Đề, đáp án và nguồn giữ nguyên |
-| `frontend/.../LessonRunner.tsx`, `api.ts` | Ẩn nút piano khi không được phép, xử lý 422 |
-| `tests/test_audit_nguoi_moi.py::test_piano_input_grades_pitch_only_but_typed_input_keeps_spelling` | Test đơn vị này đang gọi `grade_payload` với `piano` mà không khai quyền, tức là ghi lại đúng hành vi lỗi. Sẽ sửa để truyền `allowed_input_methods` |
+| `services/grading_service.py` | Thêm `allowed_input_methods(version)` và `validate_piano_payload(answer)`. `_grading_mode` chỉ trả `pitch_class_only` khi `input_method == "piano"` và cách nhập này đã được cho phép |
+| `services/learning_service.py` | `submit_attempt` chạy các bước 2.2.2–2.2.5 trước khi chấm, ném `AttemptRejected(code)` |
+| `api/attempts.py` | `AttemptRejected` → `AppError(422, code)` |
+| `contracts/learning.py` | `AttemptIn.input_method: Literal[...] \| None = None`, thay cho mặc định `"text"`. `ExerciseOut.allowed_input_methods` |
+| `api/lessons.py` | Điền `allowed_input_methods` |
+| `content/curriculum_specs.py` | L04-Q03: `grader_config` thêm `"allowed_input_methods": ["text", "piano"]`, `version=2` |
+| `frontend/src/api.ts`, `LessonRunner.tsx` | Đọc `allowed_input_methods`, ẩn nút piano khi không được phép, hiện lỗi 422 |
+| `.github/workflows/ci.yml` | Nâng `--min-passed` |
 
-Music Engine và schema CSDL không đổi.
+Music Engine và schema CSDL **không đổi**. Không có migration.
 
-## 4. Ảnh hưởng dữ liệu cũ
+### Test cũ bị ảnh hưởng
 
-- Bảng `attempts` không lưu `input_method`, nên **không xác định được** lượt cũ nào đã được chấm theo cao độ. Theo quyết định 30/10, lượt cũ giữ nguyên, không chấm lại.
-- L04-Q03-v1 vẫn tồn tại để giữ lịch sử. Lượt làm cũ trỏ v1 không bị ảnh hưởng.
-- Seed lên v2 cho L04-Q03 theo đúng quy trình ADR-006 (`SeedConflictError` sẽ báo nếu quên tăng version).
+- `test_audit_nguoi_moi.py::test_piano_input_grades_pitch_only_but_typed_input_keeps_spelling` gọi thẳng `grade_payload(..., input_method="piano")` mà không khai quyền. Test này đang ghi lại chính hành vi lỗi. Mình sẽ sửa để test truyền `allowed_input_methods` vào `grader_config`.
+- `test_audit_nguoi_moi.py::test_lesson_cannot_be_completed_by_guessing` gửi `"xx"` cho cả câu trắc nghiệm, và sau khi sửa các lượt đó sẽ nhận 422. Mục đích của test (đoán bừa không hoàn thành được bài) vẫn giữ nguyên, vì test không kiểm mã 200 cho các lượt này. Test sẽ vẫn đạt mà không cần sửa.
+- Các test khác gửi đáp án đúng nguyên văn trong `options` hoặc chuỗi chữ cho câu không có `options`. Theo quy tắc 2.2.2, các test này vẫn đạt mà không cần sửa. Mình sẽ chạy toàn bộ bộ test để xác nhận.
 
-## 5. Câu hỏi cho Thắng
+## 5. Ảnh hưởng dữ liệu cũ
 
-1. Đồng ý lưu quyền trong `grader_config` của phiên bản (đề xuất), hay muốn tách thành cột riêng `exercise_versions.allowed_input_methods` (phải có migration)?
-2. Mã 422 `INPUT_METHOD_NOT_ALLOWED` có ổn không, hay dùng 403?
-3. Có muốn thêm cột `attempts.input_method` (migration nhỏ) để lần sau truy vết được lượt nào đã chấm theo cao độ không? Không bắt buộc để sửa HM-011.
-4. Việc L04-Q03 lên v2 chỉ đổi cách chấm, không đổi nhạc lý. Bước này có cần ticket Astra không, hay Thắng duyệt là đủ?
+- Bảng `attempts` không lưu `input_method`, nên **không thể** biết lượt cũ nào đã được chấm theo cao độ. Lượt cũ giữ nguyên, không chấm lại.
+- Việc lưu `attempts.input_method` để truy vết sẽ làm bằng **migration riêng sau này**, không gộp vào HM-011 khi chưa được duyệt.
+- L04-Q03-v1 vẫn được giữ cho lịch sử. Seed lên v2 theo ADR-006. Nếu quên tăng version, `SeedConflictError` sẽ báo lỗi.
+
+## 6. Khác gì bản 1
+
+| Điểm | Bản 1 | Bản 2 |
+|---|---|---|
+| `text`, `choice` | Luôn hợp lệ với mọi câu | Hợp lệ theo `options` của phiên bản. Sai cách nhập → 422 |
+| Thiếu `input_method` | Mặc định `text` | Dùng cách nhập mặc định của câu |
+| `choice` không thuộc `options` | Chấm sai | 422 `ANSWER_NOT_IN_OPTIONS` |
+| Payload piano | Không kiểm tra | Chỉ nhận 12 tên thăng của VirtualPiano. Sai → 422 `INVALID_PIANO_PAYLOAD` |
+| Test L04-Q03 `piano` + `G B D E#` | Kỳ vọng đúng | Kỳ vọng 422. Thêm ca `G B D F` và `F D B G` là đúng |
+| `attempts.input_method` | Câu hỏi mở | Migration riêng, làm sau |
+
+## 7. Cần Thắng duyệt
+
+1. Ba mã lỗi 422: `INPUT_METHOD_NOT_ALLOWED`, `ANSWER_NOT_IN_OPTIONS`, `INVALID_PIANO_PAYLOAD`.
+2. Quy tắc suy ra cách nhập từ `options`, kèm phần khai báo riêng cho piano.
+3. Đổi `AttemptIn.input_method` thành không bắt buộc, mặc định là `None`.
+4. L04-Q03 lên v2 với `allowed_input_methods: ["text", "piano"]`.
