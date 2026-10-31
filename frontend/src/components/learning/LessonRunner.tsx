@@ -89,6 +89,12 @@ type Step = { id: string; label: string; title: string; render: () => JSX.Elemen
 
 const stepStorageKey = (lessonId: string) => `hm.lesson-step.${lessonId}`;
 
+const viewStorageKey = "hm.lesson-view";
+
+function readStoredView(): boolean {
+  try { return window.localStorage.getItem(viewStorageKey) === "all"; } catch { return false; }
+}
+
 function readStoredStep(lessonId: string): number {
   try { return Number(window.localStorage.getItem(stepStorageKey(lessonId)) ?? 0) || 0; }
   catch { return 0; }
@@ -116,6 +122,9 @@ export default function LessonRunner({
   const [outdatedNotice, setOutdatedNotice] = useState<string | null>(null);
   const [lesson1Root, setLesson1Root] = useState("C");
   const [stepIndex, setStepIndex] = useState(() => readStoredStep(lesson.id));
+  // "Xem cả bài" (bố cục cuộn một trang của v0.5.3) và "Từng bước" (PR #6) dùng chung một danh sách
+  // bước và cùng trạng thái chấm, nên đổi chế độ không làm mất câu đã đúng.
+  const [viewAll, setViewAll] = useState(() => readStoredView());
   const topRef = useRef<HTMLDivElement>(null);
   const indexRef = useRef<HTMLDetailsElement>(null);
 
@@ -180,7 +189,7 @@ export default function LessonRunner({
       render: () => <article className="learning-objectives">
         <span className="section-kicker">Mục tiêu học tập</span>
         <ul>{lesson.objectives.map((objective) => <li key={objective}>{objective}</li>)}</ul>
-        <p className="muted">Bài gồm {lesson.blocks.length} phần ngắn và {total} câu hỏi. Bấm "Tiếp" để đi từng phần; tiến độ được lưu lại nếu bạn rời đi.</p>
+        <p className="muted">Bài gồm {lesson.blocks.length} phần ngắn và {total} câu hỏi. {viewAll ? "Cuộn xuống để đọc lần lượt; câu đã trả lời đúng được lưu lại." : 'Bấm "Bước tiếp" để đi từng phần; tiến độ được lưu lại nếu bạn rời đi.'}</p>
       </article>,
     },
     ...lesson.blocks.map((block): Step => ({
@@ -228,8 +237,17 @@ export default function LessonRunner({
   ];
 
   const current = Math.min(Math.max(stepIndex, 0), steps.length - 1);
+  function changeView(all: boolean) {
+    setViewAll(all);
+    try { window.localStorage.setItem(viewStorageKey, all ? "all" : "steps"); } catch { /* chế độ riêng tư: chỉ mất lựa chọn */ }
+  }
   function goTo(index: number) {
     const next = Math.min(Math.max(index, 0), steps.length - 1);
+    if (viewAll) {
+      // Trong chế độ xem cả bài, mọi bước đã nằm trên trang: chỉ cuộn tới bước đó.
+      document.getElementById(`buoc-${steps[next].id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
     setStepIndex(next);
     try { window.localStorage.setItem(stepStorageKey(lesson.id), String(next)); } catch { /* chế độ riêng tư: chỉ mất vị trí đã lưu */ }
     if (indexRef.current) indexRef.current.open = false;
@@ -244,14 +262,24 @@ export default function LessonRunner({
     </div>
 
     <article className="lesson-progress-card">
-      <div><b>Bước {current + 1}/{steps.length}</b><span>Đã đúng {correctCount}/{total} câu hỏi</span></div>
+      <div><b>{viewAll ? `${steps.length} bước` : `Bước ${current + 1}/${steps.length}`}</b><span>Đã đúng {correctCount}/{total} câu hỏi</span></div>
       <div className="progress-track" aria-label={`Đã đúng ${masteryPercent}% câu hỏi`}><span style={{ width: `${masteryPercent}%` }} /></div>
       <strong>{masteryPercent}%</strong>
     </article>
     {outdatedNotice && <div className="result bad" role="status">{outdatedNotice}</div>}
     {startError && <div className="result bad" role="alert">Chưa lưu được trạng thái bắt đầu bài. Bạn vẫn học bình thường; tiến độ sẽ được lưu khi bạn hoàn thành bài.</div>}
 
-    <div className="lesson-stepper">
+    <div className="view-toggle" role="group" aria-label="Cách xem bài">
+      <button type="button" className={viewAll ? "ghost" : ""} aria-pressed={!viewAll} onClick={() => changeView(false)}>Từng bước</button>
+      <button type="button" className={viewAll ? "" : "ghost"} aria-pressed={viewAll} onClick={() => changeView(true)}>Xem cả bài</button>
+    </div>
+
+    {viewAll ? <div className="lesson-all">
+      {steps.map((item, index) => <section key={item.id} id={`buoc-${item.id}`} className="lesson-all-step" aria-label={`Bước ${index + 1}: ${item.title}`}>
+        <p className="section-kicker">Bước {index + 1}/{steps.length} · {item.label}</p>
+        {item.render()}
+      </section>)}
+    </div> : <div className="lesson-stepper">
       <details className="step-index" ref={indexRef}>
         <summary>Mục lục bài học</summary>
         <ol>{steps.map((item, index) => {
@@ -269,7 +297,7 @@ export default function LessonRunner({
         <span className="muted">{step.exerciseId && !correct.has(step.exerciseId) ? "Bạn có thể đi tiếp và quay lại câu này sau." : `${step.label} · ${current + 1}/${steps.length}`}</span>
         <button type="button" disabled={current === steps.length - 1} onClick={() => goTo(current + 1)}>{current === steps.length - 2 ? "Tới phần hoàn thành →" : "Bước tiếp →"}</button>
       </nav>
-    </div>
+    </div>}
   </section>;
 }
 
