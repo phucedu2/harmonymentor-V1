@@ -73,6 +73,22 @@ cd frontend && npm ci && npm run build
 node scripts/phuc-music/luong_buoc1.cjs anh/   # cần backend :8000 và frontend :5173 đang chạy
 ```
 
+## 30/10/2026: logo chính thức "Cuộn I–IV–V–I"
+
+**Đã xong** (nhánh `claude/project-thread-82ijft`, PR vào `main`, chưa gộp)
+- Thay logo ♪ bằng logo nhóm chọn (ADR-007): `frontend/src/components/brand/HarmonyMentorLogo.tsx`, `Logo.tsx` giữ nguyên prop `to`.
+- Favicon SVG/ICO, apple-touch-icon, icon 192/512, `site.webmanifest` trong `frontend/public/`; tiêu đề tab "Harmony Mentor".
+- `docs/thuong-hieu/`: BRAND_NOTE, file logo SVG, script dựng lại. Ảnh trước/sau trong `docs/minh-chung/anh/logo-*.png`.
+
+**Việc tiếp theo**
+- Nhóm quyết có đổi các chữ "HarmonyMentor" còn lại sang "Harmony Mentor" không, và khi nào áp bảng màu Đồng & Gỉ cho toàn app.
+
+**Lệnh chạy lại**
+```bash
+cd frontend && npm ci && npm run build
+cd docs/thuong-hieu/_nguon && npm install && bash build.sh   # dựng lại logo (cần Python: fonttools, cairosvg, pillow)
+```
+
 ## 30/10/2026: gom tài liệu phase vào `docs/giai-doan/`
 
 **Đã xong** (nhánh `claude/project-thread-ng2frm`, PR vào `main`, chưa gộp)
