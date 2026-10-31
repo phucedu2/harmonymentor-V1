@@ -171,6 +171,37 @@ export type PracticeHistoryItem = {
 };
 export type PracticeHistory = { items: PracticeHistoryItem[]; stats: { kind: PracticeKind; attempts: number; correct: number }[] };
 
+// Harmony Lab (phuc-music Bước 4, FR-17/18): hợp âm, gợi ý và phân tích do backend + Music Engine trả về.
+export type ComposeStylePattern = { beat: number; beats: number };
+export type ComposeStyle = {
+  id: string; label: string; description: string; default_bpm: number; swing: number;
+  drums: { drum: "kick" | "snare" | "hat"; beat: number; velocity: number }[];
+  bass: { beat: number; beats: number; tone: "root" | "fifth" }[];
+  chords: ComposeStylePattern[];
+};
+export type ComposeOptions = {
+  keys: { key: string; chords: { symbol: string; numeral: string }[] }[];
+  styles: ComposeStyle[];
+  levels: { level: number; label: string }[];
+  tempo: { min: number; max: number };
+  bars: { min: number; max: number };
+};
+export type ComposeCandidate = {
+  rule: string; rule_label: string; level: number; level_label: string; symbol: string; label: string;
+  reason_vi: string; notes: string[];
+};
+export type ComposeAnalysis = {
+  key: string; level: number; level_label: string; summary_vi: string;
+  bars: { bar: number; symbol: string | null; level: number | null; rule: string | null; label: string | null; reason_vi: string | null }[];
+  warnings: { code: string; bar: number; message_vi: string }[];
+};
+export type ComposeVoicing = {
+  symbol: string; notes: string[]; pitches: PitchWithOctave[]; bass: { root: PitchWithOctave; fifth: PitchWithOctave };
+};
+export type ComposeProjectInput = { name: string; key: string; tempo_bpm: number; bars: number; style: string; chords: (string | null)[] };
+export type ComposeProject = ComposeProjectInput & { id: string; time_signature: string; updated_at: string };
+export type ComposeProjectSummary = { id: string; name: string; key: string; bars: number; style: string; updated_at: string };
+
 // Mọi request đi qua lib/http.ts để có access token và lỗi chuẩn SRS 7.4.
 const engineCall = <T,>(path: string, init?: RequestInit) => http<T>("/engine" + path, init, { auth: false });
 const apiCall = <T,>(path: string, init?: RequestInit) => http<T>(path, init);
@@ -197,6 +228,18 @@ export const api = {
   practiceAttempt: (kind: PracticeKind, level: PracticeLevel, question: Record<string, string>, answer: string | string[]) =>
     apiPost<PracticeAttemptResult>("/practice/attempts", { kind, level, question, answer }),
   practiceHistory: (limit = 20) => apiCall<PracticeHistory>(`/practice/history?limit=${limit}`),
+
+  composeOptions: () => apiCall<ComposeOptions>("/composition/options"),
+  composeSuggest: (key: string, chords: (string | null)[], index: number, max_level = 3) =>
+    apiPost<{ candidates: ComposeCandidate[]; ranked_by: string; ai_used: boolean }>("/composition/suggestions", { key, chords, index, max_level }),
+  composeVoicings: (chords: string[]) => apiPost<Record<string, ComposeVoicing>>("/composition/voicings", { chords }),
+  composeAnalyze: (key: string, chords: (string | null)[]) => apiPost<ComposeAnalysis>("/composition/analyze", { key, chords }),
+  listProjects: () => apiCall<ComposeProjectSummary[]>("/projects"),
+  getProject: (id: string) => apiCall<ComposeProject>(`/projects/${encodeURIComponent(id)}`),
+  createProject: (data: ComposeProjectInput) => apiPost<ComposeProject>("/projects", data),
+  updateProject: (id: string, data: ComposeProjectInput) =>
+    apiCall<ComposeProject>(`/projects/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(data) }),
+  deleteProject: (id: string) => apiCall<void>(`/projects/${encodeURIComponent(id)}`, { method: "DELETE" }),
 
   // Phase 0.4B source-grounded learning contract.
   listLessons: () => apiCall<LessonSummary[]>("/lessons"),
