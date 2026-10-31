@@ -121,7 +121,8 @@ def test_upgrade_keeps_every_row_and_restores_only_existing_versions(legacy_engi
     versions_before = snapshot_table(legacy_engine, VERSION_CORE_SQL)
     exercises_before = snapshot_table(legacy_engine, "SELECT id, lesson_id, skill_id FROM exercises ORDER BY id")
 
-    alembic_to(legacy_engine, "head")
+    # Nâng đúng tới PR-3 (không phải "head"): migration sau PR-3 (vd practice_attempts) có test riêng.
+    alembic_to(legacy_engine, PR3)
 
     # Không mất, không đổi, không thêm dòng nào; chỉ thêm cột.
     assert snapshot_table(legacy_engine, ATTEMPTS_SQL) == attempts_before
@@ -198,7 +199,7 @@ def test_current_version_not_matching_source_is_marked_missing(legacy_engine):
 
 def test_downgrade_is_refused(legacy_engine):
     load_fixture(legacy_engine)
-    alembic_to(legacy_engine, "head")
+    alembic_to(legacy_engine, PR3)
     with pytest.raises(RuntimeError, match="khôi phục CSDL từ bản sao lưu"):
         alembic_to(legacy_engine, BEFORE_PR3, downgrade=True)
     assert snapshot_table(legacy_engine, "SELECT version_num FROM alembic_version") == [(PR3,)]

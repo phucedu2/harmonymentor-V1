@@ -2,6 +2,77 @@
 
 File này ghi lại việc đã xong, việc đang dở, lệnh để chạy lại và việc tiếp theo. Cập nhật sau mỗi phiên việc. Lịch sử trước 27/10/2026 xem `docs/AI_USAGE.md` và các báo cáo trong `docs/giai-doan/`.
 
+## 31/10/2026: nhánh `phuc-music`, Bước 4 (Harmony Lab tối thiểu)
+
+**Đã xong** (Draft PR #18, chưa gộp; báo cáo `docs/phuc-music/BAO_CAO_BUOC_4.md`)
+- Composition Engine `backend/app/composition/`: gợi ý 5 luật, độ lạ 0–3, phân tích + cảnh báo, 4 mẫu nền. Chưa có AI (`ai_used: false`).
+- Bảng `composition_projects`, `chord_events`, `drum_events` (migration `f6a2b3c4d5e7`), API `/projects`. ADR-010 (đề xuất) chờ Thắng.
+- Trang `/app/composition`: lưới 4–8 ô, Tone.js, VexFlow, gợi ý Nghe/Dùng/Bỏ qua, phân tích, lưu/mở/xóa.
+- Q3 Bước 3: thuật ngữ chỉ chú giải ở bài đầu tiên người học gặp.
+
+**Đang dở / chờ**
+- Phúc duyệt Bước 4 (Q3 nghe thử mẫu nền). Thắng: ADR-009, ADR-010. Đạt/Astra: kiểm 5 luật và lời giải thích.
+
+**Lệnh chạy lại**
+```bash
+cd backend && python -m pytest -q          # 409 passed, 21 skipped
+cd frontend && npm ci && npm test && npm run build   # 225 test
+node scripts/phuc-music/luong_buoc4_harmony_lab.cjs docs/phuc-music/anh/buoc-4
+```
+
+## 31/10/2026: nhánh `phuc-music`, Bước 3 (giao diện "Đồng & Gỉ")
+
+**Đã xong** (Draft PR #18, chưa gộp; báo cáo `docs/phuc-music/BAO_CAO_BUOC_3.md`)
+- Token màu/font/12 màu nốt trong `@theme` (`frontend/src/index.css`). Bỏ `legacy-page` và `styles.css`; khu học dùng Tailwind + `components/ui/Page.tsx`.
+- Chú giải thuật ngữ lần đầu xuất hiện, có nút nghe (nốt từ Music Engine). Lời giải nghĩa chờ Astra/Đạt duyệt.
+- axe-core: 0 vi phạm WCAG 2.1 AA trên 15 màn × 2 cỡ; ảnh trước/sau ở `docs/phuc-music/anh/buoc-3/`.
+
+**Đang dở / chờ**
+- Phúc duyệt Bước 3 lúc 13:27 (Q1 đồng ý, Q2 duyệt, Q3 chỉ chú giải ở bài đầu tiên).
+
+**Lệnh chạy lại**
+```bash
+cd backend && python -m pytest -q          # 371 passed, 21 skipped
+cd frontend && npm ci && npm test && npm run build   # 219 test
+node scripts/phuc-music/anh_moi_trang.cjs docs/phuc-music/anh/buoc-3 sau
+AXE_PATH=<đường dẫn axe.min.js> node scripts/phuc-music/kiem_tra_wcag.cjs
+```
+
+## 31/10/2026: nhánh `phuc-music`, Bước 2 (logic và nội dung)
+
+**Đã xong** (Draft PR #18, chưa gộp; báo cáo `docs/phuc-music/BAO_CAO_BUOC_2.md`)
+- Gộp PR #12. Bài 1 lấy quãng/hợp âm từ API Music Engine. Piano hiện D#/Eb.
+- Luyện tập: máy chủ chấm, ghi `practice_attempts`, trang có lịch sử + thống kê. ADR-009 (đề xuất) chờ Thắng.
+- Lộ trình theo SRS Bảng 7; nháp L09–L12 và mục "Dùng vào sáng tác" L01–L04, chỉ hiện khi `SHOW_DRAFT_CONTENT=1`.
+
+**Đang dở / chờ**
+- Phúc: đã chọn Bảng 7 + nhãn A/B (12:53); còn Q1–Q2 trong báo cáo. Thắng: ADR-009, L-1/L-2/L-5/L-6 (kiểm tra đầu vào, EMA). Đạt/Astra: duyệt nháp.
+- Phúc duyệt Bước 2 lúc 12:55 (Q1 không, Q2 để Claude quyết).
+
+**Lệnh chạy lại**
+```bash
+cd backend && pytest -q                    # 371 passed, 21 skipped
+cd frontend && npm ci && npm test && npm run build   # 195 test
+node scripts/phuc-music/luong_buoc2_luyentap.cjs docs/phuc-music/anh/buoc-2
+node scripts/phuc-music/luong_buoc2_lotrinh.cjs docs/phuc-music/anh/buoc-2 nguoi-hoc   # SHOW_DRAFT_CONTENT=1 thì đổi hậu tố che-do-nhap
+```
+
+## 31/10/2026: nhánh `phuc-music`, Bước 0–1 (gộp khu học v0.5.3)
+
+**Đã xong** (nhánh `phuc-music`, Draft PR #18, chưa gộp)
+- Bước 0: khảo sát `docs/phuc-music/00_KHAO_SAT.md`. Main đã chứa khu học của v0.5.3; backend không cần khôi phục.
+- Bước 1: khung khu học tối kiểu v0.5.3 (`AppLayout.tsx`), nút "Từng bước / Xem cả bài" (`LessonRunner.tsx`), token `--color-shell-*`, phiên bản lấy từ `package.json`. Nhật ký `docs/phuc-music/01_NHAT_KY_GOP.md`, báo cáo `BAO_CAO_BUOC_1.md`.
+
+**Đang dở / chờ**
+- Phúc đã duyệt Bước 1 (31/10).
+
+**Lệnh chạy lại**
+```bash
+cd backend && pytest -q                    # 325 passed, 21 skipped
+cd frontend && npm ci && npm run build
+node scripts/phuc-music/luong_buoc1.cjs anh/   # cần backend :8000 và frontend :5173 đang chạy
+```
+
 ## 30/10/2026: gom tài liệu phase vào `docs/giai-doan/`
 
 **Đã xong** (nhánh `claude/project-thread-ng2frm`, PR vào `main`, chưa gộp)
@@ -10,6 +81,24 @@ File này ghi lại việc đã xong, việc đang dở, lệnh để chạy l�
 
 **Việc tiếp theo**
 - Giai đoạn mới đặt báo cáo + kiểm chứng vào `docs/giai-doan/<giai đoạn>/` và thêm một dòng vào mục lục.
+
+## 28/10/2026: HM-001 / NL-L01-01, ký âm và MIDI cho B#/Cb ở Bài 1
+
+**Đã xong** (nhánh `claude/project-thread-qdcaej`, Draft PR #12, chưa gộp)
+- `toScientificInterval/toScientificTriad` tính quãng tám theo chữ cái; `scientificToMidi` không quy về pitch class. Engine không đổi.
+- Vitest (182 test) so 17 nốt gốc × 5 quãng + 4 hợp âm với bảng do Music Engine sinh (`scripts/sinh_bang_l01_engine.py`); 5 pytest giữ bảng khớp Engine; CI thêm bước `npm test`, mức SQLite 330.
+- Chứng minh đỏ trước/xanh sau: CI run 40734235986 đỏ ở `npm test` trên commit chỉ có test. Ảnh và log MIDI trước/sau trên giao diện: `docs/minh-chung/anh/hm001/`, `docs/minh-chung/hm001/`. Báo cáo `docs/bao-cao/HM-001.md`.
+
+**Đang dở / chờ**
+- Astra và nhóm review PR #12. Không merge tự động.
+- Lỗi lân cận tách ticket riêng: `pitchClassesToAscendingNotes` đổi Eb → D# trước khi phát (chỉ sai tên, cao độ đúng).
+
+**Lệnh chạy lại**
+```bash
+cd frontend && npm ci && npm test && npm run build   # 182 passed, build đạt
+cd backend && pytest -q                              # 330 passed, 21 skipped
+python scripts/sinh_bang_l01_engine.py && git diff --exit-code frontend/tests/fixtures
+```
 
 ## 27/10/2026: PR-3, bảo vệ phiên bản câu hỏi (HM-003)
 

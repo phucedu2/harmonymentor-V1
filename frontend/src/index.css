@@ -1,29 +1,59 @@
-/* Thứ tự layer: CSS cũ (styles.css) nằm dưới utilities, nên class Tailwind luôn thắng
-   các rule cũ như `button {}` mà không cần !important. */
-@layer theme, base, legacy, components, utilities;
+/* phuc-music Bước 3: bỏ styles.css cũ và lớp .legacy-page; mọi trang dùng Tailwind + token bên dưới. */
 @import "tailwindcss";
-@import "./styles.css" layer(legacy);
 
-/* Token thiết kế theo docs/giai-doan/phase-A/PHASE_A_PLAN.md mục 4. */
+/* Bảng màu "Đồng & Gỉ" (phuc-music Bước 3). Tương phản đã đo theo công thức WCAG 2.1:
+   ink/bg 14,7:1 · primary/bg 5,6:1 · trắng/primary 6,3:1 · danger/bg 5,4:1 · muted/bg 6,2:1.
+   #45C2AB (signature) và #E0A53E (brass) chỉ 2:1 trên nền sáng nên CHỈ dùng trang trí, làm nền
+   cho chữ ink (7,5:1) hoặc làm chữ trên nền tối shell (8,4:1) — quyết định 6A. */
 @theme {
-  --color-bg: #fafaf7;
+  --color-bg: #f2f3ea;
   --color-surface: #ffffff;
-  --color-ink: #1f2328;
-  --color-muted: #5b616b;
-  --color-line: #e3e1da;
-  --color-primary: #3b5bdb;
-  --color-primary-strong: #364fc7;
-  --color-primary-soft: #edf2ff;
-  --color-success: #2b8a3e;
-  --color-success-soft: #ebfbee;
-  --color-danger: #c92a2a;
-  --color-danger-soft: #fff5f5;
-  --color-warning: #e67700;
-  --color-accent: #7048e8;
-  --color-accent-soft: #f3f0ff;
+  --color-ink: #0c231f;
+  --color-muted: #4a5e59;
+  --color-line: #d9ddd0;
+  --color-primary: #006d61;
+  --color-primary-strong: #00574d;
+  --color-primary-soft: #ddefea;
+  --color-success: #1f6f43;
+  --color-success-soft: #e1f1e6;
+  --color-danger: #b4343b;
+  --color-danger-soft: #f8e4e2;
+  --color-warning: #7a4f00;
+  --color-warning-soft: #f8ecd3;
+  --color-signature: #45c2ab;
+  --color-brass: #e0a53e;
+  --color-accent: #7a4f00;
+  --color-accent-soft: #f8ecd3;
+
+  /* Khung khu học nền tối. */
+  --color-shell: #081613;
+  --color-shell-raised: #12302a;
+  --color-shell-line: #1e3d36;
+  --color-shell-ink: #ffffff;
+  --color-shell-text: #c9d6d1;
+  --color-shell-muted: #93a9a2;
 
   --font-sans: "Be Vietnam Pro", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+}
+
+/* Màu nốt dùng qua var() trong style inline nên phải luôn được xuất ra (static), không bị lược bỏ. */
+@theme static {
+  /* 12 màu nốt theo vòng quãng năm (C → G → D …), cách nhau 30° sắc độ; chữ ink trên mọi màu ≥ 5,6:1.
+     Chỉ để trang trí và nhận diện, không bao giờ là cách duy nhất để báo đúng/sai. */
+  --color-note-c: #88ddcf;
+  --color-note-g: #88c1dd;
+  --color-note-d: #8896dd;
+  --color-note-a: #a488dd;
+  --color-note-e: #cf88dd;
+  --color-note-b: #dd88c1;
+  --color-note-fs: #dd8896;
+  --color-note-db: #dda488;
+  --color-note-ab: #ddcf88;
+  --color-note-eb: #c1dd88;
+  --color-note-bb: #96dd88;
+  --color-note-f: #88dda4;
 }
 
 @layer base {

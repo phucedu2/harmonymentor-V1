@@ -1,4 +1,4 @@
-# HarmonyMentor AI - Phase 2 Interactive Music Layer (`v0.5.3-dev`)
+# HarmonyMentor AI (`v0.5.4-dev`): nền tảng học nhạc lý thích ứng
 
 HarmonyMentor is evolving from a deterministic music-theory prototype into a source-grounded learning platform. Phase 2 adds the first interactive music layer and also fixes a pedagogical problem found during Phase 1 testing: Lessons 1-4 were structurally complete but too compressed for a true beginner.
 

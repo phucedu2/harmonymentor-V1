@@ -110,7 +110,7 @@ KH_CH11 = src("KHAIHOAN_JAZZ", "Ch.11, printed pp. 279–307", "Three-note voici
 
 LESSON_SPECS: list[dict[str, Any]] = [
     {
-        "id": "L01", "order": 1, "track": "Foundation", "title": "Từ bàn phím đến hợp âm ba nốt",
+        "id": "L01", "order": 1, "track": "M1. Nền tảng", "title": "Từ bàn phím đến hợp âm ba nốt",
         "status": "reviewed",
         "objectives": [
             "Nhận biết tên nốt và tự đếm được nửa cung trên bàn phím piano.",
@@ -190,7 +190,7 @@ LESSON_SPECS: list[dict[str, Any]] = [
         ],
     },
     {
-        "id": "L02", "order": 2, "track": "Foundation", "title": "Âm giai trưởng và hợp âm bảy điệu tính",
+        "id": "L02", "order": 2, "track": "M1. Nền tảng", "title": "Âm giai trưởng và hợp âm bảy điệu tính",
         "status": "reviewed",
         "objectives": [
             "Dựng âm giai trưởng đúng thứ tự bậc và spelling.",
@@ -240,7 +240,7 @@ LESSON_SPECS: list[dict[str, Any]] = [
         ],
     },
     {
-        "id": "L03", "order": 3, "track": "Harmony Core", "title": "Chức năng hòa âm: Tonic – Predominant/Subdominant – Dominant",
+        "id": "L03", "order": 5, "track": "M2. Hòa âm chức năng", "title": "Chức năng hòa âm: Tonic – Predominant/Subdominant – Dominant",
         "status": "reviewed",
         "objectives": [
             "Phân biệt tonic, predominant/subdominant và dominant trong một major-key phrase đơn giản.",
@@ -285,7 +285,7 @@ LESSON_SPECS: list[dict[str, Any]] = [
         ],
     },
     {
-        "id": "L04", "order": 4, "track": "Harmony Core", "title": "ii–V–I và guide-tone voice leading trên piano",
+        "id": "L04", "order": 9, "track": "M4. Jazz", "title": "ii–V–I và guide-tone voice leading trên piano",
         "status": "reviewed",
         "objectives": [
             "Nhận diện và transpose ii–V–I major sang một số giọng.",
@@ -338,7 +338,7 @@ LESSON_SPECS: list[dict[str, Any]] = [
         ],
     },
     {
-        "id": "L05", "order": 5, "track": "Functional / Contemporary", "title": "Secondary Dominants",
+        "id": "L05", "order": 6, "track": "M2. Hòa âm chức năng", "title": "Secondary Dominants",
         "status": "source_audited",
         "objectives": [
             "Nhận diện V7/x theo chord đích tạm thời.",
@@ -368,7 +368,7 @@ LESSON_SPECS: list[dict[str, Any]] = [
         ],
     },
     {
-        "id": "L06", "order": 6, "track": "Functional / Contemporary", "title": "Modal Interchange trong Pop/Contemporary",
+        "id": "L06", "order": 8, "track": "M3. Pop", "title": "Modal Interchange trong Pop/Contemporary",
         "status": "source_audited",
         "objectives": [
             "Nhận biết quan hệ parallel major/minor.",
@@ -398,7 +398,7 @@ LESSON_SPECS: list[dict[str, Any]] = [
         ],
     },
     {
-        "id": "L07", "order": 7, "track": "Jazz", "title": "Jazz Tensions, Modes và Chord-Scale Context",
+        "id": "L07", "order": 10, "track": "M4. Jazz", "title": "Jazz Tensions, Modes và Chord-Scale Context",
         "status": "source_audited",
         "objectives": [
             "Phân biệt chord tones với 9/11/13 trong extended-chord vocabulary.",
@@ -428,7 +428,7 @@ LESSON_SPECS: list[dict[str, Any]] = [
         ],
     },
     {
-        "id": "L08", "order": 8, "track": "Jazz", "title": "Jazz Piano Voicing: shell voicing và guide-tone connection",
+        "id": "L08", "order": 11, "track": "M4. Jazz", "title": "Jazz Piano Voicing: shell voicing và guide-tone connection",
         "status": "source_audited",
         "objectives": [
             "Phân biệt full chord inventory với một voicing hợp lệ.",

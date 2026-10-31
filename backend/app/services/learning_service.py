@@ -180,7 +180,7 @@ def answer_review(db: Session, user_id: str, review_item_id: str, answer, rating
 def start_lesson(db: Session, user_id: str, lesson_id: str) -> LessonProgress:
     require_user(db, user_id)
     lesson = db.get(Lesson, lesson_id)
-    if lesson is None:
+    if lesson is None or not versioning.lesson_visible(lesson):
         raise LookupError("LESSON_NOT_FOUND")
     # Frontend có thể gọi start nhiều lần cùng lúc (StrictMode, mở lại bài); "đọc rồi thêm" sẽ đụng
     # uq_user_lesson_progress trên PostgreSQL (HM-010), nên chèn kiểu "có rồi thì bỏ qua".
@@ -206,9 +206,21 @@ def _insert_progress_if_missing(db: Session, user_id: str, lesson_id: str, now: 
                .on_conflict_do_nothing(index_elements=["user_id", "lesson_id"]))
 
 
+def visible_lessons(db: Session) -> list[Lesson]:
+    """Bài người học được thấy, theo thứ tự SRS Bảng 7; bài nháp chỉ hiện khi bật SHOW_DRAFT_CONTENT."""
+    lessons = db.scalars(select(Lesson).order_by(Lesson.order_index)).unique().all()
+    return [lesson for lesson in lessons if versioning.lesson_visible(lesson)]
+
+
+def display_order(lessons: list[Lesson]) -> dict[str, int]:
+    """Số "Bài n" hiển thị = vị trí trong danh sách đang thấy, để bài nháp bị ẩn không tạo lỗ (Bài 2 → Bài 5)."""
+    return {lesson.id: index for index, lesson in enumerate(lessons, start=1)}
+
+
 def learning_overview(db: Session, user_id: str) -> dict:
     require_user(db, user_id)
-    lessons = db.scalars(select(Lesson).order_by(Lesson.order_index)).unique().all()
+    lessons = visible_lessons(db)
+    orders = display_order(lessons)
     progresses = {p.lesson_id: p for p in db.scalars(select(LessonProgress).where(LessonProgress.user_id == user_id)).all()}
 
     attempt_rows = db.execute(
@@ -252,7 +264,7 @@ def learning_overview(db: Session, user_id: str) -> dict:
             practice_percent = 100
         lesson_rows.append({
             "lesson_id": lesson.id,
-            "order": lesson.order_index,
+            "order": orders[lesson.id],
             "title": lesson.title,
             "track": lesson.track,
             "status": status,
