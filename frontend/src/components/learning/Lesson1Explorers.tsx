@@ -10,16 +10,19 @@ import {
   type KeyOverviewTier,
 } from "../../content/lessons";
 import {
+  INTERVAL_LABELS,
   LESSON1_INTERVAL_CODES,
-  buildTriad,
-  intervalExample,
-  toScientificInterval,
-  toScientificTriad,
-  triadLetterFrame,
+  TRIAD_LABELS,
+  fetchLesson1Theory,
+  intervalOf,
+  pitchNames,
+  triadOf,
+  useLesson1Theory,
   type IntervalCode,
+  type Lesson1TheoryState,
   type TriadQuality,
 } from "../../theory/lesson1Theory";
-import { normalizePitchClass } from "../../audio/musicUtils";
+import type { Lesson1Theory } from "../../api";
 
 export function RootKeySelector({ value, onChange, compact = false }: { value: string; onChange: (root: string) => void; compact?: boolean }) {
   const option = ROOT_KEY_OPTIONS.find((item) => item.spellings.includes(value)) ?? ROOT_KEY_OPTIONS[0];
@@ -41,34 +44,45 @@ export function RootKeySelector({ value, onChange, compact = false }: { value: s
   </div>;
 }
 
+// Chỉ đổi kiểu chữ (b → ♭, # → ♯) cho bậc Engine trả về, không tính gì thêm.
+const prettyDegree = (degree: string) => degree.replace(/b/g, "♭").replace(/#/g, "♯");
+
+// Trạng thái chờ/lỗi dùng chung: dữ liệu nhạc lý đến từ máy chủ nên có thể chậm hoặc lỗi mạng.
+function TheoryStatus({ state }: { state: Lesson1TheoryState }) {
+  if (state.status === "loading") return <p className="muted" role="status">Đang lấy nốt từ Music Engine…</p>;
+  if (state.status === "error") return <div className="result bad" role="alert">Chưa tải được nốt nhạc: {state.error}. Hãy thử chọn lại nốt gốc hoặc tải lại trang.</div>;
+  return null;
+}
+
 export function IntervalExplorer({ root, onRootChange, prompt }: { root: string; onRootChange: (root: string) => void; prompt?: string }) {
   const [active, setActive] = useState<IntervalCode>("M3");
-  const example = useMemo(() => intervalExample(root, active), [root, active]);
-  const scientific = useMemo(() => toScientificInterval(root, active), [root, active]);
+  const theory = useLesson1Theory(root);
+  const data = theory.data;
+  const example = data ? intervalOf(data, active) : null;
 
   return <article className="lesson-content-block explorer-block">
     <span className="section-kicker">Khám phá tương tác</span>
     <h3>4. Khám phá M3, m3, P5 và d5 trên 12 nốt gốc</h3>
     {prompt && <p>{prompt}</p>}
     <RootKeySelector value={root} onChange={onRootChange} />
-    <div className="interval-choice-row" role="group" aria-label="Chọn loại quãng">
-      {LESSON1_INTERVAL_CODES.map((code) => {
-        const item = intervalExample(root, code);
-        return <button type="button" key={code} className={active === code ? "selected" : ""} onClick={() => setActive(code)}>
-          <b>{code}</b><span>{item.semitones} nửa cung</span>
-        </button>;
-      })}
-    </div>
-    <div className="explorer-result-grid">
-      <div className="explainer-card">
-        <span>Đang xem</span>
-        <strong>{root} → {example.upper}</strong>
-        <p>{example.label}: giữ đúng số quãng theo chữ cái và có khoảng cách {example.semitones} nửa cung.</p>
-        <NoteAudioButton notes={scientific} label={`Nghe ${active}`} />
+    <TheoryStatus state={theory} />
+    {data && example && <>
+      <div className="interval-choice-row" role="group" aria-label="Chọn loại quãng">
+        {LESSON1_INTERVAL_CODES.map((code) => <button type="button" key={code} className={active === code ? "selected" : ""} aria-pressed={active === code} onClick={() => setActive(code)}>
+          <b>{code}</b><span>{intervalOf(data, code).semitones} nửa cung</span>
+        </button>)}
       </div>
-      <NotationStaff groups={[{ label: `${active} · ${root}–${example.upper}`, notes: scientific }]} caption="Ký âm cập nhật theo nốt gốc và loại quãng đang chọn." />
-    </div>
-    <VirtualPiano highlightedPitchClasses={[root, example.upper]} showOctaveNumbers={false} />
+      <div className="explorer-result-grid">
+        <div className="explainer-card">
+          <span>Đang xem</span>
+          <strong>{data.root} → {example.upper}</strong>
+          <p>{INTERVAL_LABELS[active]}: giữ đúng số quãng theo chữ cái và có khoảng cách {example.semitones} nửa cung.</p>
+          <NoteAudioButton notes={pitchNames(example)} label={`Nghe ${active}`} />
+        </div>
+        <NotationStaff groups={[{ label: `${active} · ${data.root}–${example.upper}`, notes: pitchNames(example) }]} caption="Ký âm cập nhật theo nốt gốc và loại quãng đang chọn." />
+      </div>
+      <VirtualPiano highlightedPitchClasses={[data.root, example.upper]} showOctaveNumbers={false} />
+    </>}
   </article>;
 }
 
@@ -76,67 +90,83 @@ const QUALITY_ORDER: TriadQuality[] = ["major", "minor", "diminished", "augmente
 
 export function TriadExplorer({ root, onRootChange, prompt, note }: { root: string; onRootChange: (root: string) => void; prompt?: string; note?: string }) {
   const [active, setActive] = useState<TriadQuality>("major");
-  const frame = triadLetterFrame(root);
-  const major = buildTriad(root, "major");
-  const minor = buildTriad(root, "minor");
-  const current = buildTriad(root, active);
-  const scientific = toScientificTriad(root, active);
+  const theory = useLesson1Theory(root);
+  const data = theory.data;
 
   return <article className="lesson-content-block explorer-block triad-explorer">
     <span className="section-kicker">Dựng hợp âm ba nốt</span>
     <h3>6. Dựng triad trên bất kỳ nốt gốc nào</h3>
     {prompt && <p>{prompt}</p>}
     <RootKeySelector value={root} onChange={onRootChange} />
+    <TheoryStatus state={theory} />
+    {data && <TriadExplorerBody data={data} active={active} onActive={setActive} note={note} />}
+  </article>;
+}
+
+function TriadExplorerBody({ data, active, onActive, note }: { data: Lesson1Theory; active: TriadQuality; onActive: (quality: TriadQuality) => void; note?: string }) {
+  const major = triadOf(data, "major");
+  const minor = triadOf(data, "minor");
+  const current = triadOf(data, active);
+  return <>
     <div className="construction-steps">
-      <div><span>Bước 1 · khung chữ cái 1–3–5</span><strong>{frame.join(" – ")}</strong><p>Giữ đúng họ chữ của nốt thứ ba và thứ năm trước khi quyết định dấu hóa.</p></div>
-      <div><span>Bước 2 · đếm nửa cung</span><strong>{major.label}: {major.notes.join("–")}</strong><strong>{minor.label}: {minor.notes.join("–")}</strong><p>Cùng một vị trí root trên piano có thể cần spelling khác khi đổi Major/Minor.</p></div>
+      <div><span>Bước 1 · khung chữ cái 1–3–5</span><strong>{data.letter_frame.join(" – ")}</strong><p>Giữ đúng họ chữ của nốt thứ ba và thứ năm trước khi quyết định dấu hóa.</p></div>
+      <div><span>Bước 2 · đếm nửa cung</span><strong>{TRIAD_LABELS.major}: {major.notes.join("–")}</strong><strong>{TRIAD_LABELS.minor}: {minor.notes.join("–")}</strong><p>Cùng một vị trí root trên piano có thể cần spelling khác khi đổi Major/Minor.</p></div>
     </div>
     <div className="triad-quality-grid">
       {QUALITY_ORDER.map((quality) => {
-        const triad = buildTriad(root, quality);
-        return <button type="button" key={quality} className={active === quality ? "selected" : ""} onClick={() => setActive(quality)}>
-          <span>{triad.label}</span><b>{triad.formula}</b><strong>{triad.notes.join(" – ")}</strong><small>{triad.intervalFormula}</small>
+        const triad = triadOf(data, quality);
+        return <button type="button" key={quality} className={active === quality ? "selected" : ""} aria-pressed={active === quality} onClick={() => onActive(quality)}>
+          <span>{TRIAD_LABELS[quality]}</span><b>{triad.formula.map(prettyDegree).join("–")}</b><strong>{triad.notes.join(" – ")}</strong><small>{triad.interval_formula.join(" + ")}</small>
         </button>;
       })}
     </div>
     {note && <div className="pedagogy-note">{note}</div>}
     <div className="interactive-output-row">
       <ChordInspector symbol={current.symbol} displayLabel={current.symbol} eager />
-      <NoteAudioButton notes={scientific} label={`Nghe ${current.symbol}`} />
+      <NoteAudioButton notes={pitchNames(current)} label={`Nghe ${current.symbol}`} />
       <span className="muted">Đang tô sáng: {current.notes.join(" – ")}</span>
     </div>
     <VirtualPiano highlightedPitchClasses={current.notes} showOctaveNumbers={false} />
-  </article>;
+  </>;
 }
 
 export function TriadNotationExplorer({ root, onRootChange, prompt }: { root: string; onRootChange: (root: string) => void; prompt?: string }) {
   const [active, setActive] = useState<TriadQuality>("major");
-  const groups = QUALITY_ORDER.map((quality) => {
-    const triad = buildTriad(root, quality);
-    return { label: `${triad.symbol} · ${triad.notes.join("–")}`, notes: toScientificTriad(root, quality) };
-  });
-  const current = buildTriad(root, active);
+  const theory = useLesson1Theory(root);
+  const data = theory.data;
   return <article className="lesson-content-block explorer-block">
     <span className="section-kicker">Ký âm + piano</span><h3>7. So sánh chất lượng hợp âm bằng cùng một nốt gốc</h3>
     {prompt && <p>{prompt}</p>}
     <RootKeySelector value={root} onChange={onRootChange} compact />
-    <div className="quality-tabs">{QUALITY_ORDER.map((quality) => <button type="button" key={quality} className={active === quality ? "selected" : ""} onClick={() => setActive(quality)}>{buildTriad(root, quality).label}</button>)}</div>
-    <NotationStaff groups={groups} caption="Giữ nguyên root để nhìn rõ nốt thứ ba và thứ năm thay đổi như thế nào." />
-    <VirtualPiano highlightedPitchClasses={current.notes} showOctaveNumbers={false} />
+    <TheoryStatus state={theory} />
+    {data && <>
+      <div className="quality-tabs">{QUALITY_ORDER.map((quality) => <button type="button" key={quality} className={active === quality ? "selected" : ""} aria-pressed={active === quality} onClick={() => setActive(quality)}>{TRIAD_LABELS[quality]}</button>)}</div>
+      <NotationStaff
+        groups={QUALITY_ORDER.map((quality) => {
+          const triad = triadOf(data, quality);
+          return { label: `${triad.symbol} · ${triad.notes.join("–")}`, notes: pitchNames(triad) };
+        })}
+        caption="Giữ nguyên root để nhìn rõ nốt thứ ba và thứ năm thay đổi như thế nào."
+      />
+      <VirtualPiano highlightedPitchClasses={triadOf(data, active).notes} showOctaveNumbers={false} />
+    </>}
   </article>;
 }
 
 export function TriadAudioExplorer({ root, onRootChange, prompt }: { root: string; onRootChange: (root: string) => void; prompt?: string }) {
+  const theory = useLesson1Theory(root);
+  const data = theory.data;
   return <article className="lesson-content-block explorer-block">
     <span className="section-kicker">Nghe</span><h3>8. Nghe sự thay đổi khi giữ nguyên nốt gốc</h3>
     {prompt && <p>{prompt}</p>}
     <RootKeySelector value={root} onChange={onRootChange} compact />
-    <div className="chord-audio-set">
+    <TheoryStatus state={theory} />
+    {data && <div className="chord-audio-set">
       {QUALITY_ORDER.map((quality) => {
-        const triad = buildTriad(root, quality);
-        return <NoteAudioButton key={quality} notes={toScientificTriad(root, quality)} label={`${triad.symbol} · ${triad.label}`} />;
+        const triad = triadOf(data, quality);
+        return <NoteAudioButton key={quality} notes={pitchNames(triad)} label={`${triad.symbol} · ${TRIAD_LABELS[quality]}`} />;
       })}
-    </div>
+    </div>}
   </article>;
 }
 
@@ -163,64 +193,71 @@ function splitAnswerNotes(text: string) {
   return text.replaceAll("♭", "b").replaceAll("♯", "#").split(/[\s,;\-–—]+/).map((part) => part.trim()).filter(Boolean);
 }
 
-function sameSpelledNotes(input: string[], expected: string[]) {
-  if (input.length !== expected.length) return false;
-  const normalize = (value: string) => value.replaceAll("♭", "b").replaceAll("♯", "#").toUpperCase();
-  return input.map(normalize).sort().join("|") === expected.map(normalize).sort().join("|");
-}
-
 export function RandomPracticePanel({ mode }: { mode: "interval" | "triad" }) {
   const [nonce, setNonce] = useState(() => Math.floor(Math.random() * 100000));
   const [answer, setAnswer] = useState("");
   const [feedback, setFeedback] = useState<string | null>(null);
   const [expectedChord, setExpectedChord] = useState<ChordInspection | null>(null);
 
-  const question = useMemo(() => {
+  type Question = { kind: "interval"; root: string; code: IntervalCode } | { kind: "triad"; symbol: string; label: string };
+  const question = useMemo<Question>(() => {
     if (mode === "interval") {
       const rootOption = ROOT_KEY_OPTIONS[(nonce * 7 + 3) % ROOT_KEY_OPTIONS.length];
-      const root = rootOption.defaultSpelling;
       const code = LESSON1_INTERVAL_CODES[(nonce * 5 + 1) % LESSON1_INTERVAL_CODES.length];
-      const ex = intervalExample(root, code);
-      return { root, code, upper: ex.upper, prompt: `Quãng từ ${root} lên ${ex.upper} là gì?` };
+      return { kind: "interval", root: rootOption.defaultSpelling, code };
     }
     const allKeys = TRIAD_KEY_TIERS.flatMap((tier) => tier.keys);
     const key = allKeys[(nonce * 11 + 5) % allKeys.length];
-    return { symbol: key.symbol, prompt: `Dựng ${key.label}. Hãy nhập ba tên nốt.` };
+    return { kind: "triad", symbol: key.symbol, label: key.label };
   }, [mode, nonce]);
 
+  // Đề và đáp án đều từ Music Engine: nốt trên của quãng lấy từ /music/lesson1, chấm bằng /engine/grade/*.
+  const [intervalUpper, setIntervalUpper] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
   useEffect(() => {
     setAnswer("");
     setFeedback(null);
     setExpectedChord(null);
-    if (mode === "triad" && "symbol" in question && question.symbol) {
-      void api.inspectChord(question.symbol).then(setExpectedChord).catch(() => undefined);
+    setIntervalUpper(null);
+    let alive = true;
+    if (question.kind === "interval") {
+      void fetchLesson1Theory(question.root)
+        .then((data) => { if (alive) setIntervalUpper(intervalOf(data, question.code).upper); })
+        .catch(() => { if (alive) setFeedback("Chưa lấy được câu hỏi từ máy chủ. Bấm \"Đổi câu khác\" để thử lại."); });
+    } else {
+      void api.inspectChord(question.symbol).then((chord) => { if (alive) setExpectedChord(chord); }).catch(() => undefined);
     }
-  }, [mode, nonce, question]);
+    return () => { alive = false; };
+  }, [question]);
 
-  const check = () => {
+  const check = async () => {
     if (!answer.trim()) return;
-    if (mode === "interval" && "code" in question) {
-      setFeedback(answer.trim() === question.code ? `Đúng · ${question.code}` : `Chưa đúng. Đáp án là ${question.code}. Hãy đếm chữ cái trước rồi đếm nửa cung.`);
-      return;
-    }
-    if (mode === "triad" && expectedChord) {
-      const correct = sameSpelledNotes(splitAnswerNotes(answer), expectedChord.notes);
-      setFeedback(correct ? `Đúng · ${expectedChord.symbol} = ${expectedChord.notes.join("–")}` : `Chưa đúng. ${expectedChord.symbol} được viết ${expectedChord.notes.join("–")}. Chú ý viết đúng tên nốt (spelling).`);
+    setBusy(true);
+    try {
+      if (question.kind === "interval" && intervalUpper) {
+        const result = await api.gradeIdentifyInterval(question.root, intervalUpper, answer.trim());
+        setFeedback(result.correct ? `Đúng · ${answer.trim()}` : `Chưa đúng. ${result.message_vi} Hãy đếm chữ cái trước rồi đếm nửa cung.`);
+        return;
+      }
+      if (question.kind === "triad" && expectedChord) {
+        const result = await api.gradeBuildChord(question.symbol, splitAnswerNotes(answer));
+        setFeedback(result.correct ? `Đúng · ${expectedChord.symbol} = ${expectedChord.notes.join("–")}` : `Chưa đúng. ${result.message_vi} ${expectedChord.symbol} được viết ${expectedChord.notes.join("–")}.`);
+      }
+    } catch (err) {
+      setFeedback(`Chưa chấm được: ${(err as { message?: string })?.message ?? "lỗi mạng"}.`);
+    } finally {
+      setBusy(false);
     }
   };
 
   return <div className="random-practice-panel">
     <div className="random-practice-head"><b>Luyện tập ngẫu nhiên</b><small>{mode === "triad" ? "Hợp âm chủ của 24 giọng trưởng/thứ · phần luyện thêm, không tính điểm" : "12 nốt gốc × 4 loại quãng · phần luyện thêm, không tính điểm"}</small></div>
-    <p>{question.prompt}</p>
+    <p>{question.kind === "interval" ? (intervalUpper ? `Quãng từ ${question.root} lên ${intervalUpper} là gì?` : "Đang lấy câu hỏi…") : `Dựng ${question.label}. Hãy nhập ba tên nốt.`}</p>
     {mode === "interval" ? <div className="option-row">{LESSON1_INTERVAL_CODES.map((code) => <button type="button" key={code} className={answer === code ? "option selected" : "option"} onClick={() => setAnswer(code)}>{code}</button>)}</div> : <input value={answer} onChange={(event) => setAnswer(event.target.value)} placeholder="Ví dụ định dạng: Nốt-Nốt-Nốt" />}
     <div className="actions">
-      <button type="button" disabled={!answer.trim() || (mode === "triad" && !expectedChord)} onClick={check}>Kiểm tra nhanh</button>
+      <button type="button" disabled={busy || !answer.trim() || (question.kind === "triad" && !expectedChord) || (question.kind === "interval" && !intervalUpper)} onClick={() => void check()}>Kiểm tra nhanh</button>
       <button type="button" className="text-button" onClick={() => setNonce((value) => value + 1 + Math.floor(Math.random() * 97))}>Đổi câu khác</button>
     </div>
     {feedback && <div className={`result ${feedback.startsWith("Đúng") ? "good" : "bad"}`}>{feedback}</div>}
   </div>;
-}
-
-export function pitchClassesForTriad(root: string, quality: TriadQuality) {
-  return buildTriad(root, quality).notes.map(normalizePitchClass);
 }

@@ -148,6 +148,16 @@ export type ReviewAnswerResult = {
   leitner_box: number;
 };
 
+// Phần khám phá Bài 1, sinh bởi Music Engine (GET /music/lesson1/{root}).
+export type PitchWithOctave = { name: string; midi: number };
+export type Lesson1Interval = { code: string; semitones: number; upper: string; pitches: PitchWithOctave[] };
+export type Lesson1Triad = {
+  quality: string; symbol: string; formula: string[]; interval_formula: string[]; notes: string[]; pitches: PitchWithOctave[];
+};
+export type Lesson1Theory = {
+  root: string; root_octave: number; letter_frame: string[]; intervals: Lesson1Interval[]; triads: Lesson1Triad[];
+};
+
 // Mọi request đi qua lib/http.ts để có access token và lỗi chuẩn SRS 7.4.
 const engineCall = <T,>(path: string, init?: RequestInit) => http<T>("/engine" + path, init, { auth: false });
 const apiCall = <T,>(path: string, init?: RequestInit) => http<T>(path, init);
@@ -178,6 +188,7 @@ export const api = {
   startLesson: (lessonId: string) =>
     apiPost<StartLessonResult>(`/lessons/${encodeURIComponent(lessonId)}/start`, {}),
   learningOverview: () => apiCall<LearningOverview>("/learning/overview"),
+  lesson1Theory: (root: string) => apiCall<Lesson1Theory>(`/music/lesson1/${encodeURIComponent(root)}`),
   inspectChord: (symbol: string, key?: string) =>
     apiCall<ChordInspection>(`/music/chords/inspect?symbol=${encodeURIComponent(symbol)}${key ? `&key=${encodeURIComponent(key)}` : ""}`),
   submitAttempt: (exerciseVersionId: string, answer: unknown, inputMethod: InputMethod = "text") =>
