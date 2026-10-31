@@ -79,15 +79,16 @@ export default function NotationStaff({ groups, clef = "treble", caption }: Prop
     </div>;
   }
 
+  // data-part giữ mốc ổn định cho test hotfix ký âm (mỗi nhãn nằm trong thẻ ví dụ của nó, có khung dự phòng khi VexFlow lỗi).
   return <div className="mt-3 min-w-0">
-    <div className="grid items-start gap-3 [grid-template-columns:repeat(auto-fit,minmax(11.5rem,1fr))]">
+    <div data-part="notation-examples" className="grid items-start gap-3 [grid-template-columns:repeat(auto-fit,minmax(11.5rem,1fr))]">
       {groups.map((group, index) => <div className="min-w-0 rounded-xl border border-line bg-surface p-2" key={`${group.label ?? "example"}-${index}`}>
         <div id={`${elementId}-${index}`} className="grid min-h-34 place-items-center overflow-hidden [&_svg]:block [&_svg]:h-auto [&_svg]:w-full [&_svg]:max-w-56" role="img" aria-label={`Khuông nhạc: ${group.label ?? `ví dụ ${index + 1}`}, các nốt ${group.notes.join(", ")}`} />
-        {renderErrors[index] && <div className="my-3 flex flex-col gap-1 rounded-lg border border-line bg-bg px-3 py-2 text-sm text-muted" role="status">
+        {renderErrors[index] && <div data-part="notation-fallback" className="my-3 flex flex-col gap-1 rounded-lg border border-line bg-bg px-3 py-2 text-sm text-muted" role="status">
           <b>Ký âm tạm thời không hiển thị được.</b>
           <span>{renderErrors[index]}</span>
         </div>}
-        <div className="px-1 pt-1 pb-1.5 text-center text-xs leading-snug font-semibold text-ink">{group.label ?? group.notes.join("–")}</div>
+        <div data-part="notation-example-label" className="px-1 pt-1 pb-1.5 text-center text-xs leading-snug font-semibold text-ink">{group.label ?? group.notes.join("–")}</div>
       </div>)}
     </div>
     {caption && <p className="mt-2 text-xs text-muted">{caption}</p>}
