@@ -1,4 +1,4 @@
-import { lazy, type ReactNode } from "react";
+import { lazy } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import { RequireAdmin, RequireAuth } from "./auth/guards";
 import AppLayout from "./components/layout/AppLayout";
@@ -17,9 +17,6 @@ const ProfilePage = lazy(() => import("./pages/app/ProfilePage"));
 const AdminHomePage = lazy(() => import("./pages/app/AdminHomePage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
-// Trang có từ v0.4.0 dùng CSS cũ; bọc lại cho tới khi chuyển sang Tailwind ở Giai đoạn C.
-const legacy = (page: ReactNode) => <div className="legacy-page">{page}</div>;
-
 const router = createBrowserRouter([
   {
     element: <PublicLayout />,
@@ -34,10 +31,10 @@ const router = createBrowserRouter([
     path: "app",
     element: <RequireAuth><AppLayout /></RequireAuth>,
     children: [
-      { index: true, element: legacy(<DashboardPage />) },
-      { path: "hoc", element: legacy(<LearnPage />) },
-      { path: "luyen-tap", element: legacy(<PracticePage />) },
-      { path: "tien-do", element: legacy(<ProgressPage />) },
+      { index: true, element: <DashboardPage /> },
+      { path: "hoc", element: <LearnPage /> },
+      { path: "luyen-tap", element: <PracticePage /> },
+      { path: "tien-do", element: <ProgressPage /> },
       { path: "composition", element: <CompositionLabPage /> },
       { path: "ho-so", element: <ProfilePage /> },
     ],

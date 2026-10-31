@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import * as ui from "./lessonStyles";
+import { buttonClass } from "../ui/Button";
 import { api, type ApiError, type ChordInspection } from "../../api";
 import { NoteAudioButton } from "../music/AudioControls";
 import NotationStaff from "../music/NotationStaff";
@@ -26,20 +28,21 @@ import type { Lesson1Theory } from "../../api";
 
 export function RootKeySelector({ value, onChange, compact = false }: { value: string; onChange: (root: string) => void; compact?: boolean }) {
   const option = ROOT_KEY_OPTIONS.find((item) => item.spellings.includes(value)) ?? ROOT_KEY_OPTIONS[0];
-  return <div className={`root-selector ${compact ? "compact" : ""}`}>
-    <div className="root-selector-label"><b>Nốt gốc</b><span>Chọn 1 trong 12 vị trí cao độ</span></div>
-    <div className="root-selector-grid" role="group" aria-label="Chọn nốt gốc">
+  return <div className={`my-3 grid gap-2.5 rounded-xl border border-line bg-bg ${compact ? "p-2.5" : "p-3"}`}>
+    <div className="flex flex-wrap items-baseline gap-2.5"><b>Nốt gốc</b><span className="text-xs text-muted">Chọn 1 trong 12 vị trí cao độ</span></div>
+    <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-4 lg:grid-cols-6" role="group" aria-label="Chọn nốt gốc">
       {ROOT_KEY_OPTIONS.map((item) => <button
         type="button"
         key={item.label}
-        className={item.spellings.includes(value) ? "selected" : ""}
+        className={ui.choice(item.spellings.includes(value), "text-center font-mono")}
+        aria-pressed={item.spellings.includes(value)}
         onClick={() => onChange(item.defaultSpelling)}
       >{item.label}</button>)}
     </div>
-    {option.spellings.length > 1 && <div className="enharmonic-choice">
+    {option.spellings.length > 1 && <div className="flex flex-wrap items-center gap-2 text-xs text-muted" role="group" aria-label="Cách viết nốt gốc">
       <span>Cách viết đang dùng:</span>
-      {option.spellings.map((spelling) => <button type="button" key={spelling} className={value === spelling ? "selected" : ""} onClick={() => onChange(spelling)}>{spelling}</button>)}
-      <small>Hai cách viết có thể cùng phím đàn nhưng tạo spelling khác nhau khi dựng quãng/hợp âm.</small>
+      {option.spellings.map((spelling) => <button type="button" key={spelling} aria-pressed={value === spelling} className={ui.choice(value === spelling, "font-mono")} onClick={() => onChange(spelling)}>{spelling}</button>)}
+      <small className="basis-full">Hai cách viết có thể cùng phím đàn nhưng tạo spelling khác nhau khi dựng quãng/hợp âm.</small>
     </div>}
   </div>;
 }
@@ -49,8 +52,8 @@ const prettyDegree = (degree: string) => degree.replace(/b/g, "♭").replace(/#/
 
 // Trạng thái chờ/lỗi dùng chung: dữ liệu nhạc lý đến từ máy chủ nên có thể chậm hoặc lỗi mạng.
 function TheoryStatus({ state }: { state: Lesson1TheoryState }) {
-  if (state.status === "loading") return <p className="muted" role="status">Đang lấy nốt từ Music Engine…</p>;
-  if (state.status === "error") return <div className="result bad" role="alert">Chưa tải được nốt nhạc: {state.error}. Hãy thử chọn lại nốt gốc hoặc tải lại trang.</div>;
+  if (state.status === "loading") return <p className={ui.muted} role="status">Đang lấy nốt từ máy chủ…</p>;
+  if (state.status === "error") return <div className={ui.resultBad} role="alert">Chưa tải được nốt nhạc: {state.error}. Hãy thử chọn lại nốt gốc hoặc tải lại trang.</div>;
   return null;
 }
 
@@ -60,22 +63,22 @@ export function IntervalExplorer({ root, onRootChange, prompt }: { root: string;
   const data = theory.data;
   const example = data ? intervalOf(data, active) : null;
 
-  return <article className="lesson-content-block explorer-block">
-    <span className="section-kicker">Khám phá tương tác</span>
+  return <article className={`${ui.block} ${ui.blockTone.explorer}`}>
+    <span className={ui.kicker}>Khám phá tương tác</span>
     <h3>4. Khám phá M3, m3, P5 và d5 trên 12 nốt gốc</h3>
     {prompt && <p>{prompt}</p>}
     <RootKeySelector value={root} onChange={onRootChange} />
     <TheoryStatus state={theory} />
     {data && example && <>
-      <div className="interval-choice-row" role="group" aria-label="Chọn loại quãng">
-        {LESSON1_INTERVAL_CODES.map((code) => <button type="button" key={code} className={active === code ? "selected" : ""} aria-pressed={active === code} onClick={() => setActive(code)}>
-          <b>{code}</b><span>{intervalOf(data, code).semitones} nửa cung</span>
+      <div className="my-3 grid grid-cols-2 gap-2 sm:grid-cols-4" role="group" aria-label="Chọn loại quãng">
+        {LESSON1_INTERVAL_CODES.map((code) => <button type="button" key={code} className={ui.choice(active === code, "flex flex-col items-start gap-0.5")} aria-pressed={active === code} onClick={() => setActive(code)}>
+          <b className="font-mono">{code}</b><span className="text-xs font-normal text-muted">{intervalOf(data, code).semitones} nửa cung</span>
         </button>)}
       </div>
-      <div className="explorer-result-grid">
-        <div className="explainer-card">
-          <span>Đang xem</span>
-          <strong>{data.root} → {example.upper}</strong>
+      <div className="grid items-stretch gap-3 md:grid-cols-[minmax(14rem,0.8fr)_1.2fr]">
+        <div className="flex flex-col items-start gap-2 rounded-xl border border-line bg-surface p-4 [&_p]:my-0">
+          <span className="text-xs font-semibold tracking-wide text-muted uppercase">Đang xem</span>
+          <strong className="font-mono text-2xl">{data.root} → {example.upper}</strong>
           <p>{INTERVAL_LABELS[active]}: giữ đúng số quãng theo chữ cái và có khoảng cách {example.semitones} nửa cung.</p>
           <NoteAudioButton notes={pitchNames(example)} label={`Nghe ${active}`} />
         </div>
@@ -93,8 +96,8 @@ export function TriadExplorer({ root, onRootChange, prompt, note }: { root: stri
   const theory = useLesson1Theory(root);
   const data = theory.data;
 
-  return <article className="lesson-content-block explorer-block triad-explorer">
-    <span className="section-kicker">Dựng hợp âm ba nốt</span>
+  return <article className={`${ui.block} ${ui.blockTone.explorer}`}>
+    <span className={ui.kicker}>Dựng hợp âm ba nốt</span>
     <h3>6. Dựng triad trên bất kỳ nốt gốc nào</h3>
     {prompt && <p>{prompt}</p>}
     <RootKeySelector value={root} onChange={onRootChange} />
@@ -108,23 +111,23 @@ function TriadExplorerBody({ data, active, onActive, note }: { data: Lesson1Theo
   const minor = triadOf(data, "minor");
   const current = triadOf(data, active);
   return <>
-    <div className="construction-steps">
+    <div className="my-3 grid gap-3 sm:grid-cols-2 [&>div]:flex [&>div]:flex-col [&>div]:gap-1 [&>div]:rounded-xl [&>div]:border [&>div]:border-line [&>div]:bg-surface [&>div]:p-3 [&_p]:my-0 [&_p]:text-xs [&_p]:text-muted [&_span]:text-xs [&_span]:font-semibold [&_span]:tracking-wide [&_span]:text-primary [&_span]:uppercase [&_strong]:font-mono [&_strong]:text-lg">
       <div><span>Bước 1 · khung chữ cái 1–3–5</span><strong>{data.letter_frame.join(" – ")}</strong><p>Giữ đúng họ chữ của nốt thứ ba và thứ năm trước khi quyết định dấu hóa.</p></div>
       <div><span>Bước 2 · đếm nửa cung</span><strong>{TRIAD_LABELS.major}: {major.notes.join("–")}</strong><strong>{TRIAD_LABELS.minor}: {minor.notes.join("–")}</strong><p>Cùng một vị trí root trên piano có thể cần spelling khác khi đổi Major/Minor.</p></div>
     </div>
-    <div className="triad-quality-grid">
+    <div className="grid grid-cols-2 gap-2 lg:grid-cols-4" role="group" aria-label="Chọn loại hợp âm">
       {QUALITY_ORDER.map((quality) => {
         const triad = triadOf(data, quality);
-        return <button type="button" key={quality} className={active === quality ? "selected" : ""} aria-pressed={active === quality} onClick={() => onActive(quality)}>
-          <span>{TRIAD_LABELS[quality]}</span><b>{triad.formula.map(prettyDegree).join("–")}</b><strong>{triad.notes.join(" – ")}</strong><small>{triad.interval_formula.join(" + ")}</small>
+        return <button type="button" key={quality} className={ui.choice(active === quality, "flex flex-col items-start gap-0.5")} aria-pressed={active === quality} onClick={() => onActive(quality)}>
+          <span className="text-xs">{TRIAD_LABELS[quality]}</span><b className="font-mono text-base">{triad.formula.map(prettyDegree).join("–")}</b><strong className="font-mono text-xs">{triad.notes.join(" – ")}</strong><small className="font-normal text-muted">{triad.interval_formula.join(" + ")}</small>
         </button>;
       })}
     </div>
-    {note && <div className="pedagogy-note">{note}</div>}
-    <div className="interactive-output-row">
+    {note && <div className="mt-3 rounded-md border-l-4 border-primary bg-primary-soft px-3 py-2">{note}</div>}
+    <div className="mt-3 flex flex-wrap items-center gap-2">
       <ChordInspector symbol={current.symbol} displayLabel={current.symbol} eager />
       <NoteAudioButton notes={pitchNames(current)} label={`Nghe ${current.symbol}`} />
-      <span className="muted">Đang tô sáng: {current.notes.join(" – ")}</span>
+      <span className={ui.hint}>Đang tô sáng: {current.notes.join(" – ")}</span>
     </div>
     <VirtualPiano highlightedPitchClasses={current.notes} showOctaveNumbers={false} />
   </>;
@@ -134,13 +137,13 @@ export function TriadNotationExplorer({ root, onRootChange, prompt }: { root: st
   const [active, setActive] = useState<TriadQuality>("major");
   const theory = useLesson1Theory(root);
   const data = theory.data;
-  return <article className="lesson-content-block explorer-block">
-    <span className="section-kicker">Ký âm + piano</span><h3>7. So sánh chất lượng hợp âm bằng cùng một nốt gốc</h3>
+  return <article className={`${ui.block} ${ui.blockTone.explorer}`}>
+    <span className={ui.kicker}>Ký âm + piano</span><h3>7. So sánh chất lượng hợp âm bằng cùng một nốt gốc</h3>
     {prompt && <p>{prompt}</p>}
     <RootKeySelector value={root} onChange={onRootChange} compact />
     <TheoryStatus state={theory} />
     {data && <>
-      <div className="quality-tabs">{QUALITY_ORDER.map((quality) => <button type="button" key={quality} className={active === quality ? "selected" : ""} aria-pressed={active === quality} onClick={() => setActive(quality)}>{TRIAD_LABELS[quality]}</button>)}</div>
+      <div className="my-2.5 flex flex-wrap gap-2" role="group" aria-label="Chọn loại hợp âm">{QUALITY_ORDER.map((quality) => <button type="button" key={quality} className={ui.choice(active === quality)} aria-pressed={active === quality} onClick={() => setActive(quality)}>{TRIAD_LABELS[quality]}</button>)}</div>
       <NotationStaff
         groups={QUALITY_ORDER.map((quality) => {
           const triad = triadOf(data, quality);
@@ -156,12 +159,12 @@ export function TriadNotationExplorer({ root, onRootChange, prompt }: { root: st
 export function TriadAudioExplorer({ root, onRootChange, prompt }: { root: string; onRootChange: (root: string) => void; prompt?: string }) {
   const theory = useLesson1Theory(root);
   const data = theory.data;
-  return <article className="lesson-content-block explorer-block">
-    <span className="section-kicker">Nghe</span><h3>8. Nghe sự thay đổi khi giữ nguyên nốt gốc</h3>
+  return <article className={`${ui.block} ${ui.blockTone.explorer}`}>
+    <span className={ui.kicker}>Nghe</span><h3>8. Nghe sự thay đổi khi giữ nguyên nốt gốc</h3>
     {prompt && <p>{prompt}</p>}
     <RootKeySelector value={root} onChange={onRootChange} compact />
     <TheoryStatus state={theory} />
-    {data && <div className="chord-audio-set">
+    {data && <div className="mt-3 flex flex-wrap items-center gap-2">
       {QUALITY_ORDER.map((quality) => {
         const triad = triadOf(data, quality);
         return <NoteAudioButton key={quality} notes={pitchNames(triad)} label={`${triad.symbol} · ${TRIAD_LABELS[quality]}`} />;
@@ -173,16 +176,16 @@ export function TriadAudioExplorer({ root, onRootChange, prompt }: { root: strin
 export function KeyOverview24({ prompt }: { prompt?: string }) {
   const [tierId, setTierId] = useState(TRIAD_KEY_TIERS[0].id);
   const tier: KeyOverviewTier = TRIAD_KEY_TIERS.find((item) => item.id === tierId) ?? TRIAD_KEY_TIERS[0];
-  return <article className="lesson-content-block key-overview-block">
-    <span className="section-kicker">24 giọng · hợp âm chủ</span><h3>9. Tổng quan 24 giọng · 12 trưởng & 12 thứ</h3>
+  return <article className={ui.block}>
+    <span className={ui.kicker}>24 giọng · hợp âm chủ</span><h3>9. Tổng quan 24 giọng · 12 trưởng & 12 thứ</h3>
     {prompt && <p>{prompt}</p>}
-    <div className="tier-tabs" role="tablist" aria-label="Cấp độ luyện 24 giọng">
-      {TRIAD_KEY_TIERS.map((item) => <button type="button" role="tab" aria-selected={tier.id === item.id} className={tier.id === item.id ? "selected" : ""} key={item.id} onClick={() => setTierId(item.id)}>{item.title}</button>)}
+    <div className="my-2.5 flex flex-wrap gap-2" role="group" aria-label="Cấp độ luyện 24 giọng">
+      {TRIAD_KEY_TIERS.map((item) => <button type="button" aria-pressed={tier.id === item.id} className={ui.choice(tier.id === item.id)} key={item.id} onClick={() => setTierId(item.id)}>{item.title}</button>)}
     </div>
-    <p className="muted">{tier.note}</p>
-    <div className="key-card-grid">
-      {tier.keys.map((item) => <div className="key-card" key={item.symbol}>
-        <span>{item.label}</span>
+    <p className={ui.muted}>{tier.note}</p>
+    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+      {tier.keys.map((item) => <div className="flex min-w-0 items-center justify-between gap-2 rounded-xl border border-line bg-bg p-2.5" key={item.symbol}>
+        <span className="text-xs font-semibold">{item.label}</span>
         <ChordInspector symbol={item.symbol} displayLabel={item.symbol} compact />
       </div>)}
     </div>
@@ -250,14 +253,14 @@ export function RandomPracticePanel({ mode }: { mode: "interval" | "triad" }) {
     }
   };
 
-  return <div className="random-practice-panel">
-    <div className="random-practice-head"><b>Luyện tập ngẫu nhiên</b><small>{mode === "triad" ? "Hợp âm chủ của 24 giọng trưởng/thứ · phần luyện thêm, không tính điểm" : "12 nốt gốc × 4 loại quãng · phần luyện thêm, không tính điểm"}</small></div>
+  return <div className="mt-4 grid gap-2 border-t border-dashed border-primary/40 pt-3.5 [&_p]:my-0">
+    <div className="flex flex-col"><b>Luyện tập ngẫu nhiên</b><small className={ui.hint}>{mode === "triad" ? "Hợp âm chủ của 24 giọng trưởng/thứ · phần luyện thêm, không tính điểm" : "12 nốt gốc × 4 loại quãng · phần luyện thêm, không tính điểm"}</small></div>
     <p>{question.kind === "interval" ? (intervalUpper ? `Quãng từ ${question.root} lên ${intervalUpper} là gì?` : "Đang lấy câu hỏi…") : `Dựng ${question.label}. Hãy nhập ba tên nốt.`}</p>
-    {mode === "interval" ? <div className="option-row">{LESSON1_INTERVAL_CODES.map((code) => <button type="button" key={code} className={answer === code ? "option selected" : "option"} onClick={() => setAnswer(code)}>{code}</button>)}</div> : <input value={answer} onChange={(event) => setAnswer(event.target.value)} placeholder="Ví dụ định dạng: Nốt-Nốt-Nốt" />}
-    <div className="actions">
-      <button type="button" disabled={busy || !answer.trim() || (question.kind === "triad" && !expectedChord) || (question.kind === "interval" && !intervalUpper)} onClick={() => void check()}>Kiểm tra nhanh</button>
-      <button type="button" className="text-button" onClick={() => setNonce((value) => value + 1 + Math.floor(Math.random() * 97))}>Đổi câu khác</button>
+    {mode === "interval" ? <div className="flex flex-wrap gap-2" role="group" aria-label="Chọn đáp án">{LESSON1_INTERVAL_CODES.map((code) => <button type="button" key={code} aria-pressed={answer === code} className={ui.choice(answer === code, "font-mono")} onClick={() => setAnswer(code)}>{code}</button>)}</div> : <input className={ui.input} aria-label="Ba tên nốt của hợp âm" value={answer} onChange={(event) => setAnswer(event.target.value)} placeholder="Ví dụ định dạng: Nốt-Nốt-Nốt" />}
+    <div className="flex flex-wrap items-center gap-2">
+      <button type="button" className={buttonClass("primary")} disabled={busy || !answer.trim() || (question.kind === "triad" && !expectedChord) || (question.kind === "interval" && !intervalUpper)} onClick={() => void check()}>Kiểm tra nhanh</button>
+      <button type="button" className={ui.textButton} onClick={() => setNonce((value) => value + 1 + Math.floor(Math.random() * 97))}>Đổi câu khác</button>
     </div>
-    {feedback && <div className={`result ${feedback.startsWith("Đúng") ? "good" : "bad"}`}>{feedback}</div>}
+    {feedback && <div role="status" className={feedback.startsWith("Đúng") ? ui.resultGood : ui.resultBad}><span aria-hidden="true">{feedback.startsWith("Đúng") ? "✓ " : "✗ "}</span>{feedback}</div>}
   </div>;
 }

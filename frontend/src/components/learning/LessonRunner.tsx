@@ -21,6 +21,10 @@ import {
   TriadExplorer,
   TriadNotationExplorer,
 } from "./Lesson1Explorers";
+import * as ui from "./lessonStyles";
+import { TermText, firstAppearances } from "./TermText";
+import { Button } from "../ui/Button";
+import { Badge, ChipButton, ProgressBar, ResultBox } from "../ui/Page";
 
 export const REVIEW_MODE_LABELS: Record<string, string> = {
   recall: "Tự nhớ",
@@ -88,6 +92,14 @@ const BLOCK_LABELS: Record<string, string> = {
   summary: "Tóm tắt",
   interactive: "Thực hành có hướng dẫn",
 };
+
+// Các khối chữ được chú giải thuật ngữ; khối "theory" và khối không có nhãn riêng dùng bộ hiển thị mặc định.
+const ANNOTATED_BLOCKS = new Set(["callout", "interactive", "summary"]);
+
+function blockTexts(payload: Record<string, unknown>): string[] {
+  const pick = (value: unknown) => (Array.isArray(value) ? value.filter((x): x is string => typeof x === "string") : typeof value === "string" ? [value] : []);
+  return [...pick(payload.paragraphs), ...pick(payload.items), ...pick(payload.prompt)];
+}
 
 type Step = { id: string; label: string; title: string; render: () => JSX.Element; exerciseId?: string };
 
@@ -186,14 +198,18 @@ export default function LessonRunner({
     }
   };
 
+  // Chú giải thuật ngữ ở khối chữ đầu tiên nhắc tới nó (bỏ qua khối thuật ngữ vì khối đó tự giải nghĩa).
+  const termMap = useMemo(() => firstAppearances(lesson.blocks
+    .filter((block) => ANNOTATED_BLOCKS.has(block.block_type) || !BLOCK_LABELS[block.block_type] || block.block_type === "theory")
+    .map((block) => ({ id: block.id, texts: blockTexts(block.payload) }))), [lesson.blocks]);
   const blockProps = { exerciseMap, attempted, correct, onAttempt: noteAttempt, onOutdated: handleOutdated, lesson1Root, onLesson1RootChange: setLesson1Root };
   const steps: Step[] = [
     {
       id: "intro", label: "Mở đầu", title: "Bài này giúp bạn làm được gì",
-      render: () => <article className="learning-objectives">
-        <span className="section-kicker">Mục tiêu học tập</span>
+      render: () => <article className={ui.block}>
+        <span className={ui.kicker}>Mục tiêu học tập</span>
         <ul>{lesson.objectives.map((objective) => <li key={objective}>{objective}</li>)}</ul>
-        <p className="muted">Bài gồm {lesson.blocks.length} phần ngắn và {total} câu hỏi. {viewAll ? "Cuộn xuống để đọc lần lượt; câu đã trả lời đúng được lưu lại." : 'Bấm "Bước tiếp" để đi từng phần; tiến độ được lưu lại nếu bạn rời đi.'}</p>
+        <p className={ui.muted}>Bài gồm {lesson.blocks.length} phần ngắn và {total} câu hỏi. {viewAll ? "Cuộn xuống để đọc lần lượt; câu đã trả lời đúng được lưu lại." : 'Bấm "Bước tiếp" để đi từng phần; tiến độ được lưu lại nếu bạn rời đi.'}</p>
       </article>,
     },
     ...lesson.blocks.map((block): Step => ({
@@ -201,14 +217,14 @@ export default function LessonRunner({
       label: BLOCK_LABELS[block.block_type] ?? "Nội dung",
       title: typeof block.payload.title === "string" ? block.payload.title : (BLOCK_LABELS[block.block_type] ?? "Nội dung"),
       exerciseId: block.block_type === "checkpoint" && typeof block.payload.exercise_id === "string" ? block.payload.exercise_id : undefined,
-      render: () => <BlockRenderer key={block.id} block={block} {...blockProps} />,
+      render: () => <BlockRenderer key={block.id} block={block} terms={termMap.get(block.id)} {...blockProps} />,
     })),
     {
       id: "quiz", label: "Kiểm tra", title: "Kiểm tra cuối bài",
-      render: () => <article className="card block final-quiz-card">
-        <div className="section-heading"><div><span className="section-kicker">Kiểm tra cuối bài</span><h3>Tự làm, không nhìn lại lý thuyết</h3></div><span className="muted">{finalQuiz.length} câu · sai 2 lần sẽ có lời giải</span></div>
-        {finalQuiz.length === 0 && <p className="muted">Các câu của bài này nằm ở phần kiểm tra nhanh trong bài.</p>}
-        <div className="quiz-stack">{finalQuiz.map((exercise) => (
+      render: () => <article className={ui.block}>
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between"><div><span className={ui.kicker}>Kiểm tra cuối bài</span><h3>Tự làm, không nhìn lại lý thuyết</h3></div><span className={ui.hint}>{finalQuiz.length} câu · sai 2 lần sẽ có lời giải</span></div>
+        {finalQuiz.length === 0 && <p className={ui.muted}>Các câu của bài này nằm ở phần kiểm tra nhanh trong bài.</p>}
+        <div className="mt-3 grid gap-3">{finalQuiz.map((exercise) => (
           <ExerciseCard key={exercise.version_id} exercise={exercise} attempted={attempted.has(exercise.id)} correct={correct.has(exercise.id)} onAttempt={noteAttempt} onOutdated={handleOutdated} />
         ))}</div>
       </article>,
@@ -216,25 +232,25 @@ export default function LessonRunner({
     {
       id: "finish", label: "Hoàn thành", title: "Hoàn thành bài và lên lịch ôn",
       render: () => <>
-        <article className="card block completion-card">
-          <div><span className="section-kicker">Hoàn thành</span><h3>Hoàn thành bài</h3></div>
+        <article className={`${ui.block} border-primary/40`}>
+          <div><span className={ui.kicker}>Hoàn thành</span><h3>Hoàn thành bài</h3></div>
           <p>{alreadyCompleted ? "Bạn đã hoàn thành bài này. Lịch ôn nằm ở trang Tiến độ." : allCorrect ? "Bạn đã trả lời đúng tất cả các câu. Bấm nút bên dưới để hoàn thành và lên lịch ôn." : `Bạn cần trả lời đúng cả ${total} câu (mỗi câu đúng ít nhất một lần). Hiện đã đúng ${correctCount}/${total}.`}</p>
-          {!alreadyCompleted && !allCorrect && <ul className="remaining-list">{lesson.exercises.filter((exercise) => !correct.has(exercise.id)).map((exercise) => {
+          {!alreadyCompleted && !allCorrect && <ul>{lesson.exercises.filter((exercise) => !correct.has(exercise.id)).map((exercise) => {
             const target = steps.findIndex((step) => step.exerciseId === exercise.id);
-            return <li key={exercise.id}><button type="button" className="text-button" onClick={() => goTo(target >= 0 ? target : steps.length - 2)}>{exercise.prompt}</button></li>;
+            return <li key={exercise.id}><button type="button" className={ui.textButton} onClick={() => goTo(target >= 0 ? target : steps.length - 2)}>{exercise.prompt}</button></li>;
           })}</ul>}
-          <button disabled={!allCorrect || alreadyCompleted} onClick={complete}>{alreadyCompleted ? "Đã hoàn thành" : "Hoàn thành & lên lịch ôn"}</button>
-          {completion && <div className="result good">{completion}</div>}
-          {completeError && <div className="result bad">{completeError}</div>}
+          <Button size="lg" className="mt-2" disabled={!allCorrect || alreadyCompleted} onClick={complete}>{alreadyCompleted ? "Đã hoàn thành" : "Hoàn thành và lên lịch ôn"}</Button>
+          {completion && <ResultBox correct title="Hoàn thành!">{completion}</ResultBox>}
+          {completeError && <ResultBox correct={false} title="Chưa hoàn thành được">{completeError}</ResultBox>}
         </article>
-        <article className="card block review-preview-card">
-          <div className="section-heading"><div><span className="section-kicker">Ôn tập</span><h3>Thẻ ghi nhớ của bài</h3></div><span className="pill">Leitner: 1 → 2 → 4 → 8 → 16 ngày</span></div>
-          <p className="muted">Khi hoàn thành bài, các thẻ này vào lịch ôn ở trang Tiến độ. Nhớ đúng thì lần ôn sau giãn ra, quên thì ôn lại từ ngày mai.</p>
-          <div className="flash-grid">{lesson.review_items.slice(0, 4).map((item) => <Flashcard key={item.id} front={item.front} back={item.back} mode={item.mode} />)}</div>
+        <article className={`${ui.block} mt-4`}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between"><div><span className={ui.kicker}>Ôn tập</span><h3>Thẻ ghi nhớ của bài</h3></div><Badge>Lịch ôn: 1 → 2 → 4 → 8 → 16 ngày</Badge></div>
+          <p className={ui.muted}>Khi hoàn thành bài, các thẻ này vào lịch ôn ở trang Tiến độ. Nhớ đúng thì lần ôn sau giãn ra, quên thì ôn lại từ ngày mai.</p>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">{lesson.review_items.slice(0, 4).map((item) => <Flashcard key={item.id} front={item.front} back={item.back} mode={item.mode} />)}</div>
         </article>
-        <details className="sources-panel">
-          <summary>Tài liệu tham khảo của bài ({lesson.sources.length})</summary>
-          <ul>{lesson.sources.map((source) => <li key={`${source.source_id}-${source.locator}`}><b>{source.title}</b><br/><span className="muted">{source.locator}</span>{source.note && <><br/><small>{source.note}</small></>}</li>)}</ul>
+        <details className="mt-4 rounded-xl border border-line bg-surface px-4 py-3">
+          <summary className="min-h-11 cursor-pointer content-center font-semibold">Tài liệu tham khảo của bài ({lesson.sources.length})</summary>
+          <ul className="mt-2 grid gap-3">{lesson.sources.map((source) => <li key={`${source.source_id}-${source.locator}`}><b>{source.title}</b><br/><span className={ui.hint}>{source.locator}</span>{source.note && <><br/><small className={ui.hint}>{source.note}</small></>}</li>)}</ul>
         </details>
       </>,
     },
@@ -259,47 +275,52 @@ export default function LessonRunner({
   }
   const step = steps[current];
 
-  return <section className="lesson-runner" ref={topRef}>
-    <button className="text-button" onClick={onBack}>← Tất cả bài học</button>
-    <div className="page-heading lesson-title-row">
-      <div><span className="eyebrow">{lesson.track}</span><h2>Bài {lesson.order}. {lesson.title}</h2></div>
+  return <section className="scroll-mt-4 pb-20 sm:pb-0" ref={topRef}>
+    <button className={ui.textButton} onClick={onBack}>← Tất cả bài học</button>
+    <header className="mt-2 mb-4">
+      <p className={ui.kicker}>{lesson.track}</p>
+      <h1 className="mt-1 font-display text-3xl leading-tight font-semibold text-ink">Bài {lesson.order}. {lesson.title}</h1>
+    </header>
+
+    <div className="mb-4 grid items-center gap-2 rounded-2xl border border-primary/25 bg-surface px-4 py-3 sm:grid-cols-[minmax(10rem,1fr)_2fr_auto] sm:gap-4">
+      <div className="flex flex-col"><b className="text-ink">{viewAll ? `${steps.length} bước` : `Bước ${current + 1}/${steps.length}`}</b><span className="text-xs text-muted">Đã đúng {correctCount}/{total} câu hỏi</span></div>
+      <ProgressBar value={masteryPercent} label={`Đã đúng ${masteryPercent}% câu hỏi`} />
+      <strong className="font-mono text-primary">{masteryPercent}%</strong>
+    </div>
+    {outdatedNotice && <div className={ui.resultBad} role="status">{outdatedNotice}</div>}
+    {startError && <div className={ui.resultBad} role="alert">Chưa lưu được trạng thái bắt đầu bài. Bạn vẫn học bình thường; tiến độ sẽ được lưu khi bạn hoàn thành bài.</div>}
+
+    <div className="my-3 inline-flex gap-2" role="group" aria-label="Cách xem bài">
+      <ChipButton pressed={!viewAll} onClick={() => changeView(false)}>Từng bước</ChipButton>
+      <ChipButton pressed={viewAll} onClick={() => changeView(true)}>Xem cả bài</ChipButton>
     </div>
 
-    <article className="lesson-progress-card">
-      <div><b>{viewAll ? `${steps.length} bước` : `Bước ${current + 1}/${steps.length}`}</b><span>Đã đúng {correctCount}/{total} câu hỏi</span></div>
-      <div className="progress-track" aria-label={`Đã đúng ${masteryPercent}% câu hỏi`}><span style={{ width: `${masteryPercent}%` }} /></div>
-      <strong>{masteryPercent}%</strong>
-    </article>
-    {outdatedNotice && <div className="result bad" role="status">{outdatedNotice}</div>}
-    {startError && <div className="result bad" role="alert">Chưa lưu được trạng thái bắt đầu bài. Bạn vẫn học bình thường; tiến độ sẽ được lưu khi bạn hoàn thành bài.</div>}
-
-    <div className="view-toggle" role="group" aria-label="Cách xem bài">
-      <button type="button" className={viewAll ? "ghost" : ""} aria-pressed={!viewAll} onClick={() => changeView(false)}>Từng bước</button>
-      <button type="button" className={viewAll ? "" : "ghost"} aria-pressed={viewAll} onClick={() => changeView(true)}>Xem cả bài</button>
-    </div>
-
-    {viewAll ? <div className="lesson-all">
-      {steps.map((item, index) => <section key={item.id} id={`buoc-${item.id}`} className="lesson-all-step" aria-label={`Bước ${index + 1}: ${item.title}`}>
-        <p className="section-kicker">Bước {index + 1}/{steps.length} · {item.label}</p>
+    {viewAll ? <div className="grid gap-6">
+      {steps.map((item, index) => <section key={item.id} id={`buoc-${item.id}`} className="grid scroll-mt-4 gap-1.5" aria-label={`Bước ${index + 1}: ${item.title}`}>
+        <p className={ui.kicker}>Bước {index + 1}/{steps.length} · {item.label}</p>
         {item.render()}
       </section>)}
-    </div> : <div className="lesson-stepper">
-      <details className="step-index" ref={indexRef}>
-        <summary>Mục lục bài học</summary>
-        <ol>{steps.map((item, index) => {
+    </div> : <div className="grid gap-4">
+      <details className="rounded-xl border border-line bg-surface px-4 py-2" ref={indexRef}>
+        <summary className="min-h-11 cursor-pointer content-center font-semibold">Mục lục bài học</summary>
+        <ol className="mt-2 mb-2 grid gap-1">{steps.map((item, index) => {
           const done = item.exerciseId ? correct.has(item.exerciseId) : index < current;
-          return <li key={item.id}><button type="button" className={index === current ? "current" : ""} aria-current={index === current ? "step" : undefined} onClick={() => goTo(index)}>
-            <span className="step-dot">{done ? "✓" : index + 1}</span><span><small>{item.label}</small>{item.title}</span>
+          const here = index === current;
+          return <li key={item.id}><button type="button" aria-current={here ? "step" : undefined} onClick={() => goTo(index)}
+            className={`flex min-h-11 w-full items-center gap-3 rounded-lg border px-2 py-1.5 text-left text-ink hover:bg-primary-soft ${here ? "border-primary bg-primary-soft" : "border-transparent"}`}>
+            <span className={`grid size-7 flex-none place-items-center rounded-full text-xs font-semibold ${done ? "bg-success-soft text-success" : "bg-bg text-muted"}`}>{done ? "✓" : index + 1}</span>
+            <span className="flex flex-col"><small className="text-xs text-muted">{item.label}</small>{item.title}</span>
           </button></li>;
         })}</ol>
       </details>
 
-      <div className="lesson-flow" key={step.id}>{step.render()}</div>
+      <div className="grid gap-3" key={step.id}>{step.render()}</div>
 
-      <nav className="step-nav" aria-label="Chuyển bước">
-        <button type="button" className="ghost" disabled={current === 0} onClick={() => goTo(current - 1)}>← Bước trước</button>
-        <span className="muted">{step.exerciseId && !correct.has(step.exerciseId) ? "Bạn có thể đi tiếp và quay lại câu này sau." : `${step.label} · ${current + 1}/${steps.length}`}</span>
-        <button type="button" disabled={current === steps.length - 1} onClick={() => goTo(current + 1)}>{current === steps.length - 2 ? "Tới phần hoàn thành →" : "Bước tiếp →"}</button>
+      {/* Nút chuyển bước dính đáy màn hình: trên điện thoại 360px nút chính luôn nhìn thấy. */}
+      <nav className="fixed inset-x-0 bottom-0 z-20 flex items-center justify-between gap-3 border-t border-line bg-bg/95 px-4 py-3 backdrop-blur sm:sticky sm:inset-x-auto sm:px-0" aria-label="Chuyển bước">
+        <Button variant="secondary" disabled={current === 0} onClick={() => goTo(current - 1)}>← Bước trước</Button>
+        <span className="hidden text-center text-sm text-muted sm:block">{step.exerciseId && !correct.has(step.exerciseId) ? "Bạn có thể đi tiếp và quay lại câu này sau." : `${step.label} · ${current + 1}/${steps.length}`}</span>
+        <Button disabled={current === steps.length - 1} onClick={() => goTo(current + 1)}>{current === steps.length - 2 ? "Tới phần hoàn thành →" : "Bước tiếp →"}</Button>
       </nav>
     </div>}
   </section>;
@@ -314,8 +335,10 @@ function BlockRenderer({
   onOutdated,
   lesson1Root,
   onLesson1RootChange,
+  terms,
 }: {
   block: LessonDetail["blocks"][number];
+  terms?: Set<string>;
   exerciseMap: Map<string, LessonExercise>;
   attempted: Set<string>;
   correct: Set<string>;
@@ -338,15 +361,18 @@ function BlockRenderer({
   const progression = Array.isArray(block.payload.progression) ? block.payload.progression.filter((item): item is string => typeof item === "string") : [];
   const chords = Array.isArray(block.payload.chords) ? block.payload.chords.filter((item): item is string => typeof item === "string") : [];
   const bpm = typeof block.payload.bpm === "number" ? block.payload.bpm : 80;
+  // Mỗi thuật ngữ chỉ chú giải một lần trong khối, dù xuất hiện ở nhiều đoạn.
+  const claimed = new Set<string>();
+  const t = (text: string) => <TermText text={text} terms={terms} claimed={claimed} />;
 
   if (block.block_type === "checkpoint") {
     const exerciseId = typeof block.payload.exercise_id === "string" ? block.payload.exercise_id : "";
     const exercise = exerciseMap.get(exerciseId);
     if (!exercise) return null;
-    return <article className="checkpoint-block">
-      <div className="checkpoint-label"><span>Kiểm tra nhanh</span>{attempted.has(exercise.id) && <b className={correct.has(exercise.id) ? "done-good" : "done-tried"}>{correct.has(exercise.id) ? "✓ Đã đúng" : "↻ Đã thử"}</b>}</div>
+    return <article className={`${ui.block} ${ui.blockTone.checkpoint}`}>
+      <div className="flex items-center justify-between gap-3"><span className={ui.kicker}>Kiểm tra nhanh</span>{attempted.has(exercise.id) && <Badge tone={correct.has(exercise.id) ? "success" : "warning"}>{correct.has(exercise.id) ? "✓ Đã đúng" : "↻ Đã thử"}</Badge>}</div>
       <h3>{title}</h3>
-      {note && <p className="muted">{note}</p>}
+      {note && <p className={ui.muted}>{note}</p>}
       <ExerciseCard key={exercise.version_id} exercise={exercise} attempted={attempted.has(exercise.id)} correct={correct.has(exercise.id)} onAttempt={onAttempt} onOutdated={onOutdated} inline />
       {(block.payload.random_practice === "interval" || block.payload.random_practice === "triad") && <RandomPracticePanel mode={block.payload.random_practice} />}
     </article>;
@@ -375,10 +401,10 @@ function BlockRenderer({
 
   if (block.block_type === "progression") {
     const symbols = prompt ? parseProgressionSymbols(prompt) : [];
-    return <article className="lesson-content-block progression-block">
-      <span className="section-kicker">Vòng hợp âm</span><h3>{title}</h3>
+    return <article className={ui.block}>
+      <span className={ui.kicker}>Vòng hợp âm</span><h3>{title}</h3>
       {prompt && <ProgressionInspector text={prompt} contextKey={contextKey} />}
-      <p className="interaction-hint">Rê chuột, focus hoặc nhấn vào từng hợp âm để xem cấu tạo. Bạn cũng có thể nghe cả progression.</p>
+      <p className="text-xs text-muted">Rê chuột, focus hoặc nhấn vào từng hợp âm để xem cấu tạo. Bạn cũng có thể nghe cả progression.</p>
       {symbols.length > 1 && <ProgressionAudio symbols={symbols} contextKey={contextKey} initialBpm={bpm} />}
     </article>;
   }
@@ -412,12 +438,12 @@ function BlockRenderer({
       return [{ label: typeof value.label === "string" ? value.label : undefined, notes }];
     });
     const caption = typeof block.payload.caption === "string" ? block.payload.caption : undefined;
-    return <article className="lesson-content-block notation-block"><span className="section-kicker">Ký âm</span><h3>{title}</h3><NotationStaff groups={groups} caption={caption} /></article>;
+    return <article className={`${ui.block} overflow-x-auto`}><span className={ui.kicker}>Ký âm</span><h3>{title}</h3><NotationStaff groups={groups} caption={caption} /></article>;
   }
 
   if (block.block_type === "audio") {
-    return <article className="lesson-content-block audio-block">
-      <span className="section-kicker">Nghe</span><h3>{title}</h3>
+    return <article className={`${ui.block} ${ui.blockTone.audio}`}>
+      <span className={ui.kicker}>Nghe</span><h3>{title}</h3>
       {prompt && <p>{prompt}</p>}
       {progression.length > 1 && <ProgressionAudio symbols={progression} contextKey={contextKey} initialBpm={bpm} />}
       {chords.length > 0 && <ChordAudioSet symbols={chords} contextKey={contextKey} />}
@@ -453,8 +479,8 @@ function BlockRenderer({
         setPianoEvidenceBusy(false);
       }
     };
-    return <article className="lesson-content-block piano-task-block">
-      <span className="section-kicker">Piano tương tác</span><h3>{title}</h3>
+    return <article className={`${ui.block} ${ui.blockTone.piano}`}>
+      <span className={ui.kicker}>Piano tương tác</span><h3>{title}</h3>
       {prompt && <p>{prompt}</p>}
       {progression.length > 1 && <ProgressionAudio symbols={progression} contextKey={contextKey} initialBpm={bpm} />}
       <VirtualPiano
@@ -464,44 +490,44 @@ function BlockRenderer({
         onSelectionChange={setPianoSelection}
         showOctaveNumbers={block.payload.show_octave_numbers !== false}
       />
-      {exercise && evidenceMode === "pitch_class" && <div className="piano-evidence">
-        <button type="button" disabled={pianoEvidenceBusy || pianoSelection.length === 0} onClick={() => void submitPianoEvidence()}>{pianoEvidenceBusy ? "Đang kiểm tra…" : submitLabel}</button>
-        {pianoEvidenceResult && <div className={`result ${pianoEvidenceResult.correct ? "good" : "bad"}`}><b>{pianoEvidenceResult.correct ? "Chính xác" : "Chưa đúng, thử lại nhé"}</b><p>{pianoEvidenceResult.feedback}</p>{pianoEvidenceResult.explanation && <p className="explanation"><b>Giải thích:</b> {pianoEvidenceResult.explanation}</p>}</div>}
-        {pianoEvidenceError && <div className="result bad">{pianoEvidenceError}</div>}
+      {exercise && evidenceMode === "pitch_class" && <div className="mt-3 grid items-start gap-2">
+        <Button className="justify-self-start" disabled={pianoEvidenceBusy || pianoSelection.length === 0} onClick={() => void submitPianoEvidence()}>{pianoEvidenceBusy ? "Đang kiểm tra…" : submitLabel}</Button>
+        {pianoEvidenceResult && <ResultBox correct={pianoEvidenceResult.correct} title={pianoEvidenceResult.correct ? "Chính xác" : "Chưa đúng, thử lại nhé"}><p>{pianoEvidenceResult.feedback}</p>{pianoEvidenceResult.explanation && <p className={ui.explanation}><b>Giải thích:</b> {pianoEvidenceResult.explanation}</p>}</ResultBox>}
+        {pianoEvidenceError && <div className={ui.resultBad}>{pianoEvidenceError}</div>}
       </div>}
     </article>;
   }
 
   if (block.block_type === "interactive") {
-    return <article className="lesson-content-block interactive-block">
-      <span className="section-kicker">Thực hành có hướng dẫn</span><h3>{title}</h3>
-      {prompt && <p>{prompt}</p>}
+    return <article className={`${ui.block} ${ui.blockTone.interactive}`}>
+      <span className={ui.kicker}>Thực hành có hướng dẫn</span><h3>{title}</h3>
+      {prompt && <p>{t(prompt)}</p>}
     </article>;
   }
 
   if (block.block_type === "callout") {
-    return <article className="lesson-content-block callout-block"><span className="section-kicker">Lưu ý</span><h3>{title}</h3>{prompt && <p>{prompt}</p>}</article>;
+    return <article className={`${ui.block} ${ui.blockTone.callout}`}><span className={ui.kicker}>Lưu ý</span><h3>{title}</h3>{prompt && <p>{t(prompt)}</p>}</article>;
   }
 
   if (block.block_type === "compose_link") {
     // Nhãn mục tiêu A/B do backend gửi trong payload.goals; frontend chỉ hiển thị.
     const goals = Array.isArray(block.payload.goals) ? block.payload.goals.filter((g): g is string => typeof g === "string") : [];
-    return <article className="lesson-content-block compose-block"><span className="section-kicker">Dùng vào sáng tác</span><h3>{title}</h3>
-      {goals.length > 0 && <p className="goal-badges">{goals.map((goal) => <span key={goal} className="goal-badge">{GOAL_LABELS[goal] ?? `Mục tiêu ${goal}`}</span>)}</p>}
+    return <article className={`${ui.block} ${ui.blockTone.compose}`}><span className={ui.kicker}>Dùng vào sáng tác</span><h3>{title}</h3>
+      {goals.length > 0 && <p className="flex flex-wrap gap-2">{goals.map((goal) => <Badge key={goal} tone="warning">{GOAL_LABELS[goal] ?? `Mục tiêu ${goal}`}</Badge>)}</p>}
       {items.length > 0 && <ul>{items.map((item) => <li key={item}>{item}</li>)}</ul>}
     </article>;
   }
 
   if (block.block_type === "summary") {
-    return <article className="lesson-content-block summary-block"><span className="section-kicker">Tóm tắt</span><h3>{title}</h3>{items.length > 0 && <ul>{items.map((item) => <li key={item}>{item}</li>)}</ul>}</article>;
+    return <article className={`${ui.block} ${ui.blockTone.summary}`}><span className={ui.kicker}>Tóm tắt</span><h3>{title}</h3>{items.length > 0 && <ul>{items.map((item) => <li key={item}>{t(item)}</li>)}</ul>}</article>;
   }
 
-  return <article className="lesson-content-block">
-    <span className="section-kicker">{BLOCK_LABELS[block.block_type] ?? "Nội dung"}</span><h3>{title}</h3>
-    {paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-    {items.length > 0 && <ul>{items.map((item) => <li key={item}>{item}</li>)}</ul>}
-    {prompt && <p className="callout">{prompt}</p>}
-    {block.block_type === "theory" && title.toLowerCase().includes("triad") && <div className="inline-chords"><ChordInspector symbol="C" /><ChordInspector symbol="Cm" /><ChordInspector symbol="Cdim" /><ChordInspector symbol="Caug" /></div>}
+  return <article className={ui.block}>
+    <span className={ui.kicker}>{BLOCK_LABELS[block.block_type] ?? "Nội dung"}</span><h3>{title}</h3>
+    {paragraphs.map((paragraph) => <p key={paragraph}>{t(paragraph)}</p>)}
+    {items.length > 0 && <ul>{items.map((item) => <li key={item}>{t(item)}</li>)}</ul>}
+    {prompt && <p className="rounded-lg bg-primary-soft px-3 py-2 text-ink">{t(prompt)}</p>}
+    {block.block_type === "theory" && title.toLowerCase().includes("triad") && <div className="mt-3 flex flex-wrap gap-2"><ChordInspector symbol="C" /><ChordInspector symbol="Cm" /><ChordInspector symbol="Cdim" /><ChordInspector symbol="Caug" /></div>}
   </article>;
 }
 
@@ -544,32 +570,32 @@ function ExerciseCard({
     } finally { setBusy(false); }
   };
 
-  return <div className={`quiz-item ${inline ? "inline-quiz" : ""}`}>
-    <div className="quiz-meta"><span>{EXERCISE_KIND_LABELS[exercise.kind] ?? exercise.kind.replace(/_/g, " ")}</span>{attempted && <span className={correct ? "mini-state good-state" : "mini-state tried-state"}>{correct ? "✓ Đã đúng" : "Đã thử"}</span>}</div>
-    <b>{exercise.prompt}</b>
-    {exercise.options && <div className="option-row">{exercise.options.map((option) => <button type="button" key={option} className={answer === option ? "option selected" : "option"} onClick={() => setAnswer(option)}>{option}</button>)}</div>}
+  const kindLabel = EXERCISE_KIND_LABELS[exercise.kind] ?? exercise.kind.replace(/_/g, " ");
+  return <div className={inline ? "grid gap-2 pt-3" : "grid gap-2 rounded-xl border border-line bg-bg p-4"}>
+    <div className="flex items-center justify-between gap-2 text-xs font-semibold tracking-wide text-muted uppercase"><span>{kindLabel}</span>{attempted && <Badge tone={correct ? "success" : "warning"}>{correct ? "✓ Đã đúng" : "Đã thử"}</Badge>}</div>
+    <b className="text-ink">{exercise.prompt}</b>
+    {exercise.options && <div className="flex flex-wrap gap-2" role="group" aria-label="Các lựa chọn">{exercise.options.map((option) => <button type="button" key={option} aria-pressed={answer === option} className={ui.choice(answer === option)} onClick={() => setAnswer(option)}>{option}</button>)}</div>}
     {!exercise.options && (() => {
       const presentation = inputPresentation(exercise);
       return <>
-        <input value={answer} onChange={(event) => setAnswer(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") void submit(); }} placeholder={presentation.placeholder} aria-describedby={`${exercise.id}-input-hint`} />
-        {presentation.hint && <small id={`${exercise.id}-input-hint`} className="input-format-hint">{presentation.hint}</small>}
+        <input className={ui.input} aria-label={`Câu trả lời: ${exercise.prompt}`} value={answer} onChange={(event) => setAnswer(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") void submit(); }} placeholder={presentation.placeholder} aria-describedby={`${exercise.id}-input-hint`} />
+        {presentation.hint && <small id={`${exercise.id}-input-hint`} className={ui.hint}>{presentation.hint}</small>}
       </>;
     })()}
-    <div className="actions"><button disabled={busy || !answer.trim()} onClick={submit}>{busy ? "Đang kiểm tra…" : attempted ? "Kiểm tra lại" : "Kiểm tra"}</button></div>
-    {result && <div className={`result ${result.correct ? "good" : "bad"}`} role="status">
-      <b>{result.correct ? "Chính xác!" : "Chưa đúng"}</b>
+    <div><Button disabled={busy || !answer.trim()} onClick={submit}>{busy ? "Đang kiểm tra…" : attempted ? "Kiểm tra lại" : "Kiểm tra"}</Button></div>
+    {result && <ResultBox correct={result.correct} title={result.correct ? "Chính xác!" : "Chưa đúng"}>
       {!result.correct && result.feedback && <p>{result.feedback}</p>}
       {result.explanation
-        ? <p className="explanation"><b>Giải thích:</b> {result.explanation}</p>
-        : !result.correct && <p className="muted">Thử lại nhé. Nếu sai thêm {Math.max(1, 2 - result.wrong_attempts)} lần nữa, lời giải sẽ hiện ra.</p>}
-    </div>}
-    {error && <div className="result bad">{error}</div>}
+        ? <p className={ui.explanation}><b>Giải thích:</b> {result.explanation}</p>
+        : !result.correct && <p className={ui.muted}>Thử lại nhé. Nếu sai thêm {Math.max(1, 2 - result.wrong_attempts)} lần nữa, lời giải sẽ hiện ra.</p>}
+    </ResultBox>}
+    {error && <div className={ui.resultBad}>{error}</div>}
   </div>;
 }
 
 function Flashcard({ front, back, mode }: { front: string; back: string; mode: string }) {
   const [revealed, setRevealed] = useState(false);
-  return <button type="button" className="flash flash-button" onClick={() => setRevealed((value) => !value)}>
-    <small>{REVIEW_MODE_LABELS[mode] ?? mode}</small><b>{front}</b><span>{revealed ? back : "Tự nhớ đáp án trước, rồi bấm để lật thẻ"}</span>
+  return <button type="button" aria-expanded={revealed} className="grid w-full gap-1 rounded-xl border border-line bg-bg p-4 text-left text-ink hover:border-primary" onClick={() => setRevealed((value) => !value)}>
+    <small className="text-xs font-semibold tracking-wide text-muted uppercase">{REVIEW_MODE_LABELS[mode] ?? mode}</small><b>{front}</b><span className={revealed ? "text-ink" : "text-muted"}>{revealed ? back : "Tự nhớ đáp án trước, rồi bấm để lật thẻ"}</span>
   </button>;
 }

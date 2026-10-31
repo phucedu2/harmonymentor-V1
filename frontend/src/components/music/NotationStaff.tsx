@@ -74,22 +74,22 @@ export default function NotationStaff({ groups, clef = "treble", caption }: Prop
   }, [elementId, groups, clef]);
 
   if (!groups.length) {
-    return <div className="notation-fallback" role="status">
+    return <div className="my-3 flex flex-col gap-1 rounded-lg border border-line bg-bg px-3 py-2 text-sm text-muted" role="status">
       <b>Chưa có dữ liệu ký âm để hiển thị.</b>
     </div>;
   }
 
-  return <div className="notation-shell">
-    <div className="notation-examples">
-      {groups.map((group, index) => <div className="notation-example" key={`${group.label ?? "example"}-${index}`}>
-        <div id={`${elementId}-${index}`} className="notation-canvas" aria-label={group.label ?? `Ví dụ ký âm ${index + 1}`} />
-        {renderErrors[index] && <div className="notation-fallback" role="status">
+  return <div className="mt-3 min-w-0">
+    <div className="grid items-start gap-3 [grid-template-columns:repeat(auto-fit,minmax(11.5rem,1fr))]">
+      {groups.map((group, index) => <div className="min-w-0 rounded-xl border border-line bg-surface p-2" key={`${group.label ?? "example"}-${index}`}>
+        <div id={`${elementId}-${index}`} className="grid min-h-34 place-items-center overflow-hidden [&_svg]:block [&_svg]:h-auto [&_svg]:w-full [&_svg]:max-w-56" role="img" aria-label={`Khuông nhạc: ${group.label ?? `ví dụ ${index + 1}`}, các nốt ${group.notes.join(", ")}`} />
+        {renderErrors[index] && <div className="my-3 flex flex-col gap-1 rounded-lg border border-line bg-bg px-3 py-2 text-sm text-muted" role="status">
           <b>Ký âm tạm thời không hiển thị được.</b>
           <span>{renderErrors[index]}</span>
         </div>}
-        <div className="notation-example-label">{group.label ?? group.notes.join("–")}</div>
+        <div className="px-1 pt-1 pb-1.5 text-center text-xs leading-snug font-semibold text-ink">{group.label ?? group.notes.join("–")}</div>
       </div>)}
     </div>
-    {caption && <p className="notation-caption">{caption}</p>}
+    {caption && <p className="mt-2 text-xs text-muted">{caption}</p>}
   </div>;
 }
