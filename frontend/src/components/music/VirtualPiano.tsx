@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { audioEngine } from "../../audio/AudioEngine";
-import { midiToScientific, pitchClassOf } from "../../audio/musicUtils";
+import { midiToScientific, pianoKeyLabel, pitchClassOf } from "../../audio/musicUtils";
 
 type Props = {
   startMidi?: number;
@@ -108,7 +108,7 @@ export default function VirtualPiano({
     </div>
     <div className="piano-caption">
       <span>Click/tap để nghe nốt.</span>
-      {selectionMode && <><span>Đã chọn: {selected.length ? selected.join(" · ") : "chưa có"}</span><button type="button" className="text-button" onClick={() => setSelected([])}>Xóa chọn</button></>}
+      {selectionMode && <><span>Đã chọn: {selected.length ? selected.map(pianoKeyLabel).join(" · ") : "chưa có"}</span><button type="button" className="text-button" onClick={() => setSelected([])}>Xóa chọn</button></>}
       <small>Phím đen có thể có hai tên, ví dụ C#/Db. Đây là hai cách gọi cho cùng một phím; bài học sẽ giải thích khi nào cần dùng tên nào. Khi bài tập yêu cầu viết tên nốt, hãy trả lời bằng chữ thay vì chỉ dựa vào vị trí phím đàn.</small>
     </div>
   </div>;

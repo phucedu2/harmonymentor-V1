@@ -73,3 +73,16 @@ export function parseProgressionSymbols(text: string): string[] {
     .map((part) => part.trim())
     .filter(Boolean);
 }
+
+// Phím đen không cho biết tên nốt: phím giữa D và E vừa là D# vừa là Eb. Khi hiện phím người học
+// đã bấm, ghi cả hai tên (D#/Eb4) để không ngầm "sửa" Eb thành D#. Tên chính tả đúng theo
+// hợp âm do Music Engine trả trong lời giải; payload gửi máy chủ vẫn là tên thăng (HM-011).
+const BLACK_KEY_LABELS: Record<string, string> = { "C#": "C#/Db", "D#": "D#/Eb", "F#": "F#/Gb", "G#": "G#/Ab", "A#": "A#/Bb" };
+
+export function pianoKeyLabel(scientific: string): string {
+  const match = scientific.trim().match(/^(.*?)(-?\d+)?$/);
+  const name = match?.[1] ?? scientific;
+  const octave = match?.[2] ?? "";
+  const label = BLACK_KEY_LABELS[normalizePitchClass(name)] ?? name;
+  return `${label}${octave}`;
+}
