@@ -17,6 +17,7 @@ Các giai đoạn 0.2 → 2.3 là lộ trình của bản code gốc (zip v0.1.0
 | [phase-2.1](phase-2.1/) | v0.5.1-dev | Sửa lỗi ký âm làm trắng trang | [PHASE_2_1_NOTATION_HOTFIX.md](phase-2.1/PHASE_2_1_NOTATION_HOTFIX.md), [VERIFICATION_PHASE_2_1_HOTFIX.txt](phase-2.1/VERIFICATION_PHASE_2_1_HOTFIX.txt) |
 | [phase-2.2](phase-2.2/) | v0.5.2-dev | Viết lại Bài 1 cho người mới bắt đầu | [PHASE_2_2_LESSON1_PEDAGOGY_REWRITE.md](phase-2.2/PHASE_2_2_LESSON1_PEDAGOGY_REWRITE.md), [VERIFICATION_PHASE_2_2.txt](phase-2.2/VERIFICATION_PHASE_2_2.txt) |
 | [phase-2.3](phase-2.3/) | v0.5.3-dev | Bài 1 nhiều giọng; kiểm định dưới góc nhìn người mới học (20/10, sau khi gộp Giai đoạn B) | [PHASE_2_3_MULTIKEY_LESSON1.md](phase-2.3/PHASE_2_3_MULTIKEY_LESSON1.md), [VERIFICATION_PHASE_2_3.txt](phase-2.3/VERIFICATION_PHASE_2_3.txt), [AUDIT_NGUOI_MOI_HOC.md](phase-2.3/AUDIT_NGUOI_MOI_HOC.md) |
+| [wow-ui-thu-nghiem](wow-ui-thu-nghiem/) | 0.5.4-dev | Thử nghiệm trang chủ "wow": cuộn GSAP + âm thanh, Đồng & Gỉ (Draft, chưa gộp) | [BAO_CAO_WOW_UI.md](wow-ui-thu-nghiem/BAO_CAO_WOW_UI.md) |
 
 ## Quy ước cho giai đoạn sau
 

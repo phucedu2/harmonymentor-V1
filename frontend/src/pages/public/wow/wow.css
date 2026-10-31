@@ -1,0 +1,128 @@
+/* Trang chủ "wow": bảng màu Đồng & Gỉ chỉ áp trong .wow để không đổi giao diện các trang khác.
+   Khi nhóm chốt đổi màu toàn web thì chuyển các biến này vào @theme trong index.css. */
+@import "@fontsource/fraunces/vietnamese-600.css";
+@import "@fontsource/fraunces/vietnamese-600-italic.css";
+@import "@fontsource/fraunces/latin-600.css";
+@import "@fontsource/fraunces/latin-600-italic.css";
+
+.wow {
+  --w-verdigris: #45c2ab;
+  --w-deep: #006d61;
+  --w-mid: #1f9683;
+  --w-brass: #e0a53e;
+  --w-felt: #b4343b;
+  --w-ivory: #f2f3ea;
+  --w-lacquer: #0c231f;
+  --w-night: #081613;
+  --w-ink-soft: #3d5550;
+  --w-line: #d6dbcc;
+  color: var(--w-lacquer);
+  background: var(--w-ivory);
+  overflow-x: clip;
+  /* Bàn phím Piano dùng các biến này (styles.css); đổi sang màu Đồng & Gỉ trong trang chủ. */
+  --accent: var(--w-verdigris);
+  --key-white: #fff;
+  --key-black: var(--w-lacquer);
+}
+.wow .display { font-family: "Fraunces", Georgia, serif; font-weight: 600; letter-spacing: -0.02em; }
+.wow .display em { font-style: italic; color: var(--w-brass); }
+
+/* ---------- Hero ---------- */
+.wow-hero {
+  position: relative;
+  min-height: calc(100svh - 64px);
+  background:
+    radial-gradient(60% 50% at 75% 30%, rgba(69, 194, 171, 0.22), transparent 70%),
+    radial-gradient(40% 40% at 15% 85%, rgba(224, 165, 62, 0.16), transparent 70%),
+    var(--w-night);
+  color: var(--w-ivory);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  isolation: isolate;
+}
+.wow-hero h1 { font-size: clamp(2.8rem, 9vw, 8.5rem); line-height: 0.95; }
+.wow-hero .lead { color: rgba(242, 243, 234, 0.78); }
+.wow-char { display: inline-block; will-change: transform; cursor: default; transition: color 0.2s; }
+.wow-char:hover { color: var(--w-verdigris); }
+.wow-word { display: inline-block; white-space: nowrap; }
+
+.wow-float { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.wow-float span {
+  position: absolute; border-radius: 50%;
+  transform: rotate(-20deg);
+  width: var(--s); height: calc(var(--s) * 0.74);
+  background: var(--c); opacity: 0.85;
+  filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.35));
+}
+.wow-float span::after { /* thân nốt */
+  content: ""; position: absolute; right: 2px; bottom: 45%;
+  width: max(3px, calc(var(--s) * 0.08)); height: calc(var(--s) * 2.4);
+  background: var(--c); border-radius: 2px;
+}
+.wow-float span.no-stem::after { display: none; }
+
+.wow-cta {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  border-radius: 999px; padding: 0.95rem 1.6rem; font-weight: 600;
+  background: var(--w-brass); color: var(--w-night);
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 10px 30px -10px rgba(224, 165, 62, 0.7);
+}
+.wow-cta:hover { transform: translateY(-2px) scale(1.02); }
+.wow-ghost {
+  display: inline-flex; align-items: center; border-radius: 999px; padding: 0.95rem 1.6rem; font-weight: 600;
+  border: 1px solid rgba(242, 243, 234, 0.3); color: var(--w-ivory);
+}
+.wow-ghost:hover { border-color: var(--w-verdigris); color: var(--w-verdigris); }
+
+.wow-sound { border: 1px solid rgba(242, 243, 234, 0.3); color: var(--w-ivory); background: rgba(8, 22, 19, 0.6); backdrop-filter: blur(6px); }
+.wow-sound[aria-pressed="true"] { border-color: var(--w-verdigris); color: var(--w-verdigris); }
+.wow-sound.on-light { color: var(--w-lacquer); border-color: var(--w-line); background: rgba(242, 243, 234, 0.85); }
+.wow-eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; }
+.wow-eq i { width: 3px; height: 4px; background: currentColor; border-radius: 1px; }
+.wow-eq[data-on="true"] i { animation: wow-eq 0.9s ease-in-out infinite; }
+.wow-eq[data-on="true"] i:nth-child(2) { animation-delay: 0.15s; }
+.wow-eq[data-on="true"] i:nth-child(3) { animation-delay: 0.3s; }
+.wow-eq[data-on="true"] i:nth-child(4) { animation-delay: 0.45s; }
+@keyframes wow-eq { 0%, 100% { height: 4px; } 50% { height: 14px; } }
+
+.wow-scrollhint { color: rgba(242, 243, 234, 0.6); }
+.wow-scrollhint i { display: block; width: 1px; height: 40px; margin: 8px auto 0; background: linear-gradient(var(--w-verdigris), transparent); animation: wow-drip 1.8s ease-in-out infinite; transform-origin: top; }
+@keyframes wow-drip { 0% { transform: scaleY(0); } 60% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
+
+/* ---------- Cảnh khuông nhạc ---------- */
+.wow-staff-scene { background: var(--w-ivory); }
+.wow-staff svg line.staff { stroke: var(--w-lacquer); stroke-width: 2; }
+.wow-staff .note ellipse { fill: var(--c); }
+.wow-staff .note text { fill: var(--w-lacquer); font-family: "Fraunces", serif; font-weight: 600; }
+.wow-step { position: absolute; inset: 0; }
+.wow-kicker { font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--w-deep); }
+
+/* ---------- Dải vòng hợp âm ---------- */
+.wow-prog { background: var(--w-lacquer); color: var(--w-ivory); }
+.wow-card {
+  flex: 0 0 auto; width: min(78vw, 420px); border-radius: 28px; padding: 2rem;
+  background: linear-gradient(160deg, rgba(69, 194, 171, 0.14), rgba(8, 22, 19, 0.2));
+  border: 1px solid rgba(69, 194, 171, 0.3);
+  transition: border-color 0.3s, transform 0.3s, background 0.3s;
+}
+.wow-card[data-active="true"] { border-color: var(--w-brass); background: linear-gradient(160deg, rgba(224, 165, 62, 0.22), rgba(8, 22, 19, 0.2)); transform: translateY(-8px); }
+.wow-card .roman { font-family: "Fraunces", serif; font-style: italic; color: var(--w-brass); }
+.wow-card .piano { --key-white: #f2f3ea; --key-black: #0c231f; --accent: #45c2ab; --line: #0c231f; }
+
+/* ---------- Phần dưới (giữ nội dung cũ, đổi màu) ---------- */
+.wow .wow-panel { background: #fff; border: 1px solid var(--w-line); border-radius: 22px; }
+.wow .reveal { will-change: transform, opacity; }
+.wow-final { background: var(--w-deep); color: var(--w-ivory); }
+
+/* Giảm chuyển động: tắt hiệu ứng CSS lặp; GSAP tự chuyển sang bản nhẹ trong WowHome. */
+@media (prefers-reduced-motion: reduce) {
+  .wow-eq[data-on="true"] i, .wow-scrollhint i { animation: none; }
+  .wow-cta:hover { transform: none; }
+}
+
+/* Màn hình hẹp: nốt trang trí mờ đi để không che chữ. */
+@media (max-width: 640px) {
+  .wow-float span { opacity: 0.35; }
+}
