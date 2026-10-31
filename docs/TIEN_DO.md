@@ -2,6 +2,24 @@
 
 File này ghi lại việc đã xong, việc đang dở, lệnh để chạy lại và việc tiếp theo. Cập nhật sau mỗi phiên việc. Lịch sử trước 27/10/2026 xem `docs/AI_USAGE.md` và các báo cáo trong `docs/giai-doan/`.
 
+## 31/10/2026: nhánh `phuc-music`, Bước 4 (Harmony Lab tối thiểu)
+
+**Đã xong** (Draft PR #18, chưa gộp; báo cáo `docs/phuc-music/BAO_CAO_BUOC_4.md`)
+- Composition Engine `backend/app/composition/`: gợi ý 5 luật, độ lạ 0–3, phân tích + cảnh báo, 4 mẫu nền. Chưa có AI (`ai_used: false`).
+- Bảng `composition_projects`, `chord_events`, `drum_events` (migration `f6a2b3c4d5e7`), API `/projects`. ADR-010 (đề xuất) chờ Thắng.
+- Trang `/app/composition`: lưới 4–8 ô, Tone.js, VexFlow, gợi ý Nghe/Dùng/Bỏ qua, phân tích, lưu/mở/xóa.
+- Q3 Bước 3: thuật ngữ chỉ chú giải ở bài đầu tiên người học gặp.
+
+**Đang dở / chờ**
+- Phúc duyệt Bước 4 (Q3 nghe thử mẫu nền). Thắng: ADR-009, ADR-010. Đạt/Astra: kiểm 5 luật và lời giải thích.
+
+**Lệnh chạy lại**
+```bash
+cd backend && python -m pytest -q          # 409 passed, 21 skipped
+cd frontend && npm ci && npm test && npm run build   # 225 test
+node scripts/phuc-music/luong_buoc4_harmony_lab.cjs docs/phuc-music/anh/buoc-4
+```
+
 ## 31/10/2026: nhánh `phuc-music`, Bước 3 (giao diện "Đồng & Gỉ")
 
 **Đã xong** (Draft PR #18, chưa gộp; báo cáo `docs/phuc-music/BAO_CAO_BUOC_3.md`)
@@ -10,7 +28,7 @@ File này ghi lại việc đã xong, việc đang dở, lệnh để chạy l�
 - axe-core: 0 vi phạm WCAG 2.1 AA trên 15 màn × 2 cỡ; ảnh trước/sau ở `docs/phuc-music/anh/buoc-3/`.
 
 **Đang dở / chờ**
-- Phúc: duyệt Bước 3 và Q1–Q3 trong báo cáo. Bước 4 (Harmony Lab) chỉ bắt đầu khi Phúc duyệt.
+- Phúc duyệt Bước 3 lúc 13:27 (Q1 đồng ý, Q2 duyệt, Q3 chỉ chú giải ở bài đầu tiên).
 
 **Lệnh chạy lại**
 ```bash
