@@ -15,9 +15,9 @@ const BASE = process.env.BASE_URL || 'http://localhost:5173';
   await p.getByRole('button', { name: 'Đăng ký' }).click(); await p.waitForTimeout(2500);
   await p.getByRole('link', { name: 'Học', exact: true }).first().click(); await p.waitForTimeout(1800);
   await p.screenshot({ path: `${OUT}/03-lo-trinh-${TAG}.png`, fullPage: true });
-  console.log(TAG, (await p.locator('.lesson-row').allInnerTexts()).map((t) => t.split('\n').slice(0, 3).join(' / ')).join('\n'));
+  console.log(TAG, (await p.locator('[data-lesson-id]').allInnerTexts()).map((t) => t.split('\n').slice(0, 3).join(' / ')).join('\n'));
   if (TAG === 'che-do-nhap') {
-    await p.locator('.lesson-row').first().click(); await p.waitForTimeout(2000);
+    await p.locator('[data-lesson-id]').first().click(); await p.waitForTimeout(2000);
     await p.getByRole('button', { name: 'Xem cả bài' }).click().catch(() => {}); await p.waitForTimeout(1200);
     const block = p.getByText('Dùng vào sáng tác').last();
     await block.scrollIntoViewIfNeeded(); await p.waitForTimeout(500);

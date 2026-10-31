@@ -20,10 +20,10 @@ const BASE = process.env.BASE_URL || 'http://localhost:5173';
     // Câu hợp âm: gõ sai trước rồi gõ đáp án đúng do máy chủ trả về.
     const input = p.getByLabel('Đáp án');
     await input.fill('C C C'); await p.getByRole('button', { name: 'Kiểm tra' }).click(); await p.waitForTimeout(1500);
-    const expected = (await p.locator('.result p b').first().textContent()) || '';
+    const expected = (await p.locator('[role=status] b.font-mono').first().textContent()) || '';
     await input.fill(expected); await p.getByRole('button', { name: 'Kiểm tra' }).click(); await p.waitForTimeout(1500);
     await p.screenshot({ path: `${OUT}/02-luyen-tap-co-lich-su-${t}.png`, fullPage: true });
-    console.log(t, 'lịch sử:', (await p.locator('.practice-history').innerText()).replace(/\n/g, ' | '));
+    console.log(t, 'lịch sử:', (await p.locator('[aria-labelledby=practice-history-title]').innerText()).replace(/\n/g, ' | '));
     console.log(t, 'request:', [...new Set(requests)].join(', '));
     await p.close();
   }
