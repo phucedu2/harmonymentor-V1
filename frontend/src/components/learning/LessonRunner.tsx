@@ -67,6 +67,9 @@ function inputPresentation(exercise: LessonExercise): InputPresentation {
 }
 
 // Nhãn tiếng Việt cho từng loại khối; người học không cần thấy tên kỹ thuật như "theory".
+// A = backing track, B = vòng hợp âm lạ (mục tiêu sản phẩm của phuc-music).
+const GOAL_LABELS: Record<string, string> = { A: "Mục tiêu A · Backing track", B: "Mục tiêu B · Vòng hợp âm lạ" };
+
 const BLOCK_LABELS: Record<string, string> = {
   theory: "Lý thuyết",
   callout: "Lưu ý",
@@ -478,6 +481,15 @@ function BlockRenderer({
 
   if (block.block_type === "callout") {
     return <article className="lesson-content-block callout-block"><span className="section-kicker">Lưu ý</span><h3>{title}</h3>{prompt && <p>{prompt}</p>}</article>;
+  }
+
+  if (block.block_type === "compose_link") {
+    // Nhãn mục tiêu A/B do backend gửi trong payload.goals; frontend chỉ hiển thị.
+    const goals = Array.isArray(block.payload.goals) ? block.payload.goals.filter((g): g is string => typeof g === "string") : [];
+    return <article className="lesson-content-block compose-block"><span className="section-kicker">Dùng vào sáng tác</span><h3>{title}</h3>
+      {goals.length > 0 && <p className="goal-badges">{goals.map((goal) => <span key={goal} className="goal-badge">{GOAL_LABELS[goal] ?? `Mục tiêu ${goal}`}</span>)}</p>}
+      {items.length > 0 && <ul>{items.map((item) => <li key={item}>{item}</li>)}</ul>}
+    </article>;
   }
 
   if (block.block_type === "summary") {

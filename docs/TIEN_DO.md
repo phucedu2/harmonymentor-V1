@@ -10,12 +10,12 @@ File này ghi lại việc đã xong, việc đang dở, lệnh để chạy l�
 - Lộ trình theo SRS Bảng 7; nháp L09–L12 và mục "Dùng vào sáng tác" L01–L04, chỉ hiện khi `SHOW_DRAFT_CONTENT=1`.
 
 **Đang dở / chờ**
-- Phúc: thẻ chọn thứ tự 12 bài; Q1–Q2 trong báo cáo. Thắng: ADR-009, L-1/L-2/L-5/L-6 (kiểm tra đầu vào, EMA). Đạt/Astra: duyệt nháp.
+- Phúc: đã chọn Bảng 7 + nhãn A/B (12:53); còn Q1–Q2 trong báo cáo. Thắng: ADR-009, L-1/L-2/L-5/L-6 (kiểm tra đầu vào, EMA). Đạt/Astra: duyệt nháp.
 - Bước 3 chỉ bắt đầu khi Phúc duyệt Bước 2.
 
 **Lệnh chạy lại**
 ```bash
-cd backend && pytest -q                    # 370 passed, 21 skipped
+cd backend && pytest -q                    # 371 passed, 21 skipped
 cd frontend && npm ci && npm test && npm run build   # 195 test
 node scripts/phuc-music/luong_buoc2_luyentap.cjs docs/phuc-music/anh/buoc-2
 node scripts/phuc-music/luong_buoc2_lotrinh.cjs docs/phuc-music/anh/buoc-2 nguoi-hoc   # SHOW_DRAFT_CONTENT=1 thì đổi hậu tố che-do-nhap

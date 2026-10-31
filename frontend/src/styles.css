@@ -327,3 +327,6 @@
 .practice-items li { padding: 6px 10px; border-radius: 7px; border-left: 4px solid var(--line); }
 .practice-items li.good { border-left-color: var(--good); }
 .practice-items li.bad { border-left-color: var(--bad); }
+/* phuc-music: nhãn mục tiêu A/B trong mục "Dùng vào sáng tác" */
+.goal-badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 8px; }
+.goal-badge { font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px; background: var(--color-primary-soft, #eef2ff); color: var(--color-primary, #3046c8); }

@@ -15,7 +15,15 @@ from sqlalchemy.orm import sessionmaker
 
 from app.content import versioning
 from app.content.curriculum_specs import LESSON_SPECS, MIGRATED_LESSON_IDS
-from app.content.draft_specs import COMPOSE_BLOCKS, CURRICULUM_MODULES, DRAFT_LESSON_SPECS, module_order
+from app.content.draft_specs import (
+    COMPOSE_BLOCKS,
+    CURRICULUM_MODULES,
+    DRAFT_LESSON_SPECS,
+    GOAL_LABELS,
+    LESSON_GOALS,
+    blocks_with_drafts,
+    module_order,
+)
 from app.content.seed_data import seed_initial_data
 from app.content.source_registry import SOURCE_REGISTRY
 from app.db.models import Base, Lesson
@@ -120,3 +128,14 @@ def test_nhac_ly_trong_muc_sang_tac_khop_engine():
     assert names("G7")[1] == "B" and names("G7")[3] == "F"
     assert names("Cmaj7")[1] == "E" and names("Cmaj7")[3] == "B"
     assert set(COMPOSE_BLOCKS) == {"L01", "L02", "L03", "L04"}
+
+
+def test_moi_muc_sang_tac_co_nhan_muc_tieu_a_b():
+    for spec in LESSON_SPECS + DRAFT_LESSON_SPECS:
+        compose = [p for _, kind, p in blocks_with_drafts(spec) if kind == "compose_link"]
+        if spec["id"] in set(COMPOSE_BLOCKS) | {s["id"] for s in DRAFT_LESSON_SPECS}:
+            assert len(compose) == 1 and compose[0]["goals"], spec["id"]
+            assert set(compose[0]["goals"]) <= set(GOAL_LABELS)
+    # Cả hai mục tiêu đều có bài phục vụ, và bài thực hành cuối (L12) gom cả A lẫn B.
+    assert {g for goals in LESSON_GOALS.values() for g in goals} == {"A", "B"}
+    assert LESSON_GOALS["L12"] == ["A", "B"]

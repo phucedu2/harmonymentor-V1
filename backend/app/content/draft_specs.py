@@ -24,6 +24,14 @@ from .curriculum_specs import (
 )
 
 DRAFT = "draft"
+
+# Nhãn mục tiêu sản phẩm (Phúc chọn 31/10: Bảng 7 + nhãn A/B).
+# A = dựng được backing track ngắn; B = tạo vòng hợp âm lạ mà dễ nghe và giải thích được vì sao lạ.
+GOAL_LABELS = {"A": "Mục tiêu A: backing track", "B": "Mục tiêu B: vòng hợp âm lạ"}
+LESSON_GOALS: dict[str, list[str]] = {
+    "L01": ["A"], "L02": ["A"], "L03": ["A", "B"], "L04": ["A"],
+    "L09": ["B"], "L10": ["A"], "L11": ["A"], "L12": ["A", "B"],
+}
 _UNVERIFIED = "Định vị nguồn do Claude đề xuất, chưa đối chiếu trang; Đạt/Astra xác minh trước khi phát hành."
 
 # SRS 2.1 Bảng 7: thứ tự học là thứ tự trong bảng, không phải thứ tự mã bài.
@@ -55,7 +63,8 @@ def _draft_lesson(lesson_id: str, title: str, objectives: list[str], sources: li
             (f"{lesson_id}-B01", "callout", {"status": DRAFT, "title": "Bản nháp, chưa duyệt",
                                             "prompt": "Dàn ý do Claude đề xuất để Đạt/Astra soạn và kiểm định. Chưa có câu hỏi và thẻ ôn."}),
             (f"{lesson_id}-B02", "theory", {"status": DRAFT, "title": "Dàn ý bài", "items": outline}),
-            (f"{lesson_id}-B03", "compose_link", {"status": DRAFT, "title": "Dùng vào sáng tác", "items": compose}),
+            (f"{lesson_id}-B03", "compose_link", {"status": DRAFT, "title": "Dùng vào sáng tác",
+                                                 "goals": LESSON_GOALS[lesson_id], "items": compose}),
         ],
         "exercises": [], "review_items": [],
     }
@@ -165,6 +174,7 @@ def blocks_with_drafts(spec: dict[str, Any]) -> list[tuple[str, str, dict[str, A
     items = COMPOSE_BLOCKS.get(spec["id"])
     if not items:
         return blocks
-    block = (f"{spec['id']}-BSTAC", "compose_link", {"status": DRAFT, "title": "Dùng vào sáng tác", "items": items})
+    block = (f"{spec['id']}-BSTAC", "compose_link", {"status": DRAFT, "title": "Dùng vào sáng tác",
+                                                     "goals": LESSON_GOALS[spec["id"]], "items": items})
     at = len(blocks) - 1 if blocks and blocks[-1][1] == "summary" else len(blocks)
     return blocks[:at] + [block] + blocks[at:]

@@ -14,7 +14,7 @@ Ngày 31/10/2026. Nhánh `phuc-music`, Draft PR #18. Bước 2 dựng trên nhá
    - Trang Luyện tập hiện 10 lượt gần nhất và thống kê đúng/tổng theo từng dạng bài.
    - Lượt làm của Admin ghi `is_test`. Phần này **chưa nối mastery** (xem mục 5).
    - Bảng mới lệch ERD tài liệu 04, nên có `ADR-009-de-xuat-lich-su-luyen-tap.md` chờ Thắng duyệt schema.
-5. **Lộ trình 12 bài theo SRS 2.1 Bảng 7.** Đây là phương án Claude khuyên trên thẻ quyết định. Phúc chưa chọn, và đổi lại cũng dễ.
+5. **Lộ trình 12 bài theo SRS 2.1 Bảng 7.** Phúc chọn phương án này trên thẻ quyết định lúc 12:53 ngày 31/10, kèm nhãn mục tiêu A/B.
    - Module và thứ tự lấy từ `CURRICULUM_MODULES` (`draft_specs.py`).
    - Mã L01–L08 và nội dung giữ nguyên (3A). Chỉ đổi `order` và `track`.
    - Số "Bài n" hiển thị đếm theo những bài người học đang thấy, nên không bị nhảy từ Bài 2 sang Bài 5.
@@ -22,6 +22,7 @@ Ngày 31/10/2026. Nhánh `phuc-music`, Draft PR #18. Bước 2 dựng trên nhá
 6. **Nội dung nháp, chờ Đạt/Astra duyệt** (`backend/app/content/draft_specs.py`).
    - L09–L12: mỗi bài có mục tiêu, nguồn trong `source_registry` và dàn ý. Chưa có câu hỏi và thẻ ôn.
    - Mục "Dùng vào sáng tác" cho L01–L04, chèn ngay trước phần tóm tắt.
+   - Mỗi mục "Dùng vào sáng tác" mang nhãn mục tiêu: A (backing track) và/hoặc B (vòng hợp âm lạ), theo `LESSON_GOALS`. L12 phục vụ cả A và B.
    - Tất cả chỉ hiện khi `SHOW_DRAFT_CONTENT=1`. Người học không thấy gì mới, và nội dung bài đã phát hành giữ nguyên.
    - Các câu nhạc lý trong mục "Dùng vào sáng tác" đã kiểm bằng Engine (test `test_nhac_ly_trong_muc_sang_tac_khop_engine`).
 
@@ -37,15 +38,16 @@ Ngày 31/10/2026. Nhánh `phuc-music`, Draft PR #18. Bước 2 dựng trên nhá
 | `4ac0cf0` | feat(practice): trang Luyện tập có lịch sử |
 | `a550b2c` | docs(adr): ADR-009 đề xuất |
 | `05c85f6` | feat(content): lộ trình Bảng 7, nháp L09–L12, "Dùng vào sáng tác" |
+| (commit sau) | feat(content): nhãn mục tiêu A/B |
 
 ## 3. Kiểm tra (chạy thật ngày 31/10/2026)
 
 | Lệnh | Kết quả |
 |---|---|
-| `cd backend && pytest -q` | **370 passed, 21 skipped** (main: 325; thêm 25 API Bài 1, 7 + 2 Luyện tập, 6 lộ trình; PR #12 thêm 5) |
+| `cd backend && pytest -q` | **371 passed, 21 skipped** (main: 325; thêm 25 API Bài 1, 7 + 2 Luyện tập, 7 lộ trình; PR #12 thêm 5) |
 | `cd frontend && npm test` | **195 passed** (PR #12: 182; thêm 4 `lesson1Theory`, 9 `pianoKeyLabel`) |
 | `cd frontend && npm run build` | Đạt |
-| `ci.yml` | `--min-passed` nâng từ 355 lên 370 |
+| `ci.yml` | `--min-passed` nâng từ 355 lên 371 |
 | `node scripts/phuc-music/luong_buoc2_luyentap.cjs` | 1440px và 390px: trả lời sai rồi đúng, lịch sử ghi "Hợp âm 1/2 đúng". Trang chỉ gọi `/practice/*`, không gọi thẳng `/engine/grade` |
 | `node scripts/phuc-music/luong_buoc2_lotrinh.cjs` | Người học thấy 8 bài theo Bảng 7; chế độ nháp thấy đủ 12 bài, L01 có mục "Dùng vào sáng tác" |
 | Bài 1 trên trình duyệt | Nốt gốc G#: B#4, D##5. Mỗi nốt gốc (C, Ab, G#) gọi API một lần |
@@ -71,7 +73,7 @@ Ngày 31/10/2026. Nhánh `phuc-music`, Draft PR #18. Bước 2 dựng trên nhá
 
 ## 6. Câu hỏi cho nhóm
 
-- **Q1 (Phúc):** thẻ quyết định thứ tự 12 bài vẫn chờ. Nếu giữ Bảng 7, bài ii–V–I (L04, đã chạy được) đứng thứ 6, sau hai bài "Sắp có" (L05, L06). Người học vẫn mở được, nhưng nhãn sẽ ghi "Nên học sau Bài 5", mà Bài 5 lại là bài chưa có nội dung. Có nên thêm quy tắc "bỏ qua bài Sắp có khi gợi ý thứ tự" không?
+- **Q1 (Phúc):** Phúc đã chọn Bảng 7. Theo đó, bài ii–V–I (L04, đã chạy được) đứng thứ 6, sau hai bài "Sắp có" (L05, L06). Người học vẫn mở được, nhưng nhãn sẽ ghi "Nên học sau Bài 5", mà Bài 5 lại là bài chưa có nội dung. Có nên thêm quy tắc "bỏ qua bài Sắp có khi gợi ý thứ tự" không?
 - **Q2 (Phúc/Thắng):** chỉ dẫn ban đầu ghi "sửa Eb → D# ở piano", còn HM-011 (PR #15) thì để payload dùng tên thăng. Mình mới sửa phần hiển thị (D#/Eb). Có cần đổi cả payload không?
 - **Q3 (Thắng):** duyệt schema `practice_attempts` (ADR-009), và chốt L-1/L-2/L-5/L-6 để làm bài kiểm tra đầu vào và EMA.
 - **Q4 (Đạt/Astra):** duyệt dàn ý L09–L12 và 4 mục "Dùng vào sáng tác". Định vị nguồn của L09–L11 là Claude đề xuất, chưa đối chiếu từng trang.
