@@ -34,7 +34,11 @@ async function audit(p, name) {
     await go('/app/luyen-tap', 'luyện tập');
     await p.getByLabel('Đáp án').fill('C C C'); await p.getByRole('button', { name: 'Kiểm tra' }).click(); await p.waitForTimeout(1200);
     total += await audit(p, `${size} luyện tập sau khi chấm`);
-    await go('/app/tien-do', 'tiến độ'); await go('/app/composition', 'sáng tác'); await go('/app/ho-so', 'hồ sơ');
+    await go('/app/tien-do', 'tiến độ'); await go('/app/composition', 'sáng tác');
+    // Harmony Lab sau khi xin gợi ý cho ô 4 (Bước 4): thẻ gợi ý, nút Nghe/Dùng/Bỏ qua và phân tích.
+    await p.getByRole('button', { name: /^Ô 4/ }).click();
+    await p.getByRole('button', { name: /Gợi ý hợp âm thay/ }).click(); await p.waitForTimeout(1000);
+    total += await audit(p, `${size} sáng tác có gợi ý`); await go('/app/ho-so', 'hồ sơ');
     await p.close();
   }
   // Bàn phím: chỉ dùng Tab/Enter để mở Bài 1 và bấm một phím piano.
