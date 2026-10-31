@@ -257,6 +257,31 @@ class ReviewAttempt(Base):
 # Lưới này chặn mọi đường ghi qua SQLAlchemy (seed, Admin sau này). Câu SQL viết tay thì không đi qua đây:
 # trên PostgreSQL có thêm trigger do migration PR-3 tạo; trên SQLite chỉ có lưới này.
 
+
+class PracticeAttempt(Base):
+    """Lượt làm ở trang Luyện tập (đề sinh ngẫu nhiên, không thuộc bài học) — FR-LRN-08 "lịch sử học tập".
+
+    Tách khỏi `attempts` vì `attempts.exercise_version_id` bắt buộc trỏ tới câu đã phát hành (ADR-006),
+    còn đề luyện tập do Music Engine sinh mỗi lần. Chỉ ghi lịch sử, KHÔNG cập nhật mastery: luyện tập
+    có tính vào mastery hay không là quyết định còn mở của PR-5 (D-3). Bảng chưa có trong ERD tài liệu 04,
+    xem ADR-009-de-xuat (chờ Thắng duyệt schema).
+    """
+
+    __tablename__ = "practice_attempts"
+    __table_args__ = (CheckConstraint("kind IN ('chord', 'interval', 'scale', 'roman')", name="ck_practice_kind"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    kind: Mapped[str] = mapped_column(String(16))
+    level: Mapped[Optional[str]] = mapped_column(String(8), nullable=True)
+    question: Mapped[dict[str, Any]] = mapped_column(JSON)
+    answer: Mapped[Any] = mapped_column(JSON)
+    correct: Mapped[bool] = mapped_column(Boolean)
+    primary_error: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    # Lượt của Admin không tính vào thống kê (nguyên tắc bất biến số 8).
+    is_test: Mapped[bool] = mapped_column(Boolean, default=False, server_default=sa_false())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+
 from sqlalchemy import event, inspect as sa_inspect, select  # noqa: E402
 
 _LOCKED_VERSION_COLUMNS = (
