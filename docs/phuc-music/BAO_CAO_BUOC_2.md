@@ -1,5 +1,7 @@
 # Báo cáo Bước 2: logic và nội dung
 
+**Phúc duyệt Bước 2 lúc 12:55 ngày 31/10/2026.**
+
 Ngày 31/10/2026. Nhánh `phuc-music`, Draft PR #18. Bước 2 dựng trên nhánh của PR #12 (HM-001), theo lựa chọn 4A. Phạm vi theo M-5A: chỉ làm những phần Thắng đã chốt.
 
 ## 1. Đã làm gì
@@ -73,8 +75,8 @@ Ngày 31/10/2026. Nhánh `phuc-music`, Draft PR #18. Bước 2 dựng trên nhá
 
 ## 6. Câu hỏi cho nhóm
 
-- **Q1 (Phúc):** Phúc đã chọn Bảng 7. Theo đó, bài ii–V–I (L04, đã chạy được) đứng thứ 6, sau hai bài "Sắp có" (L05, L06). Người học vẫn mở được, nhưng nhãn sẽ ghi "Nên học sau Bài 5", mà Bài 5 lại là bài chưa có nội dung. Có nên thêm quy tắc "bỏ qua bài Sắp có khi gợi ý thứ tự" không?
-- **Q2 (Phúc/Thắng):** chỉ dẫn ban đầu ghi "sửa Eb → D# ở piano", còn HM-011 (PR #15) thì để payload dùng tên thăng. Mình mới sửa phần hiển thị (D#/Eb). Có cần đổi cả payload không?
+- **Q1 (Phúc):** Phúc đã chọn Bảng 7. Theo đó, bài ii–V–I (L04, đã chạy được) đứng thứ 6, sau hai bài "Sắp có" (L05, L06). Người học vẫn mở được, nhưng nhãn sẽ ghi "Nên học sau Bài 5", mà Bài 5 lại là bài chưa có nội dung. Có nên thêm quy tắc "bỏ qua bài Sắp có khi gợi ý thứ tự" không? **Phúc trả lời 31/10 12:55: không.** Giữ nguyên nhãn hiện tại.
+- **Q2 (Phúc/Thắng):** chỉ dẫn ban đầu ghi "sửa Eb → D# ở piano", còn HM-011 (PR #15) thì để payload dùng tên thăng. Mình mới sửa phần hiển thị (D#/Eb). Có cần đổi cả payload không? **Phúc để Claude quyết (31/10 12:55): giữ tên thăng trong payload** cho khớp HM-011 và Engine; chỉ phần hiển thị có cả hai tên.
 - **Q3 (Thắng):** duyệt schema `practice_attempts` (ADR-009), và chốt L-1/L-2/L-5/L-6 để làm bài kiểm tra đầu vào và EMA.
 - **Q4 (Đạt/Astra):** duyệt dàn ý L09–L12 và 4 mục "Dùng vào sáng tác". Định vị nguồn của L09–L11 là Claude đề xuất, chưa đối chiếu từng trang.
 
