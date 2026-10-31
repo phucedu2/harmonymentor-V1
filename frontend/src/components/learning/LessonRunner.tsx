@@ -22,7 +22,8 @@ import {
   TriadNotationExplorer,
 } from "./Lesson1Explorers";
 import * as ui from "./lessonStyles";
-import { annotateTerms, firstAppearances } from "./TermText";
+import { annotateTerms, claimTerms, firstAppearances, readTermOwners, termsForLesson, writeTermOwners } from "./TermText";
+import { useAuth } from "../../auth/AuthProvider";
 import { Button } from "../ui/Button";
 import { Badge, ChipButton, ProgressBar, ResultBox } from "../ui/Page";
 
@@ -130,6 +131,7 @@ export default function LessonRunner({
   // Gọi khi máy chủ báo câu hỏi đã có phiên bản mới (409 EXERCISE_VERSION_SUPERSEDED): trang tải lại bài.
   onLessonOutdated?: () => Promise<void>;
 }) {
+  const userId = useAuth().user?.id;
   const [attempted, setAttempted] = useState<Set<string>>(new Set(initialProgress?.attempted_exercise_ids ?? []));
   const [correct, setCorrect] = useState<Set<string>>(new Set(initialProgress?.correct_exercise_ids ?? []));
   const [completion, setCompletion] = useState<string | null>(null);
@@ -199,9 +201,17 @@ export default function LessonRunner({
   };
 
   // Chú giải thuật ngữ ở khối chữ đầu tiên nhắc tới nó (bỏ qua khối thuật ngữ vì khối đó tự giải nghĩa).
-  const termMap = useMemo(() => firstAppearances(lesson.blocks
+  const lessonTerms = useMemo(() => firstAppearances(lesson.blocks
     .filter((block) => ANNOTATED_BLOCKS.has(block.block_type) || !BLOCK_LABELS[block.block_type] || block.block_type === "theory")
     .map((block) => ({ id: block.id, texts: blockTexts(block.payload) }))), [lesson.blocks]);
+  // Chủ thuật ngữ đọc một lần khi mở bài; ghi lại sau khi render (không ghi trong lúc render).
+  const [termOwners] = useState(() => readTermOwners(userId));
+  const termMap = useMemo(() => termsForLesson(lessonTerms, termOwners, lesson.id), [lessonTerms, termOwners, lesson.id]);
+  useEffect(() => {
+    const latest = readTermOwners(userId);
+    const next = claimTerms(latest, termMap, lesson.id);
+    if (next !== latest) writeTermOwners(userId, next);
+  }, [userId, termMap, lesson.id]);
   const blockProps = { exerciseMap, attempted, correct, onAttempt: noteAttempt, onOutdated: handleOutdated, lesson1Root, onLesson1RootChange: setLesson1Root };
   const steps: Step[] = [
     {

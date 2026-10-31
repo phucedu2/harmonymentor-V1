@@ -2,7 +2,7 @@
 import { describe, expect, it } from "vitest";
 import { StrictMode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { TERMS, annotateTerms, firstAppearances } from "../src/components/learning/TermText";
+import { TERMS, annotateTerms, claimTerms, firstAppearances, termsForLesson } from "../src/components/learning/TermText";
 
 describe("chú giải thuật ngữ", () => {
   it("gán mỗi thuật ngữ cho khối đầu tiên nhắc tới nó", () => {
@@ -41,6 +41,18 @@ describe("chú giải thuật ngữ", () => {
     }
     const html = renderToStaticMarkup(<StrictMode><Khoi /><Khoi /></StrictMode>);
     expect(html.match(/<button/g)).toHaveLength(2);
+  });
+
+  it("chỉ chú giải ở bài đầu tiên người học gặp thuật ngữ, học lại bài đó vẫn thấy", () => {
+    const l01 = new Map([["B1", new Set(["half-step"])]]);
+    const l02 = new Map([["B1", new Set(["half-step", "M3"])]]);
+    const owners = claimTerms({}, l01, "L01");
+    expect(owners).toEqual({ "half-step": "L01" });
+    expect([...termsForLesson(l02, owners, "L02").get("B1")!]).toEqual(["M3"]);
+    expect([...termsForLesson(l01, owners, "L01").get("B1")!]).toEqual(["half-step"]);
+    const after = claimTerms(owners, termsForLesson(l02, owners, "L02"), "L02");
+    expect(after).toEqual({ "half-step": "L01", M3: "L02" });
+    expect(claimTerms(after, l01, "L01")).toBe(after);
   });
 
   it("thuật ngữ có âm thanh dùng mã quãng/ký hiệu để hỏi Music Engine, không chứa nốt viết cứng", () => {

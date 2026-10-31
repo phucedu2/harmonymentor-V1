@@ -40,6 +40,48 @@ export function firstAppearances(blocks: { id: string; texts: string[] }[]): Map
 }
 
 /**
+ * Chỉ giữ chú giải ở bài đầu tiên người học gặp thuật ngữ (Phúc chọn 31/10, Q3 Bước 3).
+ * `owners` ghi thuật ngữ → mã bài đã chú giải nó. Thuật ngữ chưa có chủ hoặc chủ là chính bài này thì vẫn chú giải,
+ * nên học lại bài cũ vẫn thấy chú giải, còn bài sau thì không lặp lại.
+ */
+export function termsForLesson(termMap: Map<string, Set<string>>, owners: Record<string, string>, lessonId: string): Map<string, Set<string>> {
+  const result = new Map<string, Set<string>>();
+  for (const [blockId, ids] of termMap) {
+    const kept = new Set([...ids].filter((id) => !owners[id] || owners[id] === lessonId));
+    if (kept.size) result.set(blockId, kept);
+  }
+  return result;
+}
+
+/** Ghi bài hiện tại làm chủ các thuật ngữ chưa có chủ; trả về chính `owners` nếu không có gì mới. */
+export function claimTerms(owners: Record<string, string>, termMap: Map<string, Set<string>>, lessonId: string): Record<string, string> {
+  let next = owners;
+  for (const ids of termMap.values()) for (const id of ids) {
+    if (next[id]) continue;
+    if (next === owners) next = { ...owners };
+    next[id] = lessonId;
+  }
+  return next;
+}
+
+// Lưu ở trình duyệt theo từng tài khoản: đây chỉ là tiện ích hiển thị. Mất dữ liệu (chế độ riêng tư, xóa trình duyệt)
+// thì quay về chú giải lại, an toàn cho người mới hơn là bỏ sót.
+const ownersKey = (userId: string) => `hm.term-owners.${userId}`;
+
+export function readTermOwners(userId: string | undefined): Record<string, string> {
+  if (!userId) return {};
+  try {
+    const parsed: unknown = JSON.parse(window.localStorage.getItem(ownersKey(userId)) ?? "{}");
+    return parsed && typeof parsed === "object" ? parsed as Record<string, string> : {};
+  } catch { return {}; }
+}
+
+export function writeTermOwners(userId: string | undefined, owners: Record<string, string>) {
+  if (!userId) return;
+  try { window.localStorage.setItem(ownersKey(userId), JSON.stringify(owners)); } catch { /* chế độ riêng tư: lần sau chú giải lại */ }
+}
+
+/**
  * Chú giải lần xuất hiện đầu của các thuật ngữ trong `terms` (mỗi thuật ngữ một lần trong cả khối).
  * Là hàm thuần gọi trong lúc khối cha render, KHÔNG phải component: nếu đặt việc đánh dấu `claimed`
  * trong render của component con thì React StrictMode render hai lần, lần hai thấy thuật ngữ đã bị
