@@ -22,6 +22,14 @@
   --color-accent: #7048e8;
   --color-accent-soft: #f3f0ff;
 
+  /* Khung khu học nền tối, lấy từ bố cục v0.5.3-dev. Màu tạm: Bước 3 đổi sang bảng "Đồng & Gỉ" (nền #081613). */
+  --color-shell: #151a27;
+  --color-shell-raised: #252c3d;
+  --color-shell-line: #2d3445;
+  --color-shell-ink: #ffffff;
+  --color-shell-text: #c8cfdd;
+  --color-shell-muted: #9da7bd;
+
   --font-sans: "Be Vietnam Pro", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
 }
