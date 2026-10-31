@@ -23,7 +23,7 @@ from ..db.session import get_db
 from ..music_engine import diatonic_chords
 from ..music_engine.key import all_supported_keys
 from .presets import BEATS_PER_BAR, STYLES, drum_events
-from .rules import LEVEL_LABELS, RULES, CompositionInputError, analyze, suggest
+from .rules import LEVEL_LABELS, RULES, CompositionInputError, analyze, suggest, voicing
 
 router = APIRouter(prefix="/api/v1", tags=["composition"])
 
@@ -66,6 +66,19 @@ def composition_suggestions(body: SuggestIn, _user: User = Depends(get_current_u
     except CompositionInputError as exc:
         raise _input_error(exc) from exc
     return {"candidates": candidates, "ranked_by": "rule", "ai_used": False}
+
+
+class VoicingsIn(BaseModel):
+    chords: list[str] = Field(min_length=1, max_length=16)
+
+
+@router.post("/composition/voicings")
+def composition_voicings(body: VoicingsIn):
+    """Cao độ để phát (Tone.js) và vẽ khuông (VexFlow), công khai như các API Music Engine."""
+    try:
+        return {symbol: voicing(symbol) for symbol in dict.fromkeys(body.chords)}
+    except CompositionInputError as exc:
+        raise _input_error(exc) from exc
 
 
 class AnalyzeIn(BaseModel):

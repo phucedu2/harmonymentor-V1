@@ -192,3 +192,13 @@ def test_du_an_cua_admin_la_is_test():
     pid = client.post("/api/v1/projects", json=project_body(), headers=auth(uid, "admin")).json()["id"]
     with SessionLocal() as db:
         assert db.get(CompositionProject, pid).is_test is True
+
+
+def test_the_bam_lay_tu_engine_dung_ten_va_quang_tam():
+    res = client.post("/api/v1/composition/voicings", json={"chords": ["G7", "Ebm7b5", "G7"]}).json()
+    assert list(res) == ["G7", "Ebm7b5"]
+    assert [p["name"] for p in res["G7"]["pitches"]] == ["G3", "B3", "D4", "F4"]
+    assert [p["name"] for p in res["Ebm7b5"]["pitches"]] == ["Eb4", "Gb4", "Bbb4", "Db5"]
+    assert res["Ebm7b5"]["pitches"][2]["midi"] == 69  # Bbb4 = A4 khi phát, tên vẫn giữ Bbb
+    assert res["G7"]["bass"] == {"root": {"name": "G2", "midi": 43}, "fifth": {"name": "D3", "midi": 50}}
+    assert client.post("/api/v1/composition/voicings", json={"chords": ["Xyz"]}).status_code == 422

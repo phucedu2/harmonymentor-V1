@@ -369,3 +369,28 @@ def _classify(tonic: Note, chord: ChordSymbol, rn: RomanNumeral | None, prev: Ch
             return "chromatic_mediant", "mediant", (f"Chromatic mediant so với {prev.symbol}: cùng loại hợp âm, nốt gốc "
                                                     f"cách quãng 3, đổi màu đột ngột.")
     return "outside", "ngoài giọng", f"{chord.symbol} không thuộc giọng {tonic.name} trưởng."
+
+
+# --- thế bấm để phát và vẽ khuông ---------------------------------------------------------------
+
+def _pitch(note: Note) -> dict:
+    return {"name": str(note), "midi": note.midi}
+
+
+def voicing(symbol: str) -> dict:
+    """Cao độ cụ thể (có quãng tám) cho một hợp âm, dựng bằng Music Engine để frontend không tự tính.
+
+    Hợp âm: gốc ở quãng tám 4 nếu chữ cái C–F, còn lại quãng tám 3, để mọi hợp âm nằm quanh nốt C4.
+    Bass: nốt gốc và nốt thứ ba trong công thức (nốt năm của hợp âm) ở quãng tám 2.
+    """
+    try:
+        chord = parse_chord_symbol(symbol)
+    except MusicEngineError as exc:
+        raise CompositionInputError(exc.code, f"Không đọc được hợp âm {symbol!r}.") from exc
+    octave = 4 if chord.root.letter in "CDEF" else 3
+    root = chord.root.with_octave(octave)
+    tones = [transpose(root, iv) for iv in chord.type.intervals]
+    bass_root = chord.root.with_octave(2)
+    bass_fifth = transpose(bass_root, chord.type.intervals[2])
+    return {"symbol": chord.symbol, "notes": [n.name for n in chord.notes], "pitches": [_pitch(t) for t in tones],
+            "bass": {"root": _pitch(bass_root), "fifth": _pitch(bass_fifth)}}
