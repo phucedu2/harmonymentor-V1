@@ -2,6 +2,25 @@
 
 File này ghi lại việc đã xong, việc đang dở, lệnh để chạy lại và việc tiếp theo. Cập nhật sau mỗi phiên việc. Lịch sử trước 27/10/2026 xem `docs/AI_USAGE.md` và các báo cáo trong `docs/giai-doan/`.
 
+## 31/10/2026: nhánh `phuc-music`, Bước 2 (logic và nội dung)
+
+**Đã xong** (Draft PR #18, chưa gộp; báo cáo `docs/phuc-music/BAO_CAO_BUOC_2.md`)
+- Gộp PR #12. Bài 1 lấy quãng/hợp âm từ API Music Engine. Piano hiện D#/Eb.
+- Luyện tập: máy chủ chấm, ghi `practice_attempts`, trang có lịch sử + thống kê. ADR-009 (đề xuất) chờ Thắng.
+- Lộ trình theo SRS Bảng 7; nháp L09–L12 và mục "Dùng vào sáng tác" L01–L04, chỉ hiện khi `SHOW_DRAFT_CONTENT=1`.
+
+**Đang dở / chờ**
+- Phúc: thẻ chọn thứ tự 12 bài; Q1–Q2 trong báo cáo. Thắng: ADR-009, L-1/L-2/L-5/L-6 (kiểm tra đầu vào, EMA). Đạt/Astra: duyệt nháp.
+- Bước 3 chỉ bắt đầu khi Phúc duyệt Bước 2.
+
+**Lệnh chạy lại**
+```bash
+cd backend && pytest -q                    # 370 passed, 21 skipped
+cd frontend && npm ci && npm test && npm run build   # 195 test
+node scripts/phuc-music/luong_buoc2_luyentap.cjs docs/phuc-music/anh/buoc-2
+node scripts/phuc-music/luong_buoc2_lotrinh.cjs docs/phuc-music/anh/buoc-2 nguoi-hoc   # SHOW_DRAFT_CONTENT=1 thì đổi hậu tố che-do-nhap
+```
+
 ## 31/10/2026: nhánh `phuc-music`, Bước 0–1 (gộp khu học v0.5.3)
 
 **Đã xong** (nhánh `phuc-music`, Draft PR #18, chưa gộp)
@@ -9,7 +28,7 @@ File này ghi lại việc đã xong, việc đang dở, lệnh để chạy l�
 - Bước 1: khung khu học tối kiểu v0.5.3 (`AppLayout.tsx`), nút "Từng bước / Xem cả bài" (`LessonRunner.tsx`), token `--color-shell-*`, phiên bản lấy từ `package.json`. Nhật ký `docs/phuc-music/01_NHAT_KY_GOP.md`, báo cáo `BAO_CAO_BUOC_1.md`.
 
 **Đang dở / chờ**
-- Phúc duyệt Bước 1 rồi mới làm Bước 2 (dựng trên nhánh PR #12).
+- Phúc đã duyệt Bước 1 (31/10).
 
 **Lệnh chạy lại**
 ```bash
