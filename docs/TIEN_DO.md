@@ -2,6 +2,23 @@
 
 File này ghi lại việc đã xong, việc đang dở, lệnh để chạy lại và việc tiếp theo. Cập nhật sau mỗi phiên việc. Lịch sử trước 27/10/2026 xem `docs/AI_USAGE.md` và các báo cáo trong `docs/giai-doan/`.
 
+## 01/11/2026: nhánh `phuc-music`, logo chính thức + piano trang chủ
+
+**Đã xong**
+- Gộp logo "Cuộn I–IV–V–I" (PR #16, ADR-007) vào `phuc-music` bằng merge, giữ nguyên commit của PR #16. `<Logo inverted />` trên khung khu học tối dùng bản tối của logo (`data-theme="dark"` theo vùng; sửa trong `_nguon/gen_react.js` rồi dựng lại).
+- Piano "Bấm thử một hợp âm" ở trang chủ hết đen kịt: `Piano.tsx` dùng token `@theme` thay cho các biến đã mất khi bỏ `styles.css` ở Bước 3. Thêm `tests/cssVars.test.ts` bắt mọi `var(--x)` chưa định nghĩa.
+
+**Đang dở / chờ**
+- PR #16 vẫn mở vào `main`; gộp PR #16 trước hay sau PR #18 đều không xung đột lại vì cùng commit.
+- ADR-007 ghi "màu chính của app vẫn là bảng cũ": trên `phuc-music` đã là Đồng & Gỉ (Bước 3), cập nhật ADR khi gộp.
+- Chữ "HarmonyMentor" ở chân khung khu học (`HarmonyMentor v0.5.4-dev`) chưa đổi thành "Harmony Mentor", để nhóm quyết (ADR-007).
+
+**Lệnh chạy lại**
+```bash
+cd frontend && npm test && npm run build   # 226 test
+cd docs/thuong-hieu/_nguon && npm install && bash fetch_fonts.sh && REPO_OUT=../../../frontend/src/components/brand node gen_react.js
+```
+
 ## 31/10/2026: nhánh `phuc-music`, Bước 4 (Harmony Lab tối thiểu)
 
 **Đã xong** (Draft PR #18, chưa gộp; báo cáo `docs/phuc-music/BAO_CAO_BUOC_4.md`)
