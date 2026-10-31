@@ -318,3 +318,12 @@
 .lesson-all { display: grid; gap: 22px; }
 .lesson-all-step { display: grid; gap: 6px; scroll-margin-top: 16px; }
 .lesson-all-step > .section-kicker { margin: 0; }
+
+/* phuc-music Bước 2: lịch sử Luyện tập */
+.practice-history { margin-top: 18px; }
+.practice-history h3 { margin: 0 0 8px; }
+.practice-stats { display: flex; flex-wrap: wrap; gap: 8px 16px; list-style: none; padding: 0; margin: 0 0 10px; }
+.practice-items { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; font-size: 14px; }
+.practice-items li { padding: 6px 10px; border-radius: 7px; border-left: 4px solid var(--line); }
+.practice-items li.good { border-left-color: var(--good); }
+.practice-items li.bad { border-left-color: var(--bad); }

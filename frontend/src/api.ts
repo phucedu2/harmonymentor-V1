@@ -158,6 +158,19 @@ export type Lesson1Theory = {
   root: string; root_octave: number; letter_frame: string[]; intervals: Lesson1Interval[]; triads: Lesson1Triad[];
 };
 
+// Luyện tập (phuc-music Bước 2): máy chủ chấm bằng Music Engine và ghi lịch sử theo token.
+export type PracticeKind = "chord" | "interval" | "scale" | "roman";
+export type PracticeLevel = "de" | "vua" | "kho";
+export type PracticeAttemptResult = {
+  id: string; kind: PracticeKind; correct: boolean; expected: string | string[]; message_vi: string;
+  primary_error: string | null; errors: { code: string; message_vi: string }[]; convention_verified: boolean | null;
+};
+export type PracticeHistoryItem = {
+  id: string; kind: PracticeKind; level: PracticeLevel | null; question: Record<string, string>;
+  answer: string | string[]; correct: boolean; primary_error: string | null; created_at: string;
+};
+export type PracticeHistory = { items: PracticeHistoryItem[]; stats: { kind: PracticeKind; attempts: number; correct: number }[] };
+
 // Mọi request đi qua lib/http.ts để có access token và lỗi chuẩn SRS 7.4.
 const engineCall = <T,>(path: string, init?: RequestInit) => http<T>("/engine" + path, init, { auth: false });
 const apiCall = <T,>(path: string, init?: RequestInit) => http<T>(path, init);
@@ -180,6 +193,10 @@ export const api = {
     enginePost<GradeResult>("/grade/build-scale", { tonic, scale_type, answer }),
   gradeRoman: (key: string, chord: string, answer: string) =>
     enginePost<GradeResult>("/grade/roman-numeral", { key, chord, answer }),
+
+  practiceAttempt: (kind: PracticeKind, level: PracticeLevel, question: Record<string, string>, answer: string | string[]) =>
+    apiPost<PracticeAttemptResult>("/practice/attempts", { kind, level, question, answer }),
+  practiceHistory: (limit = 20) => apiCall<PracticeHistory>(`/practice/history?limit=${limit}`),
 
   // Phase 0.4B source-grounded learning contract.
   listLessons: () => apiCall<LessonSummary[]>("/lessons"),
