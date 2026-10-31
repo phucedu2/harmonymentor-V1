@@ -2,6 +2,22 @@
 
 File này ghi lại việc đã xong, việc đang dở, lệnh để chạy lại và việc tiếp theo. Cập nhật sau mỗi phiên việc. Lịch sử trước 27/10/2026 xem `docs/AI_USAGE.md` và các báo cáo trong `docs/giai-doan/`.
 
+## 31/10/2026: nhánh `phuc-music`, Bước 0–1 (gộp khu học v0.5.3)
+
+**Đã xong** (nhánh `phuc-music`, Draft PR #18, chưa gộp)
+- Bước 0: khảo sát `docs/phuc-music/00_KHAO_SAT.md`. Main đã chứa khu học của v0.5.3; backend không cần khôi phục.
+- Bước 1: khung khu học tối kiểu v0.5.3 (`AppLayout.tsx`), nút "Từng bước / Xem cả bài" (`LessonRunner.tsx`), token `--color-shell-*`, phiên bản lấy từ `package.json`. Nhật ký `docs/phuc-music/01_NHAT_KY_GOP.md`, báo cáo `BAO_CAO_BUOC_1.md`.
+
+**Đang dở / chờ**
+- Phúc duyệt Bước 1 rồi mới làm Bước 2 (dựng trên nhánh PR #12).
+
+**Lệnh chạy lại**
+```bash
+cd backend && pytest -q                    # 325 passed, 21 skipped
+cd frontend && npm ci && npm run build
+node scripts/phuc-music/luong_buoc1.cjs anh/   # cần backend :8000 và frontend :5173 đang chạy
+```
+
 ## 30/10/2026: gom tài liệu phase vào `docs/giai-doan/`
 
 **Đã xong** (nhánh `claude/project-thread-ng2frm`, PR vào `main`, chưa gộp)
