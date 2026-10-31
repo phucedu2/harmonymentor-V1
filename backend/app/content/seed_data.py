@@ -12,6 +12,7 @@ from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from .curriculum_specs import LESSON_SPECS, MIGRATED_LESSON_IDS
+from .draft_specs import DRAFT_LESSON_SPECS, blocks_with_drafts
 from .skill_graph import PREREQUISITES, SKILLS
 from .source_registry import SOURCE_REGISTRY
 from .versioning import (
@@ -44,6 +45,9 @@ from ..db.models import (
 def _upsert_lesson(db: Session, spec: dict) -> Lesson:
     lesson = db.get(Lesson, spec["id"])
     runtime_status = "reviewed" if spec["id"] in MIGRATED_LESSON_IDS else "source_audited"
+    if spec.get("status") == STATUS_DRAFT:
+        # Bài nháp (phuc-music): chỉ hiện khi bật SHOW_DRAFT_CONTENT, xem versioning.lesson_visible.
+        runtime_status = STATUS_DRAFT
     if lesson is None:
         lesson = Lesson(
             id=spec["id"], order_index=spec["order"], track=spec["track"], title=spec["title"],
@@ -76,7 +80,7 @@ def _upsert_blocks(db: Session, spec: dict) -> None:
     # the unique (lesson_id, position) constraint on an existing Phase 0.4B database.
     db.execute(delete(LessonBlock).where(LessonBlock.lesson_id == spec["id"]))
     db.flush()
-    for position, (block_id, block_type, payload) in enumerate(spec["blocks"], start=1):
+    for position, (block_id, block_type, payload) in enumerate(blocks_with_drafts(spec), start=1):
         db.add(LessonBlock(
             id=block_id, lesson_id=spec["id"], position=position,
             block_type=block_type, payload=payload,
@@ -213,7 +217,7 @@ def _upsert_reviews(db: Session, spec: dict) -> None:
 def seed_initial_data(db: Session, lesson_specs: list[dict] | None = None) -> None:
     """Seed idempotent; gặp xung đột phiên bản thì rollback toàn bộ và raise SeedConflictError."""
     try:
-        _seed(db, LESSON_SPECS if lesson_specs is None else lesson_specs)
+        _seed(db, LESSON_SPECS + DRAFT_LESSON_SPECS if lesson_specs is None else lesson_specs)
     except BaseException:
         db.rollback()
         raise
@@ -251,7 +255,14 @@ def _seed(db: Session, lesson_specs: list[dict]) -> None:
         if exists is None:
             db.add(SkillPrerequisite(skill_id=skill_id, prerequisite_skill_id=prerequisite_id))
 
-    # Curriculum index and source matrix for all eight lessons.
+    # Curriculum index and source matrix. order_index là UNIQUE: khi thứ tự đổi (SRS Bảng 7) thì
+    # dời mọi bài sang số âm tạm trước, để cập nhật từng bài không đụng số của bài khác.
+    existing = db.scalars(select(Lesson)).all()
+    wanted = {spec["id"]: spec["order"] for spec in lesson_specs}
+    if any(lesson.id in wanted and lesson.order_index != wanted[lesson.id] for lesson in existing):
+        for index, lesson in enumerate((x for x in existing if x.id in wanted), start=1):
+            lesson.order_index = -index
+        db.flush()
     for spec in lesson_specs:
         _upsert_lesson(db, spec)
     db.flush()
@@ -262,6 +273,9 @@ def _seed(db: Session, lesson_specs: list[dict]) -> None:
     now = datetime.now(timezone.utc)
     conflicts: list[SeedConflict] = []
     for spec in lesson_specs:
+        if spec.get("status") == STATUS_DRAFT:
+            _upsert_blocks(db, spec)  # bài nháp chỉ có dàn ý, chưa có câu hỏi/thẻ ôn
+            continue
         if spec["id"] not in MIGRATED_LESSON_IDS:
             continue
         _upsert_blocks(db, spec)

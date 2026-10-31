@@ -70,6 +70,7 @@ function inputPresentation(exercise: LessonExercise): InputPresentation {
 const BLOCK_LABELS: Record<string, string> = {
   theory: "Lý thuyết",
   callout: "Lưu ý",
+  compose_link: "Dùng vào sáng tác",
   piano: "Piano tương tác",
   glossary: "Thuật ngữ",
   checkpoint: "Kiểm tra nhanh",
