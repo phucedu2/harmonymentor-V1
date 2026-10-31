@@ -31,10 +31,11 @@ def version(engine: sa.Engine) -> str:
         return conn.execute(sa.text("SELECT version_num FROM alembic_version")).scalar_one()
 
 
-def test_head_la_practice_va_model_khop_migration(tmp_path):
+def test_practice_va_model_khop_migration(tmp_path):
+    # Nâng tới đúng migration này (không phải "head"): migration sau (vd dự án Harmony Lab) có test riêng.
     engine = sa.create_engine(f"sqlite:///{tmp_path / 'pm.db'}", future=True)
     try:
-        alembic_to(engine, "head")
+        alembic_to(engine, PRACTICE)
         assert version(engine) == PRACTICE
         cols = {c["name"] for c in sa.inspect(engine).get_columns("practice_attempts")}
         assert cols == {"id", "user_id", "kind", "level", "question", "answer", "correct", "primary_error", "is_test", "created_at"}
@@ -49,7 +50,7 @@ def test_head_la_practice_va_model_khop_migration(tmp_path):
 def test_go_migration_chi_xoa_bang_moi(tmp_path):
     engine = sa.create_engine(f"sqlite:///{tmp_path / 'pm.db'}", future=True)
     try:
-        alembic_to(engine, "head")
+        alembic_to(engine, PRACTICE)
         tables_before = set(sa.inspect(engine).get_table_names())
         alembic_to(engine, PR3, downgrade=True)
         assert version(engine) == PR3

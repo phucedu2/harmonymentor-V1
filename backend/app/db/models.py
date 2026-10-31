@@ -282,6 +282,62 @@ class PracticeAttempt(Base):
     is_test: Mapped[bool] = mapped_column(Boolean, default=False, server_default=sa_false())
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
 
+class CompositionProject(Base):
+    """Dự án Harmony Lab (FR-17, tài liệu 04 Bảng 8 và mục 6.8): lưu ký hiệu, thời gian theo phách, không lưu âm thanh.
+
+    Thêm `style` (mẫu nền pop/ballad/bossa/lofi) và `created_at`/`updated_at` so với ERD; xem ADR-010 (chờ Thắng duyệt).
+    """
+
+    __tablename__ = "composition_projects"
+    __table_args__ = (
+        CheckConstraint("tempo_bpm BETWEEN 60 AND 160", name="ck_composition_tempo"),
+        CheckConstraint("bars BETWEEN 4 AND 8", name="ck_composition_bars"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    name: Mapped[str] = mapped_column(String(120))
+    key: Mapped[str] = mapped_column(String(8))
+    tempo_bpm: Mapped[int] = mapped_column(Integer)
+    time_signature: Mapped[str] = mapped_column(String(8), default="4/4", server_default="4/4")
+    bars: Mapped[int] = mapped_column(Integer)
+    style: Mapped[str] = mapped_column(String(16))
+    is_test: Mapped[bool] = mapped_column(Boolean, default=False, server_default=sa_false())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    chord_events: Mapped[list["ChordEvent"]] = relationship(
+        back_populates="project", cascade="all, delete-orphan", order_by="ChordEvent.start_beat")
+    drum_events: Mapped[list["DrumEvent"]] = relationship(
+        back_populates="project", cascade="all, delete-orphan", order_by="DrumEvent.start_beat")
+
+
+class ChordEvent(Base):
+    __tablename__ = "chord_events"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    project_id: Mapped[str] = mapped_column(ForeignKey("composition_projects.id"), index=True)
+    start_beat: Mapped[float] = mapped_column(Float)
+    duration_beats: Mapped[float] = mapped_column(Float)
+    symbol: Mapped[str] = mapped_column(String(32))
+
+    project: Mapped[CompositionProject] = relationship(back_populates="chord_events")
+
+
+class DrumEvent(Base):
+    __tablename__ = "drum_events"
+    __table_args__ = (CheckConstraint("drum IN ('kick', 'snare', 'hat')", name="ck_drum_kind"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    project_id: Mapped[str] = mapped_column(ForeignKey("composition_projects.id"), index=True)
+    drum: Mapped[str] = mapped_column(String(8))
+    start_beat: Mapped[float] = mapped_column(Float)
+    velocity: Mapped[int] = mapped_column(Integer)
+
+    project: Mapped[CompositionProject] = relationship(back_populates="drum_events")
+
+
 from sqlalchemy import event, inspect as sa_inspect, select  # noqa: E402
 
 _LOCKED_VERSION_COLUMNS = (
