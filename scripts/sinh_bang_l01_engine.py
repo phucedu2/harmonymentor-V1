@@ -1,7 +1,8 @@
 """Sinh bảng đáp án scientific pitch + MIDI cho phần khám phá L01 từ Music Engine (HM-001).
 
-Vì sao cần: frontend L01 tự dựng quãng/hợp âm để vẽ khuông và phát âm thanh ngay, không chờ API.
-Bảng này để test frontend so với Music Engine (nguồn sự thật duy nhất) ở mọi nốt gốc L01 hỗ trợ.
+Vì sao cần: bảng vàng cho mọi nốt gốc L01. Từ phuc-music Bước 2, frontend lấy quãng/hợp âm từ
+API /api/v1/music/lesson1/{root}; backend test so API với bảng này, frontend test dùng bảng để kiểm
+đường đổi tên ASPN → MIDI khi phát âm thanh.
 
 Chạy lại sau khi đổi Engine hoặc danh sách nốt gốc:
     python scripts/sinh_bang_l01_engine.py

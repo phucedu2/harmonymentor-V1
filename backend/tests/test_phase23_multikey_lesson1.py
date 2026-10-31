@@ -98,7 +98,10 @@ def test_music_util_and_notation_support_enharmonic_and_double_accidental_paths(
     theory = (FRONTEND / "theory" / "lesson1Theory.ts").read_text(encoding="utf-8")
     notation = (FRONTEND / "components" / "music" / "NotationStaff.tsx").read_text(encoding="utf-8")
     music_utils = (FRONTEND / "audio" / "musicUtils.ts").read_text(encoding="utf-8")
-    assert "spellInterval" in theory and "buildTriad" in theory
+    # phuc-music Bước 2: dấu hóa kép/enharmonic của Bài 1 nay do Music Engine sinh qua
+    # /api/v1/music/lesson1/{root} (test_phuc_music_lesson1_api.py); frontend không tự dựng quãng nữa.
+    assert "api.lesson1Theory" in theory
+    assert "spellInterval" not in theory and "buildTriad" not in theory
     assert "#{1,2}" in notation and "b{1,2}" in notation
     assert "accidentalOffset" in music_utils
 
