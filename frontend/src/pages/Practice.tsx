@@ -5,6 +5,9 @@ import {
 } from "../api";
 // Practice dùng chung piano tương tác với Learn (v0.5.3); Piano.tsx dạng SVG chỉ còn cho trang chủ.
 import VirtualPiano from "../components/music/VirtualPiano";
+import { Alert } from "../components/ui/Alert";
+import { Button } from "../components/ui/Button";
+import { Badge, Card, CardTitle, PageHeading, ResultBox, ToggleGroup } from "../components/ui/Page";
 
 const pick = <T,>(xs: T[]) => xs[Math.floor(Math.random() * xs.length)];
 
@@ -82,25 +85,16 @@ export default function PracticePage() {
   };
   return (
     <section>
-      <div className="page-heading">
-        <div><span className="eyebrow">LUYỆN TẬP</span><h2>Luyện tập nhạc lý</h2></div>
-        <p>Câu hỏi ngẫu nhiên, máy chấm bằng Music Engine. Mỗi lượt được ghi vào lịch sử của bạn nhưng chưa tính vào mức thành thạo, nên cứ làm sai thoải mái.</p>
+      <PageHeading eyebrow="Luyện tập" title="Luyện tập nhạc lý">
+        Câu hỏi ngẫu nhiên, máy chấm bằng Music Engine. Mỗi lượt được ghi vào lịch sử của bạn nhưng chưa tính vào mức thành thạo, nên cứ làm sai thoải mái.
+      </PageHeading>
+      <div className="mb-2 flex flex-wrap items-center gap-3">
+        <span id="muc-do" className="text-sm font-semibold text-ink">Mức độ</span>
+        <ToggleGroup label="Mức độ" value={level} onChange={choose}
+          options={(Object.keys(LEVELS) as Level[]).map((value) => ({ value, label: `${LEVELS[value].label}${value === suggested ? " (gợi ý)" : ""}` }))} />
       </div>
-      <div className="level-row" role="group" aria-label="Mức độ">
-        <b>Mức độ:</b>
-        {(Object.keys(LEVELS) as Level[]).map((value) => (
-          <button key={value} type="button" className={level === value ? "on" : "ghost"} aria-pressed={level === value} onClick={() => choose(value)}>
-            {LEVELS[value].label}{value === suggested ? " (gợi ý)" : ""}
-          </button>
-        ))}
-      </div>
-      <p className="level-note">{spec.note}</p>
-      <nav className="tabs" role="tablist" aria-label="Dạng bài tập">
-        {TABS.map((t) => (
-          <button key={t.id} role="tab" aria-selected={tab === t.id} className={tab === t.id ? "on" : ""}
-            onClick={() => setTab(t.id)}>{t.label}</button>
-        ))}
-      </nav>
+      <p className="mb-4 text-sm text-muted">{spec.note}</p>
+      <ToggleGroup className="mb-4" label="Dạng bài tập" value={tab} onChange={setTab} options={TABS.map((t) => ({ value: t.id, label: t.label }))} />
       {tab === "chord" && <ChordExercise key={level} {...ctx} />}
       {tab === "interval" && <IntervalExercise key={level} {...ctx} />}
       {tab === "scale" && <ScaleExercise key={level} {...ctx} />}
@@ -142,24 +136,23 @@ function Exercise(props: {
     return res;
   };
   return (
-    <section className="card exercise-card">
-      <div className="prompt">{props.prompt}</div><p className="hint">{props.hint}</p>
-      <form onSubmit={(e) => { e.preventDefault(); if (answer.trim()) g.run(submit); }}>
-        <input value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder={props.placeholder} aria-label="Đáp án" />
-        <button type="submit" disabled={g.busy || !answer.trim()}>Kiểm tra</button>
-        <button type="button" className="ghost" onClick={next}>Câu khác</button>
+    <Card className="max-w-3xl">
+      <p className="text-xl leading-snug text-ink">{props.prompt}</p><p className="mt-2 text-sm text-muted">{props.hint}</p>
+      <form className="mt-4 flex flex-wrap gap-2" onSubmit={(e) => { e.preventDefault(); if (answer.trim()) g.run(submit); }}>
+        <input className="min-h-11 min-w-0 flex-[1_1_14rem] rounded-lg border border-line bg-surface px-3 font-mono text-base text-ink placeholder:text-muted" value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder={props.placeholder} aria-label="Đáp án" />
+        <Button type="submit" disabled={g.busy || !answer.trim()}>Kiểm tra</Button>
+        <Button type="button" variant="secondary" onClick={next}>Câu khác</Button>
       </form>
-      {g.error && <div className="result bad">{g.error}</div>}
+      {g.error && <div className="mt-3"><Alert tone="danger">{g.error}</Alert></div>}
       {g.result && (
-        <div className={`result ${g.result.correct ? "good" : "bad"}`}>
-          <strong>{g.result.correct ? "Chính xác!" : "Chưa đúng."}</strong>
+        <ResultBox correct={g.result.correct}>
           {!g.result.correct && <p>{g.result.message_vi}</p>}
-          {!g.result.correct && <p>Đáp án đúng: <b>{expected.join(" ")}</b></p>}
-          {g.result.convention_verified === false && <p className="codes">Lưu ý: cách viết ký hiệu này chưa được đối chiếu với tài liệu nguồn.</p>}
-        </div>
+          {!g.result.correct && <p>Đáp án đúng: <b className="font-mono">{expected.join(" ")}</b></p>}
+          {g.result.convention_verified === false && <p className="text-xs text-muted">Lưu ý: cách viết ký hiệu này chưa được đối chiếu với tài liệu nguồn.</p>}
+        </ResultBox>
       )}
       {props.showPiano && g.result && <VirtualPiano highlightedPitchClasses={expected} incorrectPitchClasses={g.result.correct ? [] : splitNotes(answer)} showLabels={false} startMidi={48} endMidi={72} />}
-    </section>
+    </Card>
   );
 }
 
@@ -167,7 +160,7 @@ function ChordExercise(ctx: ExerciseContext) {
   const { spec } = ctx;
   const make = () => pick(spec.roots) + pick(spec.chordSuffixes);
   const [symbol, setSymbol] = useState(make);
-  return <Exercise prompt={<>Dựng hợp âm <span className="big">{symbol}</span></>}
+  return <Exercise prompt={<>Dựng hợp âm <span className="font-mono font-semibold text-primary">{symbol}</span></>}
     hint="Gõ các nốt cách nhau bằng dấu cách, dấu phẩy hoặc gạch ngang. Tên nốt phải đúng chính tả (Ab khác G#)."
     placeholder="ví dụ: G B D F" kind="chord" ctx={ctx} question={{ symbol }} listAnswer
     onNext={() => setSymbol(make())} showPiano />;
@@ -182,8 +175,8 @@ function IntervalExercise(ctx: ExerciseContext) {
     setQuestion({ lower, upper: note });
   };
   useEffect(() => { make().catch(() => setQuestion(null)); }, []);
-  if (!question) return <section className="card">Đang tải câu hỏi…</section>;
-  return <Exercise prompt={<>Quãng đi lên từ <span className="big">{question.lower}</span> tới <span className="big">{question.upper}</span> là gì?</>}
+  if (!question) return <Card className="text-muted">Đang tải câu hỏi…</Card>;
+  return <Exercise prompt={<>Quãng đi lên từ <span className="font-mono font-semibold text-primary">{question.lower}</span> tới <span className="font-mono font-semibold text-primary">{question.upper}</span> là gì?</>}
     hint="Viết tính chất + số: P, M, m, A, d. Ví dụ M3, A4, d5." placeholder="ví dụ: M3"
     kind="interval" ctx={ctx} question={question} onNext={make} />;
 }
@@ -193,7 +186,7 @@ function ScaleExercise(ctx: ExerciseContext) {
   const make = () => ({ tonic: pick(spec.scaleKeys), type: pick(spec.scaleTypes) });
   const [question, setQuestion] = useState(make);
   const label = question.type === "major" ? "trưởng" : "thứ tự nhiên";
-  return <Exercise prompt={<>Dựng âm giai <span className="big">{question.tonic} {label}</span></>}
+  return <Exercise prompt={<>Dựng âm giai <span className="font-mono font-semibold text-primary">{question.tonic} {label}</span></>}
     hint="Viết 7 nốt đi lên, không lặp lại chủ âm. Thứ tự bậc là một phần của đáp án."
     placeholder="ví dụ: D E F# G A B C#" kind="scale" ctx={ctx}
     question={{ tonic: question.tonic, scale_type: question.type }} listAnswer
@@ -208,8 +201,8 @@ function RomanExercise(ctx: ExerciseContext) {
     setQuestion({ key, chord: pick(chords).chord });
   };
   useEffect(() => { make().catch(() => setQuestion(null)); }, []);
-  if (!question) return <section className="card">Đang tải câu hỏi…</section>;
-  return <Exercise prompt={<>Trong giọng <span className="big">{question.key} trưởng</span>, hợp âm <span className="big">{question.chord}</span> là bậc nào?</>}
+  if (!question) return <Card className="text-muted">Đang tải câu hỏi…</Card>;
+  return <Exercise prompt={<>Trong giọng <span className="font-mono font-semibold text-primary">{question.key} trưởng</span>, hợp âm <span className="font-mono font-semibold text-primary">{question.chord}</span> là bậc nào?</>}
     hint="Chữ hoa = trưởng, chữ thường = thứ, ° = giảm, ø7 = nửa giảm."
     placeholder="ví dụ: ii7" kind="roman" ctx={ctx} question={question} onNext={make} />;
 }
@@ -227,30 +220,30 @@ function describeQuestion(item: PracticeHistoryItem): string {
 
 function PracticeHistoryPanel({ history, failed }: { history: PracticeHistory | null; failed: boolean }) {
   return (
-    <section className="card practice-history" aria-labelledby="practice-history-title">
-      <h3 id="practice-history-title">Lịch sử luyện tập</h3>
-      {failed && <p className="hint">Chưa tải được lịch sử. Lượt làm vẫn được chấm; hãy tải lại trang sau.</p>}
-      {!failed && !history && <p className="hint">Đang tải lịch sử…</p>}
-      {history && history.stats.length === 0 && <p className="hint">Chưa có lượt nào. Làm thử một câu ở trên nhé.</p>}
+    <Card className="mt-6" aria-labelledby="practice-history-title">
+      <CardTitle><span id="practice-history-title">Lịch sử luyện tập</span></CardTitle>
+      {failed && <p className="mt-2 text-sm text-muted">Chưa tải được lịch sử. Lượt làm vẫn được chấm; hãy tải lại trang sau.</p>}
+      {!failed && !history && <p className="mt-2 text-sm text-muted">Đang tải lịch sử…</p>}
+      {history && history.stats.length === 0 && <p className="mt-2 text-sm text-muted">Chưa có lượt nào. Làm thử một câu ở trên nhé.</p>}
       {history && history.stats.length > 0 && (
         <>
-          <ul className="practice-stats">
+          <ul className="mt-3 flex flex-wrap gap-2">
             {history.stats.map((stat) => (
-              <li key={stat.kind}><b>{KIND_LABEL[stat.kind]}</b> {stat.correct}/{stat.attempts} đúng</li>
+              <li key={stat.kind}><Badge tone="muted">{KIND_LABEL[stat.kind]}: {stat.correct}/{stat.attempts} đúng</Badge></li>
             ))}
           </ul>
-          <ol className="practice-items">
+          <ol className="mt-3 grid gap-1.5 text-sm">
             {history.items.map((item) => (
-              <li key={item.id} className={item.correct ? "good" : "bad"}>
-                <span aria-hidden="true">{item.correct ? "✓" : "✗"}</span>
+              <li key={item.id} className={`rounded-lg border-l-4 bg-bg px-3 py-2 text-ink ${item.correct ? "border-success" : "border-danger"}`}>
+                <span aria-hidden="true" className={item.correct ? "text-success" : "text-danger"}>{item.correct ? "✓" : "✗"}</span>
                 <span className="sr-only">{item.correct ? "Đúng" : "Sai"}:</span>
-                {" "}{KIND_LABEL[item.kind]} · {describeQuestion(item)} · bạn trả lời <b>{([] as string[]).concat(item.answer).join(" ")}</b>
+                {" "}{KIND_LABEL[item.kind]} · {describeQuestion(item)} · bạn trả lời <b className="font-mono">{([] as string[]).concat(item.answer).join(" ")}</b>
               </li>
             ))}
           </ol>
-          <p className="hint">Thống kê tính trên toàn bộ lượt làm; danh sách hiện 10 lượt gần nhất.</p>
+          <p className="mt-3 text-sm text-muted">Thống kê tính trên toàn bộ lượt làm; danh sách hiện 10 lượt gần nhất.</p>
         </>
       )}
-    </section>
+    </Card>
   );
 }
