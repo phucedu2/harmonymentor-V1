@@ -22,7 +22,7 @@ import {
   TriadNotationExplorer,
 } from "./Lesson1Explorers";
 import * as ui from "./lessonStyles";
-import { TermText, firstAppearances } from "./TermText";
+import { annotateTerms, firstAppearances } from "./TermText";
 import { Button } from "../ui/Button";
 import { Badge, ChipButton, ProgressBar, ResultBox } from "../ui/Page";
 
@@ -363,7 +363,7 @@ function BlockRenderer({
   const bpm = typeof block.payload.bpm === "number" ? block.payload.bpm : 80;
   // Mỗi thuật ngữ chỉ chú giải một lần trong khối, dù xuất hiện ở nhiều đoạn.
   const claimed = new Set<string>();
-  const t = (text: string) => <TermText text={text} terms={terms} claimed={claimed} />;
+  const t = (text: string) => annotateTerms(text, terms, claimed);
 
   if (block.block_type === "checkpoint") {
     const exerciseId = typeof block.payload.exercise_id === "string" ? block.payload.exercise_id : "";
