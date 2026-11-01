@@ -15,11 +15,16 @@ from .curriculum_specs import (
     FANK_FUND,
     KH_CH2,
     KH_CH5,
+    KH_CH11,
     OMT_FUNCTION,
+    OMT_INTERVALS,
     OMT_MODAL,
     OMT_ROMAN,
     OMT_TONICIZATION,
+    OMT_VOICINGS,
     TER_CH1,
+    TER_CH3,
+    f,
     src,
 )
 
@@ -168,13 +173,50 @@ COMPOSE_BLOCKS: dict[str, list[str]] = {
 }
 
 
+# Thẻ ôn tự diễn đạt cho 3 ý mà câu hỏi đã chuyển sang trắc nghiệm (L01-Q05, L03-Q05, L04-Q06): trắc nghiệm
+# chỉ kiểm "nhận ra", thẻ này buộc người học tự nói lại. Dạng thẻ tự đánh giá (rubric + contains_any).
+# KHÔNG seed vào review_items (bảng này chưa có trạng thái nháp): chỉ hiện thành khối nháp để Đạt/Astra duyệt.
+# Duyệt xong thì chép nguyên mục vào review_items của bài trong curriculum_specs.py.
+DRAFT_REVIEW_ITEMS: dict[str, list[dict[str, Any]]] = {
+    "L01": [
+        f("L01-F09", "F# và Gb có thể là cùng một phím đàn. Vì sao vẫn phải chọn đúng một tên? Tự giải thích bằng lời của bạn, có ví dụ.",
+          "Cùng cao độ nhưng tên nốt do quãng và khung chữ cái quyết định. Ví dụ quãng 3 trưởng trên D phải là F# "
+          "(D–E–F là ba tên chữ cái); viết Gb thì thành quãng 4 giảm.",
+          "pitch.spelling", "recall", "rubric",
+          {"accepted": ["chữ cái", "chu cai", "quãng", "quang", "ngữ cảnh", "ngu canh", "spelling"]},
+          {"mode": "contains_any", "strip_accents": True}, [OMT_INTERVALS, FANK_FUND]),
+    ],
+    "L03": [
+        f("L03-F09", "Vì sao không gán chức năng (T, PD, D) chỉ bằng tên hợp âm? Giải thích bằng lời của bạn, có ví dụ.",
+          "Chức năng phụ thuộc giọng và các hợp âm đứng trước, đứng sau. Ví dụ G là D (át) trong giọng C trưởng "
+          "nhưng là T (chủ) trong giọng G trưởng.",
+          "function.progression", "recall", "rubric",
+          {"accepted": ["giọng", "giong", "ngữ cảnh", "ngu canh", "phụ thuộc", "phu thuoc", "context"]},
+          {"mode": "contains_any", "strip_accents": True}, [OMT_FUNCTION, TER_CH3]),
+    ],
+    "L04": [
+        f("L04-F09", "Nối hợp âm mượt (smooth voice leading) là gì? Mô tả bằng lời của bạn với G7 → Cmaj7.",
+          "Giữ nốt chung, các nốt còn lại đi bước gần nhất. G7 → Cmaj7: B giữ nguyên (3 của G7 thành 7 của Cmaj7), "
+          "F xuống nửa cung thành E (3 của Cmaj7).",
+          "voicing.voice_leading", "recall", "rubric",
+          {"accepted": ["nốt chung", "not chung", "giữ nguyên", "giu nguyen", "bước gần", "buoc gan", "common tone"]},
+          {"mode": "contains_any", "strip_accents": True}, [OMT_VOICINGS, KH_CH11]),
+    ],
+}
+
+
 def blocks_with_drafts(spec: dict[str, Any]) -> list[tuple[str, str, dict[str, Any]]]:
-    """Khối của bài kèm mục "Dùng vào sáng tác" (nháp) chèn trước khối tóm tắt cuối."""
+    """Khối của bài kèm các khối nháp ("Dùng vào sáng tác", thẻ ôn đề xuất) chèn trước khối tóm tắt cuối."""
     blocks = list(spec["blocks"])
+    drafts = []
     items = COMPOSE_BLOCKS.get(spec["id"])
-    if not items:
-        return blocks
-    block = (f"{spec['id']}-BSTAC", "compose_link", {"status": DRAFT, "title": "Dùng vào sáng tác",
-                                                     "goals": LESSON_GOALS[spec["id"]], "items": items})
+    if items:
+        drafts.append((f"{spec['id']}-BSTAC", "compose_link", {"status": DRAFT, "title": "Dùng vào sáng tác",
+                                                               "goals": LESSON_GOALS[spec["id"]], "items": items}))
+    cards = DRAFT_REVIEW_ITEMS.get(spec["id"])
+    if cards:
+        drafts.append((f"{spec['id']}-BTHE", "theory", {
+            "status": DRAFT, "title": "Thẻ ôn tự diễn đạt (nháp, chờ Đạt duyệt)",
+            "items": [f"Mặt trước: {card['front']} · Đáp án: {card['back']}" for card in cards]}))
     at = len(blocks) - 1 if blocks and blocks[-1][1] == "summary" else len(blocks)
-    return blocks[:at] + [block] + blocks[at:]
+    return blocks[:at] + drafts + blocks[at:]

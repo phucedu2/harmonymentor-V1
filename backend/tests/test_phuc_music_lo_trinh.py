@@ -19,6 +19,7 @@ from app.content.draft_specs import (
     COMPOSE_BLOCKS,
     CURRICULUM_MODULES,
     DRAFT_LESSON_SPECS,
+    DRAFT_REVIEW_ITEMS,
     GOAL_LABELS,
     LESSON_GOALS,
     blocks_with_drafts,
@@ -30,6 +31,7 @@ from app.db.models import Base, Lesson
 from app.main import app
 from app.music_engine.chord import chord_tones
 from app.music_engine.roman import diatonic_chords
+from app.services.grading_service import is_self_check
 from tests.auth_helpers import auth
 
 BANG_7 = ["L01", "L02", "L09", "L10", "L03", "L05", "L11", "L06", "L04", "L07", "L08", "L12"]
@@ -69,6 +71,8 @@ def test_nguoi_hoc_khong_thay_noi_dung_nhap():
         l01 = client.get("/api/v1/lessons/L01").json()
         assert l01["block_count"] == 14 and len(l01["blocks"]) == 14
         assert all(b["block_type"] != "compose_link" for b in l01["blocks"])
+        assert all(not b["id"].endswith("-BTHE") for b in l01["blocks"])
+        assert l01["review_item_count"] == 8
         assert client.post("/api/v1/lessons/L09/start", headers=auth("demo-user")).status_code == 404
         overview = client.get("/api/v1/learning/overview", headers=auth("demo-user")).json()
         assert [x["lesson_id"] for x in overview["lessons"]] == PUBLISHED_ORDER
@@ -82,8 +86,28 @@ def test_che_do_nhap_hien_du_12_bai(drafts_on):
         assert [x["order"] for x in lessons] == list(range(1, 13))
         l09 = client.get("/api/v1/lessons/L09").json()
         assert l09["status"] == "draft" and [b["block_type"] for b in l09["blocks"]] == ["callout", "theory", "compose_link"]
-        blocks = [b["block_type"] for b in client.get("/api/v1/lessons/L01").json()["blocks"]]
-        assert blocks[-2:] == ["compose_link", "summary"]
+        l01 = client.get("/api/v1/lessons/L01").json()
+        assert [b["block_type"] for b in l01["blocks"]][-3:] == ["compose_link", "theory", "summary"]
+        # Thẻ nháp chỉ là khối để duyệt, không vào hàng đợi ôn kể cả ở chế độ nháp.
+        assert l01["review_item_count"] == 8
+
+
+def test_the_on_nhap_dung_dang_tu_danh_gia_va_chua_seed():
+    published = {item["id"] for spec in LESSON_SPECS for item in spec["review_items"]}
+    exercises = {e["id"]: e for spec in LESSON_SPECS for e in spec["exercises"]}
+    # Mỗi thẻ tự diễn đạt lại ý của một câu đã chuyển sang trắc nghiệm, cùng kỹ năng.
+    goc = {"L01-F09": "L01-Q05", "L03-F09": "L03-Q05", "L04-F09": "L04-Q06"}
+    cards = [card for lesson_cards in DRAFT_REVIEW_ITEMS.values() for card in lesson_cards]
+    assert sorted(card["id"] for card in cards) == sorted(goc)
+    for card in cards:
+        assert card["id"] not in published
+        assert is_self_check(card["strategy"], card["grader_config"]), card["id"]
+        assert card["skill"] == exercises[goc[card["id"]]]["skill"], card["id"]
+        assert card["provenance"] and all(s["source_id"] in SOURCE_REGISTRY for s in card["provenance"])
+    for spec in LESSON_SPECS:
+        drafts = [p for bid, _, p in blocks_with_drafts(spec) if bid.endswith("-BTHE")]
+        assert len(drafts) == (1 if spec["id"] in DRAFT_REVIEW_ITEMS else 0), spec["id"]
+        assert all(p["status"] == "draft" for p in drafts)
 
 
 def test_seed_doi_thu_tu_tren_csdl_cu(tmp_path):
