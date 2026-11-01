@@ -43,10 +43,11 @@ const LEVELS: Record<Level, LevelSpec> = {
 };
 const LEVEL_KEY = "hm.practice-level";
 
-// Mức mặc định theo bài đã hoàn thành: xong Bài 2 thì Vừa, xong Bài 4 thì Khó.
+// Mức mặc định theo bài đã hoàn thành: xong L02 thì Vừa, xong L03 thì Khó. Mức Khó chỉ dùng kiến thức
+// L01–L02 ở mọi giọng nên không chờ L04 (ii–V–I đã dời xuống M4 Jazz theo SRS Bảng 7).
 function suggestedLevel(overview: LearningOverview | null): Level {
   const done = new Set(overview?.lessons.filter((lesson) => lesson.status === "completed").map((lesson) => lesson.lesson_id));
-  if (done.has("L04")) return "kho";
+  if (done.has("L03")) return "kho";
   if (done.has("L02")) return "vua";
   return "de";
 }
