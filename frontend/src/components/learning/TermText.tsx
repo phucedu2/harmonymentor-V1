@@ -11,16 +11,16 @@ export type GlossaryTerm = { id: string; pattern: RegExp; label: string; definit
 
 // Thứ tự quan trọng: cụm dài ("quãng tám", "hợp âm trưởng") đứng trước cụm ngắn để khớp đúng.
 export const TERMS: GlossaryTerm[] = [
-  { id: "half-step", pattern: /nửa cung/i, label: "Nửa cung", definition: "Khoảng cách nhỏ nhất giữa hai phím đàn kề nhau (tính cả phím đen). Ví dụ E–F, hoặc C với phím đen ngay bên phải nó.", sound: { kind: "interval", code: "m2" } },
-  { id: "octave", pattern: /quãng tám/i, label: "Quãng tám", definition: "Hai nốt cùng tên, nốt trên cao gấp đôi nốt dưới, cách nhau 12 nửa cung. Ví dụ C4 lên C5.", sound: { kind: "interval", code: "P8" } },
+  { id: "half-step", pattern: /nửa cung/i, label: "Nửa cung", definition: "Khoảng cách giữa hai phím đàn liền nhau (tính cả phím đen), là bước nhỏ nhất trên bàn phím. Ví dụ E–F, hoặc C với phím đen ngay bên phải nó.", sound: { kind: "interval", code: "m2" } },
+  { id: "octave", pattern: /quãng tám/i, label: "Quãng tám", definition: "Hai nốt cùng tên cách nhau 12 nửa cung. Tần số của nốt trên gấp đôi nốt dưới, nên hai nốt nghe rất giống nhau. Ví dụ C4 lên C5.", sound: { kind: "interval", code: "P8" } },
   { id: "major-triad", pattern: /hợp âm trưởng/i, label: "Hợp âm trưởng", definition: "Ba nốt: nốt gốc, quãng 3 trưởng (M3) và quãng 5 đúng (P5) tính từ nốt gốc. Thường được mô tả là nghe sáng.", sound: { kind: "chord", symbol: "C" } },
   { id: "minor-triad", pattern: /hợp âm thứ/i, label: "Hợp âm thứ", definition: "Ba nốt: nốt gốc, quãng 3 thứ (m3) và quãng 5 đúng (P5). Thường được mô tả là nghe tối hơn hợp âm trưởng.", sound: { kind: "chord", symbol: "Cm" } },
   { id: "dim-triad", pattern: /hợp âm giảm/i, label: "Hợp âm giảm", definition: "Ba nốt: nốt gốc, quãng 3 thứ (m3) và quãng 5 giảm (d5). Nghe căng, hay muốn đi tiếp.", sound: { kind: "chord", symbol: "Cdim" } },
   { id: "aug-triad", pattern: /hợp âm tăng/i, label: "Hợp âm tăng", definition: "Ba nốt: nốt gốc, quãng 3 trưởng (M3) và quãng 5 tăng (A5).", sound: { kind: "chord", symbol: "Caug" } },
   { id: "M3", pattern: /\bM3\b/, label: "M3 · quãng 3 trưởng", definition: "Quãng gồm ba tên chữ cái (ví dụ C–D–E) và rộng 4 nửa cung.", sound: { kind: "interval", code: "M3" } },
-  { id: "m3", pattern: /\bm3\b/, label: "m3 · quãng 3 thứ", definition: "Quãng gồm ba tên chữ cái và rộng 3 nửa cung, hẹp hơn M3 một nửa cung.", sound: { kind: "interval", code: "m3" } },
-  { id: "P5", pattern: /\bP5\b/, label: "P5 · quãng 5 đúng", definition: "Quãng gồm năm tên chữ cái (ví dụ C–G) và rộng 7 nửa cung.", sound: { kind: "interval", code: "P5" } },
-  { id: "d5", pattern: /\bd5\b/, label: "d5 · quãng 5 giảm", definition: "Quãng gồm năm tên chữ cái nhưng chỉ rộng 6 nửa cung, hẹp hơn P5 một nửa cung.", sound: { kind: "interval", code: "d5" } },
+  { id: "m3", pattern: /\bm3\b/, label: "m3 · quãng 3 thứ", definition: "Quãng gồm ba tên chữ cái (ví dụ C–D–E♭) và rộng 3 nửa cung, hẹp hơn M3 một nửa cung.", sound: { kind: "interval", code: "m3" } },
+  { id: "P5", pattern: /\bP5\b/, label: "P5 · quãng 5 đúng", definition: "Quãng gồm năm tên chữ cái (ví dụ C–D–E–F–G) và rộng 7 nửa cung.", sound: { kind: "interval", code: "P5" } },
+  { id: "d5", pattern: /\bd5\b/, label: "d5 · quãng 5 giảm", definition: "Quãng gồm năm tên chữ cái (ví dụ C–D–E–F–G♭) nhưng chỉ rộng 6 nửa cung, hẹp hơn P5 một nửa cung.", sound: { kind: "interval", code: "d5" } },
 ];
 
 /** Gán mỗi thuật ngữ cho khối đầu tiên chứa nó, theo thứ tự khối trong bài. */

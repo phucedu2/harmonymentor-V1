@@ -62,4 +62,17 @@ describe("chú giải thuật ngữ", () => {
       else expect(term.sound.symbol).toMatch(/^C(m|dim|aug)?$/);
     }
   });
+
+  // Lời giải nghĩa là nội dung dạy: số nửa cung phải khớp quãng mà nút nghe phát.
+  it("định nghĩa quãng ghi đúng số nửa cung và số tên chữ cái", () => {
+    const semitones: Record<string, number> = { P8: 12, M3: 4, m3: 3, P5: 7, d5: 6 };
+    const letters: Record<string, string> = { M3: "ba", m3: "ba", P5: "năm", d5: "năm" };
+    for (const term of TERMS) {
+      if (term.sound?.kind !== "interval" || !(term.sound.code in semitones)) continue;
+      expect(term.definition).toContain(`${semitones[term.sound.code]} nửa cung`);
+      if (letters[term.sound.code]) expect(term.definition).toContain(`${letters[term.sound.code]} tên chữ cái`);
+    }
+    // "cao gấp đôi" dễ hiểu là vị trí; điều gấp đôi là tần số.
+    expect(TERMS.find((term) => term.id === "octave")!.definition).toMatch(/tần số/i);
+  });
 });
