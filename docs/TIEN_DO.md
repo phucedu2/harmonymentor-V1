@@ -2,6 +2,26 @@
 
 File này ghi lại việc đã xong, việc đang dở, lệnh để chạy lại và việc tiếp theo. Cập nhật sau mỗi phiên việc. Lịch sử trước 27/10/2026 xem `docs/AI_USAGE.md` và các báo cáo trong `docs/giai-doan/`.
 
+## 01/11/2026: nhánh `phuc-music`, sửa theo báo cáo đối chiếu nội dung học (v0.5.3 / main / phuc-music)
+
+**Đã xong**
+- Chú giải thuật ngữ: "Quãng tám" nói đúng là *tần số* gấp đôi; "Nửa cung" bỏ cách nói "khoảng cách nhỏ nhất giữa hai phím kề nhau"; thêm ví dụ cho m3, P5, d5. Test khóa số nửa cung và số tên chữ cái khớp mã quãng.
+- 3 thẻ ôn tự diễn đạt **nháp** (L01-F09, L03-F09, L04-F09) cho ba ý đã chuyển sang trắc nghiệm (L01-Q05, L03-Q05, L04-Q06), trong `draft_specs.DRAFT_REVIEW_ITEMS`. Không seed vào `review_items` (bảng chưa có trạng thái nháp); chỉ hiện thành khối nháp `-BTHE` khi bật `SHOW_DRAFT_CONTENT`.
+- ADR-011 (đề xuất): giữ lộ trình đi thẳng theo Bảng 7, đề nghị sửa câu "rẽ vào một trong ba nhánh" ở SRS 4.1.
+- Luyện tập: mức Khó gợi ý mở sau L03 (trước là L04, nay là Bài 6).
+- CI: mức pytest 409 → 410 (sửa luôn tên bước còn ghi 355).
+
+**Đang dở / chờ**
+- Đạt/Astra duyệt 3 thẻ nháp; duyệt xong chép nguyên mục từ `DRAFT_REVIEW_ITEMS` vào `review_items` của bài trong `curriculum_specs.py`.
+- Nhóm duyệt ADR-011 và câu sửa SRS 4.1; sửa slide/demo còn gọi ii–V–I là "Bài 4" (nay là Bài 6).
+- Lời giải nghĩa thuật ngữ vẫn nằm ở frontend (`TermText.tsx`), ngoài quy trình duyệt nội dung.
+
+**Lệnh chạy lại**
+```bash
+cd backend && DATABASE_URL=sqlite:///$TMP/t.db AUTO_CREATE_SCHEMA=1 python -m pytest -q -m "not postgres"   # 410 passed
+cd frontend && npm test && npm run build   # 227 test
+```
+
 ## 01/11/2026: nhánh `phuc-music`, logo chính thức + piano trang chủ
 
 **Đã xong**
