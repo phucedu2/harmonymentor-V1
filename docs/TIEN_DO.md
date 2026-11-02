@@ -13,7 +13,7 @@ File này ghi lại việc đã xong, việc đang dở, lệnh để chạy l�
 
 **Đang dở / chờ**
 - 3 bạn nghe và chấm ở trang nghe mù (đích ≥ 4/5, không phong cách nào < 3). Claude không nghe được nên chưa thể nói "nghe đạt".
-- Thắng duyệt ADR-012 (cột mới + 23 mã trống lệch ERD Bảng 8). Phúc xác nhận nguồn Rhodes/clavi FM.
+- Thắng duyệt ADR-012 (cột mới + 23 mã trống lệch ERD Bảng 8).
 - Chưa có bộ `.m4a` cho Safari; jazz chưa lên 180 BPM (CHECK tempo 160).
 
 **Lệnh chạy lại**

@@ -150,7 +150,7 @@ Bus chính có thêm:
 ## 5. Rủi ro và câu hỏi cho nhóm
 
 1. **Thắng cần duyệt ADR-012:** 4 cột mới trong `composition_projects`, nới `ck_drum_kind` lên 23 mã. Cả hai lệch ERD Bảng 8 của tài liệu 04.
-2. **Rhodes và clavi đang là mẫu FM (TX81Z) của VCSL**, không phải Rhodes thật. Chờ Phúc xác nhận nguồn này.
+2. **Rhodes và clavi đang là mẫu FM (TX81Z) của VCSL**, không phải Rhodes thật. Phúc đã chọn nguồn này (02/11).
 3. **Safari/iOS cũ** không giải mã `.ogg`, nên sẽ nghe synth dự phòng.
 4. **Jazz bị chặn ở 160 BPM** do giới hạn tempo của dự án.
 5. **DB SQLite dev cũ** phải `alembic upgrade head` (hoặc xóa đi rồi tạo lại) trước khi lưu dự án.

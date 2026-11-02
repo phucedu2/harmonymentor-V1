@@ -1,6 +1,6 @@
 # ADR-012 (đề xuất) · Bộ phối khí và nhạc cụ mẫu
 
-Trạng thái: **Đề xuất 02/11/2026**, chờ **Thắng** duyệt. Nhánh `phuc-music` (Draft PR #18). Phúc đã trả lời 13 câu làm rõ (1A…13A, ngày 02/11). Phúc chọn phương án không thay cho Thắng duyệt. Nguồn Rhodes/clavi tạm dùng VCSL TX81Z (FM), chờ Phúc xác nhận.
+Trạng thái: **Đề xuất 02/11/2026**, chờ **Thắng** duyệt. Nhánh `phuc-music` (Draft PR #18). Phúc đã trả lời 13 câu làm rõ (1A…13A, ngày 02/11). Phúc chọn phương án không thay cho Thắng duyệt. Nguồn Rhodes/clavi: VCSL TX81Z (FM), Phúc chọn trên thẻ quyết định 02/11/2026.
 
 ## Bối cảnh
 
