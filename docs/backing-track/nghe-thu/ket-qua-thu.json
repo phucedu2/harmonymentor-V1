@@ -1,5 +1,5 @@
 {
- "date": "2026-11-02T05:24:05.223Z",
+ "date": "2026-11-02T09:10:57.362Z",
  "seconds": 32,
  "results": [
   {
@@ -7,8 +7,8 @@
    "loop": "C-G-Am-F",
    "bpm": 100,
    "seconds": 32,
-   "load_ms": 2248,
-   "render_ms": 7464,
+   "load_ms": 4248,
+   "render_ms": 12724,
    "colors": [
     null,
     null,
@@ -22,8 +22,8 @@
     "clipped_samples": 1028
    },
    "after": {
-    "lufs": -15.9,
-    "true_peak_dbtp": -0.3,
+    "lufs": -16.9,
+    "true_peak_dbtp": -1.4,
     "clipped_samples": 0
    }
   },
@@ -33,7 +33,7 @@
    "bpm": 100,
    "seconds": 32,
    "load_ms": 0,
-   "render_ms": 8450,
+   "render_ms": 18020,
    "colors": [
     null,
     null,
@@ -47,8 +47,8 @@
     "clipped_samples": 1554
    },
    "after": {
-    "lufs": -15,
-    "true_peak_dbtp": -0.3,
+    "lufs": -16.1,
+    "true_peak_dbtp": -1.4,
     "clipped_samples": 0
    }
   },
@@ -58,7 +58,7 @@
    "bpm": 70,
    "seconds": 32,
    "load_ms": 0,
-   "render_ms": 6327,
+   "render_ms": 12723,
    "colors": [
     null,
     null,
@@ -72,8 +72,8 @@
     "clipped_samples": 418
    },
    "after": {
-    "lufs": -17.3,
-    "true_peak_dbtp": -0.5,
+    "lufs": -18.9,
+    "true_peak_dbtp": -1.4,
     "clipped_samples": 0
    }
   },
@@ -83,7 +83,7 @@
    "bpm": 70,
    "seconds": 32,
    "load_ms": 0,
-   "render_ms": 7385,
+   "render_ms": 12694,
    "colors": [
     null,
     null,
@@ -97,8 +97,8 @@
     "clipped_samples": 630
    },
    "after": {
-    "lufs": -15.9,
-    "true_peak_dbtp": -0.5,
+    "lufs": -18,
+    "true_peak_dbtp": -1.4,
     "clipped_samples": 0
    }
   },
@@ -107,8 +107,8 @@
    "loop": "C-G-Am-F",
    "bpm": 130,
    "seconds": 31.53846153846154,
-   "load_ms": 483,
-   "render_ms": 12196,
+   "load_ms": 928,
+   "render_ms": 19516,
    "colors": [
     "Cmaj7 + 9",
     "G7 + 9",
@@ -122,8 +122,8 @@
     "clipped_samples": 1078
    },
    "after": {
-    "lufs": -19.1,
-    "true_peak_dbtp": -2.9,
+    "lufs": -17.3,
+    "true_peak_dbtp": -1.5,
     "clipped_samples": 0
    }
   },
@@ -133,7 +133,7 @@
    "bpm": 130,
    "seconds": 31.53846153846154,
    "load_ms": 0,
-   "render_ms": 12191,
+   "render_ms": 18313,
    "colors": [
     "Dm7 + 9",
     "G7 + 9",
@@ -147,8 +147,8 @@
     "clipped_samples": 2190
    },
    "after": {
-    "lufs": -19.3,
-    "true_peak_dbtp": -2.4,
+    "lufs": -17.5,
+    "true_peak_dbtp": -1.6,
     "clipped_samples": 0
    }
   },
@@ -158,7 +158,7 @@
    "bpm": 80,
    "seconds": 32,
    "load_ms": 0,
-   "render_ms": 6855,
+   "render_ms": 12193,
    "colors": [
     "Cmaj7 + 9",
     "G7 + 9",
@@ -172,8 +172,8 @@
     "clipped_samples": 162
    },
    "after": {
-    "lufs": -19.2,
-    "true_peak_dbtp": -0.3,
+    "lufs": -19,
+    "true_peak_dbtp": -1.4,
     "clipped_samples": 0
    }
   },
@@ -183,7 +183,7 @@
    "bpm": 80,
    "seconds": 32,
    "load_ms": 0,
-   "render_ms": 6936,
+   "render_ms": 12788,
    "colors": [
     "Dm7 + 9",
     "G7 + 9",
@@ -197,8 +197,8 @@
     "clipped_samples": 910
    },
    "after": {
-    "lufs": -19.6,
-    "true_peak_dbtp": -0.3,
+    "lufs": -19.5,
+    "true_peak_dbtp": -1.4,
     "clipped_samples": 0
    }
   },
@@ -208,7 +208,7 @@
    "bpm": 120,
    "seconds": 32,
    "load_ms": 0,
-   "render_ms": 6821,
+   "render_ms": 15016,
    "colors": [
     "Cmaj7 + 9",
     "G7 + 9",
@@ -222,8 +222,8 @@
     "clipped_samples": 306
    },
    "after": {
-    "lufs": -15.6,
-    "true_peak_dbtp": -0.7,
+    "lufs": -18.7,
+    "true_peak_dbtp": -1.2,
     "clipped_samples": 0
    }
   },
@@ -233,7 +233,7 @@
    "bpm": 120,
    "seconds": 32,
    "load_ms": 0,
-   "render_ms": 7963,
+   "render_ms": 13897,
    "colors": [
     "Dm7 + 9",
     "G7 + 9",
@@ -243,12 +243,12 @@
    "old_style": "lofi",
    "before": {
     "lufs": -10.2,
-    "true_peak_dbtp": 0.3,
+    "true_peak_dbtp": 0.2,
     "clipped_samples": 1280
    },
    "after": {
-    "lufs": -14.7,
-    "true_peak_dbtp": -0.6,
+    "lufs": -18.6,
+    "true_peak_dbtp": -1.7,
     "clipped_samples": 0
    }
   },
@@ -258,7 +258,7 @@
    "bpm": 116,
    "seconds": 32,
    "load_ms": 0,
-   "render_ms": 11580,
+   "render_ms": 17381,
    "colors": [
     null,
     null,
@@ -272,8 +272,8 @@
     "clipped_samples": 1084
    },
    "after": {
-    "lufs": -18.9,
-    "true_peak_dbtp": -0.3,
+    "lufs": -17.7,
+    "true_peak_dbtp": -1.4,
     "clipped_samples": 0
    }
   },
@@ -283,7 +283,7 @@
    "bpm": 116,
    "seconds": 32,
    "load_ms": 0,
-   "render_ms": 12575,
+   "render_ms": 17074,
    "colors": [
     null,
     null,
@@ -297,8 +297,8 @@
     "clipped_samples": 1426
    },
    "after": {
-    "lufs": -18.5,
-    "true_peak_dbtp": -0.3,
+    "lufs": -17.2,
+    "true_peak_dbtp": -1.4,
     "clipped_samples": 0
    }
   },
@@ -308,7 +308,7 @@
    "bpm": 112,
    "seconds": 32,
    "load_ms": 0,
-   "render_ms": 12336,
+   "render_ms": 19871,
    "colors": [
     "C + 9",
     null,
@@ -323,7 +323,7 @@
    },
    "after": {
     "lufs": -16.6,
-    "true_peak_dbtp": -0.3,
+    "true_peak_dbtp": -1.4,
     "clipped_samples": 0
    }
   },
@@ -333,7 +333,7 @@
    "bpm": 112,
    "seconds": 32,
    "load_ms": 0,
-   "render_ms": 12514,
+   "render_ms": 17957,
    "colors": [
     null,
     null,
@@ -347,8 +347,8 @@
     "clipped_samples": 1962
    },
    "after": {
-    "lufs": -15.5,
-    "true_peak_dbtp": -0.4,
+    "lufs": -15.7,
+    "true_peak_dbtp": -1.4,
     "clipped_samples": 0
    }
   },
@@ -357,8 +357,8 @@
    "loop": "C-G-Am-F",
    "bpm": 104,
    "seconds": 32,
-   "load_ms": 90,
-   "render_ms": 11999,
+   "load_ms": 189,
+   "render_ms": 17652,
    "colors": [
     "Cmaj7 + 9",
     "G7 + 9",
@@ -372,8 +372,8 @@
     "clipped_samples": 596
    },
    "after": {
-    "lufs": -17.9,
-    "true_peak_dbtp": -0.3,
+    "lufs": -17.5,
+    "true_peak_dbtp": -1.4,
     "clipped_samples": 0
    }
   },
@@ -383,7 +383,7 @@
    "bpm": 104,
    "seconds": 32,
    "load_ms": 0,
-   "render_ms": 13146,
+   "render_ms": 19977,
    "colors": [
     "Dm7 + 9",
     "G7 + 9",
@@ -397,8 +397,8 @@
     "clipped_samples": 1018
    },
    "after": {
-    "lufs": -18.5,
-    "true_peak_dbtp": -0.4,
+    "lufs": -17.3,
+    "true_peak_dbtp": -1.4,
     "clipped_samples": 0
    }
   },
@@ -408,7 +408,7 @@
    "bpm": 78,
    "seconds": 32,
    "load_ms": 0,
-   "render_ms": 8648,
+   "render_ms": 12575,
    "colors": [
     "Cmaj7 + 9",
     "G7 + 9, 13",
@@ -422,8 +422,8 @@
     "clipped_samples": 518
    },
    "after": {
-    "lufs": -18.4,
-    "true_peak_dbtp": -0.7,
+    "lufs": -20.3,
+    "true_peak_dbtp": -1.5,
     "clipped_samples": 0
    }
   },
@@ -433,7 +433,7 @@
    "bpm": 78,
    "seconds": 32,
    "load_ms": 0,
-   "render_ms": 8364,
+   "render_ms": 13840,
    "colors": [
     "Dm7 + 9",
     "G7 + 9",
@@ -447,8 +447,8 @@
     "clipped_samples": 916
    },
    "after": {
-    "lufs": -18.7,
-    "true_peak_dbtp": -0.3,
+    "lufs": -20.6,
+    "true_peak_dbtp": -1.2,
     "clipped_samples": 0
    }
   }

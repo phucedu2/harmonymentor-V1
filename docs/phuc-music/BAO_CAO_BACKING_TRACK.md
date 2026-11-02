@@ -2,6 +2,8 @@
 
 Ngày 02/11/2026, nhánh `phuc-music` (Draft PR #18). Quyết định đi kèm: [ADR-012](../decisions/ADR-012-bo-phoi-khi-va-nhac-cu-mau.md) (đề xuất, chờ Thắng duyệt). Luật từng phong cách: [PHONG_CACH.md](../backing-track/PHONG_CACH.md).
 
+> **Đính chính 02/11/2026 (chiều):** các bản "sau" thu lần đầu trong `docs/backing-track/nghe-thu/` gần như im lặng, chỉ có khoảng 2 giây cuối. Lỗi nằm ở công cụ thu offline, không ở phát trực tiếp. Chi tiết ở `BAO_CAO_CAU_TRUC_BAI_HAT.md` mục 3. Đã thu lại 18 cặp và cập nhật trang nghe mù. Số đo mới của bản "sau": −15,7…−20,6 LUFS, đỉnh thật ≤ −1,2 dBTP, 0 mẫu vỡ. Các số LUFS bản "sau" ở dưới là của lần thu lỗi, xem `nghe-thu/ket-qua-thu.json` để lấy số đúng.
+
 **Trạng thái: xong về kỹ thuật và đã đo, CHƯA có người nghe.** Claude không nghe được âm thanh. Bản phối có "nghe như ban nhạc phòng thu" hay không, phải chờ 3 bạn chấm ở trang nghe mù.
 
 ## 1. Đã làm gì

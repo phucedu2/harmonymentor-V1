@@ -2,6 +2,26 @@
 
 File này ghi lại việc đã xong, việc đang dở, lệnh để chạy lại và việc tiếp theo. Cập nhật sau mỗi phiên việc. Lịch sử trước 27/10/2026 xem `docs/AI_USAGE.md` và các báo cáo trong `docs/giai-doan/`.
 
+## 02/11/2026: nhánh `phuc-music`, Harmony Lab chế độ Bài hát (Bước 0 → 5)
+
+**Đã xong** (báo cáo `docs/phuc-music/BAO_CAO_CAU_TRUC_BAI_HAT.md`, ADR-013 đề xuất, sổ tay `docs/backing-track/CAU_TRUC_BAI_HAT.md`)
+- Backend `POST /api/v1/composition/song`: 9 loại đoạn, năng lượng 1–5, chuyển đoạn (fill, snare dồn, drop, stop-time, riser, cymbal ngược), 1–3 bất ngờ theo seed, 4 kiểu kết, hook, chuyển giọng điệp khúc cuối (mặc định tắt), độ dài Ngắn/Vừa/Đầy đủ, đề xuất vòng B/C. Cột `composition_projects.form` (migration `b8d5e6f7a9c1`).
+- Frontend: phát theo khối, automation âm lượng/bộ lọc/reverb, ritardando, kênh Hook, dòng thời gian kéo thả.
+- Thu 10 bài: Chorus − Verse +2,3…+3,6 LU (9/9 bài có Verse/Chorus), đỉnh ≤ −1,2 dBTP, 0 mẫu vỡ. Trang nghe: https://claude.ai/artifact/N3pQphRxJiQ2SLkyWYcWD9
+- Sửa lỗi thu offline làm mọi bản "sau" của ADR-012 gần như im lặng; thu lại 18 cặp.
+
+**Đang dở / chờ**
+- Nhóm nghe mù 10 bài (đích ≥ 4/5, đoán đúng Chorus ≥ 80%) và chấm lại phòng nghe ADR-012 trên bản thu mới.
+- Thắng duyệt ADR-013. Phúc chọn: Outro funk/jazz giữ năng lượng cao (kết lớn) hay hạ để Intro/Outro nhỏ nhất.
+- Máy Phúc: sao lưu `harmonymentor_dev.db` rồi `cd backend && alembic -c alembic.ini upgrade head`.
+
+**Lệnh chạy lại**
+```bash
+cd backend && python -m pytest -q                      # 592 passed + 21 skipped
+cd frontend && npm test && npm run build               # 258 test
+node scripts/backing-track/thu_bai_hat.mjs && python3 scripts/backing-track/tao_trang_bai_hat.py   # cần uvicorn :8000 + npm run dev
+```
+
 ## 02/11/2026: nhánh `phuc-music`, backing track "ban nhạc thật" (Bước 0 → 5)
 
 **Đã xong** (báo cáo `docs/phuc-music/BAO_CAO_BACKING_TRACK.md`, ADR-012 đề xuất)
