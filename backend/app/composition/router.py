@@ -22,7 +22,9 @@ from ..db.models import ChordEvent, CompositionProject, DrumEvent, User
 from ..db.session import get_db
 from ..music_engine import diatonic_chords
 from ..music_engine.key import all_supported_keys
+from .arranger import ArrangementError, arrange
 from .presets import BEATS_PER_BAR, STYLES, drum_events
+from .styles import ARRANGEMENT_VERSION
 from .rules import LEVEL_LABELS, RULES, CompositionInputError, analyze, suggest, voicing
 
 router = APIRouter(prefix="/api/v1", tags=["composition"])
@@ -44,7 +46,7 @@ def composition_options():
                                               for rn in diatonic_chords(tonic)]})
     return {
         "keys": keys,
-        "styles": [{"id": style_id, **style} for style_id, style in STYLES.items()],
+        "styles": list(STYLES.values()),
         "levels": [{"level": level, "label": label} for level, label in LEVEL_LABELS.items()],
         "rules": [{"id": rule_id, "level": level, "label": label} for rule_id, (level, label) in RULES.items()],
         "tempo": {"min": 60, "max": 160},
@@ -81,6 +83,24 @@ def composition_voicings(body: VoicingsIn):
         raise _input_error(exc) from exc
 
 
+class ArrangementIn(BaseModel):
+    key: str
+    style: str
+    chords: list[Optional[str]] = Field(min_length=1, max_length=8)
+    seed: int = Field(default=1, ge=1, le=2_147_483_647)
+    energy: int = Field(default=2, ge=1, le=3)
+    bpm: Optional[int] = Field(default=None, ge=60, le=160)
+
+
+@router.post("/composition/arrangement")
+def composition_arrangement(body: ArrangementIn):
+    """Bản phối 4 vòng cho từng nhạc cụ (ADR-012 đề xuất). Cao độ do Music Engine dựng; công khai như /voicings."""
+    try:
+        return arrange(body.key, body.style, body.chords, body.seed, body.energy, body.bpm)
+    except ArrangementError as exc:
+        raise AppError(422, exc.code, exc.message_vi) from exc
+
+
 class AnalyzeIn(BaseModel):
     key: str
     chords: list[Optional[str]] = Field(min_length=1, max_length=8)
@@ -96,6 +116,14 @@ def composition_analyze(body: AnalyzeIn, _user: User = Depends(get_current_user)
 
 # --- dự án -----------------------------------------------------------------------------------------
 
+MIX_CHANNELS = ("chords", "bass", "guitar", "drums")
+
+
+class ChannelMix(BaseModel):
+    volume: float = Field(default=0.8, ge=0, le=1)
+    muted: bool = False
+
+
 class ProjectIn(BaseModel):
     name: str = Field(min_length=1, max_length=80)
     key: str
@@ -103,11 +131,16 @@ class ProjectIn(BaseModel):
     bars: int = Field(ge=4, le=8)
     style: str
     chords: list[Optional[str]]
+    seed: int = Field(default=1, ge=1, le=2_147_483_647)
+    energy: int = Field(default=2, ge=1, le=3)
+    mix: Optional[dict[str, ChannelMix]] = None
 
 
 def _validate(body: ProjectIn) -> list[Optional[str]]:
     if body.style not in STYLES:
         raise AppError(422, "UNKNOWN_STYLE", f"Mẫu nền {body.style!r} không có.")
+    if body.mix and set(body.mix) - set(MIX_CHANNELS):
+        raise AppError(422, "UNKNOWN_CHANNEL", f"Kênh trộn chỉ gồm {', '.join(MIX_CHANNELS)}.")
     if len(body.chords) != body.bars:
         raise AppError(422, "BARS_MISMATCH", f"Lưới có {body.bars} ô nhưng gửi {len(body.chords)} hợp âm.")
     try:
@@ -128,6 +161,10 @@ def _out(project: CompositionProject) -> dict:
         "id": project.id, "name": project.name, "key": project.key, "tempo_bpm": project.tempo_bpm,
         "time_signature": project.time_signature, "bars": project.bars, "style": project.style, "chords": chords,
         "drum_events": [{"drum": d.drum, "start_beat": d.start_beat, "velocity": d.velocity} for d in project.drum_events],
+        "seed": project.seed, "energy": project.energy, "mix": project.mix,
+        "arrangement_version": project.arrangement_version,
+        # Dự án lưu bằng luật phối cũ: phát lại theo luật mới (cùng seed) nên có thể nghe khác lúc lưu.
+        "arrangement_outdated": project.arrangement_version != ARRANGEMENT_VERSION,
         "created_at": project.created_at, "updated_at": project.updated_at,
     }
 
@@ -138,13 +175,18 @@ def _fill(project: CompositionProject, body: ProjectIn, symbols: list[Optional[s
     project.tempo_bpm = body.tempo_bpm
     project.bars = body.bars
     project.style = body.style
+    project.seed = body.seed
+    project.energy = body.energy
+    project.mix = {k: v.model_dump() for k, v in body.mix.items()} if body.mix else None
+    project.arrangement_version = ARRANGEMENT_VERSION
     project.updated_at = datetime.now(timezone.utc)
     # Mỗi ô một hợp âm, dài 4 phách (lưới tối thiểu của Bước 4). Ô trống không có sự kiện.
     project.chord_events = [ChordEvent(id=str(uuid4()), start_beat=float(i * BEATS_PER_BAR),
                                        duration_beats=float(BEATS_PER_BAR), symbol=symbol)
                             for i, symbol in enumerate(symbols) if symbol]
     project.drum_events = [DrumEvent(id=str(uuid4()), drum=e["drum"], start_beat=float(e["start_beat"]),
-                                     velocity=e["velocity"]) for e in drum_events(body.style, body.bars)]
+                                     velocity=e["velocity"])
+                           for e in drum_events(body.style, body.bars, body.key, symbols, body.seed, body.energy)]
 
 
 def _owned(db: Session, user: User, project_id: str) -> CompositionProject:

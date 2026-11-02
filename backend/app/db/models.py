@@ -303,6 +303,11 @@ class CompositionProject(Base):
     bars: Mapped[int] = mapped_column(Integer)
     style: Mapped[str] = mapped_column(String(16))
     is_test: Mapped[bool] = mapped_column(Boolean, default=False, server_default=sa_false())
+    # Bộ phối khí (ADR-012 đề xuất, migration a7c4d5e6f8b9): cùng seed + năng lượng + phiên bản luật → cùng bản phối.
+    seed: Mapped[int] = mapped_column(Integer, default=1, server_default="1")
+    energy: Mapped[int] = mapped_column(Integer, default=2, server_default="2")
+    mix: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
+    arrangement_version: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
@@ -327,7 +332,11 @@ class ChordEvent(Base):
 
 class DrumEvent(Base):
     __tablename__ = "drum_events"
-    __table_args__ = (CheckConstraint("drum IN ('kick', 'snare', 'hat')", name="ck_drum_kind"),)
+    # 22 mã trống/bộ gõ ≤ 8 ký tự của bộ phối khí + "hat" cũ (migration a7c4d5e6f8b9, ADR-012 đề xuất).
+    __table_args__ = (CheckConstraint(
+        "drum IN ('kick', 'snare', 'hat', 'rim', 'xstick', 'br_snare', 'hh_c', 'hh_o', 'hh_p', 'br_hh', 'ride', "
+        "'ride_b', 'br_ride', 'crash', 'tom_h', 'tom_m', 'tom_f', 'conga_h', 'conga_l', 'shaker', 'tamb', 'tri', "
+        "'clap')", name="ck_drum_kind"),)
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
     project_id: Mapped[str] = mapped_column(ForeignKey("composition_projects.id"), index=True)

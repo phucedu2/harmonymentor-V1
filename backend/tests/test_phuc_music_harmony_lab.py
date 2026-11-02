@@ -13,6 +13,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import select
 
 from app.composition.presets import STYLES, drum_events
+from app.composition.styles import DRUM_CODES
 from app.composition.rules import CompositionInputError, analyze, suggest
 from app.db.models import CompositionProject, User
 from app.db.session import SessionLocal
@@ -112,10 +113,11 @@ def test_vong_quen_tai_muc_0():
 
 
 def test_mau_nen_trai_dung_so_o():
+    # Từ 02/11 (ADR-012 đề xuất): bản phối 4 vòng, mã trống ≤ 8 ký tự trong danh sách DRUM_CODES.
     for style in STYLES:
         events = drum_events(style, 4)
-        assert max(e["start_beat"] for e in events) < 16
-        assert {e["drum"] for e in events} <= {"kick", "snare", "hat"}
+        assert max(e["start_beat"] for e in events) < 4 * 16
+        assert {e["drum"] for e in events} <= DRUM_CODES
 
 
 # --- API -------------------------------------------------------------------------------------------
@@ -130,7 +132,8 @@ def project_body(**over):
 def test_options_co_giong_mau_nen_va_muc_do_la():
     data = client.get("/api/v1/composition/options").json()
     assert len(data["keys"]) == 15 and data["keys"][0]["chords"][1] == {"symbol": "Dm", "numeral": "ii"}
-    assert [s["id"] for s in data["styles"]] == ["pop", "ballad", "bossa", "lofi"]
+    # Giữ 4 id cũ ở đầu để dự án đã lưu vẫn mở được, thêm 5 phong cách mới.
+    assert [s["id"] for s in data["styles"]] == ["pop", "ballad", "bossa", "lofi", "jazz", "rock", "indie", "funk", "rnb"]
     assert [lv["level"] for lv in data["levels"]] == [0, 1, 2, 3]
 
 
@@ -150,7 +153,8 @@ def test_luu_mo_sua_xoa_du_an_theo_chu():
     assert created.status_code == 201
     project = created.json()
     assert project["chords"] == ["C", "Am", None, "G"] and project["time_signature"] == "4/4"
-    assert len(project["drum_events"]) == len(drum_events("pop", 4))
+    assert len(project["drum_events"]) == len(drum_events("pop", 4, "C", ["C", "Am", None, "G"], 1, 2))
+    assert (project["seed"], project["energy"], project["arrangement_outdated"]) == (1, 2, False)
     pid = project["id"]
 
     assert client.get(f"/api/v1/projects/{pid}", headers=auth(other)).status_code == 404
@@ -180,7 +184,7 @@ def test_du_an_luu_thoi_gian_theo_phach():
 
 # 400 = sai kiểu dữ liệu (lớp xác thực chung của app), 422 = Engine hoặc luật dự án từ chối.
 @pytest.mark.parametrize("over,code", [
-    ({"tempo_bpm": 200}, 400), ({"bars": 3, "chords": ["C", "F", "G"]}, 400), ({"style": "rock"}, 422),
+    ({"tempo_bpm": 200}, 400), ({"bars": 3, "chords": ["C", "F", "G"]}, 400), ({"style": "metal"}, 422), ({"energy": 4}, 400),
     ({"chords": ["C", "F"]}, 422), ({"chords": ["C", "Xyz", "F", "G"]}, 422), ({"key": "Am"}, 422),
 ])
 def test_du_an_sai_bi_tu_choi(over, code):
