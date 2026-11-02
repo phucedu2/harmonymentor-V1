@@ -74,25 +74,26 @@ export function SongTimeline({ arrangement, sections, bpm, currentBar, selected,
 
     {/* Khối đoạn: rộng theo số ô. Cuộn ngang trong khung trên điện thoại, không làm cả trang cuộn ngang. */}
     <div className="overflow-x-auto pb-1">
-      <ol aria-label="Các đoạn của bài, theo thứ tự phát" className="relative flex min-w-[36rem] gap-1">
+      <ol aria-label="Các đoạn của bài, theo thứ tự phát" className="relative flex gap-1" style={{ minWidth: `${Math.max(36, sections.length * 4.75)}rem` }}>
         {sections.map((s, i) => {
           const active = currentBar !== null && currentBar >= starts[i] && currentBar < starts[i] + s.bars;
           const label = resolved?.[i]?.label ?? s.label ?? SECTION_VI[s.type];
-          return <li key={s.id} style={{ flexGrow: s.bars, flexBasis: 0, minWidth: "2.75rem" }}
+          return <li key={s.id} style={{ flexGrow: s.bars, flexBasis: 0, minWidth: "4.5rem" }}
             onDragOver={(e) => e.preventDefault()} onDrop={(e) => onDrop(e, i)}>
             <button type="button" draggable onDragStart={() => setDragFrom(i)} onKeyDown={(e) => onKey(e, i)}
               onClick={() => onSelect(i)} aria-pressed={selected === i}
               aria-label={`${label}, ${s.bars} ô, vòng ${resolved?.[i]?.progression ?? s.progression}, năng lượng ${resolved?.[i]?.energy ?? s.energy}, bắt đầu ${mmss(secondsAt(starts[i]))}${active ? ", đang phát" : ""}. Alt + mũi tên để dời.`}
               style={{ background: SECTION_COLOR[s.type] }}
-              className={`grid h-full min-h-16 w-full content-between overflow-hidden rounded-lg border-2 px-1.5 py-1 text-left text-ink ${selected === i ? "border-ink" : "border-transparent hover:border-ink/40"} ${active ? "shadow-[inset_0_-4px_0_var(--color-ink)]" : ""}`}>
-              <span className="truncate text-xs font-semibold">{label}</span>
-              <span className="truncate font-mono text-[11px]">{s.bars} ô · {resolved?.[i]?.progression ?? s.progression}{emptySlots.includes(s.progression) && s.progression !== "A" ? "*" : ""}</span>
+              className={`grid h-full min-h-24 w-full content-between overflow-hidden rounded-lg border-2 px-1.5 py-1 text-left text-ink ${selected === i ? "border-ink" : "border-transparent hover:border-ink/40"} ${active ? "shadow-[inset_0_-4px_0_var(--color-ink)]" : ""}`}>
+              {/* Tên đoạn luôn đọc đủ (không cắt "Pre-…"): cho xuống dòng thay vì truncate. */}
+              <span className="break-words text-xs font-semibold leading-tight">{label}</span>
+              <span className="font-mono text-[11px] leading-tight">{mmss(secondsAt(starts[i]))}<br />{s.bars} ô · {resolved?.[i]?.progression ?? s.progression}{emptySlots.includes(s.progression) && s.progression !== "A" ? "*" : ""}</span>
             </button>
           </li>;
         })}
       </ol>
       {/* Đường cong năng lượng + con trỏ phát */}
-      <svg viewBox="0 0 1000 56" preserveAspectRatio="none" role="img" className="mt-1 h-14 w-full min-w-[36rem]"
+      <svg viewBox="0 0 1000 56" preserveAspectRatio="none" role="img" className="mt-1 h-14 w-full" style={{ minWidth: `${Math.max(36, sections.length * 4.75)}rem` }}
         aria-label={`Đường cong năng lượng: ${sections.map((s, i) => `${resolved?.[i]?.label ?? SECTION_VI[s.type]} ${resolved?.[i]?.energy ?? s.energy}`).join(", ")}`}>
         {[1, 2, 3, 4, 5].map((e) => <line key={e} x1={0} x2={1000} y1={52 - e * 10} y2={52 - e * 10} stroke="var(--color-line)" strokeWidth={1} vectorEffect="non-scaling-stroke" />)}
         <polyline points={energyPoints} fill="none" stroke="var(--color-primary)" strokeWidth={2.5} vectorEffect="non-scaling-stroke" />
@@ -100,6 +101,15 @@ export function SongTimeline({ arrangement, sections, bpm, currentBar, selected,
         {currentBar !== null && <line x1={(currentBar / total) * 1000} x2={(currentBar / total) * 1000} y1={0} y2={56} stroke="var(--color-ink)" strokeWidth={2} vectorEffect="non-scaling-stroke" />}
       </svg>
     </div>
+    {/* Danh sách đoạn theo thứ tự, ghi rõ tên và mốc thời gian (như dải màu ở trang nghe thử). */}
+    <ol aria-hidden="true" className="flex flex-wrap gap-1.5 text-xs text-ink">
+      {sections.map((s, i) => <li key={s.id}>
+        <button type="button" tabIndex={-1} onClick={() => onSelect(i)} style={{ background: SECTION_COLOR[s.type] }}
+          className={`rounded-full border-2 px-2.5 py-1 ${selected === i ? "border-ink" : "border-transparent"}`}>
+          <b>{resolved?.[i]?.label ?? s.label ?? SECTION_VI[s.type]}</b> <span className="font-mono">{mmss(secondsAt(starts[i]))}–{mmss(secondsAt(starts[i] + s.bars))}</span>
+        </button>
+      </li>)}
+    </ol>
     <p className="text-xs text-muted">Đường xanh: năng lượng từng đoạn (1 mộc → 5 đỉnh). ▲ đỏ: điểm bất ngờ có chủ đích.{emptySlots.length > 0 && " *: vòng này còn trống, đang tạm dùng vòng A."}</p>
     {surprises.length > 0 && <ul className="flex flex-wrap gap-2 text-xs">
       {surprises.map((sp, k) => <li key={k} className="rounded-full border border-line bg-bg px-2.5 py-1 text-ink">▲ {sp.label_vi}</li>)}
