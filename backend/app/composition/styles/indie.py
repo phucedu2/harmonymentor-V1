@@ -26,3 +26,21 @@ PACK = {
     },
     "fx": {"reverb": 0.3, "room": "hall", "delay": 0.18, "lofi": False, "chorus": True, "drive": False},
 }
+
+PACK["song"] = {
+    "forms": {
+        "short": [("intro", 4, "A", 1), ("verse", 8, "A", 2), ("chorus", 8, "B", 4), ("outro", 4, "A", 2)],
+        "medium": [("intro", 8, "A", 1), ("verse", 8, "A", 2), ("chorus", 8, "B", 4), ("verse", 8, "A", 2),
+                   ("chorus", 8, "B", 4), ("bridge", 8, "C", 3, "Bridge (dồn dài)"), ("chorus", 8, "B", 5),
+                   ("outro", 8, "A", 2)],
+        "full": [("intro", 8, "A", 1), ("verse", 16, "A", 2), ("chorus", 8, "B", 4), ("post", 4, "B", 3),
+                 ("verse", 16, "A", 2), ("chorus", 8, "B", 4), ("post", 4, "B", 3), ("bridge", 8, "C", 3, "Bridge (dồn dài)"),
+                 ("breakdown", 4, "A", 1), ("chorus", 8, "B", 5), ("chorus", 8, "B", 5), ("outro", 8, "A", 2)],
+    },
+    "parts": {"intro": ["guitar", "drums", "hook"], "breakdown": ["guitar", "keys"]},
+    "verse_stick": False,
+    "ending": "fade",
+    "surprises": [("drop_bar", "chorus"), ("half", "bridge"), ("riser", "chorus")],
+    "transitions": {"chorus_from_bridge": "snare_build"},
+    "hook": {"instrument": "guitar", "rhythms": ["x===x===x=======", "x.....x.....x===", "x=x=x===........"]},
+}

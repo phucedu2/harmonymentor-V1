@@ -26,3 +26,22 @@ PACK = {
     },
     "fx": {"reverb": 0.2, "room": "room", "delay": 0.0, "lofi": False, "chorus": False, "drive": True},
 }
+
+PACK["song"] = {
+    "forms": {
+        "short": [("intro", 4, "A", 2), ("verse", 8, "A", 2), ("chorus", 8, "B", 4), ("outro", 4, "B", 4)],
+        "medium": [("intro", 4, "A", 2), ("verse", 8, "A", 2), ("pre", 4, "A", 3), ("chorus", 8, "B", 4),
+                   ("verse", 8, "A", 2), ("pre", 4, "A", 3), ("chorus", 8, "B", 4), ("solo", 8, "A", 4),
+                   ("breakdown", 4, "A", 2), ("chorus", 8, "B", 5), ("chorus", 8, "B", 5)],
+        "full": [("intro", 8, "A", 2), ("verse", 16, "A", 2), ("pre", 4, "A", 3), ("chorus", 8, "B", 4),
+                 ("verse", 8, "A", 2), ("pre", 4, "A", 3), ("chorus", 8, "B", 4), ("solo", 16, "A", 4),
+                 ("breakdown", 4, "A", 2), ("pre", 4, "A", 3), ("chorus", 8, "B", 5), ("chorus", 8, "B", 5),
+                 ("outro", 8, "B", 4)],
+    },
+    "parts": {"intro": ["guitar", "hook"], "breakdown": ["bass", "drums"]},
+    "verse_stick": False,
+    "ending": "big_hit",
+    "surprises": [("double", "last_chorus"), ("stop_time", "chorus"), ("drop_bar", "chorus"), ("riser", "chorus")],
+    "transitions": {},
+    "hook": {"instrument": "guitar", "rhythms": ["x.x.x.x.x=======", "x=x=x===x=======", "x...x...x.x.x==="]},
+}

@@ -308,6 +308,9 @@ class CompositionProject(Base):
     energy: Mapped[int] = mapped_column(Integer, default=2, server_default="2")
     mix: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
     arrangement_version: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    # Chế độ Bài hát (ADR-013 đề xuất, migration b8d5e6f7a9c1): các đoạn + vòng A/B/C + cờ hook/lên giọng.
+    # NULL = dự án vòng lặp (mọi dự án trước 02/11 chiều), mở ở chế độ Vòng lặp như cũ.
+    form: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)

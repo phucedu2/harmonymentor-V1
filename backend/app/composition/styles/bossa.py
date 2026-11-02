@@ -29,3 +29,23 @@ PACK = {
     },
     "fx": {"reverb": 0.14, "room": "room", "delay": 0.0, "lofi": False, "chorus": False, "drive": False},
 }
+
+PACK["song"] = {
+    "forms": {
+        "short": [("intro", 4, "A", 1), ("verse", 8, "A", 2, "A"), ("chorus", 8, "B", 3, "B"),
+                  ("verse", 8, "A", 3, "A"), ("outro", 4, "A", 2)],
+        "medium": [("intro", 4, "A", 1), ("verse", 8, "A", 2, "A"), ("verse", 8, "A", 2, "A"), ("chorus", 8, "B", 3, "B"),
+                   ("verse", 8, "A", 3, "A"), ("solo", 16, "A", 4, "Instrumental"), ("verse", 8, "A", 3, "A"),
+                   ("outro", 8, "A", 2)],
+        "full": [("intro", 8, "A", 1), ("verse", 8, "A", 2, "A"), ("verse", 8, "A", 2, "A"), ("chorus", 8, "B", 3, "B"),
+                 ("verse", 8, "A", 3, "A"), ("solo", 16, "A", 4, "Instrumental"), ("chorus", 8, "B", 4, "B"),
+                 ("verse", 8, "A", 3, "A"), ("verse", 8, "A", 3, "A"), ("chorus", 8, "B", 4, "B"),
+                 ("verse", 8, "A", 3, "A"), ("verse", 4, "A", 2, "A (tag)"), ("outro", 16, "A", 2)],
+    },
+    "parts": {"intro": ["guitar", "hook"]},
+    "verse_stick": False,
+    "ending": "fade",
+    "surprises": [("stop_time", "solo"), ("reverse_cymbal", "chorus"), ("stop_time", "chorus")],
+    "transitions": {},
+    "hook": {"instrument": "piano", "rhythms": ["x==.x==.x=======", "..x..x..x=======", "x.x...x.x======="]},
+}

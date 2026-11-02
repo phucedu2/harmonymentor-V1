@@ -24,3 +24,23 @@ PACK = {
     },
     "fx": {"reverb": 0.1, "room": "room", "delay": 0.0, "lofi": False, "chorus": False, "drive": False},
 }
+
+PACK["song"] = {
+    "forms": {
+        "short": [("intro", 2, "A", 2), ("verse", 8, "A", 3, "Vamp A"), ("chorus", 8, "B", 4, "Vamp B"),
+                  ("verse", 8, "A", 4, "Vamp A"), ("outro", 4, "A", 3)],
+        "medium": [("intro", 2, "A", 2), ("verse", 8, "A", 3, "Vamp A"), ("chorus", 8, "B", 4, "Vamp B"),
+                   ("verse", 8, "A", 3, "Vamp A"), ("chorus", 8, "B", 4, "Vamp B"), ("breakdown", 4, "A", 2),
+                   ("verse", 8, "A", 4, "Vamp A (đủ)"), ("chorus", 8, "B", 5, "Vamp B"), ("outro", 4, "A", 3)],
+        "full": [("intro", 4, "A", 2), ("verse", 8, "A", 3, "Vamp A"), ("chorus", 8, "B", 4, "Vamp B"),
+                 ("verse", 8, "A", 3, "Vamp A"), ("chorus", 8, "B", 4, "Vamp B"), ("solo", 16, "A", 4, "Solo"),
+                 ("breakdown", 8, "A", 2), ("verse", 8, "A", 4, "Vamp A (đủ)"), ("chorus", 8, "B", 5, "Vamp B"),
+                 ("chorus", 8, "B", 5, "Vamp B"), ("outro", 8, "A", 3)],
+    },
+    "parts": {"intro": ["drums"], "breakdown": ["bass", "drums"]},
+    "verse_stick": False,
+    "ending": "big_hit",
+    "surprises": [("stop_time", "chorus"), ("drop_bar", "chorus"), ("stop_time", "verse")],
+    "transitions": {},
+    "hook": {"instrument": "clav", "rhythms": ["..x..x.x........", "x..x..x.x.......", "...x.x...x.x...."]},
+}

@@ -48,6 +48,13 @@ def _check_legacy_users_table() -> None:
             "create_all) hoặc chỉ `alembic -c alembic.ini upgrade head` (CSDL do Alembic quản lý). "
             "Không cần dữ liệu cũ: xóa harmonymentor_dev.db để tạo lại."
         )
+    # Chế độ Bài hát (02/11/2026 chiều, migration b8d5e6f7a9c1): thiếu cột form thì Harmony Lab lỗi 500.
+    if "form" not in {c["name"] for c in inspector.get_columns("composition_projects")}:
+        raise RuntimeError(
+            "CSDL cũ thiếu cột form của composition_projects (chế độ Bài hát, ADR-013). Giữ dữ liệu: "
+            "`alembic -c alembic.ini upgrade head` (CSDL đã nâng tới a7c4d5e6f8b9). "
+            "Không cần dữ liệu cũ: xóa harmonymentor_dev.db để tạo lại."
+        )
     columns = {c["name"] for c in inspector.get_columns("users")}
     if "email" not in columns:
         raise RuntimeError(

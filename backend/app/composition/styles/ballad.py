@@ -27,3 +27,20 @@ PACK = {
     },
     "fx": {"reverb": 0.3, "room": "hall", "delay": 0.0, "lofi": False, "chorus": False, "drive": False},
 }
+
+PACK["song"] = {
+    "forms": {
+        "short": [("intro", 4, "A", 1), ("verse", 8, "A", 2), ("chorus", 8, "B", 4), ("outro", 4, "A", 1)],
+        "medium": [("intro", 4, "A", 1), ("verse", 8, "A", 2), ("chorus", 8, "B", 4), ("verse", 8, "A", 2),
+                   ("chorus", 8, "B", 4), ("bridge", 4, "C", 3), ("chorus", 8, "B", 5), ("outro", 4, "A", 1)],
+        "full": [("intro", 4, "A", 1), ("verse", 8, "A", 2), ("chorus", 8, "B", 4), ("verse", 8, "A", 2),
+                 ("chorus", 8, "B", 4), ("bridge", 8, "C", 3), ("breakdown", 4, "A", 1), ("chorus", 8, "B", 5),
+                 ("chorus", 4, "B", 5), ("outro", 4, "A", 1)],
+    },
+    "parts": {"intro": ["keys", "hook"], "breakdown": ["keys"]},
+    "verse_stick": True,
+    "ending": "ritardando_fermata",
+    "surprises": [("drop_bar", "chorus"), ("reverse_cymbal", "chorus"), ("stop_time", "chorus")],
+    "transitions": {"chorus": "reverse_cymbal"},
+    "hook": {"instrument": "piano", "rhythms": ["x==x==x=====", "x=====x==x==", "...x==x=====", "x==x=====x=="]},
+}

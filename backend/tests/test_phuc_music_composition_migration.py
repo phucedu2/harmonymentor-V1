@@ -12,6 +12,7 @@ from tests.test_phuc_music_practice_migration import PRACTICE, alembic_to, versi
 
 COMPOSITION = "f6a2b3c4d5e7"
 ARRANGEMENT = "a7c4d5e6f8b9"  # 02/11: seed, energy, mix, arrangement_version (ADR-012 đề xuất)
+SONG_FORM = "b8d5e6f7a9c1"  # 02/11 chiều: cột JSON form cho chế độ Bài hát (ADR-013 đề xuất)
 TABLES = {"composition_projects", "chord_events", "drum_events"}
 
 
@@ -19,10 +20,10 @@ def test_head_la_composition_va_model_khop_migration(tmp_path):
     engine = sa.create_engine(f"sqlite:///{tmp_path / 'hl.db'}", future=True)
     try:
         alembic_to(engine, "head")
-        assert version(engine) == ARRANGEMENT
+        assert version(engine) == SONG_FORM
         cols = {c["name"] for c in sa.inspect(engine).get_columns("composition_projects")}
         assert cols == {"id", "user_id", "name", "key", "tempo_bpm", "time_signature", "bars", "style", "is_test",
-                        "created_at", "updated_at", "deleted_at", "seed", "energy", "mix", "arrangement_version"}
+                        "created_at", "updated_at", "deleted_at", "seed", "energy", "mix", "arrangement_version", "form"}
         with engine.connect() as conn:
             diff = compare_metadata(MigrationContext.configure(conn), Base.metadata)
         assert [d for d in diff if any(t in str(d) for t in TABLES)] == []

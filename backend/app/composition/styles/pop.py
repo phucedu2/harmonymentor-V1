@@ -39,3 +39,25 @@ PACK = {
     },
     "fx": {"reverb": 0.16, "room": "room", "delay": 0.0, "lofi": False, "chorus": False, "drive": False},
 }
+
+# Bài hát (ADR-013 đề xuất): khuôn theo độ dài, luật từng loại đoạn, kết bài, đột biến cho phép, hook.
+# Mỗi đoạn: (loại, số ô, vòng, năng lượng 1–5[, nhãn]). Nguồn: docs/backing-track/CAU_TRUC_BAI_HAT.md mục B.
+PACK["song"] = {
+    "forms": {
+        "short": [("intro", 4, "A", 1), ("verse", 8, "A", 2), ("chorus", 8, "B", 4), ("outro", 4, "A", 2)],
+        "medium": [("intro", 4, "A", 1), ("verse", 8, "A", 2), ("pre", 4, "A", 3), ("chorus", 8, "B", 4),
+                   ("verse", 8, "A", 2), ("pre", 4, "A", 3), ("chorus", 8, "B", 4), ("bridge", 8, "C", 3),
+                   ("chorus", 8, "B", 5), ("outro", 4, "A", 2)],
+        "full": [("intro", 4, "A", 1), ("verse", 16, "A", 2), ("pre", 4, "A", 3), ("chorus", 8, "B", 4),
+                 ("post", 4, "B", 3), ("verse", 8, "A", 2), ("pre", 4, "A", 3), ("chorus", 8, "B", 4), ("post", 4, "B", 3),
+                 ("bridge", 8, "C", 3), ("breakdown", 4, "A", 1), ("pre", 4, "A", 3), ("chorus", 8, "B", 5),
+                 ("chorus", 8, "B", 5), ("outro", 8, "A", 2)],
+    },
+    "parts": {"intro": ["keys", "hook"], "breakdown": ["keys"]},
+    "verse_stick": True,
+    "ending": "fade",
+    "surprises": [("drop_bar", "chorus"), ("stop_time", "chorus"), ("half", "bridge"), ("reverse_cymbal", "chorus")],
+    "transitions": {},
+    "hook": {"instrument": "piano", "rhythms": ["x.x.x=======....", "x=..x=..x=======", "..x.x.x=x=======",
+                                                "x=x=x===x======="]},
+}

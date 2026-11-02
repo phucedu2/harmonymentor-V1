@@ -8,7 +8,7 @@ lưu dự án. Thứ tự ứng viên theo luật cố định; chưa có lớp 
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Literal, Optional
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, Response
@@ -24,6 +24,10 @@ from ..music_engine import diatonic_chords
 from ..music_engine.key import all_supported_keys
 from .arranger import ArrangementError, arrange
 from .presets import BEATS_PER_BAR, STYLES, drum_events
+from .song import (
+    ENDINGS, LENGTHS, MAX_BARS, SECTION_LABELS, SECTION_TYPES, SONG_VERSION, TRANSITIONS, SongError, arrange_song,
+    drum_events_for_song, normalize_form,
+)
 from .styles import ARRANGEMENT_VERSION
 from .rules import LEVEL_LABELS, RULES, CompositionInputError, analyze, suggest, voicing
 
@@ -51,6 +55,10 @@ def composition_options():
         "rules": [{"id": rule_id, "level": level, "label": label} for rule_id, (level, label) in RULES.items()],
         "tempo": {"min": 60, "max": 160},
         "bars": {"min": 4, "max": 8},
+        # Chế độ Bài hát (ADR-013 đề xuất): danh mục để giao diện dựng dòng thời gian.
+        "song": {"version": SONG_VERSION, "max_bars": MAX_BARS, "lengths": list(LENGTHS),
+                 "section_types": [{"id": t, "label": SECTION_LABELS[t]} for t in SECTION_TYPES],
+                 "transitions": list(TRANSITIONS), "endings": list(ENDINGS)},
     }
 
 
@@ -101,6 +109,69 @@ def composition_arrangement(body: ArrangementIn):
         raise AppError(422, exc.code, exc.message_vi) from exc
 
 
+SectionType = Literal["intro", "verse", "pre", "chorus", "post", "bridge", "breakdown", "solo", "outro"]
+Transition = Literal["auto", "none", "fill_small", "fill_big", "snare_build", "drop_bar", "stop_time", "pickup", "riser",
+                     "reverse_cymbal"]
+
+
+class SectionIn(BaseModel):
+    id: str = Field(default="", max_length=16)
+    type: SectionType
+    label: Optional[str] = Field(default=None, max_length=40)
+    bars: int = Field(ge=1, le=16)
+    progression: Literal["A", "B", "C"] = "A"
+    energy: int = Field(ge=1, le=5)
+    feel: Literal["auto", "normal", "half", "double"] = "auto"
+    hook: bool = True
+    transition: Transition = "auto"
+    seed: Optional[int] = Field(default=None, ge=1, le=2_147_483_647)
+
+
+class ModulateIn(BaseModel):
+    enabled: bool = False
+    semitones: Literal[1, 2] = 1
+
+
+class ProgressionsIn(BaseModel):
+    A: list[Optional[str]] = Field(min_length=1, max_length=8)
+    B: Optional[list[Optional[str]]] = Field(default=None, max_length=8)
+    C: Optional[list[Optional[str]]] = Field(default=None, max_length=8)
+
+
+class SongFormIn(BaseModel):
+    length: Literal["short", "medium", "full"] = "medium"
+    hook: bool = True
+    modulate: ModulateIn = ModulateIn()
+    ending: Literal["auto", "fade", "ritardando_fermata", "big_hit", "tag_x3"] = "auto"
+    progressions: ProgressionsIn
+    sections: Optional[list[SectionIn]] = Field(default=None, max_length=32)
+
+
+class SongIn(BaseModel):
+    key: str
+    style: str
+    seed: int = Field(default=1, ge=1, le=2_147_483_647)
+    energy: int = Field(default=2, ge=1, le=3)   # "Năng lượng tổng": dời cả đường cong −1/0/+1 mức
+    bpm: Optional[int] = Field(default=None, ge=60, le=160)
+    form: SongFormIn
+
+
+def _form_dict(form: SongFormIn) -> dict:
+    data = form.model_dump()
+    if data["sections"] is None:
+        data.pop("sections")
+    return data
+
+
+@router.post("/composition/song")
+def composition_song(body: SongIn):
+    """Backing track dạng bài hát: đoạn, chuyển đoạn, hook, automation (ADR-013 đề xuất). Cao độ do Music Engine dựng."""
+    try:
+        return arrange_song(body.key, body.style, _form_dict(body.form), body.seed, body.energy, body.bpm)
+    except ArrangementError as exc:
+        raise AppError(422, exc.code, exc.message_vi) from exc
+
+
 class AnalyzeIn(BaseModel):
     key: str
     chords: list[Optional[str]] = Field(min_length=1, max_length=8)
@@ -116,7 +187,7 @@ def composition_analyze(body: AnalyzeIn, _user: User = Depends(get_current_user)
 
 # --- dự án -----------------------------------------------------------------------------------------
 
-MIX_CHANNELS = ("chords", "bass", "guitar", "drums")
+MIX_CHANNELS = ("chords", "bass", "guitar", "drums", "hook")
 
 
 class ChannelMix(BaseModel):
@@ -134,6 +205,8 @@ class ProjectIn(BaseModel):
     seed: int = Field(default=1, ge=1, le=2_147_483_647)
     energy: int = Field(default=2, ge=1, le=3)
     mix: Optional[dict[str, ChannelMix]] = None
+    # Có form = dự án ở chế độ Bài hát (QĐ 9A, cột JSON `form`); không có = chế độ Vòng lặp như cũ.
+    form: Optional[SongFormIn] = None
 
 
 def _validate(body: ProjectIn) -> list[Optional[str]]:
@@ -151,6 +224,30 @@ def _validate(body: ProjectIn) -> list[Optional[str]]:
     return [bar["symbol"] for bar in result["bars"]]
 
 
+def _validate_form(body: ProjectIn, symbols: list[Optional[str]]) -> Optional[dict]:
+    """Form lưu kèm dự án: vòng A luôn = lưới hợp âm của dự án (chord_events, QĐ 1A); B/C chuẩn hóa qua Engine."""
+    if body.form is None:
+        return None
+    data = _form_dict(body.form)
+    progs = data["progressions"]
+    progs["A"] = symbols
+    for slot in ("B", "C"):
+        if progs.get(slot):
+            try:
+                progs[slot] = [bar["symbol"] for bar in analyze(body.key, progs[slot])["bars"]]
+            except CompositionInputError as exc:
+                raise _input_error(exc) from exc
+    try:
+        return normalize_form(body.style, data)
+    except SongError as exc:
+        raise AppError(422, exc.code, exc.message_vi) from exc
+
+
+def _expected_version(project: CompositionProject) -> int:
+    # Vòng lặp giữ luật v1 y nguyên từng nốt (QĐ 2A), nên dự án vòng lặp cũ không bị báo "đã đổi" oan.
+    return SONG_VERSION if project.form else ARRANGEMENT_VERSION
+
+
 def _out(project: CompositionProject) -> dict:
     chords: list[Optional[str]] = [None] * project.bars
     for event in project.chord_events:
@@ -164,7 +261,8 @@ def _out(project: CompositionProject) -> dict:
         "seed": project.seed, "energy": project.energy, "mix": project.mix,
         "arrangement_version": project.arrangement_version,
         # Dự án lưu bằng luật phối cũ: phát lại theo luật mới (cùng seed) nên có thể nghe khác lúc lưu.
-        "arrangement_outdated": project.arrangement_version != ARRANGEMENT_VERSION,
+        "arrangement_outdated": project.arrangement_version != _expected_version(project),
+        "form": project.form,
         "created_at": project.created_at, "updated_at": project.updated_at,
     }
 
@@ -178,15 +276,22 @@ def _fill(project: CompositionProject, body: ProjectIn, symbols: list[Optional[s
     project.seed = body.seed
     project.energy = body.energy
     project.mix = {k: v.model_dump() for k, v in body.mix.items()} if body.mix else None
-    project.arrangement_version = ARRANGEMENT_VERSION
+    form = _validate_form(body, symbols)
+    project.form = form
+    project.arrangement_version = SONG_VERSION if form else ARRANGEMENT_VERSION
     project.updated_at = datetime.now(timezone.utc)
     # Mỗi ô một hợp âm, dài 4 phách (lưới tối thiểu của Bước 4). Ô trống không có sự kiện.
     project.chord_events = [ChordEvent(id=str(uuid4()), start_beat=float(i * BEATS_PER_BAR),
                                        duration_beats=float(BEATS_PER_BAR), symbol=symbol)
                             for i, symbol in enumerate(symbols) if symbol]
+    # drum_events trải đủ cả bài (bài hát) hoặc đủ 4 vòng (vòng lặp), đúng như lúc phát (QĐ 5A).
+    try:
+        events = (drum_events_for_song(body.key, body.style, form, body.seed, body.energy) if form
+                  else drum_events(body.style, body.bars, body.key, symbols, body.seed, body.energy))
+    except ArrangementError as exc:
+        raise AppError(422, exc.code, exc.message_vi) from exc
     project.drum_events = [DrumEvent(id=str(uuid4()), drum=e["drum"], start_beat=float(e["start_beat"]),
-                                     velocity=e["velocity"])
-                           for e in drum_events(body.style, body.bars, body.key, symbols, body.seed, body.energy)]
+                                     velocity=e["velocity"]) for e in events]
 
 
 def _owned(db: Session, user: User, project_id: str) -> CompositionProject:
@@ -204,7 +309,8 @@ def list_projects(user: User = Depends(get_current_user), db: Session = Depends(
     rows = db.scalars(select(CompositionProject).where(
         CompositionProject.user_id == user.id, CompositionProject.deleted_at.is_(None)
     ).order_by(CompositionProject.updated_at.desc())).all()
-    return [{"id": p.id, "name": p.name, "key": p.key, "bars": p.bars, "style": p.style, "updated_at": p.updated_at}
+    return [{"id": p.id, "name": p.name, "key": p.key, "bars": p.bars, "style": p.style, "updated_at": p.updated_at,
+             "mode": "song" if p.form else "loop"}
             for p in rows]
 
 

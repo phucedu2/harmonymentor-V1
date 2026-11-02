@@ -22,3 +22,14 @@ def test_csdl_moi_khong_bao_loi(tmp_path, monkeypatch):
     Base.metadata.create_all(bind=eng)
     monkeypatch.setattr(db_session, "engine", eng)
     db_session._check_legacy_users_table()
+
+
+def test_thieu_cot_form_bao_ro_cach_nang(tmp_path, monkeypatch):
+    # CSDL dev đã nâng tới a7c4d5e6f8b9 nhưng chưa có cột form (chế độ Bài hát, ADR-013): báo lệnh upgrade head.
+    eng = create_engine(f"sqlite:///{tmp_path / 'cu2.db'}")
+    Base.metadata.create_all(bind=eng)
+    with eng.begin() as c:
+        c.execute(text("ALTER TABLE composition_projects DROP COLUMN form"))
+    monkeypatch.setattr(db_session, "engine", eng)
+    with pytest.raises(RuntimeError, match="upgrade head"):
+        db_session._check_legacy_users_table()

@@ -25,3 +25,20 @@ PACK = {
     },
     "fx": {"reverb": 0.2, "room": "plate", "delay": 0.0, "lofi": True, "chorus": False, "drive": False},
 }
+
+PACK["song"] = {
+    "forms": {
+        "short": [("intro", 4, "A", 1), ("verse", 8, "A", 2, "A"), ("chorus", 8, "B", 3, "B"), ("outro", 4, "A", 2)],
+        "medium": [("intro", 4, "A", 1), ("verse", 8, "A", 2, "A"), ("chorus", 8, "B", 3, "B"),
+                   ("verse", 8, "A", 3, "A (thêm lớp)"), ("chorus", 8, "B", 4, "B"), ("outro", 4, "A", 2)],
+        "full": [("intro", 4, "A", 1), ("verse", 8, "A", 2, "A"), ("chorus", 8, "B", 3, "B"),
+                 ("verse", 8, "A", 3, "A (thêm lớp)"), ("chorus", 8, "B", 4, "B"), ("breakdown", 4, "A", 1),
+                 ("verse", 8, "A", 3, "A"), ("chorus", 8, "B", 4, "B"), ("chorus", 8, "B", 5, "B"), ("outro", 8, "A", 2)],
+    },
+    "parts": {"breakdown": ["keys", "drums"]},
+    "verse_stick": False,
+    "ending": "fade",
+    "surprises": [("drop_bar", "chorus"), ("stop_time", "chorus"), ("reverse_cymbal", "chorus")],
+    "transitions": {},
+    "hook": {"instrument": "epiano", "rhythms": ["x=====x=x=======", "....x=x=x=======", "x===x=====x====="]},
+}

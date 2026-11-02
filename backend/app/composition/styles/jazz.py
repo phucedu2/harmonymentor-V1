@@ -26,3 +26,24 @@ PACK = {
     },
     "fx": {"reverb": 0.1, "room": "room", "delay": 0.0, "lofi": False, "chorus": False, "drive": False},
 }
+
+# Jazz: Head A A B A (vòng A cho A, vòng B cho B), solo đệm cho học sinh ứng tác, kết tag ii–V × 3.
+PACK["song"] = {
+    "forms": {
+        "short": [("intro", 4, "A", 2), ("verse", 8, "A", 3, "Head A"), ("bridge", 8, "B", 3, "Head B"),
+                  ("outro", 8, "A", 2, "Tag ii–V")],
+        "medium": [("intro", 4, "A", 2), ("verse", 8, "A", 3, "Head A"), ("verse", 8, "A", 3, "Head A"),
+                   ("bridge", 8, "B", 3, "Head B"), ("verse", 8, "A", 3, "Head A"), ("solo", 16, "A", 4, "Solo"),
+                   ("verse", 8, "A", 4, "Head A"), ("outro", 8, "A", 2, "Tag ii–V")],
+        "full": [("intro", 4, "A", 2), ("verse", 8, "A", 3, "Head A"), ("verse", 8, "A", 3, "Head A"),
+                 ("bridge", 8, "B", 3, "Head B"), ("verse", 8, "A", 3, "Head A"), ("solo", 16, "A", 4, "Solo"),
+                 ("solo", 16, "B", 4, "Solo"), ("verse", 8, "A", 4, "Head A"), ("verse", 8, "A", 4, "Head A"),
+                 ("bridge", 8, "B", 3, "Head B"), ("verse", 8, "A", 4, "Head A"), ("outro", 8, "A", 2, "Tag ii–V")],
+    },
+    "parts": {"intro": ["keys", "bass", "hook"]},
+    "verse_stick": False,
+    "ending": "tag_x3",
+    "surprises": [("stop_time", "solo"), ("stop_time", "verse"), ("reverse_cymbal", "solo")],
+    "transitions": {},
+    "hook": {"instrument": "piano", "rhythms": ["x==x.x=====.", "..x..x.x===.", "x.x..x======"]},
+}
