@@ -2,6 +2,29 @@
 
 File này ghi lại việc đã xong, việc đang dở, lệnh để chạy lại và việc tiếp theo. Cập nhật sau mỗi phiên việc. Lịch sử trước 27/10/2026 xem `docs/AI_USAGE.md` và các báo cáo trong `docs/giai-doan/`.
 
+## 02/11/2026: nhánh `phuc-music`, backing track "ban nhạc thật" (Bước 0 → 5)
+
+**Đã xong** (báo cáo `docs/phuc-music/BAO_CAO_BACKING_TRACK.md`, ADR-012 đề xuất)
+- 610 mẫu thu thật CC0/CC BY (piano Salamander, Rhodes/clavi FM của VCSL, bass Growlybass, upright, guitar Gretsch, trống Big Rusty, bộ gõ VCSL), ghi công ở `frontend/public/samples/CREDITS.md`.
+- Bộ phối 9 phong cách ở backend (`/api/v1/composition/arrangement`), dẫn giọng, walking bass, fill, crash, tô màu qua Engine; frontend chỉ humanize theo seed (±30 ms).
+- Bàn trộn bus/send, cân mức theo LUFS đo thật; 36 bản thu sau: −14,7..−19,6 LUFS, 0 mẫu vỡ (bản cũ 162–2 190).
+- Giao diện: Năng lượng 1–3, kênh Guitar, fader từng kênh, Tạo bản khác, thanh tải mẫu, tự về synth khi mẫu lỗi. Migration `a7c4d5e6f8b9` (seed, energy, mix, arrangement_version; nới `ck_drum_kind`).
+- Trang nghe mù 18 cặp (claude.ai + `docs/backing-track/nghe-thu/index.html`), `PHONG_CACH.md` 9 phong cách có nguồn.
+
+**Đang dở / chờ**
+- 3 bạn nghe và chấm ở trang nghe mù (đích ≥ 4/5, không phong cách nào < 3). Claude không nghe được nên chưa thể nói "nghe đạt".
+- Thắng duyệt ADR-012 (cột mới + 23 mã trống lệch ERD Bảng 8). Phúc xác nhận nguồn Rhodes/clavi FM.
+- Chưa có bộ `.m4a` cho Safari; jazz chưa lên 180 BPM (CHECK tempo 160).
+
+**Lệnh chạy lại**
+```bash
+cd backend && python -m pytest -q                      # 459 passed + 21 skipped
+cd frontend && npm test && npm run build               # 240 test
+python3 scripts/samples/build_samples.py --cache /tmp/src   # dựng lại mẫu (cần git + ffmpeg)
+node scripts/backing-track/thu_nghe_thu.mjs --wav-dir /tmp/wav && python3 scripts/backing-track/tao_trang_nghe.py
+node scripts/backing-track/do_hieu_nang.mjs            # cần uvicorn :8000 và npm run dev :5173
+```
+
 ## 01/11/2026: nhánh `phuc-music`, sửa theo báo cáo đối chiếu nội dung học (v0.5.3 / main / phuc-music)
 
 **Đã xong**
