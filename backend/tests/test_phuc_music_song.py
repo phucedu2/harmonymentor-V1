@@ -18,7 +18,7 @@ from app.composition.arranger import arrange, movement
 from app.composition.song import (
     MAX_BARS, SECTION_TYPES, SONG_VERSION, SongError, arrange_song, default_form, round_bars,
 )
-from app.composition.styles import ARRANGEMENT_VERSION, DRUM_CODES, ORDER
+from app.composition.styles import ARRANGEMENT_VERSION, DRUM_CODES, ORDER, PACKS
 from app.db.models import User
 from app.db.session import SessionLocal
 from app.main import app
@@ -282,6 +282,37 @@ def test_ket_bai(style, ending):
     if ending == "tag_x3":
         tag = [b["symbol"] for b in r["bars"][last["start_bar"] if "start_bar" in last else int(last["start_beat"] // 4):]]
         assert tag[:6] == ["Dm7", "G7"] * 3 and tag[-1] == "Cmaj7"
+
+
+def _replay(points, target, beat):
+    """Áp automation theo đúng thứ tự trả về, như trình phát: điểm sau cùng phách hủy dốc của điểm trước."""
+    val, ramp_from, start, ramp, to = 0.0, 0.0, 0.0, 0.0, 0.0
+    for a in points:
+        if a["target"] != target or a["beat"] > beat:
+            continue
+        cur = val if not ramp or a["beat"] >= start + ramp else ramp_from + (to - ramp_from) * (a["beat"] - start) / ramp
+        ramp_from, start, ramp, to = cur, a["beat"], a["ramp"], a["value"]
+        val = a["value"] if not a["ramp"] else cur
+    if ramp and beat < start + ramp:
+        return ramp_from + (to - ramp_from) * (beat - start) / ramp
+    return to if ramp else val
+
+
+@pytest.mark.parametrize("style", [s for s in ORDER if PACKS[s]["song"]["ending"] == "fade"])
+def test_fade_that_su_nho_dan(style):
+    """Phát lại automation theo thứ tự: cuối bài phải xuống ≤ -30 dB (lỗi cũ: mức Outro đè mất dốc fade)."""
+    r = song(style, "medium")
+    out = r["sections"][-1]
+    assert _replay(r["automation"], "master", r["total_beats"]) <= -30
+    assert _replay(r["automation"], "master", out["start_beat"] + 0.5) >= -8
+
+
+def test_automation_cung_phach_dat_ngay_truoc_doc():
+    for style in ORDER:
+        pts = song(style, "medium")["automation"]
+        for a, b in zip(pts, pts[1:]):
+            if a["beat"] == b["beat"] and a["target"] == b["target"]:
+                assert not (a["ramp"] > 0 and b["ramp"] == 0), (style, a, b)
 
 
 # --- hook ------------------------------------------------------------------------------------------

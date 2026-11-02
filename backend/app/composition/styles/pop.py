@@ -55,6 +55,8 @@ PACK["song"] = {
     },
     "parts": {"intro": ["keys", "hook"], "breakdown": ["keys"]},
     "verse_stick": True,
+    # Bù độ to Chorus − Verse (dB) đo trên bản thu 02/11/2026, xem song.sec_db.
+    "chorus_trim_db": -1.4,
     "ending": "fade",
     "surprises": [("drop_bar", "chorus"), ("stop_time", "chorus"), ("half", "bridge"), ("reverse_cymbal", "chorus")],
     "transitions": {},

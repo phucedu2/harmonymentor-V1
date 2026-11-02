@@ -52,12 +52,14 @@ ENDING_LABELS = {"fade": "nhỏ dần", "ritardando_fermata": "chậm dần + ng
 # Công thức năng lượng 1–5 (mục D của sổ tay). `level` = mức mẫu nhịp sẵn có 1–3 của style pack (không xóa mẫu cũ).
 #   bass: mức mẫu bass · guitar: mức để so với `min_energy` của guitar · notes: số nốt tối đa của phím (None = đủ)
 #   top: dời đỉnh thế bấm phím (nửa cung) · lh: tay trái quãng tám (piano) · db: âm lượng tổng của đoạn (automation)
+# db hiệu chỉnh theo số đo 02/11/2026: chỉ riêng mật độ lớp đã làm Chorus to hơn Verse ~3 LU, bản đầu (-4 → 0 dB)
+# đo được +7,2 LU và đỉnh -0,2 dBTP; nên chênh dB giữa các mức để nhỏ và hạ cả đường 2 dB cho limiter dư chỗ.
 ENERGY_RECIPE = {
-    1: {"level": 1, "bass": 1, "guitar": 1, "notes": 3, "top": -3, "lh": False, "db": -6.0},
-    2: {"level": 2, "bass": 1, "guitar": 1, "notes": 3, "top": -3, "lh": False, "db": -4.0},
+    1: {"level": 1, "bass": 1, "guitar": 1, "notes": 3, "top": -3, "lh": False, "db": -4.5},
+    2: {"level": 2, "bass": 1, "guitar": 1, "notes": 3, "top": -3, "lh": False, "db": -2.5},
     3: {"level": 2, "bass": 2, "guitar": 2, "notes": None, "top": 0, "lh": False, "db": -2.5},
-    4: {"level": 3, "bass": 3, "guitar": 3, "notes": None, "top": 3, "lh": True, "db": 0.0},
-    5: {"level": 3, "bass": 3, "guitar": 3, "notes": None, "top": 5, "lh": True, "db": 0.5},
+    4: {"level": 3, "bass": 3, "guitar": 3, "notes": None, "top": 3, "lh": True, "db": -2.0},
+    5: {"level": 3, "bass": 3, "guitar": 3, "notes": None, "top": 5, "lh": True, "db": -1.5},
 }
 HOOK_RANGE = (72, 88)    # C5–E6: trên tầm giọng hát (nguyên tắc 4)
 HOOK_CONTOURS = ([0, 1, 2, -1], [0, -1, -2, 1], [0, 2, 1, 0], [0, 1, 0, -1], [0, -2, -1, 1], [0, 1, 1, -2])
@@ -925,8 +927,16 @@ def arrange_song(key: str, style: str, form: dict, seed: int = 1, energy: int = 
             hook_count[s.idx] = hook_count.get(s.idx, 0) + 1
 
     # 10. automation theo đoạn
+    def sec_db(sec) -> float:
+        # Bù độ to theo vai trò đoạn của từng phong cách (chorus_trim_db trong style pack, đo 02/11/2026): mật độ lớp
+        # làm Chorus to hơn Verse rất khác nhau giữa các phong cách (funk +0,6 LU, indie +5,9 LU). Bù dương thì đẩy
+        # Chorus lên, bù âm thì đẩy Verse lên (không hạ Chorus), để mọi phong cách về khoảng +2…+4 LU.
+        trim = song_rules.get("chorus_trim_db", 0.0)
+        extra = trim if (trim > 0 and sec.type == "chorus") else (-trim if (trim < 0 and sec.type == "verse") else 0.0)
+        return ENERGY_RECIPE[sec.energy]["db"] + extra
+
     for s in secs:
-        db = ENERGY_RECIPE[s.energy]["db"]
+        db = sec_db(s)
         automation.append({"beat": s.start_beat, "target": "master", "value": db, "ramp": 0.0})
         reverb = 1.6 if s.type == "bridge" else 1.25 if s.type in ("intro", "outro", "breakdown") else 1.0
         automation.append({"beat": s.start_beat, "target": "reverb", "value": reverb, "ramp": 1.0 if s.idx else 0.0})
@@ -937,10 +947,12 @@ def arrange_song(key: str, style: str, form: dict, seed: int = 1, energy: int = 
             automation.append({"beat": s.start_beat, "target": "filter", "value": 20000.0, "ramp": float(s.bars * BEATS_PER_BAR)})
         if s.type == "pre" and s.idx + 1 < len(secs):
             # Pre-Chorus dâng dần âm lượng tới mức của đoạn sau (không bật đột ngột).
-            nxt_db = ENERGY_RECIPE[secs[s.idx + 1].energy]["db"]
+            nxt_db = sec_db(secs[s.idx + 1])
             automation.append({"beat": s.start_beat + 0.01, "target": "master", "value": (db + nxt_db) / 2 - 0.5,
                                "ramp": float(s.bars * BEATS_PER_BAR) - 0.5})
-    automation.sort(key=lambda a: (a["beat"], a["target"]))
+    # Cùng phách, cùng thông số: điểm "đặt ngay" đứng trước điểm "dốc", vì trình phát áp theo thứ tự và một điểm
+    # đặt ngay đến sau sẽ hủy dốc (lỗi đo được 02/11: Outro fade bị mức của đoạn đè, không nhỏ dần).
+    automation.sort(key=lambda a: (a["beat"], a["target"], a["ramp"] > 0))
 
     for track in tracks.values():
         track["events"].sort(key=lambda ev: (ev["beat"], ev.get("drum", "")))
