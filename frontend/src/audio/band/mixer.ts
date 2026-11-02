@@ -5,14 +5,15 @@
 // Một reverb chung, mỗi kênh gửi vào một lượng khác nhau (trống nhiều hơn bass) → cả ban nhạc "đứng trong một phòng".
 import * as Tone from "tone";
 
-import type { BandChannel, BandMix, StyleFx } from "./types";
+import type { AutomationPoint, BandChannel, BandMix, StyleFx } from "./types";
 
 type Strip = { input: Tone.Gain; fader: Tone.Volume; send: Tone.Gain; delaySend: Tone.Gain; nodes: Tone.ToneAudioNode[] };
 
 // Lượng gửi reverb theo kênh (nhân với mức reverb của phong cách): bass gần như khô để tiếng trầm không đục.
-const SEND: Record<BandChannel, number> = { chords: 1, bass: 0.12, guitar: 0.9, drums: 0.75 };
+const SEND: Record<BandChannel, number> = { chords: 1, bass: 0.12, guitar: 0.9, drums: 0.75, hook: 1.15 };
 // Âm lượng nền mỗi kênh (dB) để cân ban nhạc trước khi người dùng kéo fader.
-const BASE_DB: Record<BandChannel, number> = { chords: -7, bass: -5, guitar: 0, drums: 4 };
+// Hook (chế độ Bài hát): câu ngắn tầm cao, đặt thấp hơn phím ~3 dB để là "lời đáp" chứ không lấn ban nhạc.
+const BASE_DB: Record<BandChannel, number> = { chords: -7, bass: -5, guitar: 0, drums: 4, hook: -10 };
 // Bù riêng theo phong cách (dB), từ số đo LUFS từng kênh thu solo ngày 02/11/2026 (scripts/backing-track): mật độ
 // nốt mỗi phong cách khác nhau (ballad thưa, bossa dày) nên cùng một fader nghe to nhỏ khác nhau. Đích: phím ≈ trống,
 // bass thấp hơn ~2 dB, guitar đệm thấp hơn ~2 dB (rock: guitar dẫn, phím lùi lại). Jazz/ballad để trống nhẹ hơn.
@@ -30,7 +31,7 @@ const STYLE_TRIM: Record<string, Partial<Record<BandChannel, number>>> = {
 // Bù âm lượng tổng: đo bản thu pop -23,5 LUFS khi chưa bù; sau khi cân kênh, +6 dB đưa về -16..-18 LUFS (mức nghe thoải mái trên web);
 // limiter -2 dB phía sau chặn đỉnh (chừa chỗ cho đỉnh xuyên mẫu) nên không vỡ tiếng.
 const MAKEUP_DB = 6;
-const PAN: Record<BandChannel, number> = { chords: 0.05, bass: 0, guitar: -0.3, drums: 0 };
+const PAN: Record<BandChannel, number> = { chords: 0.05, bass: 0, guitar: -0.3, drums: 0, hook: 0.25 };
 
 const ROOM: Record<StyleFx["room"], { decay: number; preDelay: number }> = {
   room: { decay: 1.1, preDelay: 0.008 }, plate: { decay: 1.9, preDelay: 0.015 }, hall: { decay: 3.0, preDelay: 0.025 },
@@ -46,6 +47,11 @@ export function softClip(x: number): number {
 export class BandMixer {
   readonly strips: Record<BandChannel, Strip>;
   private master: Tone.Gain;
+  // Tự động hóa theo đoạn (chế độ Bài hát): âm lượng tổng, bộ lọc thấp tổng, lượng gửi reverb, đường về reverb.
+  private songVol: Tone.Volume;
+  private songFilter: Tone.Filter;
+  private reverbIn: Tone.Gain;
+  private reverbOut: Tone.Gain;
   private reverb: Tone.Reverb;
   private delay: Tone.FeedbackDelay;
   private extra: Tone.ToneAudioNode[] = [];
@@ -71,10 +77,16 @@ export class BandMixer {
       this.extra.push(lp, sat, wow);
       masterOut = wow;
     }
-    this.master = new Tone.Gain(Tone.dbToGain(MAKEUP_DB)).connect(masterOut);
+    // Chuỗi tổng: master → bộ lọc thấp (mặc định 20 kHz = không lọc) → âm lượng đoạn → (lo-fi) → nén → limiter.
+    // Limiter vẫn đứng cuối nên automation đẩy âm lượng lên cũng không vượt trần.
+    this.songVol = new Tone.Volume(0).connect(masterOut);
+    this.songFilter = new Tone.Filter({ type: "lowpass", frequency: 20000, Q: 0.5, rolloff: -12 }).connect(this.songVol);
+    this.master = new Tone.Gain(Tone.dbToGain(MAKEUP_DB)).connect(this.songFilter);
 
     const room = ROOM[fx.room];
-    this.reverb = new Tone.Reverb({ decay: room.decay, preDelay: room.preDelay, wet: 1 }).connect(this.master);
+    this.reverbOut = new Tone.Gain(1).connect(this.master);
+    this.reverb = new Tone.Reverb({ decay: room.decay, preDelay: room.preDelay, wet: 1 }).connect(this.reverbOut);
+    this.reverbIn = new Tone.Gain(1).connect(this.reverb);
     this.delay = new Tone.FeedbackDelay({ delayTime: "8n.", feedback: 0.28, wet: 1 }).connect(this.master);
     const delayFilter = new Tone.Filter({ type: "lowpass", frequency: 3000 }).connect(this.delay);
     this.extra.push(delayFilter);
@@ -106,14 +118,14 @@ export class BandMixer {
         head = chorus;
       }
       const input = new Tone.Gain(1).connect(head);
-      const send = new Tone.Gain(fx.reverb * SEND[ch] * 2.2).connect(this.reverb);
-      const delaySend = new Tone.Gain(ch === "guitar" || ch === "chords" ? fx.delay : 0).connect(delayFilter);
+      const send = new Tone.Gain(fx.reverb * SEND[ch] * 2.2).connect(this.reverbIn);
+      const delaySend = new Tone.Gain(ch === "guitar" || ch === "chords" || ch === "hook" ? fx.delay : 0).connect(delayFilter);
       fader.connect(send);
       fader.connect(delaySend);
       nodes.push(send, delaySend, input);
       return { input, fader, send, delaySend, nodes };
     };
-    this.strips = { chords: make("chords"), bass: make("bass"), guitar: make("guitar"), drums: make("drums") };
+    this.strips = { chords: make("chords"), bass: make("bass"), guitar: make("guitar"), drums: make("drums"), hook: make("hook") };
     if (fx.lofi) this.vinyl = this.makeVinyl();
   }
 
@@ -143,10 +155,34 @@ export class BandMixer {
     if (!on && this.vinyl.state === "started") this.vinyl.stop(time);
   }
 
+  /**
+   * Áp một điểm tự động hóa tại thời điểm `time` (giây của AudioContext). `rampSec` = 0 thì đặt ngay.
+   * Âm lượng đổi bằng dốc tuyến tính theo dB; bộ lọc đổi theo dốc mũ (tai nghe tần số theo thang log).
+   */
+  automate(p: Pick<AutomationPoint, "target" | "value">, rampSec: number, time: number): void {
+    const ramp = Math.max(0, rampSec);
+    const param = p.target === "master" ? this.songVol.volume : p.target === "filter" ? this.songFilter.frequency
+      : p.target === "reverb" ? this.reverbIn.gain : this.reverbOut.gain;
+    const value = p.target === "filter" ? Math.min(20000, Math.max(80, p.value)) : p.value;
+    param.cancelScheduledValues(time);
+    if (ramp < 0.005) { param.setValueAtTime(value, time); return; }
+    param.setValueAtTime(param.getValueAtTime(time) as number, time);
+    if (p.target === "filter") param.exponentialRampToValueAtTime(value, time + ramp);
+    else param.linearRampToValueAtTime(value, time + ramp);
+  }
+
+  /** Trả mọi thông số tự động hóa về trung tính (chế độ Vòng lặp, hoặc trước khi phát lại bài). */
+  resetAutomation(time = Tone.now()): void {
+    this.automate({ target: "master", value: 0 }, 0, time);
+    this.automate({ target: "filter", value: 20000 }, 0, time);
+    this.automate({ target: "reverb", value: 1 }, 0, time);
+    this.automate({ target: "reverb_return", value: 1 }, 0, time);
+  }
+
   /** Fader 0..1 → dB (đường cong log như fader thật), cộng mức nền của kênh. */
   applyMix(mix: BandMix): void {
     for (const ch of Object.keys(this.strips) as BandChannel[]) {
-      const { volume, muted } = mix[ch];
+      const { volume, muted } = mix[ch] ?? { volume: 0.8, muted: false };
       const fader = this.strips[ch].fader;
       // Đặt âm lượng trước rồi mới tắt tiếng: với Tone.Volume, gán volume sau khi mute sẽ bật tiếng lại.
       fader.volume.value = BASE_DB[ch] + (STYLE_TRIM[this.style]?.[ch] ?? 0) + 20 * Math.log10(Math.max(volume, 0.001) / 0.8);
@@ -163,7 +199,11 @@ export class BandMixer {
     for (const strip of Object.values(this.strips)) for (const n of strip.nodes) n.dispose();
     for (const n of this.extra) n.dispose();
     this.reverb.dispose();
+    this.reverbIn.dispose();
+    this.reverbOut.dispose();
     this.delay.dispose();
     this.master.dispose();
+    this.songFilter.dispose();
+    this.songVol.dispose();
   }
 }

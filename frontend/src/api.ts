@@ -1,6 +1,6 @@
 // Backend contracts. Music theory remains deterministic on the server; frontend is presentation/input only.
 import { http } from "./lib/http";
-import type { Arrangement } from "./audio/band/types";
+import type { Arrangement, SongForm } from "./audio/band/types";
 
 export type EngineError = { code: string; message: string; details?: Record<string, unknown> };
 // ApiRequestError (lib/http.ts) thỏa kiểu này, nên các trang cũ đọc lỗi như trước.
@@ -184,6 +184,8 @@ export type ComposeOptions = {
   levels: { level: number; label: string }[];
   tempo: { min: number; max: number };
   bars: { min: number; max: number };
+  song?: { version: number; max_bars: number; lengths: string[]; section_types: { id: string; label: string }[];
+    transitions: string[]; endings: string[] };
 };
 export type ComposeCandidate = {
   rule: string; rule_label: string; level: number; level_label: string; symbol: string; label: string;
@@ -197,15 +199,17 @@ export type ComposeAnalysis = {
 export type ComposeVoicing = {
   symbol: string; notes: string[]; pitches: PitchWithOctave[]; bass: { root: PitchWithOctave; fifth: PitchWithOctave };
 };
-export type ComposeMix = Record<"chords" | "bass" | "guitar" | "drums", { volume: number; muted: boolean }>;
+export type ComposeMix = Partial<Record<"chords" | "bass" | "guitar" | "drums" | "hook", { volume: number; muted: boolean }>>;
 export type ComposeProjectInput = {
   name: string; key: string; tempo_bpm: number; bars: number; style: string; chords: (string | null)[];
   seed: number; energy: number; mix: ComposeMix | null;
+  /** Có = dự án ở chế độ Bài hát (ADR-013 đề xuất); null = Vòng lặp như cũ. */
+  form?: SongForm | null;
 };
 export type ComposeProject = ComposeProjectInput & {
   id: string; time_signature: string; updated_at: string; arrangement_version: number; arrangement_outdated: boolean;
 };
-export type ComposeProjectSummary = { id: string; name: string; key: string; bars: number; style: string; updated_at: string };
+export type ComposeProjectSummary = { id: string; name: string; key: string; bars: number; style: string; updated_at: string; mode?: "song" | "loop" };
 
 // Mọi request đi qua lib/http.ts để có access token và lỗi chuẩn SRS 7.4.
 const engineCall = <T,>(path: string, init?: RequestInit) => http<T>("/engine" + path, init, { auth: false });
@@ -241,6 +245,8 @@ export const api = {
   composeAnalyze: (key: string, chords: (string | null)[]) => apiPost<ComposeAnalysis>("/composition/analyze", { key, chords }),
   composeArrangement: (body: { key: string; style: string; chords: (string | null)[]; seed: number; energy: number; bpm: number }) =>
     apiPost<Arrangement>("/composition/arrangement", body),
+  composeSong: (body: { key: string; style: string; seed: number; energy: number; bpm: number; form: SongForm }) =>
+    apiPost<Arrangement>("/composition/song", body),
   listProjects: () => apiCall<ComposeProjectSummary[]>("/projects"),
   getProject: (id: string) => apiCall<ComposeProject>(`/projects/${encodeURIComponent(id)}`),
   createProject: (data: ComposeProjectInput) => apiPost<ComposeProject>("/projects", data),

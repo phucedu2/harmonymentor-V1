@@ -138,6 +138,14 @@ export function humanize(arr: Arrangement, opts: HumanizeOptions): PlayHit[] {
       });
     });
   }
+  // Hook nhạc cụ (chế độ Bài hát): câu ngắn tầm cao, lệch nhẹ như tay phải người chơi; kênh riêng "Hook".
+  for (const e of arr.tracks.hook?.events ?? []) {
+    hits.push({
+      channel: "hook", instrument: "hook", beat: swung(e.beat),
+      offset: timing(feel.sigma_ms.keys, feel.pocket_ms.keys ?? 0),
+      dur: e.dur * (0.9 + rand() * 0.08), midi: e.midi[0], piece: null, vel: velocity(e.vel, e.beat, 0.06), art: e.art,
+    });
+  }
   return hits.sort((a, b) => a.beat - b.beat || a.offset - b.offset);
 }
 
