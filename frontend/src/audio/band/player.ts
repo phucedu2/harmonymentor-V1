@@ -11,7 +11,7 @@ import { SampledInstrument, SynthInstrument, type BandInstrument } from "./instr
 import { BandMixer } from "./mixer";
 import { instrumentsFor, loadInstruments, loadManifest, preferLite, type LoadProgress } from "./samples";
 import { SongFx } from "./songFx";
-import { BLOCK_BEATS, automationAt, splitBlocks, tempoAt } from "./songSchedule";
+import { BLOCK_BEATS, automationAt, beatToSeconds, splitBlocks, tempoAt } from "./songSchedule";
 import { BAND_CHANNELS, type Arrangement, type BandChannel, type BandMix, type PlayHit } from "./types";
 
 export type PlayOptions = {
@@ -295,26 +295,65 @@ class BandPlayer {
 export const bandPlayer = new BandPlayer();
 
 /**
- * Thu bản phối thành AudioBuffer (Tone.Offline), chỉ dùng nội bộ để nghe so sánh trước/sau (không cho người dùng xuất).
+ * Thu bản phối thành AudioBuffer, chỉ dùng nội bộ để nghe so sánh (không cho người dùng xuất).
  * Gọi `loadInstruments` trước để mẫu đã giải nén. Bài hát: thu cả automation, tempo chậm dần, FX chuyển đoạn.
+ *
+ * Vì sao không dùng Tone.Offline + Transport: Tone chạy hết đồng hồ trước rồi mới thu, nên MỌI giọng (6 000–8 000
+ * nhát một bài) được tạo và nối sẵn từ đầu; Chrome phải kéo qua tất cả ở mỗi khối 128 mẫu → thời gian thu tăng theo
+ * bình phương (đo 02/11/2026: 2 000 giọng/60 s mất 164 s, bài Vừa 155 s mất 9 phút). Ở đây dùng
+ * OfflineAudioContext.suspend(): cứ mỗi CHUNK giây dừng lại, tạo giọng cho đoạn kế tiếp rồi chạy tiếp → tuyến tính.
+ * Thời điểm mỗi nhát tính thẳng bằng songSchedule.beatToSeconds (cùng công thức với dòng thời gian), nên tempo
+ * chậm dần khớp với Transport khi phát trực tiếp.
  */
 export async function renderOffline(arr: Arrangement, bpm: number, seed: number, seconds: number, mix: BandMix): Promise<Tone.ToneAudioBuffer> {
-  return Tone.Offline(async ({ transport }) => {
-    const mixer = new BandMixer(arr.fx, Tone.getDestination(), arr.style);
+  const CHUNK = 2;
+  // OfflineAudioContext gốc của trình duyệt (bản bọc của Tone không có suspend()).
+  const native = new OfflineAudioContext(2, Math.ceil(seconds * 44100), 44100);
+  const ctx = new Tone.OfflineContext(native as unknown as Tone.BaseContext["rawContext"] as never);
+  const prev = Tone.getContext();
+  Tone.setContext(ctx);
+  try {
+    const mixer = new BandMixer(arr.fx, ctx.destination, arr.style);
     await mixer.ready;
     mixer.applyMix(mix);
     const band = await buildBand(arr, false, true, mixer);
-    transport.bpm.value = bpm;
-    scheduleHits(transport, humanize(arr, { seed, bpm }), band);
+    const scale = bpm / arr.bpm;
+    const map = (arr.tempo_map ?? []).map((p) => ({ ...p, bpm: p.bpm * scale }));
+    const sec = (beat: number) => beatToSeconds(beat, bpm, map);
+    const hits = humanize(arr, { seed, bpm }).map((h) => ({ h, t: Math.max(0, sec(h.beat) + h.offset) }))
+      .sort((a, b) => a.t - b.t);
     if (isSong(arr)) {
       const manifest = await loadManifest();
       const fx = new SongFx(mixer.input("drums"), manifest.instruments.drums);
       mixer.resetAutomation(0);
-      scheduleSongExtras(transport, arr, mixer, fx, 0, arr.total_beats + 1, bpm / arr.bpm);
+      for (const p of arr.automation ?? []) mixer.automate(p, sec(p.beat + p.ramp) - sec(p.beat), sec(p.beat));
+      for (const e of arr.fx_events ?? []) {
+        const a = sec(e.beat), b = sec(e.beat + e.dur);
+        if (e.kind === "reverse_cymbal") fx.reverseCymbal(b, b - a, e.gain ?? 0.8);
+        else fx.riser(a, b - a, 0.3);
+      }
     }
     if (arr.fx.lofi) mixer.setVinyl(true, 0);
-    transport.start(0);
-  }, seconds, 2);
+    const raw = native;
+    let k = 0;
+    const scheduleUpTo = (until: number) => {
+      for (; k < hits.length && hits[k].t < until; k += 1) {
+        const { h, t } = hits[k];
+        band.get(h.instrument)?.play(h, t, (h.dur * 60) / tempoAt(h.beat, bpm, map));
+      }
+    };
+    // Khối đầu xếp ngay; mỗi lần dừng ở t thì xếp các nhát trong [t + CHUNK, t + 2·CHUNK) để luôn đi trước một khối.
+    scheduleUpTo(CHUNK * 2);
+    for (let t = CHUNK; t < seconds; t += CHUNK) {
+      const until = t + CHUNK * 2;
+      raw.suspend(t).then(() => { scheduleUpTo(until); return raw.resume(); });
+    }
+    const buffer = await raw.startRendering();
+    for (const inst of band.values()) inst.dispose();
+    return new Tone.ToneAudioBuffer(buffer);
+  } finally {
+    Tone.setContext(prev);
+  }
 }
 
 export { BAND_CHANNELS, neededKeys };

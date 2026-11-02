@@ -5,7 +5,8 @@ import * as Tone from "tone";
 // Gỡ lỗi khi thu: lộ Tone đúng bản mà các module dùng.
 (window as unknown as { __Tone: typeof Tone }).__Tone = Tone;
 
-import { renderOffline } from "../src/audio/band/player";
+import { neededKeys, renderOffline } from "../src/audio/band/player";
+import { beatToSeconds } from "../src/audio/band/songSchedule";
 import { instrumentsFor, loadInstruments } from "../src/audio/band/samples";
 import { DEFAULT_MIX, type Arrangement } from "../src/audio/band/types";
 import { BackingTrackPlayer } from "./legacy/backingTrack";
@@ -42,7 +43,7 @@ async function post<T>(path: string, body: unknown): Promise<T> {
   return r.json() as Promise<T>;
 }
 
-declare global { interface Window { renderAfter: unknown; renderBefore: unknown } }
+declare global { interface Window { renderAfter: unknown; renderBefore: unknown; renderSong: unknown } }
 
 window.renderAfter = async (style: string, chords: string[], seed: number, energy: number, bpm: number | null, seconds: number,
   only?: string) => {
@@ -69,4 +70,29 @@ window.renderBefore = async (oldStyle: string, chords: string[], bpm: number | n
     await player.play({ events, bars: chords.length, bpm: useBpm, swing: style.swing, loop: true, onBar: () => {}, onEnd: () => {} });
   }, seconds, 2);
   return { wav: b64(wav(buf.get()!)), bpm: useBpm, seconds };
+};
+
+// Chế độ Bài hát (ADR-013 đề xuất): thu trọn bài theo form mặc định của phong cách. Trả kèm mốc giây từng đoạn
+// (tính cả ritardando) để đo LUFS từng đoạn và đặt mốc trên trang nghe.
+window.renderSong = async (style: string, progressions: Record<string, string[] | null>, length: string, seed: number,
+  energy: number, modulate = false, strip: string[] = []) => {
+  const form = { length, hook: true, modulate: { enabled: modulate, semitones: 1 }, ending: "auto", progressions };
+  const arr = await post<Arrangement>("/composition/song", { key: "C", style, seed, energy, form });
+  // `strip`: bỏ bớt một phần (automation, fx_events, tempo_map, hook) để gỡ lỗi/đo riêng từng phần.
+  for (const k of strip) {
+    if (k === "hook") delete arr.tracks.hook; else delete (arr as Record<string, unknown>)[k];
+  }
+  const t0 = performance.now();
+  await loadInstruments(neededKeys(arr), false);
+  const loadMs = performance.now() - t0;
+  const tempo = arr.tempo_map ?? [];
+  const sec = (b: number) => beatToSeconds(b, arr.bpm, tempo);
+  const len = sec(arr.total_beats) + (arr.tail_beats ?? 4) * 60 / arr.bpm + 1;
+  const t1 = performance.now();
+  const buf = await renderOffline(arr, arr.bpm, seed, len, DEFAULT_MIX);
+  const sections = (arr.sections ?? []).map((s) => ({ id: s.id, type: s.type, label: s.label, energy: s.energy,
+    design_energy: s.design_energy, transition: s.transition, start: sec(s.start_beat), end: sec(s.end_beat), note_vi: s.note_vi }));
+  return { wav: b64(wav(buf.get()!)), bpm: arr.bpm, loadMs, renderMs: performance.now() - t1, seconds: len, sections,
+    surprises: (arr.surprises ?? []).map((x) => ({ ...x, sec: sec(x.beat) })), ending: arr.ending, total_bars: arr.total_bars,
+    events: { hook: arr.tracks.hook?.events.length ?? 0 } };
 };

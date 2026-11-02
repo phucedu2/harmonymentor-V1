@@ -62,10 +62,13 @@ export class BandMixer {
     // Limiter của Web Audio (DynamicsCompressor) có attack nên tiếng kick vẫn lọt đỉnh 0 dBFS (đo được 30-120 mẫu chạm
     // trần mỗi bản thu 16 s). Thêm bộ cắt mềm cuối chuỗi: tuyến tính dưới 0,7, cong dần tới trần 0,97, không bao giờ vỡ tiếng.
     // WaveShaper chỉ nhận [-1, 1]: chia đôi trước rồi nhân đôi trong đường cong, để đỉnh tới 2,0 (+6 dB) vẫn cong mềm.
-    const clipper = new Tone.WaveShaper((x) => softClip(x * 2), 8192).connect(destination);
+    // Sau bộ cắt mềm hạ 1,1 dB (trần 0,97 → 0,85 ≈ -1,4 dBFS) để đỉnh thật ≤ -1 dBTP: đo 02/11/2026 bản thu chạm
+    // trần cắt mềm -0,3 dBTP, vượt mức an toàn khi trình duyệt/hệ điều hành chuyển mẫu hoặc nén lại.
+    const ceiling = new Tone.Gain(0.88).connect(destination);
+    const clipper = new Tone.WaveShaper((x) => softClip(x * 2), 8192).connect(ceiling);
     const pad = new Tone.Gain(0.5).connect(clipper);
     const limiter = new Tone.Limiter(-2).connect(pad);
-    this.extra.push(clipper, pad);
+    this.extra.push(ceiling, clipper, pad);
     const glue = new Tone.Compressor({ threshold: -14, ratio: 2, attack: 0.02, release: 0.25 }).connect(limiter);
     this.extra.push(limiter, glue);
     let masterOut: Tone.InputNode = glue;
@@ -164,11 +167,31 @@ export class BandMixer {
     const param = p.target === "master" ? this.songVol.volume : p.target === "filter" ? this.songFilter.frequency
       : p.target === "reverb" ? this.reverbIn.gain : this.reverbOut.gain;
     const value = p.target === "filter" ? Math.min(20000, Math.max(80, p.value)) : p.value;
+    // Giá trị xuất phát tự tính từ điểm trước, KHÔNG dùng param.getValueAtTime: trong Tone.Offline nó trả 0 sau khi
+    // hủy lịch cùng thời điểm, và dốc mũ từ 0 giữ nguyên 0 → bộ lọc 0 Hz, im cả Intro (đo 02/11/2026).
+    const from = this.autoValueAt(p.target, time);
     param.cancelScheduledValues(time);
-    if (ramp < 0.005) { param.setValueAtTime(value, time); return; }
-    param.setValueAtTime(param.getValueAtTime(time) as number, time);
-    if (p.target === "filter") param.exponentialRampToValueAtTime(value, time + ramp);
+    if (ramp < 0.005) {
+      param.setValueAtTime(value, time);
+      this.auto[p.target] = { from: value, to: value, t0: time, t1: time, exp: false };
+      return;
+    }
+    const exp = p.target === "filter";
+    param.setValueAtTime(from, time);
+    if (exp) param.exponentialRampToValueAtTime(value, time + ramp);
     else param.linearRampToValueAtTime(value, time + ramp);
+    this.auto[p.target] = { from, to: value, t0: time, t1: time + ramp, exp };
+  }
+
+  private auto: Partial<Record<AutomationPoint["target"], { from: number; to: number; t0: number; t1: number; exp: boolean }>> = {};
+
+  /** Giá trị đang có của một thông số tự động hóa tại `time`, nội suy theo dốc đang chạy. */
+  private autoValueAt(target: AutomationPoint["target"], time: number): number {
+    const a = this.auto[target];
+    if (!a) return target === "master" ? 0 : target === "filter" ? 20000 : 1;
+    if (time >= a.t1 || a.t1 <= a.t0) return a.to;
+    const t = Math.max(0, (time - a.t0) / (a.t1 - a.t0));
+    return a.exp ? a.from * (a.to / a.from) ** t : a.from + (a.to - a.from) * t;
   }
 
   /** Trả mọi thông số tự động hóa về trung tính (chế độ Vòng lặp, hoặc trước khi phát lại bài). */

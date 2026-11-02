@@ -127,9 +127,13 @@ export class SampledInstrument implements BandInstrument {
    */
   private sweep(): void {
     const now = this.context.currentTime;
+    // Tone.Offline chạy hết đồng hồ (currentTime giả) TRƯỚC rồi mới thu âm thật. Hủy nút ở đây thì giọng chưa kịp
+    // kêu đã mất: bản thu im lặng, chỉ còn ~2 giây cuối (đo 02/11/2026, mọi bản "sau" ở nghe-thu đều dính).
+    // Nên khi thu offline chỉ bỏ khỏi danh sách theo dõi, để context offline tự giải phóng sau khi thu xong.
+    const offline = this.context.isOffline;
     const keep: Voice[] = [];
     for (const v of this.voices) {
-      if (v.end + 0.5 < now) { v.src.dispose(); v.gain.dispose(); } else keep.push(v);
+      if (v.end + 0.5 < now) { if (!offline) { v.src.dispose(); v.gain.dispose(); } } else keep.push(v);
     }
     this.voices = keep;
   }
