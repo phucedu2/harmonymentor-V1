@@ -90,6 +90,6 @@ Ràng buộc `ck_drum_kind` của `drum_events` được nới từ 3 mã (`kick
 
 1. **Safari/iOS cũ không giải mã `.ogg`.** Trên các máy đó app sẽ dùng synth dự phòng. Muốn nghe mẫu thật trên Safari thì cần thêm bộ `.m4a` (khoảng +21 MB).
 2. **Jazz chưa lên được 180 BPM**, vì tempo dự án bị chặn ở 60–160 (CHECK của ADR-010). Muốn nới thì cần migration riêng.
-3. **DB SQLite dev cũ** (`backend/harmonymentor_dev.db`) cần chạy `alembic upgrade head` hoặc xóa đi rồi tạo lại. Nếu không, lưu dự án sẽ vướng ràng buộc trống cũ.
+3. **DB SQLite dev cũ** (`backend/harmonymentor_dev.db`, dựng bằng create_all) phải chạy `alembic -c alembic.ini stamp f6a2b3c4d5e7 && alembic -c alembic.ini upgrade head` (giữ dữ liệu) hoặc xóa đi rồi tạo lại. Không làm thì `/projects` lỗi 500; từ 02/11 API báo rõ lỗi này lúc khởi động.
 4. **Rhodes và clavi là mẫu FM (TX81Z)**, không phải Rhodes điện cơ thật. Chưa tìm được bộ Rhodes thật nào có giấy phép CC0/CC BY đủ lớp lực (QĐ 3C: hỏi từng trường hợp).
 5. **Claude không nghe được âm thanh.** "Đạt" chỉ có nghĩa là đạt về kỹ thuật và số đo. Chất lượng nghe phải chờ 3 bạn chấm ở trang nghe mù (đích ≥ 4/5, không phong cách nào < 3).

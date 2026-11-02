@@ -39,6 +39,15 @@ def _check_legacy_users_table() -> None:
             "CSDL cũ thiếu cột ảnh chụp của exercise_versions (PR-3, HM-003). Với SQLite dev: xóa file "
             "harmonymentor_dev.db để tạo lại. Với CSDL do Alembic quản lý: chạy `alembic -c alembic.ini upgrade head`."
         )
+    # Bộ phối khí (02/11/2026, migration a7c4d5e6f8b9): CSDL SQLite dựng bằng create_all trước ngày này thiếu cột
+    # seed/energy/mix, mở Harmony Lab sẽ lỗi 500. stamp + upgrade giữ nguyên dữ liệu (đã thử trên bản sao CSDL cũ).
+    if "seed" not in {c["name"] for c in inspector.get_columns("composition_projects")}:
+        raise RuntimeError(
+            "CSDL cũ thiếu cột seed/energy/mix của composition_projects (bộ phối khí, ADR-012). Giữ dữ liệu: "
+            "`alembic -c alembic.ini stamp f6a2b3c4d5e7 && alembic -c alembic.ini upgrade head` (CSDL tạo bằng "
+            "create_all) hoặc chỉ `alembic -c alembic.ini upgrade head` (CSDL do Alembic quản lý). "
+            "Không cần dữ liệu cũ: xóa harmonymentor_dev.db để tạo lại."
+        )
     columns = {c["name"] for c in inspector.get_columns("users")}
     if "email" not in columns:
         raise RuntimeError(
