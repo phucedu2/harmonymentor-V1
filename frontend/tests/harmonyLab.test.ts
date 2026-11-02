@@ -1,17 +1,9 @@
-// phuc-music Bước 4: lịch phát và logic lưới của Harmony Lab (không cần Tone.js hay trình duyệt).
+// phuc-music Bước 4: logic lưới của Harmony Lab (không cần Tone.js hay trình duyệt).
+// Lịch phát cũ (buildSchedule) đã thay bằng bộ phối khí backend + humanize, test ở band.test.ts (02/11).
 import { describe, expect, it } from "vitest";
-import type { ComposeOptions, ComposeStyle, ComposeVoicing } from "../src/api";
-import { beatToTransport, buildSchedule } from "../src/audio/trackSchedule";
+import type { ComposeOptions } from "../src/api";
 import { remapToKey, resizeBars, starterProgression } from "../src/components/compose/harmonyLab";
 
-const p = (name: string, midi: number) => ({ name, midi });
-const C: ComposeVoicing = { symbol: "C", notes: ["C", "E", "G"], pitches: [p("C4", 60), p("E4", 64), p("G4", 67)], bass: { root: p("C2", 36), fifth: p("G2", 43) } };
-const style: ComposeStyle = {
-  id: "pop", label: "Pop", description: "", default_bpm: 100, swing: 0,
-  drums: [{ drum: "kick", beat: 0, velocity: 110 }, { drum: "snare", beat: 1, velocity: 95 }],
-  bass: [{ beat: 0, beats: 2, tone: "root" }, { beat: 2, beats: 2, tone: "fifth" }],
-  chords: [{ beat: 0, beats: 4 }],
-};
 // Bảng hợp âm giống dữ liệu /composition/options trả về cho C và G (Music Engine dựng).
 const options = {
   keys: [
@@ -19,21 +11,6 @@ const options = {
     { key: "G", chords: ["G", "Am", "Bm", "C", "D", "Em", "F#dim"].map((symbol) => ({ symbol, numeral: "" })) },
   ],
 } as unknown as ComposeOptions;
-
-describe("lịch phát backing track", () => {
-  it("trống chạy cả ô trống, hợp âm và bass chỉ ở ô có hợp âm, dùng số MIDI từ Engine", () => {
-    const events = buildSchedule([C, null], style);
-    expect(events.filter((e) => e.channel === "drums").map((e) => e.beat)).toEqual([0, 1, 4, 5]);
-    expect(events.filter((e) => e.channel === "chords")).toEqual([{ channel: "chords", beat: 0, beats: 4, midi: [60, 64, 67] }]);
-    expect(events.filter((e) => e.channel === "bass").map((e) => e.midi)).toEqual([[36], [43]]);
-  });
-
-  it("đổi phách sang thời gian nhạc ô:phách:móc kép", () => {
-    expect(beatToTransport(0)).toBe("0:0:0");
-    expect(beatToTransport(5.5)).toBe("1:1:2");
-    expect(beatToTransport(16)).toBe("4:0:0");
-  });
-});
 
 describe("lưới hợp âm", () => {
   it("vòng mẫu I–vi–IV–V lấy từ danh sách hợp âm của giọng, lặp khi lưới dài hơn", () => {

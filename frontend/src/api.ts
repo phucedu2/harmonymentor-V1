@@ -1,5 +1,6 @@
 // Backend contracts. Music theory remains deterministic on the server; frontend is presentation/input only.
 import { http } from "./lib/http";
+import type { Arrangement } from "./audio/band/types";
 
 export type EngineError = { code: string; message: string; details?: Record<string, unknown> };
 // ApiRequestError (lib/http.ts) thỏa kiểu này, nên các trang cũ đọc lỗi như trước.
@@ -172,12 +173,10 @@ export type PracticeHistoryItem = {
 export type PracticeHistory = { items: PracticeHistoryItem[]; stats: { kind: PracticeKind; attempts: number; correct: number }[] };
 
 // Harmony Lab (phuc-music Bước 4, FR-17/18): hợp âm, gợi ý và phân tích do backend + Music Engine trả về.
-export type ComposeStylePattern = { beat: number; beats: number };
+// Phong cách nền (ADR-012 đề xuất): mẫu nhịp nằm ở backend (style pack), giao diện chỉ cần tên, mô tả, tempo.
 export type ComposeStyle = {
-  id: string; label: string; description: string; default_bpm: number; swing: number;
-  drums: { drum: "kick" | "snare" | "hat"; beat: number; velocity: number }[];
-  bass: { beat: number; beats: number; tone: "root" | "fifth" }[];
-  chords: ComposeStylePattern[];
+  id: string; label: string; description: string; default_bpm: number; bpm_range: [number, number]; swing: number;
+  instruments: { keys: string; bass: string; guitar: string };
 };
 export type ComposeOptions = {
   keys: { key: string; chords: { symbol: string; numeral: string }[] }[];
@@ -198,8 +197,14 @@ export type ComposeAnalysis = {
 export type ComposeVoicing = {
   symbol: string; notes: string[]; pitches: PitchWithOctave[]; bass: { root: PitchWithOctave; fifth: PitchWithOctave };
 };
-export type ComposeProjectInput = { name: string; key: string; tempo_bpm: number; bars: number; style: string; chords: (string | null)[] };
-export type ComposeProject = ComposeProjectInput & { id: string; time_signature: string; updated_at: string };
+export type ComposeMix = Record<"chords" | "bass" | "guitar" | "drums", { volume: number; muted: boolean }>;
+export type ComposeProjectInput = {
+  name: string; key: string; tempo_bpm: number; bars: number; style: string; chords: (string | null)[];
+  seed: number; energy: number; mix: ComposeMix | null;
+};
+export type ComposeProject = ComposeProjectInput & {
+  id: string; time_signature: string; updated_at: string; arrangement_version: number; arrangement_outdated: boolean;
+};
 export type ComposeProjectSummary = { id: string; name: string; key: string; bars: number; style: string; updated_at: string };
 
 // Mọi request đi qua lib/http.ts để có access token và lỗi chuẩn SRS 7.4.
@@ -234,6 +239,8 @@ export const api = {
     apiPost<{ candidates: ComposeCandidate[]; ranked_by: string; ai_used: boolean }>("/composition/suggestions", { key, chords, index, max_level }),
   composeVoicings: (chords: string[]) => apiPost<Record<string, ComposeVoicing>>("/composition/voicings", { chords }),
   composeAnalyze: (key: string, chords: (string | null)[]) => apiPost<ComposeAnalysis>("/composition/analyze", { key, chords }),
+  composeArrangement: (body: { key: string; style: string; chords: (string | null)[]; seed: number; energy: number; bpm: number }) =>
+    apiPost<Arrangement>("/composition/arrangement", body),
   listProjects: () => apiCall<ComposeProjectSummary[]>("/projects"),
   getProject: (id: string) => apiCall<ComposeProject>(`/projects/${encodeURIComponent(id)}`),
   createProject: (data: ComposeProjectInput) => apiPost<ComposeProject>("/projects", data),

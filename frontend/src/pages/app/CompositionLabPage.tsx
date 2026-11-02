@@ -2,14 +2,15 @@
 // xin gợi ý "lạ tai" theo luật (độ lạ 0–3) và đọc phân tích vì sao vòng nghe lạ.
 // Nốt, tên hợp âm, gợi ý và phân tích đều do backend + Music Engine trả về; trang chỉ hiển thị và phát.
 // Gợi ý không tự sửa dự án (nguyên tắc 5): người học bấm "Dùng hợp âm này" rồi tự lưu.
+// Nhạc nền (02/11, ADR-012 đề xuất): backend phối khí theo phong cách + seed + năng lượng; trang phát bằng mẫu thu thật.
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   api, type ApiError, type ComposeAnalysis, type ComposeCandidate, type ComposeOptions, type ComposeProjectSummary,
   type ComposeVoicing,
 } from "../../api";
 import { audioEngine } from "../../audio/AudioEngine";
-import { backingTrack } from "../../audio/backingTrack";
-import { buildSchedule, type Channel } from "../../audio/trackSchedule";
+import { bandPlayer } from "../../audio/band/player";
+import { DEFAULT_MIX, type BandChannel, type BandMix } from "../../audio/band/types";
 import { midiToScientific } from "../../audio/musicUtils";
 import { LEVEL_BADGE, chordsOfKey, remapToKey, resizeBars, starterProgression } from "../../components/compose/harmonyLab";
 import NotationStaff from "../../components/music/NotationStaff";
@@ -18,10 +19,16 @@ import { Button } from "../../components/ui/Button";
 import { Badge, Card, CardTitle, ChipButton, Kicker, PageHeading, ToggleGroup } from "../../components/ui/Page";
 import { PageLoader } from "../../components/ui/PageLoader";
 
-const CHANNEL_LABELS: Record<Channel, string> = { chords: "Hợp âm", bass: "Bass", drums: "Trống" };
+const CHANNEL_LABELS: Record<BandChannel, string> = { chords: "Hợp âm", bass: "Bass", guitar: "Guitar", drums: "Trống" };
+const ENERGY_LABELS: Record<number, string> = { 1: "Mộc", 2: "Vừa", 3: "Đầy" };
+// Hạt giống mới cho "Tạo bản khác": số nguyên dương 31 bit (khớp kiểu cột seed ở backend).
+const newSeed = () => 1 + Math.floor(Math.random() * 2_147_483_646);
 const errorText = (e: unknown) => { const err = e as ApiError; return err.message ?? err.code ?? "Có lỗi, hãy thử lại."; };
 
-type Draft = { id: string | null; name: string; key: string; tempo: number; bars: number; style: string; chords: (string | null)[] };
+type Draft = {
+  id: string | null; name: string; key: string; tempo: number; bars: number; style: string; chords: (string | null)[];
+  seed: number; energy: number; mix: BandMix;
+};
 
 export default function CompositionLabPage() {
   const [options, setOptions] = useState<ComposeOptions | null>(null);
@@ -34,7 +41,10 @@ export default function CompositionLabPage() {
   const [playing, setPlaying] = useState(false);
   const [currentBar, setCurrentBar] = useState<number | null>(null);
   const [loop, setLoop] = useState(true);
-  const [muted, setMuted] = useState<Record<Channel, boolean>>({ chords: false, bass: false, drums: false });
+  const [loading, setLoading] = useState<number | null>(null);
+  const [colors, setColors] = useState<(string | null)[]>([]);
+  const [fallback, setFallback] = useState(false);
+  const [vinyl, setVinyl] = useState(true);
   const [projects, setProjects] = useState<ComposeProjectSummary[]>([]);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState<{ tone: "success" | "danger" | "info"; text: string } | null>(null);
@@ -46,10 +56,10 @@ export default function CompositionLabPage() {
         setProjects(list);
         const style = opts.styles[0];
         setDraft({ id: null, name: "Vòng hợp âm đầu tiên", key: "C", tempo: style.default_bpm, bars: 4, style: style.id,
-          chords: starterProgression(opts, "C", 4) });
+          chords: starterProgression(opts, "C", 4), seed: 1, energy: 2, mix: DEFAULT_MIX });
       })
       .catch((e) => setLoadError(errorText(e)));
-    return () => backingTrack.stop();
+    return () => bandPlayer.stop();
   }, []);
 
   const update = (patch: Partial<Draft>) => { setDraft((d) => (d ? { ...d, ...patch } : d)); setDirty(true); };
@@ -82,38 +92,45 @@ export default function CompositionLabPage() {
     if (!draft || !style) return;
     try {
       audioEngine.stopAll();
-      const map = await ensureVoicings(draft.chords.filter((c): c is string => Boolean(c)));
-      const events = buildSchedule(draft.chords.map((c) => (c ? map[c] ?? null : null)), style);
-      await backingTrack.play({
-        events, bars: draft.bars, bpm: draft.tempo, swing: style.swing, loop,
+      // Bản phối (nốt, nhịp, lực) do backend + Music Engine dựng; trang chỉ lệch phách người, phát và trộn.
+      const arrangement = await api.composeArrangement({ key: draft.key, style: draft.style, chords: draft.chords,
+        seed: draft.seed, energy: draft.energy, bpm: draft.tempo });
+      setColors(arrangement.colors.map((c) => c.played));
+      setLoading(0);
+      await bandPlayer.play({
+        arrangement, bpm: draft.tempo, seed: draft.seed, loop, mix: draft.mix, vinyl,
+        onProgress: ({ loaded, total }) => setLoading(total ? Math.round((100 * loaded) / total) : 100),
         onBar: setCurrentBar, onEnd: () => { setPlaying(false); setCurrentBar(null); },
       });
+      setFallback(bandPlayer.mode === "synth");
       setPlaying(true);
     } catch (e) {
       setNotice({ tone: "danger", text: `Chưa phát được: ${errorText(e)}` });
-    }
-  }, [draft, style, loop, ensureVoicings]);
+    } finally { setLoading(null); }
+  }, [draft, style, loop, vinyl]);
 
-  const stopPlayback = () => { backingTrack.stop(); setPlaying(false); setCurrentBar(null); };
+  const stopPlayback = () => { bandPlayer.stop(); setPlaying(false); setCurrentBar(null); };
 
-  // Đang phát mà đổi hợp âm, mẫu nền hoặc chế độ lặp thì phát lại từ đầu với lưới mới.
-  const restartKey = draft ? `${draft.chords.join(",")}|${draft.style}|${draft.bars}|${loop}` : "";
+  // Đang phát mà đổi hợp âm, phong cách, bản phối (seed), năng lượng hoặc chế độ lặp thì phát lại với lưới mới.
+  const restartKey = draft ? `${draft.key}|${draft.chords.join(",")}|${draft.style}|${draft.bars}|${draft.seed}|${draft.energy}|${loop}` : "";
   const playingRef = useRef(playing);
   playingRef.current = playing;
   useEffect(() => { if (playingRef.current) void startPlayback(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [restartKey]);
-  useEffect(() => { if (draft) backingTrack.setBpm(draft.tempo); }, [draft?.tempo]);
+  useEffect(() => { if (draft) bandPlayer.setBpm(draft.tempo); }, [draft?.tempo]);
+  useEffect(() => { if (draft) bandPlayer.setMix(draft.mix); }, [draft?.mix]);
+  useEffect(() => { bandPlayer.setVinyl(vinyl && playingRef.current); }, [vinyl]);
 
-  const toggleChannel = (channel: Channel) => {
-    const next = { ...muted, [channel]: !muted[channel] };
-    setMuted(next);
-    backingTrack.setMuted(channel, next[channel]);
+  const setChannel = (channel: BandChannel, patch: Partial<BandMix[BandChannel]>) => {
+    if (!draft) return;
+    update({ mix: { ...draft.mix, [channel]: { ...draft.mix[channel], ...patch } } });
   };
 
   const save = async () => {
     if (!draft) return;
     setSaving(true);
     setNotice(null);
-    const body = { name: draft.name.trim() || "Vòng chưa đặt tên", key: draft.key, tempo_bpm: draft.tempo, bars: draft.bars, style: draft.style, chords: draft.chords };
+    const body = { name: draft.name.trim() || "Vòng chưa đặt tên", key: draft.key, tempo_bpm: draft.tempo, bars: draft.bars,
+      style: draft.style, chords: draft.chords, seed: draft.seed, energy: draft.energy, mix: draft.mix };
     try {
       const saved = draft.id ? await api.updateProject(draft.id, body) : await api.createProject(body);
       setDraft((d) => (d ? { ...d, id: saved.id, name: saved.name } : d));
@@ -129,10 +146,14 @@ export default function CompositionLabPage() {
     try {
       stopPlayback();
       const p = await api.getProject(id);
-      setDraft({ id: p.id, name: p.name, key: p.key, tempo: p.tempo_bpm, bars: p.bars, style: p.style, chords: p.chords });
+      // Dự án cũ (trước 02/11) chưa có seed/mix: dùng seed 1, năng lượng 2, mix mặc định (QĐ 13A).
+      setDraft({ id: p.id, name: p.name, key: p.key, tempo: p.tempo_bpm, bars: p.bars, style: p.style, chords: p.chords,
+        seed: p.seed ?? 1, energy: p.energy ?? 2, mix: { ...DEFAULT_MIX, ...(p.mix ?? {}) } });
       setSelected(0);
       setDirty(false);
-      setNotice({ tone: "info", text: `Đã mở "${p.name}".` });
+      setNotice({ tone: "info", text: p.arrangement_outdated
+        ? `Đã mở "${p.name}". Bộ phối khí đã được nâng cấp nên nhạc nền có thể nghe khác lúc bạn lưu.`
+        : `Đã mở "${p.name}".` });
     } catch (e) { setNotice({ tone: "danger", text: errorText(e) }); }
   };
 
@@ -149,7 +170,7 @@ export default function CompositionLabPage() {
     if (!options || !style) return;
     stopPlayback();
     setDraft({ id: null, name: "Vòng hợp âm mới", key: draft?.key ?? "C", tempo: style.default_bpm, bars: 4, style: style.id,
-      chords: starterProgression(options, draft?.key ?? "C", 4) });
+      chords: starterProgression(options, draft?.key ?? "C", 4), seed: 1, energy: 2, mix: DEFAULT_MIX });
     setSelected(0);
     setDirty(false);
   };
@@ -195,11 +216,28 @@ export default function CompositionLabPage() {
             options={[4, 5, 6, 7, 8].map((n) => ({ value: String(n), label: n }))}
             onChange={(v) => { const bars = Number(v); update({ bars, chords: resizeBars(draft.chords, bars) }); setSelected((s) => Math.min(s, bars - 1)); }} />
         </div>
-        <div><p className="mb-1.5 text-sm font-medium text-ink">Kênh đang bật</p>
-          <div role="group" aria-label="Bật hoặc tắt từng kênh" className="flex flex-wrap gap-2">
-            {(Object.keys(CHANNEL_LABELS) as Channel[]).map((c) => <ChipButton key={c} pressed={!muted[c]} onClick={() => toggleChannel(c)}>
-              <span aria-hidden="true">{muted[c] ? "🔇 " : "🔊 "}</span>{CHANNEL_LABELS[c]}</ChipButton>)}
+        <div><p className="mb-1.5 text-sm font-medium text-ink">Năng lượng</p>
+          <ToggleGroup label="Năng lượng bản phối" value={String(draft.energy)}
+            options={[1, 2, 3].map((n) => ({ value: String(n), label: `${n} · ${ENERGY_LABELS[n]}` }))}
+            onChange={(v) => update({ energy: Number(v) })} />
+          <p className="mt-1 text-xs text-muted">1 mộc: ít nhạc cụ, nốt dài · 3 đầy: thêm guitar, hat mở, crash.</p>
+        </div>
+      </div>
+      <div><p className="mb-1.5 text-sm font-medium text-ink">Kênh và âm lượng</p>
+        <div role="group" aria-label="Bật, tắt và chỉnh âm lượng từng kênh" className="grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
+          {(Object.keys(CHANNEL_LABELS) as BandChannel[]).map((c) => {
+            const ch = draft.mix[c];
+            return <div key={c} className="flex items-center gap-2 rounded-xl border border-line bg-surface p-1.5 pr-3">
+              <ChipButton pressed={!ch.muted} onClick={() => setChannel(c, { muted: !ch.muted })}>
+                <span aria-hidden="true">{ch.muted ? "🔇 " : "🔊 "}</span>{CHANNEL_LABELS[c]}</ChipButton>
+              <input type="range" min={0} max={1} step={0.05} value={ch.volume} disabled={ch.muted}
+                aria-label={`Âm lượng ${CHANNEL_LABELS[c]}`} aria-valuetext={`${Math.round(ch.volume * 100)}%`}
+                className="min-h-11 w-full min-w-16 accent-primary" onChange={(e) => setChannel(c, { volume: Number(e.target.value) })} />
+            </div>;
+          })}
+          <div className="flex flex-wrap items-center gap-2">
             <ChipButton pressed={loop} onClick={() => setLoop((v) => !v)}><span aria-hidden="true">↻ </span>Lặp lại</ChipButton>
+            {style.id === "lofi" && <ChipButton pressed={vinyl} onClick={() => setVinyl((v) => !v)}>Tiếng đĩa than</ChipButton>}
           </div>
         </div>
       </div>
@@ -208,11 +246,20 @@ export default function CompositionLabPage() {
         {playing
           ? <Button size="lg" className="flex-1 sm:flex-none" onClick={stopPlayback}><span aria-hidden="true">■</span> Dừng</Button>
           : <Button size="lg" className="flex-1 sm:flex-none" onClick={() => void startPlayback()}><span aria-hidden="true">▶</span> Phát</Button>}
+        <Button size="lg" variant="secondary" className="flex-1 sm:flex-none" onClick={() => update({ seed: newSeed() })}
+          aria-label="Tạo bản phối khác cho cùng vòng hợp âm">
+          <span aria-hidden="true">🎲</span> Tạo bản khác
+        </Button>
         <Button size="lg" variant="secondary" className="flex-1 sm:flex-none" loading={saving} onClick={() => void save()}>
           {draft.id ? "Lưu thay đổi" : "Lưu vòng này"}
         </Button>
         <span className="hidden self-center text-sm text-muted sm:inline" aria-live="polite">{dirty ? "Có thay đổi chưa lưu" : draft.id ? "Đã lưu" : ""}</span>
       </div>
+      {loading !== null && <div role="status" aria-live="polite" className="grid gap-1">
+        <span className="text-sm text-ink">Đang tải nhạc cụ… {loading}%</span>
+        <progress className="h-2 w-full accent-primary" max={100} value={loading} />
+      </div>}
+      {fallback && <Alert tone="info">Chưa tải được mẫu âm thanh thật (mạng hoặc trình duyệt), đang phát bằng âm tổng hợp.</Alert>}
     </Card>
 
     {/* Lưới hợp âm ở giữa. */}
@@ -232,6 +279,7 @@ export default function CompositionLabPage() {
               <span className="flex items-center justify-between text-xs font-semibold text-muted"><span>Ô {i + 1}</span>{isPlaying && <span className="text-ink">▶ đang phát</span>}</span>
               <span className="font-mono text-2xl font-semibold text-ink">{chord ?? "—"}</span>
               <span className="text-xs text-muted">{info?.label ?? (chord ? "…" : "chưa có hợp âm")}{info?.level ? ` · lạ ${info.level}` : ""}</span>
+              {chord && colors[i] && <span className="text-xs text-muted">Bản phối tô thêm màu: <b className="font-mono text-ink">{colors[i]}</b></span>}
             </button>
           </li>;
         })}
@@ -248,10 +296,11 @@ export default function CompositionLabPage() {
 
     {/* Mẫu nền ở dưới (tài liệu 04 Bảng 25). */}
     <Card className="mb-4">
-      <Kicker>Nhạc nền</Kicker><CardTitle className="mt-1">Chọn kiểu trống và bass</CardTitle>
-      <div role="group" aria-label="Mẫu nhạc nền" className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <Kicker>Nhạc nền</Kicker><CardTitle className="mt-1">Chọn phong cách ban nhạc</CardTitle>
+      <p className="mt-1 text-sm text-muted">Piano, bass, guitar và trống thu thật (mẫu CC0/CC BY, xem ghi công). Mỗi lần bấm "Tạo bản khác" ra một cách chơi mới trong cùng phong cách.</p>
+      <div role="group" aria-label="Phong cách nhạc nền" className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {options.styles.map((s) => <button key={s.id} type="button" aria-pressed={draft.style === s.id}
-          onClick={() => update({ style: s.id, tempo: s.default_bpm })}
+          onClick={() => { update({ style: s.id, tempo: s.default_bpm }); setColors([]); }}
           className={`grid min-h-11 gap-1 rounded-xl border-2 p-3 text-left ${draft.style === s.id ? "border-primary bg-primary-soft" : "border-line bg-surface hover:border-primary"}`}>
           <b className="text-ink">{s.label}</b><span className="text-sm text-muted">{s.description}</span>
           <span className="font-mono text-xs text-muted">{s.default_bpm} BPM{s.swing ? " · swing" : ""}</span>
