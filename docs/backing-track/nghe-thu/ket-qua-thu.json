@@ -1,0 +1,456 @@
+{
+ "date": "2026-11-02T05:24:05.223Z",
+ "seconds": 32,
+ "results": [
+  {
+   "style": "pop",
+   "loop": "C-G-Am-F",
+   "bpm": 100,
+   "seconds": 32,
+   "load_ms": 2248,
+   "render_ms": 7464,
+   "colors": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "old_style": "pop",
+   "before": {
+    "lufs": -10.5,
+    "true_peak_dbtp": 0.1,
+    "clipped_samples": 1028
+   },
+   "after": {
+    "lufs": -15.9,
+    "true_peak_dbtp": -0.3,
+    "clipped_samples": 0
+   }
+  },
+  {
+   "style": "pop",
+   "loop": "Dm7-G7-Cmaj7-A7",
+   "bpm": 100,
+   "seconds": 32,
+   "load_ms": 0,
+   "render_ms": 8450,
+   "colors": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "old_style": "pop",
+   "before": {
+    "lufs": -10.1,
+    "true_peak_dbtp": 0.1,
+    "clipped_samples": 1554
+   },
+   "after": {
+    "lufs": -15,
+    "true_peak_dbtp": -0.3,
+    "clipped_samples": 0
+   }
+  },
+  {
+   "style": "ballad",
+   "loop": "C-G-Am-F",
+   "bpm": 70,
+   "seconds": 32,
+   "load_ms": 0,
+   "render_ms": 6327,
+   "colors": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "old_style": "ballad",
+   "before": {
+    "lufs": -11.3,
+    "true_peak_dbtp": 0,
+    "clipped_samples": 418
+   },
+   "after": {
+    "lufs": -17.3,
+    "true_peak_dbtp": -0.5,
+    "clipped_samples": 0
+   }
+  },
+  {
+   "style": "ballad",
+   "loop": "Dm7-G7-Cmaj7-A7",
+   "bpm": 70,
+   "seconds": 32,
+   "load_ms": 0,
+   "render_ms": 7385,
+   "colors": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "old_style": "ballad",
+   "before": {
+    "lufs": -11,
+    "true_peak_dbtp": 0,
+    "clipped_samples": 630
+   },
+   "after": {
+    "lufs": -15.9,
+    "true_peak_dbtp": -0.5,
+    "clipped_samples": 0
+   }
+  },
+  {
+   "style": "bossa",
+   "loop": "C-G-Am-F",
+   "bpm": 130,
+   "seconds": 31.53846153846154,
+   "load_ms": 483,
+   "render_ms": 12196,
+   "colors": [
+    "Cmaj7 + 9",
+    "G7 + 9",
+    "Am7 + 9",
+    "Fmaj7 + 9"
+   ],
+   "old_style": "bossa",
+   "before": {
+    "lufs": -10,
+    "true_peak_dbtp": 0.1,
+    "clipped_samples": 1078
+   },
+   "after": {
+    "lufs": -19.1,
+    "true_peak_dbtp": -2.9,
+    "clipped_samples": 0
+   }
+  },
+  {
+   "style": "bossa",
+   "loop": "Dm7-G7-Cmaj7-A7",
+   "bpm": 130,
+   "seconds": 31.53846153846154,
+   "load_ms": 0,
+   "render_ms": 12191,
+   "colors": [
+    "Dm7 + 9",
+    "G7 + 9",
+    "Cmaj7 + 9",
+    "A7 + 9"
+   ],
+   "old_style": "bossa",
+   "before": {
+    "lufs": -9.7,
+    "true_peak_dbtp": 0.1,
+    "clipped_samples": 2190
+   },
+   "after": {
+    "lufs": -19.3,
+    "true_peak_dbtp": -2.4,
+    "clipped_samples": 0
+   }
+  },
+  {
+   "style": "lofi",
+   "loop": "C-G-Am-F",
+   "bpm": 80,
+   "seconds": 32,
+   "load_ms": 0,
+   "render_ms": 6855,
+   "colors": [
+    "Cmaj7 + 9",
+    "G7 + 9",
+    "Am7 + 9",
+    "Fmaj7 + 9"
+   ],
+   "old_style": "lofi",
+   "before": {
+    "lufs": -11.1,
+    "true_peak_dbtp": 0,
+    "clipped_samples": 162
+   },
+   "after": {
+    "lufs": -19.2,
+    "true_peak_dbtp": -0.3,
+    "clipped_samples": 0
+   }
+  },
+  {
+   "style": "lofi",
+   "loop": "Dm7-G7-Cmaj7-A7",
+   "bpm": 80,
+   "seconds": 32,
+   "load_ms": 0,
+   "render_ms": 6936,
+   "colors": [
+    "Dm7 + 9",
+    "G7 + 9",
+    "Cmaj7 + 9",
+    "A7 + 9"
+   ],
+   "old_style": "lofi",
+   "before": {
+    "lufs": -11,
+    "true_peak_dbtp": 0,
+    "clipped_samples": 910
+   },
+   "after": {
+    "lufs": -19.6,
+    "true_peak_dbtp": -0.3,
+    "clipped_samples": 0
+   }
+  },
+  {
+   "style": "jazz",
+   "loop": "C-G-Am-F",
+   "bpm": 120,
+   "seconds": 32,
+   "load_ms": 0,
+   "render_ms": 6821,
+   "colors": [
+    "Cmaj7 + 9",
+    "G7 + 9",
+    "Am7 + 9",
+    "Fmaj7 + 9"
+   ],
+   "old_style": "lofi",
+   "before": {
+    "lufs": -10.6,
+    "true_peak_dbtp": 0,
+    "clipped_samples": 306
+   },
+   "after": {
+    "lufs": -15.6,
+    "true_peak_dbtp": -0.7,
+    "clipped_samples": 0
+   }
+  },
+  {
+   "style": "jazz",
+   "loop": "Dm7-G7-Cmaj7-A7",
+   "bpm": 120,
+   "seconds": 32,
+   "load_ms": 0,
+   "render_ms": 7963,
+   "colors": [
+    "Dm7 + 9",
+    "G7 + 9",
+    "Cmaj7 + 9",
+    "A7 + 9"
+   ],
+   "old_style": "lofi",
+   "before": {
+    "lufs": -10.2,
+    "true_peak_dbtp": 0.3,
+    "clipped_samples": 1280
+   },
+   "after": {
+    "lufs": -14.7,
+    "true_peak_dbtp": -0.6,
+    "clipped_samples": 0
+   }
+  },
+  {
+   "style": "rock",
+   "loop": "C-G-Am-F",
+   "bpm": 116,
+   "seconds": 32,
+   "load_ms": 0,
+   "render_ms": 11580,
+   "colors": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "old_style": "pop",
+   "before": {
+    "lufs": -10.3,
+    "true_peak_dbtp": 0.1,
+    "clipped_samples": 1084
+   },
+   "after": {
+    "lufs": -18.9,
+    "true_peak_dbtp": -0.3,
+    "clipped_samples": 0
+   }
+  },
+  {
+   "style": "rock",
+   "loop": "Dm7-G7-Cmaj7-A7",
+   "bpm": 116,
+   "seconds": 32,
+   "load_ms": 0,
+   "render_ms": 12575,
+   "colors": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "old_style": "pop",
+   "before": {
+    "lufs": -10,
+    "true_peak_dbtp": 0.1,
+    "clipped_samples": 1426
+   },
+   "after": {
+    "lufs": -18.5,
+    "true_peak_dbtp": -0.3,
+    "clipped_samples": 0
+   }
+  },
+  {
+   "style": "indie",
+   "loop": "C-G-Am-F",
+   "bpm": 112,
+   "seconds": 32,
+   "load_ms": 0,
+   "render_ms": 12336,
+   "colors": [
+    "C + 9",
+    null,
+    null,
+    null
+   ],
+   "old_style": "pop",
+   "before": {
+    "lufs": -10.3,
+    "true_peak_dbtp": 0,
+    "clipped_samples": 794
+   },
+   "after": {
+    "lufs": -16.6,
+    "true_peak_dbtp": -0.3,
+    "clipped_samples": 0
+   }
+  },
+  {
+   "style": "indie",
+   "loop": "Dm7-G7-Cmaj7-A7",
+   "bpm": 112,
+   "seconds": 32,
+   "load_ms": 0,
+   "render_ms": 12514,
+   "colors": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "old_style": "pop",
+   "before": {
+    "lufs": -9.9,
+    "true_peak_dbtp": 0.1,
+    "clipped_samples": 1962
+   },
+   "after": {
+    "lufs": -15.5,
+    "true_peak_dbtp": -0.4,
+    "clipped_samples": 0
+   }
+  },
+  {
+   "style": "funk",
+   "loop": "C-G-Am-F",
+   "bpm": 104,
+   "seconds": 32,
+   "load_ms": 90,
+   "render_ms": 11999,
+   "colors": [
+    "Cmaj7 + 9",
+    "G7 + 9",
+    "Am7 + 9",
+    "Fmaj7 + 9"
+   ],
+   "old_style": "pop",
+   "before": {
+    "lufs": -10.5,
+    "true_peak_dbtp": 0.1,
+    "clipped_samples": 596
+   },
+   "after": {
+    "lufs": -17.9,
+    "true_peak_dbtp": -0.3,
+    "clipped_samples": 0
+   }
+  },
+  {
+   "style": "funk",
+   "loop": "Dm7-G7-Cmaj7-A7",
+   "bpm": 104,
+   "seconds": 32,
+   "load_ms": 0,
+   "render_ms": 13146,
+   "colors": [
+    "Dm7 + 9",
+    "G7 + 9",
+    "Cmaj7 + 9",
+    "A7 + 9"
+   ],
+   "old_style": "pop",
+   "before": {
+    "lufs": -10.4,
+    "true_peak_dbtp": 0.1,
+    "clipped_samples": 1018
+   },
+   "after": {
+    "lufs": -18.5,
+    "true_peak_dbtp": -0.4,
+    "clipped_samples": 0
+   }
+  },
+  {
+   "style": "rnb",
+   "loop": "C-G-Am-F",
+   "bpm": 78,
+   "seconds": 32,
+   "load_ms": 0,
+   "render_ms": 8648,
+   "colors": [
+    "Cmaj7 + 9",
+    "G7 + 9, 13",
+    "Am7 + 9",
+    "Fmaj7 + 9"
+   ],
+   "old_style": "lofi",
+   "before": {
+    "lufs": -11.2,
+    "true_peak_dbtp": 0,
+    "clipped_samples": 518
+   },
+   "after": {
+    "lufs": -18.4,
+    "true_peak_dbtp": -0.7,
+    "clipped_samples": 0
+   }
+  },
+  {
+   "style": "rnb",
+   "loop": "Dm7-G7-Cmaj7-A7",
+   "bpm": 78,
+   "seconds": 32,
+   "load_ms": 0,
+   "render_ms": 8364,
+   "colors": [
+    "Dm7 + 9",
+    "G7 + 9",
+    "Cmaj7 + 9",
+    "A7 + 9"
+   ],
+   "old_style": "lofi",
+   "before": {
+    "lufs": -11,
+    "true_peak_dbtp": 0,
+    "clipped_samples": 916
+   },
+   "after": {
+    "lufs": -18.7,
+    "true_peak_dbtp": -0.3,
+    "clipped_samples": 0
+   }
+  }
+ ]
+}
