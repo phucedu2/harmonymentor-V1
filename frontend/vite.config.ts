@@ -11,5 +11,6 @@ const pkg = JSON.parse(readFileSync(new URL("./package.json", import.meta.url), 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   define: { __APP_VERSION__: JSON.stringify(pkg.version) },
-  server: { proxy: { "/api": "http://127.0.0.1:8000" } },
+  // API_PROXY cho phép trỏ sang backend ở cổng khác (vd 8001) khi cổng 8000 đang bị một bản cũ chiếm.
+  server: { proxy: { "/api": process.env.API_PROXY ?? "http://127.0.0.1:8000" } },
 });

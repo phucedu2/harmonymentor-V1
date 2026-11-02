@@ -141,7 +141,12 @@ export default function CompositionLabPage() {
     try {
       const res = await api.composeSong({ key: draft.key, style: draft.style, seed: draft.seed, energy: draft.energy,
         bpm: draft.tempo, form: formForSave(form, draft.chords) });
-      update({ mode: "song", form: res.form! });
+      // Backend cũ (trước chế độ Bài hát) trả về bản phối không có `form`: báo rõ thay vì lặng lẽ ở lại Vòng lặp.
+      if (!res.form) {
+        setNotice({ tone: "danger", text: "Máy chủ đang chạy bản cũ, chưa có chế độ Bài hát. Hãy tắt rồi chạy lại backend (uvicorn) từ nhánh mới nhất." });
+        return;
+      }
+      update({ mode: "song", form: res.form });
       setSong(res);
       setSection(0);
     } catch (e) { setNotice({ tone: "danger", text: `Chưa dựng được bài: ${errorText(e)}` }); }

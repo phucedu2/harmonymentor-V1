@@ -10,7 +10,7 @@ import {
 } from "../src/audio/band/songSchedule";
 import type { Arrangement, FormSection, PlayHit } from "../src/audio/band/types";
 import {
-  MAX_SONG_BARS, addSection, barOptions, emptyForm, formForSave, moveSection, patchSection, removeSection, totalBars,
+  MAX_SONG_BARS, addSection, barOptions, emptyForm, formForSave, moveSection, patchSection, removeSection, shortLabel, totalBars,
 } from "../src/components/compose/songForm";
 
 const song = JSON.parse(readFileSync(new URL("./fixtures/song-pop-short.json", import.meta.url), "utf8")) as Arrangement;
@@ -178,5 +178,15 @@ describe("thao tác form trên dòng thời gian", () => {
     const saved = formForSave(f, ["C", "G", "Am", "F"]);
     expect(saved.progressions).toEqual({ A: ["C", "G", "Am", "F"], B: null, C: ["F", null] });
     expect(emptyForm(["C"]).modulate.enabled).toBe(false); // QĐ 5A: chuyển giọng tắt mặc định
+  });
+});
+
+describe("tên viết tắt trên dải đoạn hẹp", () => {
+  it("giữ số thứ tự và chữ 'cuối' để vẫn phân biệt các đoạn lặp", () => {
+    expect(shortLabel("pre", "Pre-Chorus 1")).toBe("Pre 1");
+    expect(shortLabel("chorus", "Chorus cuối")).toBe("Ch cuối");
+    expect(shortLabel("verse", "Verse 2")).toBe("V 2");
+    expect(shortLabel("bridge", "Bridge")).toBe("Br");
+    expect(shortLabel("intro", "Intro")).toBe("Intro");
   });
 });

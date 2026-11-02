@@ -15,6 +15,15 @@ export const SECTION_COLOR: Record<SectionType, string> = {
   post: "var(--color-note-b)", bridge: "var(--color-note-a)", breakdown: "var(--color-note-eb)", solo: "var(--color-note-d)",
   outro: "var(--color-note-f)",
 };
+// Tên viết tắt cho đoạn quá hẹp (điện thoại, đoạn 4 ô): giữ số thứ tự/"cuối" để vẫn phân biệt Chorus 1, Chorus cuối.
+const SHORT: Record<SectionType, string> = {
+  intro: "Intro", verse: "V", pre: "Pre", chorus: "Ch", post: "Post", bridge: "Br", breakdown: "Bd", solo: "Solo", outro: "Out",
+};
+export function shortLabel(type: SectionType, label: string): string {
+  const tail = label.match(/\s(\d+|cuối)$/)?.[1];
+  return tail ? `${SHORT[type]} ${tail}` : SHORT[type];
+}
+
 export const LENGTH_VI: Record<SongLength, string> = { short: "Ngắn", medium: "Vừa", full: "Đầy đủ" };
 export const TRANSITION_VI: Record<string, string> = {
   auto: "Tự chọn theo phong cách", none: "Nối thẳng", fill_small: "Fill nhỏ", fill_big: "Fill tom lớn",
