@@ -1,13 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
-import { api, type LearningOverview } from "../api";
+import { api, type LearningOverview, type PlacementStatus } from "../api";
 import { useAuth } from "../auth/AuthProvider";
+import RecommendedLessons from "../components/learning/RecommendedLessons";
 import { ButtonLink } from "../components/ui/Button";
 import { Badge, Card, CardTitle, Kicker, Metric, PageHeading, ProgressBar } from "../components/ui/Page";
 
 export default function DashboardPage() {
   const { user } = useAuth();
   const [overview, setOverview] = useState<LearningOverview | null>(null);
+  const [placement, setPlacement] = useState<PlacementStatus | null>(null);
   useEffect(() => { api.learningOverview().then(setOverview).catch(() => setOverview(null)); }, []);
+  useEffect(() => { api.placement().then((p) => setPlacement(p.status)).catch(() => setPlacement(null)); }, []);
 
   const nextLesson = useMemo(() => {
     if (!overview) return null;
@@ -25,6 +28,11 @@ export default function DashboardPage() {
         : "Học tiếp bài đang dở, rồi ôn các thẻ đến hạn để nhớ lâu."}
     </PageHeading>
 
+    {placement === "not_started" && overview?.started_lessons === 0 && <Card className="mb-4 p-4">
+      <p className="mb-2">Đã biết chút nhạc lý? Làm bài kiểm tra đầu vào 12 câu để hệ thống gợi ý bài phù hợp hơn.</p>
+      <ButtonLink to="/app/kiem-tra-dau-vao" variant="secondary">Làm bài kiểm tra đầu vào</ButtonLink>
+    </Card>}
+
     {/* Một việc chính: học tiếp. Nút chính đặt ngay đầu trang để luôn thấy trên màn 360px. */}
     <Card className="mb-4 border-primary/30 p-6">
       <Badge>{fresh ? "Bắt đầu học" : "Học tiếp"}</Badge>
@@ -38,6 +46,8 @@ export default function DashboardPage() {
         <ButtonLink to="/app/luyen-tap" variant="secondary" size="lg">Luyện tập tự do</ButtonLink>
       </div>
     </Card>
+
+    <RecommendedLessons />
 
     <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-4">
       <Metric value={`${overview?.completed_lessons ?? "–"}/${runnable ?? "–"}`} label="bài đã hoàn thành" />

@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router";
 import { api, type ApiError, type LearningOverview, type LessonDetail, type LessonSummary } from "../api";
 import LessonErrorBoundary from "../components/learning/LessonErrorBoundary";
 import LessonRunner from "../components/learning/LessonRunner";
@@ -12,6 +13,12 @@ export default function LearnPage() {
   const [selected, setSelected] = useState<LessonDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // ?bai=L02: mở thẳng bài được gợi ý từ Dashboard (RecommendedLessons). Chỉ mở một lần.
+  const [params, setParams] = useSearchParams();
+  // Ghi lại liên kết đã mở để StrictMode chạy effect hai lần không mở bài hai lần; trích dẫn mới của AI Tutor
+  // (khác bài hoặc khác khối) vẫn mở được dù đang ở trang Học.
+  const handledLink = useRef<string | null>(null);
+  const [focusBlock, setFocusBlock] = useState<string | null>(null);
 
   const refreshProgress = async () => {
     try { setOverview(await api.learningOverview()); }
@@ -42,10 +49,24 @@ export default function LearnPage() {
     } finally { setLoading(false); }
   };
 
+  useEffect(() => {
+    const wanted = params.get("bai");
+    const block = params.get("khoi");
+    if (!wanted) { handledLink.current = null; return; }
+    const key = `${wanted}|${block ?? ""}`;
+    if (handledLink.current === key || loading || !lessons.some((l) => l.id === wanted)) return;
+    handledLink.current = key;
+    setParams({}, { replace: true });
+    setFocusBlock(block);
+    if (selected?.id === wanted) return;  // bài đang mở: chỉ cần chuyển tới khối
+    void open(wanted);
+  }, [params, loading, lessons]);
+
   if (selected) return (
     <LessonErrorBoundary key={selected.id} onReset={() => { setSelected(null); void refreshProgress(); }}>
       <LessonRunner
         lesson={selected}
+        focusBlockId={focusBlock}
         initialProgress={progressMap.get(selected.id)}
         onBack={() => { setSelected(null); void refreshProgress(); }}
         onProgressChanged={() => { void refreshProgress(); }}

@@ -14,6 +14,7 @@ const PracticePage = lazy(() => import("./pages/Practice"));
 const ProgressPage = lazy(() => import("./pages/Progress"));
 const CompositionLabPage = lazy(() => import("./pages/app/CompositionLabPage"));
 const ProfilePage = lazy(() => import("./pages/app/ProfilePage"));
+const PlacementPage = lazy(() => import("./pages/app/PlacementPage"));
 const AdminHomePage = lazy(() => import("./pages/app/AdminHomePage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
@@ -37,6 +38,7 @@ const router = createBrowserRouter([
       { path: "tien-do", element: <ProgressPage /> },
       { path: "composition", element: <CompositionLabPage /> },
       { path: "ho-so", element: <ProfilePage /> },
+      { path: "kiem-tra-dau-vao", element: <PlacementPage /> },
     ],
   },
   {

@@ -20,6 +20,7 @@ from ..db.models import (
     User,
 )
 from ..content import versioning
+from . import mastery_service
 from .grading_service import GradeOutcome, grade_payload, is_self_check
 from .review_scheduler import activate_lesson_reviews, apply_review_result
 
@@ -87,32 +88,38 @@ def wrong_attempt_count(db: Session, user_id: str, exercise_id: str) -> int:
 
 
 def submit_attempt(db: Session, user_id: str, version_id: str, answer,
-                   input_method: str = "text") -> tuple[Attempt, GradeOutcome]:
-    require_user(db, user_id)
+                   input_method: str = "text", now: datetime | None = None) -> tuple[Attempt, GradeOutcome]:
+    user = require_user(db, user_id)
     version, exercise = require_exercise_version(db, version_id)
+    now = now or utcnow()
     # Cách chấm lấy từ ảnh chụp của phiên bản, không lấy từ exercises (HM-003: bản cũ rubric từng bị chấm bằng exact).
     outcome = grade_payload(version.grading_strategy, version.answer_key, version.grader_config, answer,
                             input_method=input_method)
     attempt = Attempt(
         id=str(uuid4()), user_id=user_id, exercise_version_id=version.id, answer=answer,
         correct=outcome.correct, score=outcome.score, primary_error=outcome.primary_error,
-        feedback=outcome.feedback,
+        feedback=outcome.feedback, created_at=now,
+        # Nguyên tắc 8: lượt của Admin xem trước bài không tính mastery/thống kê.
+        is_test=user.role == "admin",
     )
     db.add(attempt)
     db.flush()
     for error in outcome.errors:
         code = error.get("code", "UNKNOWN")
         db.add(AttemptError(attempt_id=attempt.id, code=code, detail={k: v for k, v in error.items() if k != "code"}))
+    # Cùng giao dịch: lượt làm và mastery được ghi cùng nhau hoặc không ghi gì.
+    mastery_service.record_attempt(db, attempt, exercise.id, exercise.skill_id, now)
     db.commit()
     return attempt, outcome
 
 
-def complete_lesson(db: Session, user_id: str, lesson_id: str) -> tuple[LessonProgress, list[ReviewState]]:
+def complete_lesson(db: Session, user_id: str, lesson_id: str,
+                    now: datetime | None = None) -> tuple[LessonProgress, list[ReviewState]]:
     require_user(db, user_id)
     lesson = db.get(Lesson, lesson_id)
     if lesson is None:
         raise LookupError("LESSON_NOT_FOUND")
-    now = utcnow()
+    now = now or utcnow()
     _insert_progress_if_missing(db, user_id, lesson_id, now)
     # Khóa dòng tiến độ: các lượt "Hoàn thành" song song chạy lần lượt, nên thẻ ôn không bị chèn trùng (HM-010).
     progress = db.scalar(select(LessonProgress).where(
@@ -146,8 +153,10 @@ def complete_lesson(db: Session, user_id: str, lesson_id: str) -> tuple[LessonPr
     return progress, states
 
 
-def answer_review(db: Session, user_id: str, review_item_id: str, answer, rating: str, response_time_ms: int | None):
+def answer_review(db: Session, user_id: str, review_item_id: str, answer, rating: str, response_time_ms: int | None,
+                  now: datetime | None = None):
     require_user(db, user_id)
+    now = now or utcnow()
     item = db.get(ReviewItem, review_item_id)
     if item is None:
         raise LookupError("REVIEW_ITEM_NOT_FOUND")
@@ -167,12 +176,16 @@ def answer_review(db: Session, user_id: str, review_item_id: str, answer, rating
         if not outcome.correct:
             # Ôn tập khác bài kiểm tra: sai thì cho xem đáp án ngay để lần sau nhớ đúng.
             outcome.feedback = f"Đáp án: {item.back}."
-    applied = apply_review_result(state, outcome.correct, rating)
+    due_before = state.due_at
+    applied = apply_review_result(state, outcome.correct, rating, now=now)
     review_attempt = ReviewAttempt(
         id=str(uuid4()), review_state_id=state.id, answer=answer, correct=outcome.correct,
-        rating=applied, response_time_ms=response_time_ms,
+        rating=applied, response_time_ms=response_time_ms, due_before=due_before, created_at=now,
     )
     db.add(review_attempt)
+    db.flush()
+    mastery_service.record_review(db, user_id=user_id, item=item, review_attempt_id=review_attempt.id,
+                                  correct=outcome.correct, due_before=due_before, now=now)
     db.commit()
     return review_attempt, state, item, outcome, applied
 

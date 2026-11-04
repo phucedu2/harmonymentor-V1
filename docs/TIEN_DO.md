@@ -2,6 +2,108 @@
 
 File này ghi lại việc đã xong, việc đang dở, lệnh để chạy lại và việc tiếp theo. Cập nhật sau mỗi phiên việc. Lịch sử trước 27/10/2026 xem `docs/AI_USAGE.md` và các báo cáo trong `docs/giai-doan/`.
 
+## 04/11/2026: demo AI 10/11 (nhánh `ai/demo-1011`, Draft PR #25, xếp chồng trên `ai/gd4-danh-gia`)
+
+**Đã xong** (báo cáo `docs/giai-doan/demo-1011/BAO_CAO.md`)
+- 6 câu nháp L01-Q07/Q08, L02-Q07..Q10 (nguồn MT21C + OMT), test chấm, mô phỏng sau phát hành: 4 kỹ năng lên 0,657, người mới đi L01 → L04 không cần placement.
+- AI Tutor: 5 câu vàng của Thắng, guardrail kiểm thêm khẳng định quãng trong lời AI.
+- 2 kịch bản trên giao diện thật (video + 7 ảnh), 1 lần giải thích lỗi bằng Gemini thật.
+- Đổi câu chữ CF (C4), test `/recommend` trên PostgreSQL (C8), ghi trạng thái duyệt vào ADR-008/014.
+- pytest 917 (không tính postgres/live).
+
+**Đang dở / chờ**
+- Đã xong 04/11: 6 câu phát hành, 4 mô tả kỹ năng mới + vector, ADR-016 (Imaj7/IM7). Thêm `get_roman_numeral` vào guardrail (Thắng duyệt), câu V7 = D7 trong G vào L02-B08 (Đạt duyệt), live 5/5. Còn: Đạt xác nhận bằng văn bản (C6); chọn khóa Gemini cho buổi demo.
+
+**Lệnh chạy lại**
+```bash
+cd backend && pytest -q tests/test_demo1011_cau_nhap.py tests/test_demo1011_tutor_gold.py
+cd backend && RUN_LIVE=1 AI_ENABLED=1 GEMINI_API_KEY=... pytest -q -m live tests/test_demo1011_live.py
+```
+
+## 04/11/2026: pipeline AI GĐ4 (nhánh `ai/gd4-danh-gia`, xếp chồng trên `ai/gd3-tutor`)
+
+**Đã xong** (báo cáo `docs/giai-doan/ai-gd4/BAO_CAO_THUC_NGHIEM.md`)
+- RAG: bộ chuẩn 30 câu + 10 ngoài phạm vi + 10 tấn công + 20 câu cài lỗi (Claude soạn, chưa có người duyệt độc lập). Gemini Recall@1 93,3% (BM25 56,7%); chặn 100%/100%, 0% chặn nhầm; guardrail 11/11, 0 báo nhầm; trả lời thật 30/30 khi nghỉ 5 s (p95 1,7 s), 23/30 khi gọi liên tục (429/503).
+- Hệ gợi ý: 2.000 người mô phỏng (bộ sinh không import bộ gợi ý), chia 80/20 theo thời gian, P0–P3. Luật tiên quyết loại 97% bài đúng nên P1–P3 HitRate@1 2,8% so với P0 96,7%; nguyên nhân là kỹ năng chỉ 1 câu chỉ lên mastery 0,30.
+- Câu dự phòng khi Gemini quá tải không còn nói "đang tạm nghỉ". Sửa test GĐ2 phụ thuộc CSDL dev dùng chung.
+- pytest 828 (không tính postgres/live).
+
+**Đang dở / chờ**
+- Thắng: chọn hướng cho luật tiên quyết (a/b/c, báo cáo mục 1.6); P-2 chờ lần chạy lại sau HM-013. Đạt: lấy mẫu 10 câu bộ chuẩn RAG, chấm đúng nhạc lý.
+
+**Lệnh chạy lại**
+```bash
+cd backend && python ../scripts/ai/evaluate_recommender.py --n 2000 --seed 20261104 --out ../docs/giai-doan/ai-gd4/ket_qua_goi_y.json
+cd backend && python ../scripts/ai/evaluate_rag.py
+cd backend && AI_ENABLED=1 GEMINI_API_KEY=... python ../scripts/ai/evaluate_rag.py --live --pause 5 --out ../docs/giai-doan/ai-gd4/ket_qua_rag.json
+```
+
+## 04/11/2026: pipeline AI GĐ3 (nhánh `ai/gd3-tutor`, xếp chồng trên `ai/gd2-goi-y`)
+
+**Đã xong** (báo cáo `docs/giai-doan/ai-gd3/BAO_CAO.md`)
+- AI Tutor: kho 45 đoạn L01–L04 + vector Gemini, retriever (ngưỡng 0,60, dự phòng BM25), phân loại ý định cục bộ, Gemini có thử lại, guardrail Music Engine, chống prompt injection, `/chat/*`, giải thích lỗi 3 mức, hạn mức, khung chat nổi.
+- pytest 820 (không tính postgres/live); bộ live 10/10 với Gemini thật; Vitest 259; build đạt; p95 3,0 s.
+
+**Đang dở / chờ**
+- Thắng duyệt migration `e3c4d5e6f7a8` + ADR-015; Đạt duyệt ngưỡng, câu mẫu ý định, câu tấn công; Phúc xem khung chat. GĐ4 (đánh giá) làm tiếp.
+
+**Lệnh chạy lại**
+```bash
+cd backend && python -m pytest -q -m "not postgres and not live"    # 820 passed
+cd backend && AI_ENABLED=1 GEMINI_API_KEY=... python -m app.ai.build_index   # khi sửa nội dung bài
+cd backend && AI_ENABLED=1 GEMINI_API_KEY=... python ../scripts/ai/gd3_hoi_thu.py
+```
+
+## 04/11/2026: pipeline AI GĐ2 (nhánh `ai/gd2-goi-y`, xếp chồng trên `ai/gd1-mastery`, Draft PR #22)
+
+**Đã xong** (báo cáo `docs/giai-doan/ai-gd2/BAO_CAO.md`)
+- Hệ gợi ý 3 tầng theo 04 mục 6.5 + ADR-008 (hàm thuần trong `app/ai/recommender/`), `GET /recommend` (3 danh sách G-3), `PUT /me/goal`, nhật ký gợi ý, thẻ "Gợi ý cho bạn".
+- Embedding Gemini thật cho 13 mô tả kỹ năng MVP; không có embedding thì content = 0. 26 mô tả kỹ năng Đạt đã duyệt (04/11).
+- pytest 747 (không tính postgres/live); Vitest 259; build đạt; 2.000 người mô phỏng p95 ~160 ms.
+
+**Đang dở / chờ**
+- Thắng và Đạt đã duyệt các mục GĐ0–GĐ2 (Phúc báo 04/11). Còn P-2 chờ số liệu GĐ4; Phúc xem giao diện (Q-G). GĐ3 làm tiếp trên `ai/gd3-tutor`.
+
+**Lệnh chạy lại**
+```bash
+cd backend && alembic -c alembic.ini upgrade head
+cd backend && python -m pytest -q -m "not postgres and not live"    # 747 passed
+cd backend && python ../scripts/ai/gd2_do_thoi_gian.py --n 2000     # đo thời gian gợi ý
+```
+
+## 04/11/2026: pipeline AI GĐ1 (nhánh `ai/gd1-mastery`, xếp chồng trên `ai/gd0-ke-hoach`)
+
+**Đã xong** (báo cáo `docs/giai-doan/ai-gd1/BAO_CAO.md`)
+- Cherry-pick PR #17 + PR #14. Ánh xạ kỹ năng ADR-008, mastery EMA + luật ôn 2A, `rebuild_mastery`, bài kiểm tra đầu vào 12 câu, `GET /me/mastery`, trang `/app/kiem-tra-dau-vao`.
+- pytest 647 passed + 21 skipped; Vitest 259; `npm run build` đạt; Alembic upgrade + check (SQLite) đạt.
+
+**Đang dở / chờ**
+- Thắng duyệt migration `c1a2b3d4e5f6` (Q-D). Đạt duyệt 12 kỹ năng placement. GĐ2 làm tiếp trên `ai/gd2-goi-y`.
+
+**Lệnh chạy lại**
+```bash
+cd backend && alembic -c alembic.ini upgrade head && python -m app.ai.rebuild_mastery
+cd backend && python -m pytest -q                       # 647 passed + 21 skipped
+python scripts/ai/gd1_nguoi_mau.py                      # PowerShell: python scripts\ai\gd1_nguoi_mau.py
+```
+
+## 04/11/2026: pipeline AI của giảng viên, GĐ0 (nhánh `ai/gd0-ke-hoach`, từ `phuc-music`)
+
+**Đã xong** (kế hoạch `docs/giai-doan/ai-gd0/KE_HOACH_AI.md`)
+- Mốc test: pytest 592 passed + 21 skipped; Vitest 259; `npm run build` đạt.
+- `scripts/ai/gd0_mo_phong_mo_khoa.py`: với nội dung hiện có, L02 và L04 không bao giờ vào gợi ý (pitch.spelling, chord.seventh_quality không có thẻ máy chấm); luật ôn 2A mở L03 ngày thứ 3; thẻ tự đánh giá tính 0,5 không giúp được.
+- Kiểm Gemini bằng khóa thật: có `gemini-3.5-flash-lite`, `gemini-3.6-flash` (lần thử bị 503), `gemini-embedding-001` (768 chiều, chưa chuẩn hóa), `gemini-embedding-2`.
+- CI chạy cả PR đích `phuc-music`. Chép pipeline vào `docs/tham-khao/`.
+
+**Đang dở / chờ**
+- Phúc duyệt kế hoạch + Q-A, Q-C; Thắng Q-B, Q-D. GĐ1 làm tiếp trên `ai/gd1-mastery` trong lúc chờ.
+
+**Lệnh chạy lại**
+```bash
+python scripts/ai/gd0_mo_phong_mo_khoa.py      # PowerShell: python scripts\ai\gd0_mo_phong_mo_khoa.py
+cd backend && python -m pytest -q              # 592 passed + 21 skipped
+```
+
 ## 02/11/2026: nhánh `phuc-music`, Harmony Lab chế độ Bài hát (Bước 0 → 5)
 
 **Đã xong** (báo cáo `docs/phuc-music/BAO_CAO_CAU_TRUC_BAI_HAT.md`, ADR-013 đề xuất, sổ tay `docs/backing-track/CAU_TRUC_BAI_HAT.md`)

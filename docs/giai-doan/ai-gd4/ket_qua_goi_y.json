@@ -1,0 +1,657 @@
+{
+ "n": 2000,
+ "seed": 20261104,
+ "bootstrap": 1000,
+ "lessons": [
+  "L01",
+  "L02",
+  "L03",
+  "L05",
+  "L06",
+  "L04",
+  "L07",
+  "L08"
+ ],
+ "learnable_lessons_with_mvp_skills": [
+  "L01",
+  "L02",
+  "L03",
+  "L04"
+ ],
+ "simulator": {
+  "users": 2000,
+  "events_mean": 99.8,
+  "events_median": 104,
+  "starts_mean": 3.44,
+  "by_persona": {
+   "Pop": 500,
+   "Guitar": 500,
+   "Jazz": 500,
+   "Newbie": 500
+  },
+  "math_check": true
+ },
+ "skipped": {
+  "no_new_lesson_after_cutoff": 1605
+ },
+ "evaluated_users": 395,
+ "truth_lesson_filter_reason": {
+  "prereq_not_ready": 384,
+  "passed": 11
+ },
+ "goal_model": "gemini-embedding-001",
+ "results": {
+  "P0": {
+   "n_users": 395,
+   "HitRate@1": 0.9671,
+   "Precision@1": 0.9671,
+   "HitRate@1 (phụ)": 0.0278,
+   "Precision@1 (phụ)": 0.0278,
+   "HitRate@3": 1.0,
+   "Precision@3": 0.3333,
+   "HitRate@3 (phụ)": 0.7443,
+   "Precision@3 (phụ)": 0.2996,
+   "HitRate@5": 1.0,
+   "Precision@5": 0.2,
+   "HitRate@5 (phụ)": 1.0,
+   "Precision@5 (phụ)": 0.2906,
+   "MRR": 0.9827,
+   "CI95 HitRate@1": [
+    0.9468,
+    0.9823
+   ],
+   "CI95 HitRate@3": [
+    1.0,
+    1.0
+   ],
+   "CI95 MRR": [
+    0.9726,
+    0.9916
+   ],
+   "mean_list_len": 5.4886,
+   "empty_main_list_rate": 0.0,
+   "by_persona": {
+    "Pop": {
+     "n": 108,
+     "HitRate@1": 1.0,
+     "HitRate@3": 1.0,
+     "MRR": 1.0
+    },
+    "Guitar": {
+     "n": 101,
+     "HitRate@1": 1.0,
+     "HitRate@3": 1.0,
+     "MRR": 1.0
+    },
+    "Jazz": {
+     "n": 49,
+     "HitRate@1": 1.0,
+     "HitRate@3": 1.0,
+     "MRR": 1.0
+    },
+    "Newbie": {
+     "n": 137,
+     "HitRate@1": 0.9051,
+     "HitRate@3": 1.0,
+     "MRR": 0.9501
+    }
+   }
+  },
+  "P1": {
+   "n_users": 395,
+   "HitRate@1": 0.0278,
+   "Precision@1": 0.0278,
+   "HitRate@1 (phụ)": 0.0278,
+   "Precision@1 (phụ)": 0.0278,
+   "HitRate@3": 0.0278,
+   "Precision@3": 0.0093,
+   "HitRate@3 (phụ)": 0.1063,
+   "Precision@3 (phụ)": 0.0363,
+   "HitRate@5": 0.0278,
+   "Precision@5": 0.0056,
+   "HitRate@5 (phụ)": 0.1063,
+   "Precision@5 (phụ)": 0.0218,
+   "MRR": 0.0278,
+   "CI95 HitRate@1": [
+    0.0127,
+    0.0456
+   ],
+   "CI95 HitRate@3": [
+    0.0127,
+    0.043
+   ],
+   "CI95 MRR": [
+    0.0127,
+    0.0456
+   ],
+   "mean_list_len": 0.0304,
+   "empty_main_list_rate": 0.9696,
+   "by_persona": {
+    "Pop": {
+     "n": 108,
+     "HitRate@1": 0.0185,
+     "HitRate@3": 0.0185,
+     "MRR": 0.0185
+    },
+    "Guitar": {
+     "n": 101,
+     "HitRate@1": 0.0396,
+     "HitRate@3": 0.0396,
+     "MRR": 0.0396
+    },
+    "Jazz": {
+     "n": 49,
+     "HitRate@1": 0.0612,
+     "HitRate@3": 0.0612,
+     "MRR": 0.0612
+    },
+    "Newbie": {
+     "n": 137,
+     "HitRate@1": 0.0146,
+     "HitRate@3": 0.0146,
+     "MRR": 0.0146
+    }
+   }
+  },
+  "P2": {
+   "n_users": 395,
+   "HitRate@1": 0.0278,
+   "Precision@1": 0.0278,
+   "HitRate@1 (phụ)": 0.1013,
+   "Precision@1 (phụ)": 0.1013,
+   "HitRate@3": 0.0278,
+   "Precision@3": 0.0093,
+   "HitRate@3 (phụ)": 0.1063,
+   "Precision@3 (phụ)": 0.0363,
+   "HitRate@5": 0.0278,
+   "Precision@5": 0.0056,
+   "HitRate@5 (phụ)": 0.1063,
+   "Precision@5 (phụ)": 0.0218,
+   "MRR": 0.0278,
+   "CI95 HitRate@1": [
+    0.0127,
+    0.0456
+   ],
+   "CI95 HitRate@3": [
+    0.0127,
+    0.043
+   ],
+   "CI95 MRR": [
+    0.0127,
+    0.0456
+   ],
+   "mean_list_len": 0.0304,
+   "empty_main_list_rate": 0.9696,
+   "few_eligible_rate": 1.0,
+   "by_persona": {
+    "Pop": {
+     "n": 108,
+     "HitRate@1": 0.0185,
+     "HitRate@3": 0.0185,
+     "MRR": 0.0185
+    },
+    "Guitar": {
+     "n": 101,
+     "HitRate@1": 0.0396,
+     "HitRate@3": 0.0396,
+     "MRR": 0.0396
+    },
+    "Jazz": {
+     "n": 49,
+     "HitRate@1": 0.0612,
+     "HitRate@3": 0.0612,
+     "MRR": 0.0612
+    },
+    "Newbie": {
+     "n": 137,
+     "HitRate@1": 0.0146,
+     "HitRate@3": 0.0146,
+     "MRR": 0.0146
+    }
+   }
+  },
+  "P3-s2a": {
+   "n_users": 395,
+   "HitRate@1": 0.0278,
+   "Precision@1": 0.0278,
+   "HitRate@1 (phụ)": 0.1013,
+   "Precision@1 (phụ)": 0.1013,
+   "HitRate@3": 0.0278,
+   "Precision@3": 0.0093,
+   "HitRate@3 (phụ)": 0.1063,
+   "Precision@3 (phụ)": 0.0363,
+   "HitRate@5": 0.0278,
+   "Precision@5": 0.0056,
+   "HitRate@5 (phụ)": 0.1063,
+   "Precision@5 (phụ)": 0.0218,
+   "MRR": 0.0278,
+   "CI95 HitRate@1": [
+    0.0127,
+    0.0456
+   ],
+   "CI95 HitRate@3": [
+    0.0127,
+    0.0456
+   ],
+   "CI95 MRR": [
+    0.0127,
+    0.0456
+   ],
+   "mean_list_len": 0.0304,
+   "empty_main_list_rate": 0.9696,
+   "few_eligible_rate": 1.0,
+   "neighbor_outcome": {
+    "has_neighbors": 0.9975,
+    "no_valid_neighbors": 0.0025
+   },
+   "min_shared_used": {
+    "2": 395
+   },
+   "by_persona": {
+    "Pop": {
+     "n": 108,
+     "HitRate@1": 0.0185,
+     "HitRate@3": 0.0185,
+     "MRR": 0.0185
+    },
+    "Guitar": {
+     "n": 101,
+     "HitRate@1": 0.0396,
+     "HitRate@3": 0.0396,
+     "MRR": 0.0396
+    },
+    "Jazz": {
+     "n": 49,
+     "HitRate@1": 0.0612,
+     "HitRate@3": 0.0612,
+     "MRR": 0.0612
+    },
+    "Newbie": {
+     "n": 137,
+     "HitRate@1": 0.0146,
+     "HitRate@3": 0.0146,
+     "MRR": 0.0146
+    }
+   }
+  },
+  "P3-s2b": {
+   "n_users": 395,
+   "HitRate@1": 0.0278,
+   "Precision@1": 0.0278,
+   "HitRate@1 (phụ)": 0.1013,
+   "Precision@1 (phụ)": 0.1013,
+   "HitRate@3": 0.0278,
+   "Precision@3": 0.0093,
+   "HitRate@3 (phụ)": 0.1063,
+   "Precision@3 (phụ)": 0.0363,
+   "HitRate@5": 0.0278,
+   "Precision@5": 0.0056,
+   "HitRate@5 (phụ)": 0.1063,
+   "Precision@5 (phụ)": 0.0218,
+   "MRR": 0.0278,
+   "CI95 HitRate@1": [
+    0.0127,
+    0.0456
+   ],
+   "CI95 HitRate@3": [
+    0.0127,
+    0.0456
+   ],
+   "CI95 MRR": [
+    0.0127,
+    0.0456
+   ],
+   "mean_list_len": 0.0304,
+   "empty_main_list_rate": 0.9696,
+   "few_eligible_rate": 1.0,
+   "neighbor_outcome": {
+    "has_neighbors": 1.0
+   },
+   "min_shared_used": {
+    "2": 394,
+    "1": 1
+   },
+   "by_persona": {
+    "Pop": {
+     "n": 108,
+     "HitRate@1": 0.0185,
+     "HitRate@3": 0.0185,
+     "MRR": 0.0185
+    },
+    "Guitar": {
+     "n": 101,
+     "HitRate@1": 0.0396,
+     "HitRate@3": 0.0396,
+     "MRR": 0.0396
+    },
+    "Jazz": {
+     "n": 49,
+     "HitRate@1": 0.0612,
+     "HitRate@3": 0.0612,
+     "MRR": 0.0612
+    },
+    "Newbie": {
+     "n": 137,
+     "HitRate@1": 0.0146,
+     "HitRate@3": 0.0146,
+     "MRR": 0.0146
+    }
+   }
+  },
+  "P3-s3a": {
+   "n_users": 395,
+   "HitRate@1": 0.0278,
+   "Precision@1": 0.0278,
+   "HitRate@1 (phụ)": 0.0962,
+   "Precision@1 (phụ)": 0.0962,
+   "HitRate@3": 0.0278,
+   "Precision@3": 0.0093,
+   "HitRate@3 (phụ)": 0.1063,
+   "Precision@3 (phụ)": 0.0363,
+   "HitRate@5": 0.0278,
+   "Precision@5": 0.0056,
+   "HitRate@5 (phụ)": 0.1063,
+   "Precision@5 (phụ)": 0.0218,
+   "MRR": 0.0278,
+   "CI95 HitRate@1": [
+    0.0127,
+    0.0456
+   ],
+   "CI95 HitRate@3": [
+    0.0127,
+    0.0456
+   ],
+   "CI95 MRR": [
+    0.0127,
+    0.0456
+   ],
+   "mean_list_len": 0.0304,
+   "empty_main_list_rate": 0.9696,
+   "few_eligible_rate": 1.0,
+   "neighbor_outcome": {
+    "has_neighbors": 0.9975,
+    "no_valid_neighbors": 0.0025
+   },
+   "min_shared_used": {
+    "3": 395
+   },
+   "by_persona": {
+    "Pop": {
+     "n": 108,
+     "HitRate@1": 0.0185,
+     "HitRate@3": 0.0185,
+     "MRR": 0.0185
+    },
+    "Guitar": {
+     "n": 101,
+     "HitRate@1": 0.0396,
+     "HitRate@3": 0.0396,
+     "MRR": 0.0396
+    },
+    "Jazz": {
+     "n": 49,
+     "HitRate@1": 0.0612,
+     "HitRate@3": 0.0612,
+     "MRR": 0.0612
+    },
+    "Newbie": {
+     "n": 137,
+     "HitRate@1": 0.0146,
+     "HitRate@3": 0.0146,
+     "MRR": 0.0146
+    }
+   }
+  },
+  "P3-s3b": {
+   "n_users": 395,
+   "HitRate@1": 0.0278,
+   "Precision@1": 0.0278,
+   "HitRate@1 (phụ)": 0.0962,
+   "Precision@1 (phụ)": 0.0962,
+   "HitRate@3": 0.0278,
+   "Precision@3": 0.0093,
+   "HitRate@3 (phụ)": 0.1063,
+   "Precision@3 (phụ)": 0.0363,
+   "HitRate@5": 0.0278,
+   "Precision@5": 0.0056,
+   "HitRate@5 (phụ)": 0.1063,
+   "Precision@5 (phụ)": 0.0218,
+   "MRR": 0.0278,
+   "CI95 HitRate@1": [
+    0.0127,
+    0.0456
+   ],
+   "CI95 HitRate@3": [
+    0.0127,
+    0.0456
+   ],
+   "CI95 MRR": [
+    0.0127,
+    0.043
+   ],
+   "mean_list_len": 0.0304,
+   "empty_main_list_rate": 0.9696,
+   "few_eligible_rate": 1.0,
+   "neighbor_outcome": {
+    "has_neighbors": 1.0
+   },
+   "min_shared_used": {
+    "3": 394,
+    "1": 1
+   },
+   "by_persona": {
+    "Pop": {
+     "n": 108,
+     "HitRate@1": 0.0185,
+     "HitRate@3": 0.0185,
+     "MRR": 0.0185
+    },
+    "Guitar": {
+     "n": 101,
+     "HitRate@1": 0.0396,
+     "HitRate@3": 0.0396,
+     "MRR": 0.0396
+    },
+    "Jazz": {
+     "n": 49,
+     "HitRate@1": 0.0612,
+     "HitRate@3": 0.0612,
+     "MRR": 0.0612
+    },
+    "Newbie": {
+     "n": 137,
+     "HitRate@1": 0.0146,
+     "HitRate@3": 0.0146,
+     "MRR": 0.0146
+    }
+   }
+  },
+  "P3-s4a": {
+   "n_users": 395,
+   "HitRate@1": 0.0278,
+   "Precision@1": 0.0278,
+   "HitRate@1 (phụ)": 0.0911,
+   "Precision@1 (phụ)": 0.0911,
+   "HitRate@3": 0.0278,
+   "Precision@3": 0.0093,
+   "HitRate@3 (phụ)": 0.1063,
+   "Precision@3 (phụ)": 0.0363,
+   "HitRate@5": 0.0278,
+   "Precision@5": 0.0056,
+   "HitRate@5 (phụ)": 0.1063,
+   "Precision@5 (phụ)": 0.0218,
+   "MRR": 0.0278,
+   "CI95 HitRate@1": [
+    0.0127,
+    0.0456
+   ],
+   "CI95 HitRate@3": [
+    0.0127,
+    0.0456
+   ],
+   "CI95 MRR": [
+    0.0127,
+    0.0456
+   ],
+   "mean_list_len": 0.0304,
+   "empty_main_list_rate": 0.9696,
+   "few_eligible_rate": 1.0,
+   "neighbor_outcome": {
+    "no_valid_neighbors": 0.0861,
+    "has_neighbors": 0.9139
+   },
+   "min_shared_used": {
+    "4": 395
+   },
+   "by_persona": {
+    "Pop": {
+     "n": 108,
+     "HitRate@1": 0.0185,
+     "HitRate@3": 0.0185,
+     "MRR": 0.0185
+    },
+    "Guitar": {
+     "n": 101,
+     "HitRate@1": 0.0396,
+     "HitRate@3": 0.0396,
+     "MRR": 0.0396
+    },
+    "Jazz": {
+     "n": 49,
+     "HitRate@1": 0.0612,
+     "HitRate@3": 0.0612,
+     "MRR": 0.0612
+    },
+    "Newbie": {
+     "n": 137,
+     "HitRate@1": 0.0146,
+     "HitRate@3": 0.0146,
+     "MRR": 0.0146
+    }
+   }
+  },
+  "P3-s4b": {
+   "n_users": 395,
+   "HitRate@1": 0.0278,
+   "Precision@1": 0.0278,
+   "HitRate@1 (phụ)": 0.0911,
+   "Precision@1 (phụ)": 0.0911,
+   "HitRate@3": 0.0278,
+   "Precision@3": 0.0093,
+   "HitRate@3 (phụ)": 0.1063,
+   "Precision@3 (phụ)": 0.0363,
+   "HitRate@5": 0.0278,
+   "Precision@5": 0.0056,
+   "HitRate@5 (phụ)": 0.1063,
+   "Precision@5 (phụ)": 0.0218,
+   "MRR": 0.0278,
+   "CI95 HitRate@1": [
+    0.0127,
+    0.0456
+   ],
+   "CI95 HitRate@3": [
+    0.0127,
+    0.0456
+   ],
+   "CI95 MRR": [
+    0.0127,
+    0.0456
+   ],
+   "mean_list_len": 0.0304,
+   "empty_main_list_rate": 0.9696,
+   "few_eligible_rate": 1.0,
+   "neighbor_outcome": {
+    "has_neighbors": 1.0
+   },
+   "min_shared_used": {
+    "3": 33,
+    "4": 361,
+    "1": 1
+   },
+   "by_persona": {
+    "Pop": {
+     "n": 108,
+     "HitRate@1": 0.0185,
+     "HitRate@3": 0.0185,
+     "MRR": 0.0185
+    },
+    "Guitar": {
+     "n": 101,
+     "HitRate@1": 0.0396,
+     "HitRate@3": 0.0396,
+     "MRR": 0.0396
+    },
+    "Jazz": {
+     "n": 49,
+     "HitRate@1": 0.0612,
+     "HitRate@3": 0.0612,
+     "MRR": 0.0612
+    },
+    "Newbie": {
+     "n": 137,
+     "HitRate@1": 0.0146,
+     "HitRate@3": 0.0146,
+     "MRR": 0.0146
+    }
+   }
+  },
+  "P2-bo-tien-quyet": {
+   "n_users": 395,
+   "HitRate@1": 0.8456,
+   "Precision@1": 0.8456,
+   "HitRate@1 (phụ)": 0.5139,
+   "Precision@1 (phụ)": 0.5139,
+   "HitRate@3": 1.0,
+   "Precision@3": 0.3333,
+   "HitRate@3 (phụ)": 0.9443,
+   "Precision@3 (phụ)": 0.4506,
+   "HitRate@5": 1.0,
+   "Precision@5": 0.2,
+   "HitRate@5 (phụ)": 1.0,
+   "Precision@5 (phụ)": 0.2906,
+   "MRR": 0.9211,
+   "CI95 HitRate@1": [
+    0.8101,
+    0.881
+   ],
+   "CI95 HitRate@3": [
+    1.0,
+    1.0
+   ],
+   "CI95 MRR": [
+    0.903,
+    0.9397
+   ],
+   "mean_list_len": 1.4886,
+   "empty_main_list_rate": 0.0,
+   "few_eligible_rate": 1.0,
+   "by_persona": {
+    "Pop": {
+     "n": 108,
+     "HitRate@1": 1.0,
+     "HitRate@3": 1.0,
+     "MRR": 1.0
+    },
+    "Guitar": {
+     "n": 101,
+     "HitRate@1": 1.0,
+     "HitRate@3": 1.0,
+     "MRR": 1.0
+    },
+    "Jazz": {
+     "n": 49,
+     "HitRate@1": 0.9592,
+     "HitRate@3": 1.0,
+     "MRR": 0.9796
+    },
+    "Newbie": {
+     "n": 137,
+     "HitRate@1": 0.5693,
+     "HitRate@3": 1.0,
+     "MRR": 0.7798
+    }
+   }
+  }
+ },
+ "runtime_s": 16.8
+}

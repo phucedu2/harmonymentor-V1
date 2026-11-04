@@ -18,6 +18,12 @@ Các giai đoạn 0.2 → 2.3 là lộ trình của bản code gốc (zip v0.1.0
 | [phase-2.2](phase-2.2/) | v0.5.2-dev | Viết lại Bài 1 cho người mới bắt đầu | [PHASE_2_2_LESSON1_PEDAGOGY_REWRITE.md](phase-2.2/PHASE_2_2_LESSON1_PEDAGOGY_REWRITE.md), [VERIFICATION_PHASE_2_2.txt](phase-2.2/VERIFICATION_PHASE_2_2.txt) |
 | [phase-2.3](phase-2.3/) | v0.5.3-dev | Bài 1 nhiều giọng; kiểm định dưới góc nhìn người mới học (20/10, sau khi gộp Giai đoạn B) | [PHASE_2_3_MULTIKEY_LESSON1.md](phase-2.3/PHASE_2_3_MULTIKEY_LESSON1.md), [VERIFICATION_PHASE_2_3.txt](phase-2.3/VERIFICATION_PHASE_2_3.txt), [AUDIT_NGUOI_MOI_HOC.md](phase-2.3/AUDIT_NGUOI_MOI_HOC.md) |
 | [phuc-music](../phuc-music/) | v0.5.4-dev | Gộp khu học v0.5.3 vào nền main, xưởng sáng tác (Bước 0–4), backing track ban nhạc thật (02/11) | [00_KHAO_SAT.md](../phuc-music/00_KHAO_SAT.md), [01_NHAT_KY_GOP.md](../phuc-music/01_NHAT_KY_GOP.md), [BAO_CAO_BUOC_1.md](../phuc-music/BAO_CAO_BUOC_1.md), [BAO_CAO_BUOC_2.md](../phuc-music/BAO_CAO_BUOC_2.md), [BAO_CAO_BUOC_3.md](../phuc-music/BAO_CAO_BUOC_3.md), [BAO_CAO_BUOC_4.md](../phuc-music/BAO_CAO_BUOC_4.md), [BAO_CAO_BACKING_TRACK.md](../phuc-music/BAO_CAO_BACKING_TRACK.md) |
+| [ai-gd0](ai-gd0/) | v0.5.4-dev | Pipeline AI của giảng viên, GĐ0: kiểm hiện trạng, mô phỏng mở khóa L01–L04, kiểm Gemini, kế hoạch GĐ1–GĐ4 (04/11) | [KE_HOACH_AI.md](ai-gd0/KE_HOACH_AI.md), [mo_phong_mo_khoa_2026-11-04.md](ai-gd0/mo_phong_mo_khoa_2026-11-04.md) |
+| [ai-gd1](ai-gd1/) | v0.5.4-dev | Pipeline AI GĐ1: ánh xạ kỹ năng ADR-008, mastery EMA, luật ôn 2A, bài kiểm tra đầu vào (04/11) | [BAO_CAO.md](ai-gd1/BAO_CAO.md), [nguoi_mau_2026-11-04.md](ai-gd1/nguoi_mau_2026-11-04.md) |
+| [ai-gd2](ai-gd2/) | v0.5.4-dev | Pipeline AI GĐ2: hệ gợi ý 3 tầng (luật, nội dung Gemini/TF-IDF, KNN chiều chung), G-3 ba danh sách, mục tiêu học, thẻ Dashboard (04/11) | [BAO_CAO.md](ai-gd2/BAO_CAO.md) |
+| [ai-gd3](ai-gd3/) | v0.5.4-dev | Pipeline AI GĐ3: AI Tutor có trích dẫn (RAG Gemini + BM25), kiểm Music Engine, chống prompt injection, giải thích lỗi 3 mức, khung chat nổi (04/11) | [BAO_CAO.md](ai-gd3/BAO_CAO.md) |
+| [ai-gd4](ai-gd4/) | v0.5.4-dev | Pipeline AI GĐ4: thực nghiệm hệ gợi ý (2.000 người mô phỏng, P0–P3) và AI Tutor (bộ chuẩn 30 câu, Gemini so với BM25, chặn, guardrail, độ trễ) (04/11) | [BAO_CAO_THUC_NGHIEM.md](ai-gd4/BAO_CAO_THUC_NGHIEM.md) |
+| [demo-1011](demo-1011/) | v0.5.4-dev | Demo AI 10/11: 6 câu nháp gỡ lộ trình L02–L04, 5 câu vàng AI Tutor, kiểm quãng trong lời AI, 2 kịch bản E2E trên giao diện thật. |
 
 ## Quy ước cho giai đoạn sau
 

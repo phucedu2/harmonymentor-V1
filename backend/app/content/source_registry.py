@@ -38,4 +38,12 @@ SOURCE_REGISTRY = {
         "license": "Reference only unless the rights holder grants broader reuse.",
         "role": "Vietnamese reference for jazz/modern harmonic function, tensions, secondary dominants, modal interchange, and voicing.",
     },
+    "MT21C": {
+        "title": "Music Theory for the 21st-Century Classroom",
+        "author": "Robert Hutchinson",
+        "url": "https://musictheory.pugetsound.edu/mt21c/",
+        "access": "official_web_verified 04/11/2026 (§1.5, §5.1, §8.1, §8.3)",
+        "license": "GNU Free Documentation License 1.2 or later; HarmonyMentor still writes its own wording.",
+        "role": "Second open source for spelling, intervals, seventh chords and Roman numerals of diatonic seventh chords.",
+    },
 }

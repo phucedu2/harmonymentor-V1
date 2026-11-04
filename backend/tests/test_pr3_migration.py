@@ -171,7 +171,11 @@ def test_seed_after_upgrade_is_idempotent(legacy_engine):
     for _ in range(2):
         with factory() as db:
             seed_initial_data(db)
-    assert snapshot_table(legacy_engine, "SELECT id, content_hash, snapshot_origin, status FROM exercise_versions ORDER BY id") == before
+    after = snapshot_table(legacy_engine, "SELECT id, content_hash, snapshot_origin, status FROM exercise_versions ORDER BY id")
+    # Seed chỉ được THÊM câu mới của nguồn (6 câu demo 10/11, đã phát hành), không đổi dòng nào đã có từ migration.
+    assert [row for row in after if row[0] in {r[0] for r in before}] == before
+    added = sorted((row[0].rsplit("-v", 1)[0], row[3]) for row in after if row[0] not in {r[0] for r in before})
+    assert added == [(x, "published") for x in ("L01-Q07", "L01-Q08", "L02-Q07", "L02-Q08", "L02-Q09", "L02-Q10")]
     with factory() as db:
         # Câu L01-Q01 vẫn hiện bằng v4 dù có một bản cũ v1 không khôi phục được.
         assert current_version(db.get(Exercise, "L01-Q01")).id == "L01-Q01-v4"

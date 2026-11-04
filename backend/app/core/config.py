@@ -8,7 +8,7 @@ without an external service.
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 def _flag(name: str, default: str) -> bool:
@@ -38,11 +38,52 @@ class Settings:
     # Hiện câu hỏi bản nháp (status=draft) cho người học. Chỉ bật tường minh ở dev/test (HM-003, ADR-006).
     show_draft_content: bool = _flag("SHOW_DRAFT_CONTENT", "0")
 
+    # Pipeline AI (GĐ2). Tắt mặc định: AI_ENABLED=false vẫn demo trọn vòng (nguyên tắc 3).
+    ai_enabled: bool = _flag("AI_ENABLED", "0")
+    # Khóa chỉ đọc từ môi trường của backend; không bao giờ trả về client hay ghi log.
+    gemini_api_key: str = field(default_factory=lambda: os.getenv("GEMINI_API_KEY", ""), repr=False)
+    gemini_embed_model: str = os.getenv("EMBEDDING_MODEL", "gemini-embedding-001")  # tên biến theo 03 Bảng cấu hình
+    gemini_embed_dim: int = int(os.getenv("EMBEDDING_DIM", "768"))
+    # Mô tả kỹ năng còn nháp (chờ Đạt/Astra duyệt) chỉ dùng cho tầng nội dung khi bật tường minh.
+    allow_draft_skill_descriptions: bool = _flag("ALLOW_DRAFT_SKILL_DESCRIPTIONS", "0")
+    # Hệ gợi ý (ADR-008 mục 5). Ngưỡng số chiều chung chưa chốt: 3 là giá trị tạm tới khi có thử nghiệm GĐ4.
+    rec_min_shared_dims: int = int(os.getenv("RECO_MIN_SHARED_DIMS", "3"))
+    rec_fallback: str = os.getenv("RECO_FALLBACK", "a")
+    rec_neighbors_k: int = int(os.getenv("RECO_NEIGHBORS_K", "10"))
+    reco_use_cf: bool = _flag("RECO_USE_CF", "1")
+    # content,mastery,due,cf của công thức đầy đủ (04 mục 6.5); bản người học mới tự suy ra (cộng cf vào content).
+    reco_weights: str = os.getenv("RECO_WEIGHTS", "0.35,0.25,0.20,0.20")
+    # 9A: dùng người học thật khi có đủ số người có đủ số chiều đã đánh giá, nếu không thì dùng người mô phỏng.
+    knn_real_min_users: int = int(os.getenv("KNN_REAL_MIN_USERS", "30"))
+    knn_real_min_dims: int = int(os.getenv("KNN_REAL_MIN_DIMS", "3"))
+    # AI Tutor (GĐ3). Tên biến theo 03 Bảng cấu hình khi có; mô hình đã xác nhận qua models.list ở GĐ0.
+    gemini_model: str = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
+    gemini_fallback_model: str = os.getenv("GEMINI_FALLBACK_MODEL", "gemini-3.6-flash")
+    ai_timeout_seconds: float = float(os.getenv("AI_TIMEOUT_SECONDS", "15"))
+    ai_daily_quota: int = int(os.getenv("AI_DAILY_QUOTA", "30"))          # lượt hỏi AI / người / ngày VN
+    # Trần chung cả hệ thống / ngày để một sự cố (vòng lặp, bị lạm dụng) không đốt hết hạn mức Gemini.
+    ai_global_daily_budget: int = int(os.getenv("AI_GLOBAL_DAILY_BUDGET", "1000"))
+    rag_top_k: int = int(os.getenv("RAG_TOP_K", "4"))
+    # Hiệu chỉnh ở GĐ3 với gemini-embedding-001 (báo cáo ai-gd3 mục C): câu trong phạm vi ≥ 0,61, ngoài ≤ 0,61.
+    rag_min_score: float = float(os.getenv("RAG_MIN_SCORE", "0.60"))
+    rag_bm25_min_score: float = float(os.getenv("RAG_BM25_MIN_SCORE", "2.0"))
+
 
 def check_runtime_settings(cfg: Settings) -> None:
     """Chặn cấu hình nguy hiểm ngay lúc khởi động thay vì để lộ ra khi người học đang dùng."""
     if cfg.app_env == "production" and cfg.show_draft_content:
         raise RuntimeError("SHOW_DRAFT_CONTENT=1 không được dùng khi APP_ENV=production: người học sẽ thấy câu hỏi chưa duyệt.")
+    if cfg.app_env == "production" and cfg.allow_draft_skill_descriptions:
+        raise RuntimeError("ALLOW_DRAFT_SKILL_DESCRIPTIONS=1 không được dùng khi APP_ENV=production: "
+                           "gợi ý sẽ dựa trên mô tả kỹ năng chưa duyệt.")
+    try:
+        weights = [float(x) for x in cfg.reco_weights.split(",")]
+    except ValueError:
+        weights = []
+    if len(weights) != 4 or any(x < 0 for x in weights) or abs(sum(weights) - 1) > 1e-6:
+        raise RuntimeError("RECO_WEIGHTS phải là 4 số không âm có tổng bằng 1, ví dụ 0.35,0.25,0.20,0.20.")
+    if cfg.rec_fallback not in {"a", "b"}:
+        raise RuntimeError("RECO_FALLBACK chỉ nhận a hoặc b (ADR-008 mục 5).")
 
 
 settings = Settings()

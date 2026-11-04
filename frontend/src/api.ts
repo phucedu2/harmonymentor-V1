@@ -217,6 +217,51 @@ const apiCall = <T,>(path: string, init?: RequestInit) => http<T>(path, init);
 const enginePost = <T,>(path: string, data: unknown) => engineCall<T>(path, { method: "POST", body: JSON.stringify(data) });
 const apiPost = <T,>(path: string, data: unknown) => apiCall<T>(path, { method: "POST", body: JSON.stringify(data) });
 
+// Pipeline AI GĐ1: mastery và bài kiểm tra đầu vào (UC-06).
+export type MasteryLevel = "not_assessed" | "learning" | "weak" | "ready" | "mastered";
+export type SkillMastery = {
+  skill_id: string; name: string; srs_code: string; group_code: string;
+  assessed: boolean; score: number | null; attempts_count: number; level: MasteryLevel;
+  ready_threshold: number; mastery_threshold: number;
+};
+export type PlacementQuestion = {
+  exercise_id: string; exercise_version_id: string; skill_id: string; kind: string; prompt: string; options?: string[] | null;
+};
+export type PlacementStatus = "not_started" | "completed" | "skipped";
+export type Placement = { status: PlacementStatus; questions: PlacementQuestion[] };
+// Pipeline AI GĐ2: gợi ý bài học (04 mục 6.5) và mục tiêu học.
+export type RecReasonCode = "content" | "mastery" | "due" | "cf" | "foundation";
+export type RecLesson = {
+  lesson_id: string; order: number; title: string; score: number;
+  components: { content: number; mastery: number; due: number; cf: number | null };
+  reason_code: RecReasonCode; reason: string; badge: string; skills: string[]; label?: string | null;
+};
+export type Recommendations = {
+  generated_at: string; log_id: string; mode: "full" | "cold_start" | "fallback"; weights_mode: "full" | "cold";
+  cf_source: "real" | "synthetic" | "none"; fallback_reason: "no_assessed_dims" | "no_valid_neighbors" | "cf_disabled" | null;
+  neighbors_count: number; content_source: "embedding" | "none"; draft_descriptions: boolean;
+  few_eligible: boolean;
+  continue: { lesson_id: string; order: number; title: string; status: "started" }[];
+  next: RecLesson[]; review: RecLesson[];
+};
+export type Goal = { goal_text: string | null; embedded: boolean; embedding_model: string | null };
+export type PlacementSubmitResult = { status: "completed"; results: { skill_id: string; correct: boolean; score: number }[] };
+
+// Pipeline AI GĐ3: AI Tutor (04 mục 3.3, Bảng 13). Nhãn "đã kiểm" do máy chủ quyết, giao diện chỉ hiển thị.
+export type ChatIntent = "concept" | "explain_error" | "quiz" | "study_advice" | "composition" | "out_of_scope";
+export type ChatCitation = { lesson_id: string; block_id: string; title: string; lesson_title: string };
+export type EngineClaim = {
+  tool: string; args: Record<string, string>; claimed: string; engine: string | null;
+  status: "verified" | "contradicted" | "unsupported"; origin: string;
+};
+export type ChatReply = {
+  message_id: number; session_id: string; reply: string; citations: ChatCitation[]; engine_claims: EngineClaim[];
+  verified: boolean; verified_label: string | null; intent: ChatIntent; hint_level: number;
+  status: "ok" | "failed" | "fallback"; suggested_actions: string[]; fallback_reason: string | null;
+  retrieval_method: string | null; quota_remaining_today: number; attempt_id?: string | null; next_hint_level?: number | null;
+};
+export type ChatContext = { page?: string; lesson_id?: string; block_id?: string };
+
 export const api = {
   // Legacy Practice routes retained during migration.
   transpose: (note: string, interval: string) =>
@@ -270,6 +315,22 @@ export const api = {
     apiPost<CompleteLessonResult>(`/lessons/${encodeURIComponent(lessonId)}/complete`, {}),
   dueReviews: (includeFuture = false) =>
     apiCall<ReviewState[]>(`/review/due?include_future=${includeFuture}`),
+  myMastery: () => apiCall<{ skill_group_map_version: string; skills: SkillMastery[] }>("/me/mastery"),
+  placement: () => apiCall<Placement>("/placement"),
+  submitPlacement: (answers: { exercise_version_id: string; answer: unknown }[], confirmRetake = false) =>
+    apiPost<PlacementSubmitResult>("/placement/submit", { answers, confirm_retake: confirmRetake }),
+  skipPlacement: () => apiPost<Placement>("/placement/skip", {}),
+  recommend: (k = 5) => apiCall<Recommendations>(`/recommend?k=${k}`),
+  clickRecommendation: (logId: string, lessonId: string) =>
+    apiPost<void>(`/recommend/${encodeURIComponent(logId)}/click`, { lesson_id: lessonId }),
+  myGoal: () => apiCall<Goal>("/me/goal"),
+  chatMessage: (message: string, sessionId: string | null, context?: ChatContext) =>
+    apiPost<ChatReply>("/chat/message", { message, session_id: sessionId, context }),
+  explainAttempt: (attemptId: string, sessionId: string | null, hintLevel?: number) =>
+    apiPost<ChatReply>("/chat/explain-attempt", { attempt_id: attemptId, session_id: sessionId, hint_level: hintLevel }),
+  rateChatMessage: (messageId: number, stars: number) =>
+    apiPost<void>(`/chat/messages/${messageId}/rating`, { stars }),
+  setGoal: (goalText: string) => apiCall<Goal>("/me/goal", { method: "PUT", body: JSON.stringify({ goal_text: goalText }) }),
   answerReview: (reviewItemId: string, answer: unknown, rating = "auto") =>
     apiPost<ReviewAnswerResult>(`/review/${encodeURIComponent(reviewItemId)}/answer`, { answer, rating }),
 };

@@ -11,6 +11,8 @@ from datetime import datetime, timezone
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
+from ..ai.skill_mapping import MAPPING_ROWS, SKILL_MAPPING, validate_mapping
+
 from .curriculum_specs import LESSON_SPECS, MIGRATED_LESSON_IDS
 from .draft_specs import DRAFT_LESSON_SPECS, blocks_with_drafts
 from .skill_graph import PREREQUISITES, SKILLS
@@ -237,14 +239,25 @@ def _seed(db: Session, lesson_specs: list[dict]) -> None:
             source.author = meta["author"]
             source.url = meta["url"]
 
-    # Skill graph.
+    # Skill graph + ánh xạ ADR-008. Bảng ánh xạ hỏng thì dừng seed, không ghi nửa chừng.
+    mapping_errors = validate_mapping({s[0] for s in SKILLS}, MAPPING_ROWS)
+    if mapping_errors:
+        raise RuntimeError("Bảng ánh xạ kỹ năng không hợp lệ: " + "; ".join(mapping_errors))
     for skill_id, name, domain in SKILLS:
+        srs_code, group_code = SKILL_MAPPING[skill_id]
         skill = db.get(Skill, skill_id)
         if skill is None:
-            db.add(Skill(id=skill_id, name=name, domain=domain))
-        else:
-            skill.name = name
-            skill.domain = domain
+            skill = Skill(id=skill_id, name=name, domain=domain)
+            db.add(skill)
+        skill.name = name
+        skill.domain = domain
+        skill.srs_code = srs_code
+        skill.group_code = group_code
+        # Ngưỡng do 04 Bảng 19 quy định; đổi giá trị phải qua nhóm (quy tắc 5.3), nên seed chỉ điền khi trống.
+        if skill.ready_threshold is None:
+            skill.ready_threshold = 0.6
+        if skill.mastery_threshold is None:
+            skill.mastery_threshold = 0.8
     db.flush()
 
     for skill_id, prerequisite_id in PREREQUISITES:
