@@ -11,18 +11,26 @@ from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
 import pytest
+from fastapi.testclient import TestClient
 from sqlalchemy import select
 
 from app.content.curriculum_specs import lesson_by_id
 from app.db.models import MasteryEvent, MasteryState, ReviewItem, ReviewState, User
 from app.db.session import SessionLocal
-from app.main import app  # noqa: F401
+from app.main import app
 from app.services import learning_service as ls
 from app.services.grading_service import is_self_check
 from tests.auth_helpers import correct_answer
 
 # 08:00 giờ Việt Nam = 01:00 UTC.
 DAY0 = datetime(2026, 11, 2, 1, 0, tzinfo=timezone.utc)
+
+
+@pytest.fixture(scope="module", autouse=True)
+def _schema_and_seed():
+    # Chạy lifespan của app (create_schema + seed) để file test chạy riêng lẻ trên CSDL mới vẫn được.
+    with TestClient(app):
+        yield
 
 
 def make_user() -> str:
