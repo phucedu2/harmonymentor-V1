@@ -121,22 +121,58 @@ def embed_goal(db: Session, user: User, embedder: Embedder | None) -> bool:
     return True
 
 
+def goal_vector_usable(user: User, store: dict[str, Any] | None = None) -> bool:
+    """Vector mục tiêu so được với file vector kỹ năng: cùng mô hình VÀ cùng số chiều.
+
+    Chỉ so tên mô hình là chưa đủ: đổi EMBEDDING_DIM mà chưa tính lại file thì phép nhân vector lỗi (rà soát R2)."""
+    store = sd.load_embeddings() if store is None else store
+    return (bool(user.goal_embedding) and user.goal_embedding_model == store.get("model")
+            and len(user.goal_embedding) == store.get("dim"))
+
+
 def content_scores(user: User) -> tuple[dict[str, float], str, bool]:
     """(điểm theo kỹ năng, nguồn "embedding" | "none", có dùng mô tả nháp không).
 
-    Không có mục tiêu, chưa có vector mục tiêu (AI tắt, Gemini lỗi) hoặc vector khác mô hình với mô tả kỹ năng:
-    content = 0 cho mọi kỹ năng, nguồn "none" (đề GĐ2 mục 2: không gán số khác)."""
+    Không có mục tiêu, chưa có vector mục tiêu (AI tắt, Gemini lỗi) hoặc vector khác mô hình/số chiều với mô tả
+    kỹ năng: content = 0 cho mọi kỹ năng, nguồn "none" (đề GĐ2 mục 2: không gán số khác)."""
     rows = sd.usable(sd.load_descriptions(), allow_draft=settings.allow_draft_skill_descriptions)
     rows = {k: v for k, v in rows.items() if is_mvp(k)}
     store = sd.load_embeddings()
-    if not user.goal_text or not rows or not user.goal_embedding or user.goal_embedding_model != store.get("model"):
+    if not user.goal_text or not rows or not goal_vector_usable(user, store):
         return {}, "none", False
+    # Vector kỹ năng hỏng độ dài (file sửa tay, ghi dở) thì bỏ riêng kỹ năng đó, không làm hỏng cả lượt gợi ý.
     vecs = {s: store["skills"][s]["vector"] for s, r in rows.items()
-            if s in store["skills"] and store["skills"][s]["hash"] == sd.description_hash(r["text"])}
+            if s in store["skills"] and store["skills"][s]["hash"] == sd.description_hash(r["text"])
+            and len(store["skills"][s]["vector"]) == store.get("dim")}
     if not vecs:
         return {}, "none", False
     draft = any(rows[s]["status"] == "draft" for s in vecs)
     return embedding_content(user.goal_embedding, vecs), "embedding", draft
+
+
+def _should_reembed(user: User, embedder: Embedder | None) -> bool:
+    """Tính lại vector mục tiêu khi nó không dùng được (chưa có, mô hình cũ, số chiều cũ) và embedder hiện tại
+    cho đúng mô hình + số chiều của file kỹ năng. Nếu embedder cũng lệch file thì tính lại vô ích: không gọi
+    Gemini mỗi lượt (rà soát R1, R2)."""
+    if embedder is None or not user.goal_text:
+        return False
+    store = sd.load_embeddings()
+    if goal_vector_usable(user, store):
+        return False
+    return embedder.model == store.get("model") and getattr(embedder, "dim", None) == store.get("dim")
+
+
+def embedding_config_mismatch(cfg=None) -> str | None:
+    """Cảnh báo lúc khởi động khi EMBEDDING_MODEL/EMBEDDING_DIM khác file vector kỹ năng (chỉ tên và số chiều)."""
+    cfg = cfg or settings
+    store = sd.load_embeddings()
+    if not cfg.ai_enabled or not store.get("model"):
+        return None
+    if (cfg.gemini_embed_model, cfg.gemini_embed_dim) != (store.get("model"), store.get("dim")):
+        return (f"EMBEDDING_MODEL/EMBEDDING_DIM = {cfg.gemini_embed_model}/{cfg.gemini_embed_dim} khác file vector kỹ "
+                f"năng ({store.get('model')}/{store.get('dim')}): tầng nội dung sẽ bằng 0. "
+                "Chạy `python -m app.ai.build_skill_embeddings` rồi commit file.")
+    return None
 
 
 def configured_weights() -> Weights:
@@ -156,7 +192,7 @@ def _item(r: Ranked, **extra) -> dict[str, Any]:
 def recommend_for_user(db: Session, user: User, *, k: int = 5, now: datetime | None = None,
                        embedder: Embedder | None = None) -> dict[str, Any]:
     now = now or datetime.now(timezone.utc)
-    if user.goal_text and user.goal_embedding is None and embed_goal(db, user, embedder):
+    if _should_reembed(user, embedder) and embed_goal(db, user, embedder):
         db.flush()
     mastery = user_mastery(db, user.id)
     target = build_vector(mastery)
