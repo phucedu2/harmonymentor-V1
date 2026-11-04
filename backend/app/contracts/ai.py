@@ -77,7 +77,7 @@ class RecLessonOut(BaseModel):
     title: str
     score: float
     components: RecComponentsOut
-    reason_code: Literal["content", "mastery", "due", "cf"]
+    reason_code: Literal["content", "mastery", "due", "cf", "foundation"]
     reason: str
     badge: str
     skills: list[str]
@@ -96,12 +96,13 @@ class RecommendOut(BaseModel):
     log_id: str
     algorithm_version: str
     skill_group_map_version: str
+    mode: Literal["full", "cold_start", "fallback"]
     weights_mode: Literal["full", "cold"]
     cf_source: Literal["real", "synthetic", "none"]
-    fallback_reason: Optional[Literal["no_assessed_dims", "no_valid_neighbors"]] = None
+    fallback_reason: Optional[Literal["no_assessed_dims", "no_valid_neighbors", "cf_disabled"]] = None
     min_shared_dims: int
     neighbors_count: int
-    content_source: Literal["embedding", "tfidf", "none"]
+    content_source: Literal["embedding", "none"]
     draft_descriptions: bool
     few_eligible: bool
     continue_: list[ContinueLessonOut] = Field(alias="continue", serialization_alias="continue")

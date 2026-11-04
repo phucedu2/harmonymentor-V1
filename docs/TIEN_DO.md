@@ -6,16 +6,16 @@ File này ghi lại việc đã xong, việc đang dở, lệnh để chạy l�
 
 **Đã xong** (báo cáo `docs/giai-doan/ai-gd2/BAO_CAO.md`)
 - Hệ gợi ý 3 tầng theo 04 mục 6.5 + ADR-008 (hàm thuần trong `app/ai/recommender/`), `GET /recommend` (3 danh sách G-3), `PUT /me/goal`, nhật ký gợi ý, thẻ "Gợi ý cho bạn".
-- Embedding Gemini thật cho 13 mô tả kỹ năng MVP; TF-IDF dự phòng khi tắt AI. 26 mô tả kỹ năng nháp chờ Đạt/Astra.
-- pytest 742 (không tính postgres/live); Vitest 259; build đạt; 2.000 người mô phỏng p95 ~160 ms.
+- Embedding Gemini thật cho 13 mô tả kỹ năng MVP; không có embedding thì content = 0. 26 mô tả kỹ năng Đạt đã duyệt (04/11).
+- pytest 747 (không tính postgres/live); Vitest 259; build đạt; 2.000 người mô phỏng p95 ~160 ms.
 
 **Đang dở / chờ**
-- Thắng: Q-E (migration `d2b3c4d5e6f7`), P-1, P-2. Đạt/Astra: Q-F (mô tả kỹ năng). Phúc: Q-G. GĐ3 làm tiếp trên `ai/gd3-tutor`.
+- Thắng và Đạt đã duyệt các mục GĐ0–GĐ2 (Phúc báo 04/11). Còn P-2 chờ số liệu GĐ4; Phúc xem giao diện (Q-G). GĐ3 làm tiếp trên `ai/gd3-tutor`.
 
 **Lệnh chạy lại**
 ```bash
 cd backend && alembic -c alembic.ini upgrade head
-cd backend && python -m pytest -q -m "not postgres and not live"    # 742 passed
+cd backend && python -m pytest -q -m "not postgres and not live"    # 747 passed
 cd backend && python ../scripts/ai/gd2_do_thoi_gian.py --n 2000     # đo thời gian gợi ý
 ```
 

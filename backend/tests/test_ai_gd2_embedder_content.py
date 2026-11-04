@@ -126,18 +126,6 @@ def test_cosine_content_clamped_to_unit_interval():
     assert scores["half"] == pytest.approx(math.sqrt(0.5))
 
 
-def test_tfidf_content_prefers_matching_text():
-    texts = {"interval.naming": "Gọi tên quãng giữa hai nốt, đếm nửa cung",
-             "progression.ii_v_i": "Tiến trình ii V I trong nhạc jazz"}
-    scores = ct.tfidf_content("học quãng", texts)
-    assert scores["interval.naming"] > scores["progression.ii_v_i"]
-    assert all(0.0 <= v <= 1.0 for v in scores.values())
-
-
-def test_tfidf_empty_goal_is_zero():
-    assert ct.tfidf_content("", {"a": "abc def"}) == {"a": 0.0}
-
-
 def test_embeddings_file_is_valid_json_without_key():
     raw = sd.EMBEDDINGS_PATH.read_text(encoding="utf-8")
     data = json.loads(raw)

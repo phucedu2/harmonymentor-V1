@@ -15,8 +15,14 @@ class Weights:
 
 
 FULL = Weights(0.35, 0.25, 0.20, 0.20)
-# Người học chưa có láng giềng: bỏ tầng cộng tác, cộng 0,20 vào tầng nội dung.
-COLD = Weights(0.55, 0.25, 0.20, 0.0)
+
+
+def cold_of(w: Weights) -> Weights:
+    """Người học chưa có láng giềng: bỏ tầng cộng tác, cộng trọng số của nó vào tầng nội dung (04 mục 6.5)."""
+    return Weights(round(w.content + w.cf, 10), w.mastery, w.due, 0.0)
+
+
+COLD = cold_of(FULL)
 
 
 @dataclass(frozen=True)

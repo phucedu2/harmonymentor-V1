@@ -59,8 +59,10 @@ def test_new_learner_cold_start_only_l01():
     assert ids(body["next"]) == ["L01"]
     assert body["few_eligible"] is True
     assert body["weights_mode"] == "cold" and body["fallback_reason"] == "no_assessed_dims"
+    assert body["mode"] == "cold_start"
     item = body["next"][0]
-    assert item["reason_code"] in {"mastery", "content", "due", "cf"} and item["reason"]
+    # Đề GĐ2 mục 6: người mới chưa làm gì, chưa có mục tiêu → L01 "bắt đầu từ nền tảng".
+    assert item["reason_code"] == "foundation" and "nền tảng" in item["reason"]
     assert set(item["components"]) == {"content", "mastery", "due", "cf"}
     assert item["components"]["cf"] is None
     assert body["continue"] == [] and body["review"] == []
@@ -189,20 +191,77 @@ def test_goal_embedding_payload_is_goal_only():
         assert user.goal_embedding_model == fake.model and len(user.goal_embedding) == fake.dim
 
 
-def test_goal_drives_content_with_local_fallback(monkeypatch):
-    # AI tắt + mô tả kỹ năng còn nháp: chỉ dùng khi bật ALLOW_DRAFT_SKILL_DESCRIPTIONS.
+def _fake_store(fake):
+    from app.content import skill_descriptions as sd
+    from app.ai.skill_mapping import is_mvp
+
+    rows = {k: v for k, v in sd.load_descriptions().items() if is_mvp(k)}
+    vecs = fake.embed([rows[k]["text"] for k in sorted(rows)], "RETRIEVAL_DOCUMENT")
+    return {"model": fake.model, "dim": fake.dim,
+            "skills": {k: {"hash": sd.description_hash(rows[k]["text"]), "vector": v} for k, v in zip(sorted(rows), vecs)}}
+
+
+def test_goal_embedding_drives_content(monkeypatch):
+    fake = FakeEmbedder()
     monkeypatch.setattr(rs, "settings", replace(rs.settings, allow_draft_skill_descriptions=True))
-    uid = make_user()
-    client.put("/api/v1/me/goal", headers=auth(uid), json={"goal_text": "quãng và tên nốt"})
-    body = get(uid)
-    assert body["content_source"] == "tfidf" and body["draft_descriptions"] is True
-    assert body["next"][0]["components"]["content"] > 0
+    monkeypatch.setattr(rs.sd, "load_embeddings", lambda: _fake_store(fake))
+    app.dependency_overrides[ai_recommend.embedder_dep] = lambda: fake
+    # Vector giả không mang nghĩa, nên lấy đúng mô tả của pitch.spelling làm mục tiêu: cosine = 1 với kỹ năng đó.
+    from app.content import skill_descriptions as sd
+
+    goal = sd.load_descriptions()["pitch.spelling"]["text"]
+    try:
+        uid = make_user()
+        client.put("/api/v1/me/goal", headers=auth(uid), json={"goal_text": goal})
+        body = get(uid)
+    finally:
+        app.dependency_overrides.pop(ai_recommend.embedder_dep, None)
+    # Đạt đã duyệt 26 mô tả (04/11) nên không còn dùng mô tả nháp.
+    assert body["content_source"] == "embedding" and body["draft_descriptions"] is False
+    l01 = body["next"][0]
+    assert l01["lesson_id"] == "L01" and l01["components"]["content"] >= 0.25  # 4 kỹ năng, một kỹ năng = 1
 
 
-def test_draft_descriptions_off_means_no_content(monkeypatch):
-    monkeypatch.setattr(rs, "settings", replace(rs.settings, allow_draft_skill_descriptions=False))
+def test_no_embedding_means_content_zero(monkeypatch):
+    # AI tắt: có mục tiêu nhưng không có vector → content = 0, không gán số khác (đề GĐ2 mục 2).
+    monkeypatch.setattr(rs, "settings", replace(rs.settings, allow_draft_skill_descriptions=True, ai_enabled=False))
     uid = make_user()
     client.put("/api/v1/me/goal", headers=auth(uid), json={"goal_text": "quãng và tên nốt"})
     body = get(uid)
     assert body["content_source"] == "none"
     assert body["next"][0]["components"]["content"] == 0
+
+
+def test_draft_descriptions_off_means_no_content(monkeypatch):
+    # Giả lập mọi mô tả còn nháp: tắt cờ thì tầng nội dung không được dùng chúng.
+    fake = FakeEmbedder()
+    real = rs.sd.load_descriptions()
+    monkeypatch.setattr(rs.sd, "load_descriptions", lambda: {k: dict(v, status="draft") for k, v in real.items()})
+    monkeypatch.setattr(rs, "settings", replace(rs.settings, allow_draft_skill_descriptions=False))
+    monkeypatch.setattr(rs.sd, "load_embeddings", lambda: _fake_store(fake))
+    app.dependency_overrides[ai_recommend.embedder_dep] = lambda: fake
+    try:
+        uid = make_user()
+        client.put("/api/v1/me/goal", headers=auth(uid), json={"goal_text": "quãng và tên nốt"})
+        body = get(uid)
+    finally:
+        app.dependency_overrides.pop(ai_recommend.embedder_dep, None)
+    assert body["content_source"] == "none"
+    assert body["next"][0]["components"]["content"] == 0
+
+
+def test_cf_can_be_switched_off(monkeypatch):
+    monkeypatch.setattr(rs, "settings", replace(rs.settings, reco_use_cf=False))
+    vec = dict(pitch__spelling=0.7, interval__naming=0.6, chord__triad_formula=0.65, chord__triad_build=0.7)
+    make_user(synthetic=True, **vec)
+    body = get(make_user(**vec))
+    assert body["mode"] == "fallback" and body["fallback_reason"] == "cf_disabled" and body["neighbors_count"] == 0
+
+
+def test_weights_come_from_config(monkeypatch):
+    monkeypatch.setattr(rs, "settings", replace(rs.settings, reco_weights="0.10,0.70,0.10,0.10"))
+    body = get(make_user(pitch__spelling=0.5))
+    l01 = body["next"][0]
+    # Người chưa có láng giềng: content 0,10 + cf 0,10 = 0,20; (1 − mastery) nhân 0,70.
+    c = l01["components"]
+    assert l01["score"] == pytest.approx(0.20 * c["content"] + 0.70 * (1 - c["mastery"]) + 0.10 * c["due"], abs=1e-3)

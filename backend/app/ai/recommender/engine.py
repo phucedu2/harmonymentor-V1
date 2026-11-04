@@ -8,7 +8,7 @@ from typing import Mapping, Sequence
 from ..skill_mapping import is_mvp
 from .cf import skill_cf
 from .reasons import reason_for
-from .scoring import COLD, FULL, Components, Weights, lesson_score
+from .scoring import FULL, Components, Weights, cold_of, lesson_score
 
 MAX_K = 5
 DEFAULT_THRESHOLDS = (0.60, 0.80)
@@ -50,6 +50,9 @@ class RecInput:
     k: int = MAX_K
     goal_text: str | None = None
     thresholds: Mapping[str, tuple[float, float]] = field(default_factory=dict)
+    weights: Weights = FULL                 # trọng số đầy đủ lấy từ cấu hình; bản người học mới suy ra bằng cold_of
+    skill_names: Mapping[str, str] = field(default_factory=dict)
+    new_learner: bool = False               # chưa làm gì, chưa placement → lý do "bắt đầu từ nền tảng"
 
 
 @dataclass
@@ -79,7 +82,7 @@ def rule_filter(lesson: LessonInfo, inp: RecInput) -> str | None:
 def recommend(inp: RecInput) -> RecOutput:
     if not 1 <= inp.k <= MAX_K:
         raise ValueError("k phải trong khoảng 1–5 (R-1)")
-    weights = FULL if inp.neighbor_ids else COLD
+    weights = inp.weights if inp.neighbor_ids else cold_of(inp.weights)
     excluded: dict[str, str] = {}
     scored: list[Ranked] = []
     for lesson in inp.lessons:
@@ -96,7 +99,7 @@ def recommend(inp: RecInput) -> RecOutput:
         # mastery_threshold), nên lesson_score không lọc thêm.
         open_comps = [c for c in comps if c.mastery < _thr(inp, c.skill_id)[1]]
         ls = lesson_score(open_comps, weights, mastery_threshold=float("inf"))
-        code, text, badge = reason_for(ls, weights, inp.goal_text)
+        code, text, badge = reason_for(ls, weights, inp.goal_text, inp.skill_names, foundation=inp.new_learner)
         scored.append(Ranked(lesson.lesson_id, lesson.order, lesson.title, ls.score, ls.content, ls.mastery,
                              ls.due, ls.cf, code, text, badge, tuple(c.skill_id for c in ls.skills)))
     # Bằng điểm thì theo thứ tự chương trình, để danh sách tất định.

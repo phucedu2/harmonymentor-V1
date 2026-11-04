@@ -15,9 +15,10 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ..ai.embedder import Embedder, EmbeddingUnavailable
-from ..ai.recommender.content import embedding_content, tfidf_content
+from ..ai.recommender.content import embedding_content
 from ..ai.recommender.engine import LessonInfo, RecInput, Ranked, recommend
-from ..ai.recommender.knn import find_neighbors
+from ..ai.recommender.scoring import Weights
+from ..ai.recommender.knn import NeighborResult, find_neighbors
 from ..ai.recommender.vector import GroupVector, PoolMatrix, build_pool, build_vector
 from ..ai.skill_mapping import SKILL_GROUP_MAP_VERSION, is_mvp
 from ..content import skill_descriptions as sd
@@ -121,19 +122,26 @@ def embed_goal(db: Session, user: User, embedder: Embedder | None) -> bool:
 
 
 def content_scores(user: User) -> tuple[dict[str, float], str, bool]:
-    """(điểm theo kỹ năng, nguồn "embedding" | "tfidf" | "none", có dùng mô tả nháp không)."""
+    """(điểm theo kỹ năng, nguồn "embedding" | "none", có dùng mô tả nháp không).
+
+    Không có mục tiêu, chưa có vector mục tiêu (AI tắt, Gemini lỗi) hoặc vector khác mô hình với mô tả kỹ năng:
+    content = 0 cho mọi kỹ năng, nguồn "none" (đề GĐ2 mục 2: không gán số khác)."""
     rows = sd.usable(sd.load_descriptions(), allow_draft=settings.allow_draft_skill_descriptions)
     rows = {k: v for k, v in rows.items() if is_mvp(k)}
-    if not user.goal_text or not rows:
-        return {}, "none", False
-    draft = any(r["status"] == "draft" for r in rows.values())
     store = sd.load_embeddings()
-    if user.goal_embedding and user.goal_embedding_model == store.get("model"):
-        vecs = {s: store["skills"][s]["vector"] for s, r in rows.items()
-                if s in store["skills"] and store["skills"][s]["hash"] == sd.description_hash(r["text"])}
-        if vecs:
-            return embedding_content(user.goal_embedding, vecs), "embedding", draft
-    return tfidf_content(user.goal_text, {s: r["text"] for s, r in rows.items()}), "tfidf", draft
+    if not user.goal_text or not rows or not user.goal_embedding or user.goal_embedding_model != store.get("model"):
+        return {}, "none", False
+    vecs = {s: store["skills"][s]["vector"] for s, r in rows.items()
+            if s in store["skills"] and store["skills"][s]["hash"] == sd.description_hash(r["text"])}
+    if not vecs:
+        return {}, "none", False
+    draft = any(rows[s]["status"] == "draft" for s in vecs)
+    return embedding_content(user.goal_embedding, vecs), "embedding", draft
+
+
+def configured_weights() -> Weights:
+    c, m, d, f = (float(x) for x in settings.reco_weights.split(","))
+    return Weights(c, m, d, f)
 
 
 # --- Gợi ý --------------------------------------------------------------------------------------
@@ -152,18 +160,29 @@ def recommend_for_user(db: Session, user: User, *, k: int = 5, now: datetime | N
         db.flush()
     mastery = user_mastery(db, user.id)
     target = build_vector(mastery)
-    pool, pool_rows, cf_source = neighbor_pool(db, user.id)
-    nb = find_neighbors(target, pool if pool is not None else {}, k=settings.rec_neighbors_k, min_shared=settings.rec_min_shared_dims,
-                        fallback=settings.rec_fallback, exclude=user.id)
+    if not settings.reco_use_cf:
+        pool, pool_rows, cf_source = None, [], "none"
+        nb = NeighborResult([], "cf_disabled", settings.rec_min_shared_dims)
+    elif target.assessed_count == 0:
+        # Người chưa có chiều nào được đánh giá: không cần đọc 2.000 ứng viên (K6).
+        pool, pool_rows, cf_source = None, [], "none"
+        nb = NeighborResult([], "no_assessed_dims", settings.rec_min_shared_dims)
+    else:
+        pool, pool_rows, cf_source = neighbor_pool(db, user.id)
+        nb = find_neighbors(target, pool if pool is not None else {}, k=settings.rec_neighbors_k,
+                            min_shared=settings.rec_min_shared_dims, fallback=settings.rec_fallback, exclude=user.id)
     neighbor_ids = [n.user_id for n in nb.neighbors]
     pool_mastery = mastery_of(pool_rows, neighbor_ids)
     content, content_source, draft = content_scores(user)
 
     infos = lesson_infos(db)
     status = {p.lesson_id: p.status for p in db.scalars(select(LessonProgress).where(LessonProgress.user_id == user.id))}
+    skills = list(db.scalars(select(Skill)))
     common = dict(mastery=mastery, due_skills=due_skills(db, user.id, now), content=content,
                   neighbor_ids=neighbor_ids, neighbor_mastery=pool_mastery, k=k, goal_text=user.goal_text,
-                  thresholds=thresholds(db))
+                  thresholds={sk.id: (sk.ready_threshold, sk.mastery_threshold) for sk in skills},
+                  weights=configured_weights(), skill_names={sk.id: sk.name for sk in skills},
+                  new_learner=not mastery and not status)
     nxt = recommend(RecInput(lessons=[i for i in infos if i.lesson_id not in status], **common))
     rev = recommend(RecInput(lessons=[i for i in infos if status.get(i.lesson_id) == "completed"], **common))
     cont = [{"lesson_id": i.lesson_id, "order": i.order, "title": i.title, "status": "started"}
@@ -171,6 +190,8 @@ def recommend_for_user(db: Session, user: User, *, k: int = 5, now: datetime | N
 
     context = {
         "algorithm_version": ALGORITHM_VERSION, "skill_group_map_version": SKILL_GROUP_MAP_VERSION,
+        # mode theo đề GĐ2 mục 7: full (có láng giềng), cold_start (chưa có chiều nào), fallback (còn lại).
+        "mode": "full" if neighbor_ids else ("cold_start" if nb.reason == "no_assessed_dims" else "fallback"),
         "weights_mode": "full" if neighbor_ids else "cold", "cf_source": cf_source if neighbor_ids else "none",
         "fallback_reason": nb.reason, "min_shared_dims": nb.min_shared_used, "fallback": settings.rec_fallback,
         "neighbors_count": len(neighbor_ids), "excluded_pairs": dict(nb.excluded),

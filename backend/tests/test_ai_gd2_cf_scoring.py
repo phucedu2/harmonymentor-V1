@@ -222,3 +222,32 @@ def test_due_skill_lifts_lesson():
                              neighbor_ids=None, neighbor_mastery={}))
     assert [r.lesson_id for r in out.ranked] == ["L05", "L01"]
     assert out.ranked[0].reason_code == "due"
+
+
+def test_reason_names_the_skill():
+    names = {"a": "Tên nốt", "b": "Quãng"}
+    ls = lesson_score([Components("a", 0, 0.2, 0, None), Components("b", 0, 0.5, 0, None)], FULL)
+    code, text, badge = reason_for(ls, FULL, None, names)
+    assert code == "mastery" and "Tên nốt" in text and badge == "Củng cố kỹ năng yếu"
+    ls = lesson_score([Components("a", 0, 0.7, 0, None), Components("b", 0, 0.7, 1, None)], FULL)
+    assert "Quãng" in reason_for(ls, FULL, None, names)[1]
+
+
+def test_reason_foundation_only_without_goal_or_due():
+    c = Components("a", 0, 0, 0, None)
+    assert reason_for(c, COLD, None, foundation=True)[0] == "foundation"
+    assert reason_for(Components("a", 0.6, 0, 0, None), COLD, "pop", foundation=True)[0] == "content"
+
+
+def test_cold_weights_follow_config():
+    from app.ai.recommender.scoring import cold_of
+
+    assert cold_of(Weights(0.4, 0.2, 0.2, 0.2)) == Weights(0.6, 0.2, 0.2, 0.0)
+
+
+def test_config_rejects_bad_weights():
+    from app.core.config import Settings, check_runtime_settings
+
+    with pytest.raises(RuntimeError, match="RECO_WEIGHTS"):
+        check_runtime_settings(Settings(reco_weights="0.5,0.5,0.5,0.5"))
+    check_runtime_settings(Settings(reco_weights="0.35,0.25,0.20,0.20"))

@@ -230,16 +230,16 @@ export type PlacementQuestion = {
 export type PlacementStatus = "not_started" | "completed" | "skipped";
 export type Placement = { status: PlacementStatus; questions: PlacementQuestion[] };
 // Pipeline AI GĐ2: gợi ý bài học (04 mục 6.5) và mục tiêu học.
-export type RecReasonCode = "content" | "mastery" | "due" | "cf";
+export type RecReasonCode = "content" | "mastery" | "due" | "cf" | "foundation";
 export type RecLesson = {
   lesson_id: string; order: number; title: string; score: number;
   components: { content: number; mastery: number; due: number; cf: number | null };
   reason_code: RecReasonCode; reason: string; badge: string; skills: string[]; label?: string | null;
 };
 export type Recommendations = {
-  generated_at: string; log_id: string; weights_mode: "full" | "cold";
-  cf_source: "real" | "synthetic" | "none"; fallback_reason: "no_assessed_dims" | "no_valid_neighbors" | null;
-  neighbors_count: number; content_source: "embedding" | "tfidf" | "none"; draft_descriptions: boolean;
+  generated_at: string; log_id: string; mode: "full" | "cold_start" | "fallback"; weights_mode: "full" | "cold";
+  cf_source: "real" | "synthetic" | "none"; fallback_reason: "no_assessed_dims" | "no_valid_neighbors" | "cf_disabled" | null;
+  neighbors_count: number; content_source: "embedding" | "none"; draft_descriptions: boolean;
   few_eligible: boolean;
   continue: { lesson_id: string; order: number; title: string; status: "started" }[];
   next: RecLesson[]; review: RecLesson[];

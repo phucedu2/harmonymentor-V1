@@ -5,7 +5,9 @@ import { Button } from "../ui/Button";
 import { Badge, Card, CardTitle, Kicker } from "../ui/Page";
 
 // Thẻ gợi ý trên Dashboard (G-3 cách B): ba mục riêng, không tranh nhau top 5.
-// Điểm và lý do đều do backend tính (04 mục 6.5); ở đây chỉ hiển thị.
+// Điểm và lý do đều do backend tính (04 mục 6.5); ở đây chỉ hiển thị. Dashboard hiện tối đa 3 bài mỗi mục
+// (đề GĐ2 mục 8), nên gọi API với k = 3 để nhật ký gợi ý khớp đúng những gì người học thấy.
+const SHOWN = 3;
 
 const pct = (v: number | null) => (v === null ? "chưa có" : `${Math.round(v * 100)}%`);
 
@@ -66,7 +68,7 @@ export default function RecommendedLessons() {
   const [failed, setFailed] = useState(false);
 
   const load = () => {
-    api.recommend().then((r) => { setData(r); setFailed(false); }).catch(() => setFailed(true));
+    api.recommend(SHOWN).then((r) => { setData(r); setFailed(false); }).catch(() => setFailed(true));
     api.myGoal().then((g) => setGoal(g.goal_text ?? "")).catch(() => undefined);
   };
   useEffect(load, []);
@@ -77,10 +79,13 @@ export default function RecommendedLessons() {
     navigate(`/app/hoc?bai=${encodeURIComponent(item.lesson_id)}`);
   };
 
-  if (failed) return null;
   return <Card className="mb-4 p-4" aria-labelledby="rec-title">
     <Kicker>Gợi ý cho bạn</Kicker>
     <CardTitle className="mt-1"><span id="rec-title">Học gì tiếp theo?</span></CardTitle>
+    {failed && <div className="mt-2" role="alert">
+      <p className="text-muted">Chưa tải được gợi ý. Bạn vẫn học theo lộ trình ở trên được.</p>
+      <Button variant="ghost" className="-ml-4" onClick={load}>Thử lại</Button>
+    </div>}
 
     {data?.continue.length ? <div className="mt-3">
       <h3 className="text-sm font-semibold">Tiếp tục bài đang học</h3>
@@ -93,7 +98,7 @@ export default function RecommendedLessons() {
 
     <div className="mt-3">
       <h3 className="text-sm font-semibold">Bài nên học tiếp</h3>
-      {!data ? <p className="mt-1 text-muted">Đang tính gợi ý…</p>
+      {!data ? (failed ? null : <p className="mt-1 text-muted">Đang tính gợi ý…</p>)
         : data.next.length ? <ul className="mt-2 grid gap-2">{data.next.map((x) => <LessonRow key={x.lesson_id} item={x} onOpen={open} />)}</ul>
         : <p className="mt-1 text-muted">Chưa có bài mới đủ điều kiện. Hãy củng cố các kỹ năng tiên quyết (đạt 60%) để mở bài tiếp theo.</p>}
     </div>
@@ -105,7 +110,7 @@ export default function RecommendedLessons() {
 
     <GoalForm initial={goal} onSaved={load} />
     {data && <p className="mt-2 text-xs text-muted">
-      {data.weights_mode === "cold" ? "Chưa đủ dữ liệu người học tương tự, gợi ý dựa trên mục tiêu, mức thành thạo và lịch ôn."
+      {data.mode !== "full" ? "Chưa đủ dữ liệu người học tương tự, gợi ý dựa trên mục tiêu, mức thành thạo và lịch ôn."
         : `So với ${data.neighbors_count} người học có trình độ gần bạn${data.cf_source === "synthetic" ? " (dữ liệu mô phỏng)" : ""}.`}
     </p>}
   </Card>;
