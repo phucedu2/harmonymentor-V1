@@ -55,6 +55,12 @@ class Skill(Base):
     id: Mapped[str] = mapped_column(String(120), primary_key=True)
     name: Mapped[str] = mapped_column(String(200))
     domain: Mapped[str] = mapped_column(String(80), default="theory")
+    # ADR-008 / CP2_ANH_XA_KY_NANG.md: srs_code = phạm vi MVP, group_code = một chiều của vector KNN.
+    srs_code: Mapped[Optional[str]] = mapped_column(String(40), nullable=True)
+    group_code: Mapped[Optional[str]] = mapped_column(String(40), nullable=True, index=True)
+    # 04 Bảng 19. Đọc từ cột thay vì hằng số để đổi ngưỡng từng kỹ năng không cần sửa code.
+    ready_threshold: Mapped[float] = mapped_column(Float, default=0.6, server_default="0.6")
+    mastery_threshold: Mapped[float] = mapped_column(Float, default=0.8, server_default="0.8")
 
 
 class SkillPrerequisite(Base):
@@ -184,6 +190,8 @@ class Attempt(Base):
     score: Mapped[float] = mapped_column(Float, default=0.0)
     primary_error: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     feedback: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    # Lượt của Admin (nguyên tắc 8): vẫn ghi để xem trước bài, không tính mastery/thống kê.
+    is_test: Mapped[bool] = mapped_column(Boolean, default=False, server_default=sa_false())
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
 
 
@@ -250,6 +258,9 @@ class ReviewAttempt(Base):
     correct: Mapped[bool] = mapped_column(Boolean)
     rating: Mapped[str] = mapped_column(String(16), default="auto")
     response_time_ms: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    # Ngày hẹn của thẻ TRƯỚC lượt này: luật ôn 2A cần biết lượt có đến hạn không, và rebuild_mastery
+    # cần tính lại đúng như lúc đó. NULL ở lượt ôn cũ (trước GĐ1).
+    due_before: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
 
 
@@ -281,6 +292,61 @@ class PracticeAttempt(Base):
     # Lượt của Admin không tính vào thống kê (nguyên tắc bất biến số 8).
     is_test: Mapped[bool] = mapped_column(Boolean, default=False, server_default=sa_false())
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+
+class MasteryState(Base):
+    """Mức thành thạo hiện tại của một người học ở một kỹ năng MVP (04 mục 2, 6.3).
+
+    Không có dòng = "chưa đánh giá", khác với "yếu" (có dòng, điểm thấp, đủ 5 lượt).
+    """
+
+    __tablename__ = "mastery_states"
+    __table_args__ = (UniqueConstraint("user_id", "skill_id", name="uq_mastery_user_skill"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    skill_id: Mapped[str] = mapped_column(ForeignKey("skills.id"), index=True)
+    score: Mapped[float] = mapped_column(Float, default=0.0)
+    attempts_count: Mapped[int] = mapped_column(Integer, default=0)
+    last_error_code: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class MasteryEvent(Base):
+    """Nhật ký từng lần mastery được xét, để giải thích điểm và để kiểm `rebuild_mastery`.
+
+    counted=false: lượt có ghi nhận (attempts_count tăng) nhưng không đổi điểm, ví dụ đúng lặp lại.
+    """
+
+    __tablename__ = "mastery_events"
+    __table_args__ = (CheckConstraint("source IN ('attempt', 'review', 'placement')", name="ck_mastery_event_source"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    skill_id: Mapped[str] = mapped_column(ForeignKey("skills.id"), index=True)
+    source: Mapped[str] = mapped_column(String(16))
+    source_id: Mapped[str] = mapped_column(String(64))
+    result: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    counted: Mapped[bool] = mapped_column(Boolean, default=True)
+    score_before: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    score_after: Mapped[float] = mapped_column(Float)
+    vn_day: Mapped[str] = mapped_column(String(10), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+
+
+class PlacementResult(Base):
+    """Bài kiểm tra đầu vào (UC-06): một dòng mỗi người học, làm lại phải xác nhận."""
+
+    __tablename__ = "placement_results"
+    __table_args__ = (CheckConstraint("status IN ('completed', 'skipped')", name="ck_placement_status"),)
+
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
+    status: Mapped[str] = mapped_column(String(16))
+    # [{exercise_version_id, skill_id, answer, correct}]: không ghi vào attempts để lượt làm trong bài
+    # sau này vẫn là "đúng lần đầu" (placement chỉ là ước lượng ban đầu).
+    answers: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list)
+    taken_count: Mapped[int] = mapped_column(Integer, default=1)
+    completed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
 
 class CompositionProject(Base):
     """Dự án Harmony Lab (FR-17, tài liệu 04 Bảng 8 và mục 6.8): lưu ký hiệu, thời gian theo phách, không lưu âm thanh.

@@ -17,9 +17,10 @@ TABLES = {"composition_projects", "chord_events", "drum_events"}
 
 
 def test_head_la_composition_va_model_khop_migration(tmp_path):
+    # Từ 04/11 head là migration GĐ1 pipeline AI (c1a2b3d4e5f6, chỉ thêm, có test riêng), nên dừng ở SONG_FORM.
     engine = sa.create_engine(f"sqlite:///{tmp_path / 'hl.db'}", future=True)
     try:
-        alembic_to(engine, "head")
+        alembic_to(engine, SONG_FORM)
         assert version(engine) == SONG_FORM
         cols = {c["name"] for c in sa.inspect(engine).get_columns("composition_projects")}
         assert cols == {"id", "user_id", "name", "key", "tempo_bpm", "time_signature", "bars", "style", "is_test",
@@ -34,7 +35,7 @@ def test_head_la_composition_va_model_khop_migration(tmp_path):
 def test_go_migration_chi_xoa_ba_bang_moi(tmp_path):
     engine = sa.create_engine(f"sqlite:///{tmp_path / 'hl.db'}", future=True)
     try:
-        alembic_to(engine, "head")
+        alembic_to(engine, SONG_FORM)
         before = set(sa.inspect(engine).get_table_names())
         alembic_to(engine, PRACTICE, downgrade=True)
         assert version(engine) == PRACTICE

@@ -55,6 +55,13 @@ def _check_legacy_users_table() -> None:
             "`alembic -c alembic.ini upgrade head` (CSDL đã nâng tới a7c4d5e6f8b9). "
             "Không cần dữ liệu cũ: xóa harmonymentor_dev.db để tạo lại."
         )
+    # Pipeline AI GĐ1 (04/11/2026, migration c1a2b3d4e5f6): thiếu cột thì mọi lượt làm bài lỗi 500.
+    if "is_test" not in {c["name"] for c in inspector.get_columns("attempts")}:
+        raise RuntimeError(
+            "CSDL cũ thiếu cột attempts.is_test và bảng mastery (pipeline AI GĐ1). Giữ dữ liệu: "
+            "`alembic -c alembic.ini upgrade head` rồi `python -m app.ai.rebuild_mastery`. "
+            "Không cần dữ liệu cũ: xóa harmonymentor_dev.db để tạo lại."
+        )
     columns = {c["name"] for c in inspector.get_columns("users")}
     if "email" not in columns:
         raise RuntimeError(
