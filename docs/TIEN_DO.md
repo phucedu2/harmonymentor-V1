@@ -2,6 +2,23 @@
 
 File này ghi lại việc đã xong, việc đang dở, lệnh để chạy lại và việc tiếp theo. Cập nhật sau mỗi phiên việc. Lịch sử trước 27/10/2026 xem `docs/AI_USAGE.md` và các báo cáo trong `docs/giai-doan/`.
 
+## 04/11/2026: pipeline AI của giảng viên, GĐ0 (nhánh `ai/gd0-ke-hoach`, từ `phuc-music`)
+
+**Đã xong** (kế hoạch `docs/giai-doan/ai-gd0/KE_HOACH_AI.md`)
+- Mốc test: pytest 592 passed + 21 skipped; Vitest 259; `npm run build` đạt.
+- `scripts/ai/gd0_mo_phong_mo_khoa.py`: với nội dung hiện có, L02 và L04 không bao giờ vào gợi ý (pitch.spelling, chord.seventh_quality không có thẻ máy chấm); luật ôn 2A mở L03 ngày thứ 3; thẻ tự đánh giá tính 0,5 không giúp được.
+- Kiểm Gemini bằng khóa thật: có `gemini-3.5-flash-lite`, `gemini-3.6-flash` (lần thử bị 503), `gemini-embedding-001` (768 chiều, chưa chuẩn hóa), `gemini-embedding-2`.
+- CI chạy cả PR đích `phuc-music`. Chép pipeline vào `docs/tham-khao/`.
+
+**Đang dở / chờ**
+- Phúc duyệt kế hoạch + Q-A, Q-C; Thắng Q-B, Q-D. GĐ1 làm tiếp trên `ai/gd1-mastery` trong lúc chờ.
+
+**Lệnh chạy lại**
+```bash
+python scripts/ai/gd0_mo_phong_mo_khoa.py      # PowerShell: python scripts\ai\gd0_mo_phong_mo_khoa.py
+cd backend && python -m pytest -q              # 592 passed + 21 skipped
+```
+
 ## 02/11/2026: nhánh `phuc-music`, Harmony Lab chế độ Bài hát (Bước 0 → 5)
 
 **Đã xong** (báo cáo `docs/phuc-music/BAO_CAO_CAU_TRUC_BAI_HAT.md`, ADR-013 đề xuất, sổ tay `docs/backing-track/CAU_TRUC_BAI_HAT.md`)
