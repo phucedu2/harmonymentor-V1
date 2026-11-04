@@ -2,6 +2,8 @@
 
 Trạng thái: **Đề xuất 04/11/2026**, chờ **Thắng** (backend) và **Đạt** (AI/NLP) duyệt. Nhánh `ai/gd3-tutor`. Kế hoạch gốc: kế hoạch AI Tutor 02/11 (Phúc trả lời 10 câu, 7A).
 
+Cập nhật 04/11/2026 (demo 10/11, Thắng duyệt, Phúc báo trong thread): thêm công cụ thứ tư `get_roman_numeral(key, chord)` vào guardrail. Khẳng định "<số La Mã> trong/của <giọng trưởng> là <hợp âm>" (hai chiều) được kiểm: hợp âm thuận giọng so số La Mã Engine; hợp âm ngoài giọng mà số La Mã là một bậc thuận giọng → contradicted; còn lại (V/V, giọng thứ) → unsupported, không bao giờ verified. `maj7` = `M7` theo ADR-016. Các phần khác của ADR này vẫn là đề xuất.
+
 ## Quyết định
 
 ### 1. Kho kiến thức

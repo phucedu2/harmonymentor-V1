@@ -37,6 +37,18 @@ INTERVAL_WITH_NAME = re.compile(
     rf"(?:(?P<code>[PMmAd][1-8])(?![A-Za-z0-9])|(?P<num>[1-8])\s*(?P<qual>trưởng|thứ|đúng|tăng|giảm))")
 
 
+# "V7 trong G trưởng là D7", "V7 của G là G7", "Am7 là vi7 trong C trưởng". Chỉ giọng trưởng: giọng thứ
+# ("trong A thứ", "Am") bị bỏ qua vì Engine MVP chỉ đặt số La Mã cho giọng trưởng.
+ROMAN = r"(?:vii|VII|iii|III|iv|IV|vi|VI|ii|II|v|V|i|I)(?:maj7|M7|ø7|°7|7|°|ø)?"
+_KEY = rf"(?:giọng\s+)?(?P<key>{NOTE})(?![A-Za-z0-9#♯♭])(?!\s*(?:thứ|minor))(?:\s*(?:trưởng|major))?"
+ROMAN_IN_KEY_IS_CHORD = re.compile(
+    rf"(?<![A-Za-z])(?P<rn>{ROMAN})(?![A-Za-z0-9])\s+(?:trong|của)\s+{_KEY}\s*(?:là|=|:)\s*(?:hợp âm\s+)?"
+    rf"(?P<chord>{CHORD})(?![A-Za-z0-9#])")
+CHORD_IS_ROMAN_IN_KEY = re.compile(
+    rf"(?<![A-Za-z0-9#])(?P<chord>{CHORD})(?![A-Za-z0-9#])\s*(?:là|=)\s*(?:hợp âm\s+)?(?P<rn>{ROMAN})"
+    rf"(?![A-Za-z0-9])\s+(?:trong|của)\s+{_KEY}")
+
+
 def interval_name(match: re.Match) -> str:
     """Tên quãng dạng mã Engine (M3, d4...) từ một kết quả INTERVAL_WITH_NAME."""
     if match["code"]:

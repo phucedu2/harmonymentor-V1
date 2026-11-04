@@ -228,7 +228,7 @@ LESSON_SPECS: list[dict[str, Any]] = [
             ("L02-B06", "piano", {"title": "5. Nghe bốn màu seventh chord", "prompt": "Bấm các nốt của Cmaj7, Dm7, G7 và Bm7b5. Chưa cần phân biệt hoàn toàn bằng tai; mục tiêu là nối chord symbol với tập nốt.", "highlight": ["C", "D", "E", "F", "G", "A", "B"], "selection_mode": True}),
             ("L02-BCP2", "checkpoint", {"title": "Gọi tên bậc bằng số La Mã", "exercise_id": "L02-Q03", "note": "Trong C major, hãy tìm bậc của Dm7 trước rồi mới chọn ký hiệu."}),
             ("L02-B07", "audio", {"title": "6. Nghe Cmaj7 và G7", "prompt": "Nghe từng chord rồi chú ý: Cmaj7 ổn định hơn trong C major, còn G7 có xu hướng muốn đi về C.", "chords": ["Cmaj7", "G7"], "key": "C"}),
-            ("L02-B08", "summary", {"title": "Ghi nhớ", "items": ["Major scale dùng 7 bậc và giữ đúng thứ tự chữ cái.", "Seventh chord mở rộng triad thành 1–3–5–7.", "Trong major key: Imaj7, ii7, iii7, IVmaj7, V7, vi7, viiø7.", "Trong C major: Dm7 = ii7, G7 = V7, Bm7♭5 = viiø7."]}),
+            ("L02-B08", "summary", {"title": "Ghi nhớ", "items": ["Major scale dùng 7 bậc và giữ đúng thứ tự chữ cái.", "Seventh chord mở rộng triad thành 1–3–5–7.", "Trong major key: Imaj7, ii7, iii7, IVmaj7, V7, vi7, viiø7.", "Trong C major: Dm7 = ii7, G7 = V7, Bm7♭5 = viiø7.", "Đổi giọng thì đổi hợp âm: trong G major, bậc V là D nên V7 = D7 (D–F#–A–C)."]}),
         ],
         "exercises": [
             q("L02-Q01", "build", "Dựng âm giai G major theo thứ tự đi lên, không lặp lại chủ âm ở cuối.", "scale.major", "music_engine", {"expected": ["G", "A", "B", "C", "D", "E", "F#"]}, {"kind": "build_scale", "tonic": "G", "scale_type": "major"}, explanation="G major dùng F# và mỗi chữ cái xuất hiện một lần.", provenance=[FANK_FUND]),

@@ -137,3 +137,34 @@ def test_unsupported_is_not_labelled_verified(client):
     body = ask(client, FakeProvider([citing_first("ii–V–I là chuỗi ba hợp âm quen thuộc trong jazz.")]),
                "ii–V–I trong C trưởng là gì?")
     assert body["status"] == "ok" and not body["verified"] and not body["verified_label"], body
+
+
+# --- Số La Mã (Thắng duyệt 04/11/2026: thêm get_roman_numeral vào guardrail) -------------------------
+
+@pytest.mark.parametrize("text,chord,claimed,status", [
+    ("V7 trong G trưởng là D7.", "D7", "V7", "verified"),
+    ("V7 trong G trưởng là G7.", "G7", "V7", "contradicted"),     # G7 ngoài giọng, V7 của G là D7
+    ("V7 của G là G7", "G7", "V7", "contradicted"),
+    ("Am7 là vi7 trong C trưởng", "Am7", "vi7", "verified"),
+    ("Cmaj7 là Imaj7 trong giọng C trưởng", "Cmaj7", "IM7", "verified"),  # ADR-016
+    ("Gmaj7 là V7 trong C trưởng", "Gmaj7", "V7", "contradicted"),
+    ("Imaj7 của C là C7", "C7", "IM7", "contradicted"),
+    ("D7 là V7 trong C trưởng", "D7", "V7", "contradicted"),
+])
+def test_roman_statements_are_checked(text, chord, claimed, status):
+    (c,) = [x for x in scan_reply(text) if x.tool == "get_roman_numeral"]
+    assert (c.args["chord"], c.claimed, c.status) == (chord, claimed, status)
+
+
+def test_roman_in_minor_key_is_ignored_and_unknown_numeral_unsupported():
+    from app.ai.tutor.guardrail import check_roman
+
+    assert not [x for x in scan_reply("ii7 trong A thứ là Bm7b5") if x.tool == "get_roman_numeral"]
+    assert check_roman("C", "D7", "V/V").status == "unsupported"  # Engine MVP chưa đặt tên át phụ
+
+
+def test_declared_roman_claim_wrong_falls_back(client):
+    claims = [{"tool": "get_roman_numeral", "args": {"key": "G", "chord": "G7"}, "result": "V7"}]
+    body = ask(client, FakeProvider([citing_first("Hợp âm át trong G trưởng là G7.", claims)] * 2),
+               "V7 trong G trưởng gồm những nốt nào?")
+    assert body["status"] == "fallback" and body["fallback_reason"] == "engine_contradiction", body

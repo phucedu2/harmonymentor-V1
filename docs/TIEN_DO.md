@@ -12,7 +12,7 @@ File này ghi lại việc đã xong, việc đang dở, lệnh để chạy l�
 - pytest 917 (không tính postgres/live).
 
 **Đang dở / chờ**
-- Đã xong 04/11: 6 câu phát hành, 4 mô tả kỹ năng mới + vector, ADR-016 (Imaj7/IM7). Còn: Thắng quyết thêm `roman_numeral` vào guardrail; Đạt quyết thêm câu "V7 của G là D7" vào L02-B08.
+- Đã xong 04/11: 6 câu phát hành, 4 mô tả kỹ năng mới + vector, ADR-016 (Imaj7/IM7). Thêm `get_roman_numeral` vào guardrail (Thắng duyệt), câu V7 = D7 trong G vào L02-B08 (Đạt duyệt), live 5/5. Còn: Đạt xác nhận bằng văn bản (C6); chọn khóa Gemini cho buổi demo.
 
 **Lệnh chạy lại**
 ```bash

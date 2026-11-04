@@ -12,7 +12,7 @@ from pydantic import BaseModel, Field, ValidationError, field_validator
 
 from .intent import INTENTS
 
-TOOLS = ("get_chord_tones", "get_scale", "identify_interval")
+TOOLS = ("get_chord_tones", "get_scale", "identify_interval", "get_roman_numeral")
 
 LLM_SCHEMA: dict[str, Any] = {
     "type": "object",
@@ -25,8 +25,9 @@ LLM_SCHEMA: dict[str, Any] = {
             "tool": {"type": "string", "enum": list(TOOLS)},
             "args": {"type": "object", "properties": {
                 "symbol": {"type": "string"}, "tonic": {"type": "string"}, "scale_type": {"type": "string"},
-                "lower": {"type": "string"}, "upper": {"type": "string"}}},
-            "result": {"type": "string", "description": "Kết quả AI khẳng định, ví dụ 'C E G Bb' hoặc 'P5'."}},
+                "lower": {"type": "string"}, "upper": {"type": "string"},
+                "key": {"type": "string"}, "chord": {"type": "string"}}},
+            "result": {"type": "string", "description": "Kết quả AI khẳng định, ví dụ 'C E G Bb', 'P5' hoặc 'V7'."}},
             "required": ["tool", "args", "result"]}},
         "hint_level": {"type": "integer", "minimum": 0, "maximum": 3},
         "suggested_actions": {"type": "array", "items": {"type": "string"}},
@@ -43,7 +44,7 @@ class Citation(BaseModel):
 
 
 class Claim(BaseModel):
-    tool: Literal["get_chord_tones", "get_scale", "identify_interval"]
+    tool: Literal["get_chord_tones", "get_scale", "identify_interval", "get_roman_numeral"]
     args: dict[str, str]
     result: str = Field(max_length=200)
 

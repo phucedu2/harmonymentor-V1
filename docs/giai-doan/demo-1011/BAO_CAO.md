@@ -12,7 +12,7 @@ Nhánh `ai/demo-1011` (xếp chồng trên `ai/gd4-danh-gia`), Draft PR #25 vào
 | C. AI Tutor RAG | Đã có từ GĐ3; thêm 5 câu vàng, kiểm khẳng định quãng trong lời AI | Có, nhưng Gemini free tier hay quá giờ |
 | D. 2 kịch bản E2E | Chạy trên giao diện thật, có video + 7 ảnh | Có |
 
-Kiểm thử: pytest SQLite **917 đạt** (sau khi phát hành và ADR-016) (`-m "not postgres and not live"`), PostgreSQL 16 cục bộ: 13 test HM-010 + `/recommend` đạt (12 test migration cần pgvector, máy này không có, CI có). CI `--min-passed` 917 / 25.
+Kiểm thử: pytest SQLite **917 đạt** (sau khi phát hành và ADR-016) (`-m "not postgres and not live"`), PostgreSQL 16 cục bộ: 13 test HM-010 + `/recommend` đạt (12 test migration cần pgvector, máy này không có, CI có). CI `--min-passed` 928 / 25 (sau khi thêm kiểm số La Mã).
 
 ## 1. Nhiệm vụ A: 6 câu mới
 
@@ -94,8 +94,8 @@ Test CI không gọi mạng tương ứng: `test_demo1011_cau_nhap.py::test_new_
 
 ## 6. Lỗi và rủi ro chưa xử lý
 
-1. **Khẳng định số La Mã chưa được kiểm**: "V7 trong G trưởng là G7 = G B D F" qua được guardrail và còn mang nhãn "đã kiểm" (vì G7 = G B D F đúng). Cần thêm công cụ `roman_numeral` vào guardrail (cần Thắng duyệt, đổi danh sách công cụ của ADR-015).
-2. **D03 không trả lời được**: bài L02 chỉ dạy V7 = G7 trong C trưởng, không có đoạn nào nói D7 là V7 của G; Gemini từ chối. Cần thêm một câu vào khối L02-B08 hoặc đưa dữ kiện Engine (bậc + hợp âm) vào prompt.
+1. ~~Khẳng định số La Mã chưa được kiểm.~~ Đã xử lý 04/11 (Thắng duyệt): guardrail có thêm `get_roman_numeral`; "V7 trong G trưởng là G7" nay bị bác (ADR-015 cập nhật). Cả 10/10 mẫu sai của 5 câu vàng bị bác.
+2. ~~D03 không trả lời được.~~ Đã xử lý 04/11 (Đạt duyệt): L02-B08 thêm "trong G major, bậc V là D nên V7 = D7 (D–F#–A–C)", tính lại vector 45 đoạn. Chạy live lần 2: 5/5 câu vàng đạt (3 Gemini trả lời, 2 dự phòng do quá giờ/503; D03 nay trích đúng L02-B08 với D7 = D F# A C đã kiểm).
 3. **Gemini free tier**: 3/5 câu live và 1/2 lần giải thích lỗi rơi vào dự phòng (quá 15 s hoặc 503). Demo vẫn chạy (dự phòng đúng thiết kế), nhưng muốn trình diễn câu trả lời của AI ổn định thì nên dùng khóa trả phí hoặc đổi `GEMINI_MODEL` sang mô hình nhanh hơn trong `.env` lúc demo.
 4. ~~Quy ước `Imaj7` (bài) và `IM7` (Engine) lệch nhau.~~ Đã xử lý: chấm nhận cả hai (ADR-016).
 5. Trang OMT trả 403 cho máy kiểm; nguồn OMT trong 6 câu là locator cũ, chưa mở lại.
@@ -109,5 +109,5 @@ Không có số liệu nào cho thấy mô hình giúp học tốt hơn. Kết q
 - ~~Q-A1~~ Thắng + Đạt duyệt, đã phát hành.
 - ~~Q-B1~~ Phúc giao Claude chọn: chấm nhận cả hai, ADR-016.
 - ~~Q-B2~~ Đạt duyệt, đã ghi.
-- Q-C1 (Thắng): thêm `roman_numeral` vào guardrail?
-- Q-C2 (Đạt): thêm câu "V7 của G trưởng là D7" vào L02-B08?
+- ~~Q-C1~~ Thắng duyệt, đã thêm.
+- ~~Q-C2~~ Đạt duyệt, đã thêm.
