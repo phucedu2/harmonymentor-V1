@@ -18,7 +18,7 @@ from ..ai.embedder import Embedder, EmbeddingUnavailable
 from ..ai.recommender.content import embedding_content, tfidf_content
 from ..ai.recommender.engine import LessonInfo, RecInput, Ranked, recommend
 from ..ai.recommender.knn import find_neighbors
-from ..ai.recommender.vector import GroupVector, build_vector
+from ..ai.recommender.vector import GroupVector, PoolMatrix, build_pool, build_vector
 from ..ai.skill_mapping import SKILL_GROUP_MAP_VERSION, is_mvp
 from ..content import skill_descriptions as sd
 from ..content import versioning
@@ -75,25 +75,35 @@ def thresholds(db: Session) -> dict[str, tuple[float, float]]:
     return {s.id: (s.ready_threshold, s.mastery_threshold) for s in db.scalars(select(Skill))}
 
 
-def neighbor_pool(db: Session, user_id: str) -> tuple[dict[str, GroupVector], dict[str, dict[str, float]], str]:
+def neighbor_pool(db: Session, user_id: str) -> tuple[PoolMatrix | None, list[tuple[str, str, float]], str]:
     """Tập ứng viên láng giềng theo 9A: người học thật khi đủ người, nếu không thì người mô phỏng.
 
     Admin không bao giờ là ứng viên (lượt is_test không tạo mastery, nhưng loại hẳn cho rõ)."""
     rows = db.execute(select(MasteryState.user_id, MasteryState.skill_id, MasteryState.score, User.is_synthetic)
                       .join(User, User.id == MasteryState.user_id)
                       .where(User.role != "admin", User.id != user_id)).all()
-    mastery: dict[bool, dict[str, dict[str, float]]] = {True: {}, False: {}}
+    by_kind: dict[bool, list[tuple[str, str, float]]] = {True: [], False: []}
     for uid, skill, score, synthetic in rows:
-        if is_mvp(skill):
-            mastery[bool(synthetic)].setdefault(uid, {})[skill] = score
-    real = {u: build_vector(m) for u, m in mastery[False].items()}
-    enough = sum(1 for v in real.values() if v.assessed_count >= settings.knn_real_min_dims)
-    if enough >= settings.knn_real_min_users:
-        return real, mastery[False], "real"
-    synthetic = {u: build_vector(m) for u, m in mastery[True].items()}
-    if synthetic:
-        return synthetic, mastery[True], "synthetic"
-    return {}, {}, "none"
+        by_kind[bool(synthetic)].append((uid, skill, score))
+    for kind, label in ((False, "real"), (True, "synthetic")):
+        pool = build_pool(by_kind[kind])
+        if not pool.ids:
+            continue
+        if kind is False:
+            enough = int((pool.assessed.sum(axis=1) >= settings.knn_real_min_dims).sum())
+            if enough < settings.knn_real_min_users:
+                continue
+        return pool, by_kind[kind], label
+    return None, [], "none"
+
+
+def mastery_of(rows: list[tuple[str, str, float]], user_ids: list[str]) -> dict[str, dict[str, float]]:
+    """Mastery MVP của đúng các láng giềng được chọn (≤ 10), không dựng cho cả 2.000 ứng viên."""
+    wanted, out = set(user_ids), {}
+    for uid, skill, score in rows:
+        if uid in wanted and is_mvp(skill):
+            out.setdefault(uid, {})[skill] = score
+    return out
 
 
 # --- Tầng nội dung ------------------------------------------------------------------------------
@@ -142,10 +152,11 @@ def recommend_for_user(db: Session, user: User, *, k: int = 5, now: datetime | N
         db.flush()
     mastery = user_mastery(db, user.id)
     target = build_vector(mastery)
-    pool, pool_mastery, cf_source = neighbor_pool(db, user.id)
-    nb = find_neighbors(target, pool, k=settings.rec_neighbors_k, min_shared=settings.rec_min_shared_dims,
+    pool, pool_rows, cf_source = neighbor_pool(db, user.id)
+    nb = find_neighbors(target, pool if pool is not None else {}, k=settings.rec_neighbors_k, min_shared=settings.rec_min_shared_dims,
                         fallback=settings.rec_fallback, exclude=user.id)
     neighbor_ids = [n.user_id for n in nb.neighbors]
+    pool_mastery = mastery_of(pool_rows, neighbor_ids)
     content, content_source, draft = content_scores(user)
 
     infos = lesson_infos(db)

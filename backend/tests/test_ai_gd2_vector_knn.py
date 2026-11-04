@@ -161,3 +161,28 @@ def test_k_fallback_b_lowers_threshold_to_one():
     assert [n.user_id for n in result.neighbors] == ["y"] and result.min_shared_used == 1
     # Dự phòng (b) không cứu được zero_norm: vẫn không có láng giềng.
     assert find_neighbors(Z, {"z": Z}, min_shared=3, fallback="b").reason == "no_valid_neighbors"
+
+
+def test_pool_matrix_same_result_as_dict_pool():
+    # Dịch vụ dựng ứng viên bằng build_pool (numpy) cho nhanh; kết quả phải trùng cách dựng từng vector.
+    from app.ai.recommender.vector import build_pool
+
+    people = {"b": {"pitch.spelling": 0.30, "interval.naming": 0.51, "chord.triad_formula": 0.66,
+                    "chord.seventh_quality": 0.51, "function.tonic": 0.30, "voicing.shell": 0.9},
+              "c": {"pitch.spelling": 0.66, "interval.naming": 0.30, "scale.major": 0.51,
+                    "chord.triad_formula": 0.30, "chord.seventh_quality": 0.83},
+              "z": {"pitch.spelling": 0.0, "interval.naming": 0.0},
+              "me": {"pitch.spelling": 0.30, "interval.naming": 0.51, "chord.triad_formula": 0.66}}
+    rows = [(u, s, v) for u, m in people.items() for s, v in m.items()]
+    as_dict = {u: build_vector(m) for u, m in people.items()}
+    for threshold in (2, 3, 4):
+        a = find_neighbors(A, as_dict, min_shared=threshold, exclude="me")
+        b = find_neighbors(A, build_pool(rows), min_shared=threshold, exclude="me")
+        assert (a.neighbors, a.reason, dict(a.excluded)) == (b.neighbors, b.reason, dict(b.excluded))
+
+
+def test_empty_pool_is_no_valid_neighbors():
+    from app.ai.recommender.vector import build_pool
+
+    assert find_neighbors(A, {}, min_shared=2).reason == "no_valid_neighbors"
+    assert find_neighbors(A, build_pool([]), min_shared=2).reason == "no_valid_neighbors"

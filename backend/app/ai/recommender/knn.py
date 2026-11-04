@@ -13,7 +13,7 @@ from typing import Mapping
 
 import numpy as np
 
-from .vector import GroupVector
+from .vector import GroupVector, PoolMatrix
 
 
 @dataclass(frozen=True)
@@ -58,14 +58,16 @@ def skill_overlap(a: GroupVector, b: GroupVector, dim: int) -> float | None:
     return len(sa & sb) / len(sa | sb)
 
 
-def _matrix(pool: Mapping[str, GroupVector]) -> tuple[list[str], np.ndarray, np.ndarray]:
+def _matrix(pool: Mapping[str, GroupVector] | PoolMatrix) -> tuple[list[str], np.ndarray, np.ndarray]:
+    if isinstance(pool, PoolMatrix):
+        return list(pool.ids), pool.values, pool.assessed
     ids = sorted(pool)
     values = np.array([pool[u].values for u in ids], dtype=float).reshape(len(ids), -1)
     assessed = np.array([pool[u].assessed for u in ids], dtype=bool).reshape(len(ids), -1)
     return ids, values, assessed
 
 
-def find_neighbors(target: GroupVector, pool: Mapping[str, GroupVector], *, k: int = 10, min_shared: int = 3,
+def find_neighbors(target: GroupVector, pool: Mapping[str, GroupVector] | PoolMatrix, *, k: int = 10, min_shared: int = 3,
                    fallback: str = "a", exclude: str | None = None) -> NeighborResult:
     """Top k láng giềng hợp lệ, xếp theo độ tương đồng giảm dần rồi theo user_id (tất định, K10).
 
@@ -74,11 +76,15 @@ def find_neighbors(target: GroupVector, pool: Mapping[str, GroupVector], *, k: i
     """
     if target.assessed_count == 0:
         return NeighborResult([], "no_assessed_dims", min_shared)
-    candidates = {u: v for u, v in pool.items() if u != exclude}
-    if not candidates:
+    if not (pool.ids if isinstance(pool, PoolMatrix) else pool):
         return NeighborResult([], "no_valid_neighbors", min_shared)
-
-    ids, values, assessed = _matrix(candidates)
+    ids, values, assessed = _matrix(pool)
+    keep = np.array([u != exclude for u in ids], dtype=bool)
+    if not keep.any():
+        return NeighborResult([], "no_valid_neighbors", min_shared)
+    if not keep.all():
+        ids = [u for u, k in zip(ids, keep) if k]
+        values, assessed = values[keep], assessed[keep]
     t_val = np.array(target.values, dtype=float)
     t_ass = np.array(target.assessed, dtype=bool)
     shared = assessed & t_ass
