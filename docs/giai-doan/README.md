@@ -24,6 +24,7 @@ Các giai đoạn 0.2 → 2.3 là lộ trình của bản code gốc (zip v0.1.0
 | [ai-gd3](ai-gd3/) | v0.5.4-dev | Pipeline AI GĐ3: AI Tutor có trích dẫn (RAG Gemini + BM25), kiểm Music Engine, chống prompt injection, giải thích lỗi 3 mức, khung chat nổi (04/11) | [BAO_CAO.md](ai-gd3/BAO_CAO.md) |
 | [ai-gd4](ai-gd4/) | v0.5.4-dev | Pipeline AI GĐ4: thực nghiệm hệ gợi ý (2.000 người mô phỏng, P0–P3) và AI Tutor (bộ chuẩn 30 câu, Gemini so với BM25, chặn, guardrail, độ trễ) (04/11) | [BAO_CAO_THUC_NGHIEM.md](ai-gd4/BAO_CAO_THUC_NGHIEM.md) |
 | [demo-1011](demo-1011/) | v0.5.4-dev | Demo AI 10/11: 6 câu nháp gỡ lộ trình L02–L04, 5 câu vàng AI Tutor, kiểm quãng trong lời AI, 2 kịch bản E2E trên giao diện thật. |
+| [wow-ui-thu-nghiem](wow-ui-thu-nghiem/) | 0.5.4-dev | Thử nghiệm trang chủ "wow": cuộn GSAP + âm thanh, Đồng & Gỉ (gộp vào phuc-music 04/11) | [BAO_CAO_WOW_UI.md](wow-ui-thu-nghiem/BAO_CAO_WOW_UI.md) |
 
 ## Quy ước cho giai đoạn sau
 
