@@ -3,15 +3,23 @@
 from __future__ import annotations
 
 import pytest
+from fastapi.testclient import TestClient
 from sqlalchemy import select
 
 from app.ai import skill_mapping as sm
 from app.content.skill_graph import PREREQUISITES, SKILLS
 from app.db.models import Skill
 from app.db.session import SessionLocal
-from app.main import app  # noqa: F401  (tạo schema + seed như các test khác)
+from app.main import app
 
 SKILL_IDS = {s[0] for s in SKILLS}
+
+
+@pytest.fixture(scope="module", autouse=True)
+def _schema_and_seed():
+    # Chạy lifespan của app (create_schema + seed) để file test chạy riêng lẻ trên CSDL mới vẫn được.
+    with TestClient(app):
+        yield
 
 
 def test_m1_mapping_covers_exactly_skill_graph():
