@@ -120,7 +120,11 @@ def test_due_card_marks_skill_due():
         assert "interval.naming" in rs.due_skills(db, uid, now)
 
 
-def test_knn_uses_synthetic_pool_when_few_real_users():
+def test_knn_uses_synthetic_pool_when_few_real_users(monkeypatch):
+    # CSDL dev dùng chung giữa các lần chạy tích lũy người thật từ test khác: ép "chưa đủ người thật" cho chắc.
+    from app.services import recommendation_service as rs_mod
+
+    monkeypatch.setattr(rs_mod, "settings", replace(rs_mod.settings, knn_real_min_users=10**6))
     vec = dict(pitch__spelling=0.7, interval__naming=0.6, chord__triad_formula=0.65, chord__triad_build=0.7)
     for _ in range(3):
         make_user(synthetic=True, scale__major=0.8, **vec)
