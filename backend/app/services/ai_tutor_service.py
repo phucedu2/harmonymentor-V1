@@ -158,9 +158,10 @@ def _fact_lines(facts: Sequence[dict[str, Any]]) -> str:
 
 
 def offline_answer(question_hits: Sequence[Hit], facts: Sequence[dict[str, Any]], titles: dict[str, str],
-                   reason: str, lead: str = fb.UNAVAILABLE) -> Draft:
+                   reason: str, lead: str | None = None) -> Draft:
     """Câu viết sẵn: dữ kiện Music Engine + trích đoạn bài học gần nhất. Không suy diễn gì thêm."""
-    parts = [lead]
+    # "Tạm nghỉ" chỉ khi AI tắt; còn lại (quá tải, hết giờ, câu bị chặn) thì nói thật là chưa trả lời được.
+    parts = [lead or (fb.UNAVAILABLE if reason == "ai_disabled" else fb.BUSY)]
     if facts:
         parts.append(f"Theo Music Engine: {_fact_lines(facts)}")
     cites = []
@@ -281,7 +282,7 @@ def answer_question(db: Session, user: User, question: str, turns: Sequence[tupl
         d.llm_calls = 1
         return d, meta
     if ans is None:
-        d = offline_answer(r.hits, facts, titles, reason or "invalid", lead=fb.UNAVAILABLE)
+        d = offline_answer(r.hits, facts, titles, reason or "invalid")
         d.llm_calls, d.llm = len(results), results[-1] if results else None
         return d, meta
     return _finish(ans, guard, allowed, titles, results, facts), meta

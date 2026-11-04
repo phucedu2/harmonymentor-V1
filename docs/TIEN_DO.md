@@ -2,6 +2,24 @@
 
 File này ghi lại việc đã xong, việc đang dở, lệnh để chạy lại và việc tiếp theo. Cập nhật sau mỗi phiên việc. Lịch sử trước 27/10/2026 xem `docs/AI_USAGE.md` và các báo cáo trong `docs/giai-doan/`.
 
+## 04/11/2026: pipeline AI GĐ4 (nhánh `ai/gd4-danh-gia`, xếp chồng trên `ai/gd3-tutor`)
+
+**Đã xong** (báo cáo `docs/giai-doan/ai-gd4/BAO_CAO_THUC_NGHIEM.md`)
+- RAG: bộ chuẩn 30 câu + 10 ngoài phạm vi + 10 tấn công + 20 câu cài lỗi (Claude soạn, chưa có người duyệt độc lập). Gemini Recall@1 93,3% (BM25 56,7%); chặn 100%/100%, 0% chặn nhầm; guardrail 11/11, 0 báo nhầm; trả lời thật 30/30 khi nghỉ 5 s (p95 1,7 s), 23/30 khi gọi liên tục (429/503).
+- Hệ gợi ý: 2.000 người mô phỏng (bộ sinh không import bộ gợi ý), chia 80/20 theo thời gian, P0–P3. Luật tiên quyết loại 97% bài đúng nên P1–P3 HitRate@1 2,8% so với P0 96,7%; nguyên nhân là kỹ năng chỉ 1 câu chỉ lên mastery 0,30.
+- Câu dự phòng khi Gemini quá tải không còn nói "đang tạm nghỉ". Sửa test GĐ2 phụ thuộc CSDL dev dùng chung.
+- pytest 828 (không tính postgres/live).
+
+**Đang dở / chờ**
+- Thắng: chọn hướng cho luật tiên quyết (a/b/c, báo cáo mục 1.6); P-2 chờ lần chạy lại sau HM-013. Đạt: lấy mẫu 10 câu bộ chuẩn RAG, chấm đúng nhạc lý.
+
+**Lệnh chạy lại**
+```bash
+cd backend && python ../scripts/ai/evaluate_recommender.py --n 2000 --seed 20261104 --out ../docs/giai-doan/ai-gd4/ket_qua_goi_y.json
+cd backend && python ../scripts/ai/evaluate_rag.py
+cd backend && AI_ENABLED=1 GEMINI_API_KEY=... python ../scripts/ai/evaluate_rag.py --live --pause 5 --out ../docs/giai-doan/ai-gd4/ket_qua_rag.json
+```
+
 ## 04/11/2026: pipeline AI GĐ3 (nhánh `ai/gd3-tutor`, xếp chồng trên `ai/gd2-goi-y`)
 
 **Đã xong** (báo cáo `docs/giai-doan/ai-gd3/BAO_CAO.md`)

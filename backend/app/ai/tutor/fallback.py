@@ -11,6 +11,7 @@ OUT_OF_SCOPE = ("Mình chỉ hỗ trợ nhạc lý trong khóa HarmonyMentor (n�
 INJECTION = "Mình không làm theo yêu cầu đó được. Mình ở đây để giúp bạn học nhạc lý trong khóa."
 UNSURE = "Mình chưa chắc về câu này vì bài học hiện có chưa nói rõ."
 UNAVAILABLE = "Trợ lý AI đang tạm nghỉ, nên mình trả lời bằng phần bài học liên quan nhất."
+BUSY = "Trợ lý AI chưa trả lời được lúc này, nên mình trả lời bằng phần bài học liên quan nhất."
 
 # Gợi mở theo mã lỗi, không chứa đáp án (mức 1–2). Mức 3 thêm lời giải của câu (explanation đã duyệt).
 ERROR_HINTS: dict[str, tuple[str, str]] = {
