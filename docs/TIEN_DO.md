@@ -2,7 +2,7 @@
 
 File này ghi lại việc đã xong, việc đang dở, lệnh để chạy lại và việc tiếp theo. Cập nhật sau mỗi phiên việc. Lịch sử trước 27/10/2026 xem `docs/AI_USAGE.md` và các báo cáo trong `docs/giai-doan/`.
 
-## 05/11/2026: pipeline AI GĐ2 (nhánh `ai/gd2-goi-y`, xếp chồng trên `ai/gd1-mastery`, Draft PR #22)
+## 04/11/2026: pipeline AI GĐ2 (nhánh `ai/gd2-goi-y`, xếp chồng trên `ai/gd1-mastery`, Draft PR #22)
 
 **Đã xong** (báo cáo `docs/giai-doan/ai-gd2/BAO_CAO.md`)
 - Hệ gợi ý 3 tầng theo 04 mục 6.5 + ADR-008 (hàm thuần trong `app/ai/recommender/`), `GET /recommend` (3 danh sách G-3), `PUT /me/goal`, nhật ký gợi ý, thẻ "Gợi ý cho bạn".

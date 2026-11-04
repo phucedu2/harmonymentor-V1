@@ -20,7 +20,7 @@ Các giai đoạn 0.2 → 2.3 là lộ trình của bản code gốc (zip v0.1.0
 | [phuc-music](../phuc-music/) | v0.5.4-dev | Gộp khu học v0.5.3 vào nền main, xưởng sáng tác (Bước 0–4), backing track ban nhạc thật (02/11) | [00_KHAO_SAT.md](../phuc-music/00_KHAO_SAT.md), [01_NHAT_KY_GOP.md](../phuc-music/01_NHAT_KY_GOP.md), [BAO_CAO_BUOC_1.md](../phuc-music/BAO_CAO_BUOC_1.md), [BAO_CAO_BUOC_2.md](../phuc-music/BAO_CAO_BUOC_2.md), [BAO_CAO_BUOC_3.md](../phuc-music/BAO_CAO_BUOC_3.md), [BAO_CAO_BUOC_4.md](../phuc-music/BAO_CAO_BUOC_4.md), [BAO_CAO_BACKING_TRACK.md](../phuc-music/BAO_CAO_BACKING_TRACK.md) |
 | [ai-gd0](ai-gd0/) | v0.5.4-dev | Pipeline AI của giảng viên, GĐ0: kiểm hiện trạng, mô phỏng mở khóa L01–L04, kiểm Gemini, kế hoạch GĐ1–GĐ4 (04/11) | [KE_HOACH_AI.md](ai-gd0/KE_HOACH_AI.md), [mo_phong_mo_khoa_2026-11-04.md](ai-gd0/mo_phong_mo_khoa_2026-11-04.md) |
 | [ai-gd1](ai-gd1/) | v0.5.4-dev | Pipeline AI GĐ1: ánh xạ kỹ năng ADR-008, mastery EMA, luật ôn 2A, bài kiểm tra đầu vào (04/11) | [BAO_CAO.md](ai-gd1/BAO_CAO.md), [nguoi_mau_2026-11-04.md](ai-gd1/nguoi_mau_2026-11-04.md) |
-| [ai-gd2](ai-gd2/) | v0.5.4-dev | Pipeline AI GĐ2: hệ gợi ý 3 tầng (luật, nội dung Gemini/TF-IDF, KNN chiều chung), G-3 ba danh sách, mục tiêu học, thẻ Dashboard (05/11) | [BAO_CAO.md](ai-gd2/BAO_CAO.md) |
+| [ai-gd2](ai-gd2/) | v0.5.4-dev | Pipeline AI GĐ2: hệ gợi ý 3 tầng (luật, nội dung Gemini/TF-IDF, KNN chiều chung), G-3 ba danh sách, mục tiêu học, thẻ Dashboard (04/11) | [BAO_CAO.md](ai-gd2/BAO_CAO.md) |
 
 ## Quy ước cho giai đoạn sau
 

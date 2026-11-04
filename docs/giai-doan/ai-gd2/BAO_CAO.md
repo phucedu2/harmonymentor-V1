@@ -64,7 +64,7 @@ Các điểm "chờ Thắng" của ADR-008 (D-2, R-1, ngưỡng số chiều chu
 | Script, ảnh | `scripts/ai/gd2_do_thoi_gian.py`, `docs/minh-chung/anh/ai-gd2/goi-y-{may-tinh,dien-thoai}.png`, `goi-y-mo-bai-*.png` |
 | CI | `.github/workflows/ci.yml`: bỏ nhóm `live`, mức tối thiểu 742 |
 
-## C. Lệnh và kết quả (05/11/2026, máy cloud)
+## C. Lệnh và kết quả (04/11/2026, máy cloud)
 
 ```bash
 cd backend && python -m pytest -q -m "not postgres and not live"   # 742 passed, 24 deselected

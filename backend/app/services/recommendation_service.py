@@ -28,7 +28,7 @@ from ..db.models import (
 )
 from . import learning_service
 
-ALGORITHM_VERSION = "gd2-2026-11-05"
+ALGORITHM_VERSION = "gd2-2026-11-04"
 GOAL_TASK = "RETRIEVAL_QUERY"
 
 

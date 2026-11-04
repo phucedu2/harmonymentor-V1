@@ -8,7 +8,7 @@ Hạ phiên bản: bỏ đúng các phần trên. Vector mục tiêu tính lại
 
 Revision ID: d2b3c4d5e6f7
 Revises: c1a2b3d4e5f6
-Create Date: 2026-11-05
+Create Date: 2026-11-04
 """
 from typing import Sequence, Union
 
