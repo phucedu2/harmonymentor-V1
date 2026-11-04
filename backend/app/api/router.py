@@ -4,6 +4,7 @@ from ..admin.router import router as admin_router
 from ..auth.router import router as auth_router
 from ..composition.router import router as composition_router
 from .ai_learning import router as ai_learning_router
+from .ai_recommend import router as ai_recommend_router
 from .attempts import router as attempts_router
 from .engine import router as engine_router
 from .lessons import router as lessons_router
@@ -24,3 +25,4 @@ api_router.include_router(composition_router)
 api_router.include_router(auth_router)
 api_router.include_router(admin_router)
 api_router.include_router(ai_learning_router)
+api_router.include_router(ai_recommend_router)

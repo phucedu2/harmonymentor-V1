@@ -63,6 +63,12 @@ def _check_legacy_users_table() -> None:
             "Không cần dữ liệu cũ: xóa harmonymentor_dev.db để tạo lại."
         )
     columns = {c["name"] for c in inspector.get_columns("users")}
+    # Pipeline AI GĐ2 (migration d2b3c4d5e6f7): thiếu cột thì mọi truy vấn users lỗi 500.
+    if "email" in columns and "goal_embedding" not in columns:
+        raise RuntimeError(
+            "CSDL cũ thiếu cột users.goal_embedding (pipeline AI GĐ2, hệ gợi ý). Giữ dữ liệu: "
+            "`alembic -c alembic.ini upgrade head`. Không cần dữ liệu cũ: xóa harmonymentor_dev.db để tạo lại."
+        )
     if "email" not in columns:
         raise RuntimeError(
             "CSDL cũ thiếu cột users.email (tạo trước Giai đoạn B). Với SQLite dev: xóa file harmonymentor_dev.db "

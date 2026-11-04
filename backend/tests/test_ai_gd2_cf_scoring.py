@@ -89,7 +89,8 @@ TABLE_21 = {"L10": (0.58, 0.10, 0, 0.60, 0.548), "L03": (0.42, 0.20, 0, 0.50, 0.
 @pytest.mark.parametrize("lesson", sorted(TABLE_21))
 def test_table_21(lesson):
     content, mastery, due, cf, expected = TABLE_21[lesson]
-    assert skill_score(Components("x", content, mastery, due, cf), FULL) == pytest.approx(expected, abs=5e-4)
+    # 04 làm tròn từng số hạng trước khi cộng (L09: 0,1085 → 0,109), nên lệch tối đa 0,001.
+    assert skill_score(Components("x", content, mastery, due, cf), FULL) == pytest.approx(expected, abs=1e-3)
 
 
 def test_table_21_due_one():
@@ -216,7 +217,8 @@ def test_k_limit_and_max_5():
 def test_due_skill_lifts_lesson():
     two = [LessonInfo("L01", 1, "Bài 1", frozenset({"pitch.spelling"}), frozenset()),
            LessonInfo("L05", 5, "Bài 5", frozenset({"function.dominant"}), frozenset())]
-    out = recommend(RecInput(lessons=two, mastery={}, due_skills=frozenset({"function.dominant"}), content={},
+    # mastery 0,5: phần (1 − mastery) = 0,125 nhỏ hơn phần due = 0,20, nên lý do là "đến hạn".
+    out = recommend(RecInput(lessons=two, mastery={"function.dominant": 0.5}, due_skills=frozenset({"function.dominant"}), content={},
                              neighbor_ids=None, neighbor_mastery={}))
     assert [r.lesson_id for r in out.ranked] == ["L05", "L01"]
     assert out.ranked[0].reason_code == "due"

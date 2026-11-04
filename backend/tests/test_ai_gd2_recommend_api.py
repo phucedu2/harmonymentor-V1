@@ -67,9 +67,10 @@ def test_new_learner_cold_start_only_l01():
 
 
 def test_k_param_bounds():
+    # Lỗi kiểm tra đầu vào của dự án trả 400 VALIDATION_ERROR (core/errors.py), không phải 422 mặc định.
     uid = make_user()
-    assert client.get("/api/v1/recommend", headers=auth(uid), params={"k": 6}).status_code == 422
-    assert client.get("/api/v1/recommend", headers=auth(uid), params={"k": 0}).status_code == 422
+    assert client.get("/api/v1/recommend", headers=auth(uid), params={"k": 6}).status_code == 400
+    assert client.get("/api/v1/recommend", headers=auth(uid), params={"k": 0}).status_code == 400
     assert len(get(uid, k=1)["next"]) <= 1
 
 
@@ -155,7 +156,7 @@ def test_click_on_lesson_not_in_list_rejected():
 def test_goal_roundtrip_and_limits():
     uid = make_user()
     h = auth(uid)
-    assert client.put("/api/v1/me/goal", headers=h, json={"goal_text": "a" * 501}).status_code == 422
+    assert client.put("/api/v1/me/goal", headers=h, json={"goal_text": "a" * 501}).status_code == 400
     r = client.put("/api/v1/me/goal", headers=h, json={"goal_text": "  Đệm hát nhạc pop  "})
     assert r.status_code == 200 and r.json()["goal_text"] == "Đệm hát nhạc pop"
     assert client.get("/api/v1/me/goal", headers=h).json()["goal_text"] == "Đệm hát nhạc pop"

@@ -34,6 +34,10 @@ class User(Base):
     goal_text: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=sa_true())
     is_synthetic: Mapped[bool] = mapped_column(Boolean, default=False, server_default=sa_false())
+    # Vector mục tiêu (04 ERD ghi vector(384) cho MiniLM; Gemini 768 chiều nên lưu JSON + tên mô hình, GĐ2).
+    # Chỉ so với vector mô tả kỹ năng cùng mô hình; khác mô hình thì tầng nội dung dùng dự phòng.
+    goal_embedding: Mapped[Optional[list[float]]] = mapped_column(JSON, nullable=True)
+    goal_embedding_model: Mapped[Optional[str]] = mapped_column(String(80), nullable=True)
 
 
 class RefreshToken(Base):
@@ -330,6 +334,25 @@ class MasteryEvent(Base):
     score_before: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     score_after: Mapped[float] = mapped_column(Float)
     vn_day: Mapped[str] = mapped_column(String(10), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+
+
+class RecommendationLog(Base):
+    """Một lần gợi ý (04 ERD): danh sách bài, điểm từng tầng và lý do, để đo tỷ lệ bấm ở GĐ5.
+
+    `context` (ngoài ERD) giữ cấu hình đã dùng: chế độ trọng số, nguồn cf, lý do dự phòng, ngưỡng chiều chung.
+    """
+
+    __tablename__ = "recommendation_logs"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    lesson_ids: Mapped[list[str]] = mapped_column(JSON, default=list)
+    scores: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list)
+    explanation: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    context: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    clicked_lesson_id: Mapped[Optional[str]] = mapped_column(String(32), nullable=True)
+    clicked_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
 
 

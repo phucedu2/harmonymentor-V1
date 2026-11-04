@@ -8,7 +8,7 @@ without an external service.
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 def _flag(name: str, default: str) -> bool:
@@ -38,11 +38,32 @@ class Settings:
     # Hiện câu hỏi bản nháp (status=draft) cho người học. Chỉ bật tường minh ở dev/test (HM-003, ADR-006).
     show_draft_content: bool = _flag("SHOW_DRAFT_CONTENT", "0")
 
+    # Pipeline AI (GĐ2). Tắt mặc định: AI_ENABLED=false vẫn demo trọn vòng (nguyên tắc 3).
+    ai_enabled: bool = _flag("AI_ENABLED", "0")
+    # Khóa chỉ đọc từ môi trường của backend; không bao giờ trả về client hay ghi log.
+    gemini_api_key: str = field(default_factory=lambda: os.getenv("GEMINI_API_KEY", ""), repr=False)
+    gemini_embed_model: str = os.getenv("EMBEDDING_MODEL", "gemini-embedding-001")  # tên biến theo 03 Bảng cấu hình
+    gemini_embed_dim: int = int(os.getenv("EMBEDDING_DIM", "768"))
+    # Mô tả kỹ năng còn nháp (chờ Đạt/Astra duyệt) chỉ dùng cho tầng nội dung khi bật tường minh.
+    allow_draft_skill_descriptions: bool = _flag("ALLOW_DRAFT_SKILL_DESCRIPTIONS", "0")
+    # Hệ gợi ý (ADR-008 mục 5). Ngưỡng số chiều chung chưa chốt: 3 là giá trị tạm tới khi có thử nghiệm GĐ4.
+    rec_min_shared_dims: int = int(os.getenv("REC_MIN_SHARED_DIMS", "3"))
+    rec_fallback: str = os.getenv("REC_FALLBACK", "a")
+    rec_neighbors_k: int = int(os.getenv("REC_NEIGHBORS_K", "10"))
+    # 9A: dùng người học thật khi có đủ số người có đủ số chiều đã đánh giá, nếu không thì dùng người mô phỏng.
+    knn_real_min_users: int = int(os.getenv("KNN_REAL_MIN_USERS", "30"))
+    knn_real_min_dims: int = int(os.getenv("KNN_REAL_MIN_DIMS", "3"))
+
 
 def check_runtime_settings(cfg: Settings) -> None:
     """Chặn cấu hình nguy hiểm ngay lúc khởi động thay vì để lộ ra khi người học đang dùng."""
     if cfg.app_env == "production" and cfg.show_draft_content:
         raise RuntimeError("SHOW_DRAFT_CONTENT=1 không được dùng khi APP_ENV=production: người học sẽ thấy câu hỏi chưa duyệt.")
+    if cfg.app_env == "production" and cfg.allow_draft_skill_descriptions:
+        raise RuntimeError("ALLOW_DRAFT_SKILL_DESCRIPTIONS=1 không được dùng khi APP_ENV=production: "
+                           "gợi ý sẽ dựa trên mô tả kỹ năng chưa duyệt.")
+    if cfg.rec_fallback not in {"a", "b"}:
+        raise RuntimeError("REC_FALLBACK chỉ nhận a hoặc b (ADR-008 mục 5).")
 
 
 settings = Settings()

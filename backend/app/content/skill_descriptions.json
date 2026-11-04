@@ -1,0 +1,135 @@
+{
+  "_note": "Mô tả kỹ năng cho tầng nội dung của hệ gợi ý (04 mục 6.5 bước 2). status=draft: chỉ dùng khi bật ALLOW_DRAFT_SKILL_DESCRIPTIONS. Đổi text thì chạy lại python -m app.ai.build_skill_embeddings.",
+  "skills": {
+    "pitch.spelling": {
+      "text": "Đọc và viết đúng tên nốt có dấu thăng, giáng, bình; hiểu nốt trùng âm như C# và Db, B# và C. Nền tảng để đọc bản nhạc, ghi hợp âm và chơi đúng phím đàn.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    },
+    "interval.naming": {
+      "text": "Gọi tên quãng giữa hai nốt theo số bậc và tính chất (trưởng, thứ, đúng, tăng, giảm), đếm số nửa cung. Dùng để hiểu cấu tạo hợp âm, giai điệu và dò hợp âm bằng tai.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    },
+    "chord.triad_formula": {
+      "text": "Nhớ công thức hợp âm ba trưởng, thứ, giảm, tăng theo quãng ba chồng lên nhau, ví dụ hợp âm trưởng gồm nốt gốc, quãng ba trưởng, quãng năm đúng.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    },
+    "chord.triad_build": {
+      "text": "Dựng hợp âm ba từ một nốt gốc bất kỳ, viết đúng tên nốt. Kỹ năng cơ bản để đệm hát, chơi hợp âm guitar, piano cho nhạc pop và ballad.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    },
+    "scale.major": {
+      "text": "Dựng âm giai trưởng theo công thức cung, cung, nửa cung, cung, cung, cung, nửa cung, và biết hóa biểu của giọng. Nền tảng để tìm hợp âm trong một giọng và chuyển giọng bài hát.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    },
+    "chord.seventh_quality": {
+      "text": "Phân biệt tính chất hợp âm bảy: maj7, 7 át, m7, m7b5, dim7. Hợp âm bảy tạo màu sắc mềm mại cho nhạc pop, R&B, ballad và là nền của hòa âm jazz.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    },
+    "chord.seventh_build": {
+      "text": "Dựng hợp âm bảy từ nốt gốc và ký hiệu như Cmaj7, G7, Dm7, Bm7b5, viết đúng tên nốt. Dùng khi đệm đàn theo bản hợp âm có hợp âm bảy.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    },
+    "roman.major_seventh": {
+      "text": "Ghi số La Mã cho các hợp âm bảy trong giọng trưởng (Imaj7, ii7, iii7, IVmaj7, V7, vi7, viiø7). Giúp đọc tiến trình hợp âm độc lập với giọng và chuyển giọng nhanh.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    },
+    "function.tonic": {
+      "text": "Nhận ra chức năng chủ (tonic) của hợp âm I, iii, vi: cảm giác ổn định, nơi bài hát nghỉ và kết thúc câu.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    },
+    "function.predominant": {
+      "text": "Nhận ra chức năng hạ át (predominant, subdominant) của hợp âm ii, IV: tạo chuyển động rời chủ, chuẩn bị cho át. Thường gặp trong vòng hòa âm pop.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    },
+    "function.dominant": {
+      "text": "Nhận ra chức năng át (dominant) của hợp âm V, V7, vii°: tạo căng thẳng muốn giải quyết về chủ. Hiểu vì sao bước kết V–I nghe trọn vẹn.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    },
+    "function.progression": {
+      "text": "Hiểu luồng chức năng chủ, hạ át, át, chủ trong tiến trình hợp âm. Dùng để phân tích, viết và cải biên vòng hòa âm cho bài hát pop, sáng tác ca khúc.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    },
+    "progression.ii_v_i": {
+      "text": "Nhận diện và dựng tiến trình ii–V–I với hợp âm bảy trong giọng trưởng. Đây là tiến trình quan trọng nhất của jazz, cũng hay xuất hiện trong pop, bossa nova.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    },
+    "voicing.guide_tones": {
+      "text": "Tìm guide tones (quãng ba và quãng bảy) của hợp âm bảy, phần nốt quyết định màu hợp âm. Dùng cho đệm piano jazz gọn và dẫn giọng mượt.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    },
+    "voicing.voice_leading": {
+      "text": "Dẫn giọng giữa các thế bấm hợp âm: giữ nốt chung, di chuyển ít nhất. Giúp tiếng đệm piano liền mạch khi đổi hợp âm.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    },
+    "voicing.shell": {
+      "text": "Thế bấm shell 3 nốt (nốt gốc, quãng ba, quãng bảy) cho piano jazz và đệm hát, tay trái gọn, chừa chỗ cho giai điệu.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    },
+    "harmony.secondary_dominant.identify": {
+      "text": "Nhận diện hợp âm át phụ như V/V, V/ii, V/vi trong bài hát: hợp âm bảy át mượn tạm để nhấn vào một hợp âm khác ngoài chủ.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    },
+    "harmony.secondary_dominant.build": {
+      "text": "Dựng hợp âm át phụ cho một hợp âm đích trong giọng, viết đúng nốt có dấu hóa bất thường.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    },
+    "harmony.secondary_dominant.apply": {
+      "text": "Thêm hợp âm át phụ vào vòng hòa âm để tạo chuyển động mạnh và màu sắc, khi cải biên hoặc sáng tác bài hát pop, ballad.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    },
+    "scale.parallel_minor": {
+      "text": "Quan hệ giữa giọng trưởng và giọng thứ cùng tên (C trưởng và C thứ): nốt nào khác, hợp âm nào đổi tính chất. Nền tảng cho hợp âm mượn.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    },
+    "harmony.modal_interchange.identify": {
+      "text": "Nhận diện hợp âm mượn từ giọng thứ cùng tên, như iv, bVI, bVII trong giọng trưởng, tạo màu buồn hoặc kịch tính trong nhạc pop, rock, nhạc phim.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    },
+    "harmony.modal_interchange.apply": {
+      "text": "Dùng hợp âm mượn trong vòng hòa âm khi sáng tác hoặc phối lại bài hát để tạo cảm xúc mới.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    },
+    "tension.naming": {
+      "text": "Gọi tên và xác định bậc các nốt tension 9, 11, 13 trên hợp âm bảy, cùng các biến thể b9, #9, #11, b13 trong hòa âm jazz.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    },
+    "mode.basic": {
+      "text": "Các điệu thức (mode) cơ bản như Dorian, Mixolydian, Lydian: cấu tạo và màu sắc, dùng cho ngẫu hứng và chọn thang âm trên hợp âm.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    },
+    "chord_scale.basic": {
+      "text": "Quan hệ hợp âm và thang âm: chọn thang âm phù hợp cho từng hợp âm bảy để ngẫu hứng hoặc viết giai điệu jazz.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    },
+    "chord_scale.context": {
+      "text": "Chọn thang âm cho hợp âm theo chức năng và ngữ cảnh tiến trình, ví dụ V7 về chủ thứ dùng thang âm khác V7 về chủ trưởng.",
+      "status": "draft",
+      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; chờ Đạt/Astra duyệt (6A)"
+    }
+  }
+}
