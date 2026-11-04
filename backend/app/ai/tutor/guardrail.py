@@ -13,7 +13,8 @@ from dataclasses import asdict, dataclass
 from typing import Any, Iterable
 
 from ...music_engine import tools as engine
-from .notes import CHORD_WITH_NOTES, SCALE_WITH_NOTES, SYMBOL_IN_QUESTION, norm_accidentals, solfege_to_letters, split_notes
+from .notes import (CHORD_WITH_NOTES, INTERVAL_WITH_NAME, SCALE_WITH_NOTES, SYMBOL_IN_QUESTION, interval_name,
+                    norm_accidentals, solfege_to_letters, split_notes)
 from .schema import Claim
 
 _SCALE_KIND = {"major": "major", "trưởng": "major", "natural minor": "natural_minor", "thứ tự nhiên": "natural_minor",
@@ -104,6 +105,12 @@ def scan_reply(reply: str) -> list[CheckedClaim]:
         claimed = " ".join(split_notes(m["notes"]))
         value, _ = run_tool("get_scale", args)
         out.append(CheckedClaim("get_scale", args, claimed, value, _compare("get_scale", claimed, value), "scanned"))
+    for m in INTERVAL_WITH_NAME.finditer(text):
+        args = {"lower": norm_accidentals(m["lo"]), "upper": norm_accidentals(m["hi"])}
+        claimed = interval_name(m)
+        value, _ = run_tool("identify_interval", args)
+        out.append(CheckedClaim("identify_interval", args, claimed, value,
+                                _compare("identify_interval", claimed, value), "scanned"))
     return out
 
 

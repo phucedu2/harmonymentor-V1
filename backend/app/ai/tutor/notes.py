@@ -28,6 +28,22 @@ CHORD_WITH_NOTES = re.compile(
 SCALE_WITH_NOTES = re.compile(
     rf"(?:âm giai|gam|scale)\s+(?P<tonic>{NOTE})\s*(?P<kind>major|trưởng|natural minor|thứ tự nhiên|minor|thứ)"
     rf"[^A-G\n]{{0,25}}(?P<notes>{NOTE}(?:{_SEP}{NOTE}){{5,7}})(?![A-Za-z0-9#])", re.IGNORECASE)
+# "D–F# là M3", "từ D lên Gb là quãng d4", "A–C = quãng 3 thứ". Chỉ bắt câu khẳng định ngay sau cặp nốt
+# ("là", "=", ":"), nên "D–Gb không phải M3" không bị hiểu thành D–Gb = M3. Nốt dưới trước, đi lên.
+_IV_QUAL_VI = {"trưởng": "M", "thứ": "m", "đúng": "P", "tăng": "A", "giảm": "d"}
+INTERVAL_WITH_NAME = re.compile(
+    rf"(?<![A-Za-z0-9#])(?P<lo>{NOTE})\s*(?:–|—|-|→|lên)\s*(?P<hi>{NOTE})(?![A-Za-z0-9#–—-])\s*"
+    rf"(?:là|=|:)\s*(?:một\s+)?(?:quãng\s*)?"
+    rf"(?:(?P<code>[PMmAd][1-8])(?![A-Za-z0-9])|(?P<num>[1-8])\s*(?P<qual>trưởng|thứ|đúng|tăng|giảm))")
+
+
+def interval_name(match: re.Match) -> str:
+    """Tên quãng dạng mã Engine (M3, d4...) từ một kết quả INTERVAL_WITH_NAME."""
+    if match["code"]:
+        return match["code"]
+    return _IV_QUAL_VI[match["qual"]] + match["num"]
+
+
 SYMBOL_IN_QUESTION = re.compile(rf"(?<![A-Za-z0-9#])(?P<sym>{NOTE}(?:maj7|M7|m7b5|ø7|dim7|dim|aug|m7|m|7))"
                                 rf"(?![A-Za-z0-9#])")
 
