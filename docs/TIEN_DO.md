@@ -2,6 +2,22 @@
 
 File này ghi lại việc đã xong, việc đang dở, lệnh để chạy lại và việc tiếp theo. Cập nhật sau mỗi phiên việc. Lịch sử trước 27/10/2026 xem `docs/AI_USAGE.md` và các báo cáo trong `docs/giai-doan/`.
 
+## 04/11/2026: pipeline AI GĐ3 (nhánh `ai/gd3-tutor`, xếp chồng trên `ai/gd2-goi-y`)
+
+**Đã xong** (báo cáo `docs/giai-doan/ai-gd3/BAO_CAO.md`)
+- AI Tutor: kho 45 đoạn L01–L04 + vector Gemini, retriever (ngưỡng 0,60, dự phòng BM25), phân loại ý định cục bộ, Gemini có thử lại, guardrail Music Engine, chống prompt injection, `/chat/*`, giải thích lỗi 3 mức, hạn mức, khung chat nổi.
+- pytest 820 (không tính postgres/live); bộ live 10/10 với Gemini thật; Vitest 259; build đạt; p95 3,0 s.
+
+**Đang dở / chờ**
+- Thắng duyệt migration `e3c4d5e6f7a8` + ADR-015; Đạt duyệt ngưỡng, câu mẫu ý định, câu tấn công; Phúc xem khung chat. GĐ4 (đánh giá) làm tiếp.
+
+**Lệnh chạy lại**
+```bash
+cd backend && python -m pytest -q -m "not postgres and not live"    # 820 passed
+cd backend && AI_ENABLED=1 GEMINI_API_KEY=... python -m app.ai.build_index   # khi sửa nội dung bài
+cd backend && AI_ENABLED=1 GEMINI_API_KEY=... python ../scripts/ai/gd3_hoi_thu.py
+```
+
 ## 04/11/2026: pipeline AI GĐ2 (nhánh `ai/gd2-goi-y`, xếp chồng trên `ai/gd1-mastery`, Draft PR #22)
 
 **Đã xong** (báo cáo `docs/giai-doan/ai-gd2/BAO_CAO.md`)

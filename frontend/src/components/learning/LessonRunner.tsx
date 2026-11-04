@@ -24,6 +24,7 @@ import {
 import * as ui from "./lessonStyles";
 import { annotateTerms, claimTerms, firstAppearances, readTermOwners, termsForLesson, writeTermOwners } from "./TermText";
 import { useAuth } from "../../auth/AuthProvider";
+import { requestExplain } from "../../lib/tutorBus";
 import { Button } from "../ui/Button";
 import { Badge, ChipButton, ProgressBar, ResultBox } from "../ui/Page";
 
@@ -123,8 +124,11 @@ export default function LessonRunner({
   onBack,
   onProgressChanged,
   onLessonOutdated,
+  focusBlockId,
 }: {
   lesson: LessonDetail;
+  // Trích dẫn của AI Tutor mở đúng khối: /app/hoc?bai=L02&khoi=L02-B05.
+  focusBlockId?: string | null;
   initialProgress?: LessonLearningProgress;
   onBack: () => void;
   onProgressChanged?: () => void;
@@ -284,6 +288,17 @@ export default function LessonRunner({
     topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
   const step = steps[current];
+
+  useEffect(() => {
+    if (!focusBlockId) return;
+    const index = steps.findIndex((item) => item.id === focusBlockId);
+    if (index < 0) return;
+    if (viewAll) {
+      requestAnimationFrame(() => document.getElementById(`buoc-${focusBlockId}`)?.scrollIntoView({ behavior: "smooth", block: "start" }));
+    } else {
+      setStepIndex(index);
+    }
+  }, [focusBlockId]);
 
   return <section className="scroll-mt-4 pb-20 sm:pb-0" ref={topRef}>
     <button className={ui.textButton} onClick={onBack}>← Tất cả bài học</button>
@@ -598,6 +613,7 @@ function ExerciseCard({
       {result.explanation
         ? <p className={ui.explanation}><b>Giải thích:</b> {result.explanation}</p>
         : !result.correct && <p className={ui.muted}>Thử lại nhé. Nếu sai thêm {Math.max(1, 2 - result.wrong_attempts)} lần nữa, lời giải sẽ hiện ra.</p>}
+      {!result.correct && <Button variant="ghost" className="mt-1" onClick={() => requestExplain({ attemptId: result.attempt_id, prompt: exercise.prompt })}>Giải thích lỗi này</Button>}
     </ResultBox>}
     {error && <div className={ui.resultBad}>{error}</div>}
   </div>;

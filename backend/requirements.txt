@@ -18,3 +18,5 @@ music21>=9
 # pipeline AI (GĐ2): KNN và cosine bằng numpy, SDK Gemini (chỉ gọi khi AI_ENABLED=1)
 numpy>=1.26
 google-genai>=1.0
+# GĐ3: phân loại ý định câu hỏi (TF-IDF ký tự + LogisticRegression), chạy cục bộ, không cần mạng
+scikit-learn>=1.4

@@ -356,6 +356,57 @@ class RecommendationLog(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
 
 
+class ChatSession(Base):
+    """Phiên chat AI Tutor (04 Bảng 7). id là UUID dạng chuỗi để chạy được cả SQLite và PostgreSQL."""
+
+    __tablename__ = "chat_sessions"
+    __table_args__ = (CheckConstraint("mode IN ('companion', 'harmony_assistant')", name="ck_chat_sessions_mode"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    mode: Mapped[str] = mapped_column(String(24), default="companion")
+    summary: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+
+
+class ChatMessage(Base):
+    """Một tin nhắn (04 Bảng 7). tool_calls giữ lời gọi Music Engine, cách truy xuất và việc có gọi LLM hay không
+    (để tính hạn mức). Tin nhắn của người dùng chỉ lưu ở đây, không gửi cho Gemini ngoài 6 tin gần nhất."""
+
+    __tablename__ = "chat_messages"
+    __table_args__ = (
+        CheckConstraint("role IN ('user', 'assistant', 'tool')", name="ck_chat_messages_role"),
+        CheckConstraint("status IN ('ok', 'failed', 'fallback')", name="ck_chat_messages_status"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    session_id: Mapped[str] = mapped_column(ForeignKey("chat_sessions.id", ondelete="CASCADE"), index=True)
+    role: Mapped[str] = mapped_column(String(16))
+    content: Mapped[str] = mapped_column(Text)
+    intent: Mapped[Optional[str]] = mapped_column(String(32), nullable=True)
+    citations: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list)
+    engine_claims: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list)
+    tool_calls: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    hint_level: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    status: Mapped[str] = mapped_column(String(16), default="ok")
+    latency_ms: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    tokens_in: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    tokens_out: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+
+
+class ChatFeedback(Base):
+    __tablename__ = "chat_feedback"
+    __table_args__ = (CheckConstraint("stars BETWEEN 1 AND 5", name="ck_chat_feedback_stars"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    message_id: Mapped[int] = mapped_column(ForeignKey("chat_messages.id", ondelete="CASCADE"), unique=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    stars: Mapped[int] = mapped_column(Integer)
+    comment: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+
 class PlacementResult(Base):
     """Bài kiểm tra đầu vào (UC-06): một dòng mỗi người học, làm lại phải xác nhận."""
 

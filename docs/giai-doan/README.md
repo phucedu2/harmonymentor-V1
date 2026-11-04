@@ -21,6 +21,7 @@ Các giai đoạn 0.2 → 2.3 là lộ trình của bản code gốc (zip v0.1.0
 | [ai-gd0](ai-gd0/) | v0.5.4-dev | Pipeline AI của giảng viên, GĐ0: kiểm hiện trạng, mô phỏng mở khóa L01–L04, kiểm Gemini, kế hoạch GĐ1–GĐ4 (04/11) | [KE_HOACH_AI.md](ai-gd0/KE_HOACH_AI.md), [mo_phong_mo_khoa_2026-11-04.md](ai-gd0/mo_phong_mo_khoa_2026-11-04.md) |
 | [ai-gd1](ai-gd1/) | v0.5.4-dev | Pipeline AI GĐ1: ánh xạ kỹ năng ADR-008, mastery EMA, luật ôn 2A, bài kiểm tra đầu vào (04/11) | [BAO_CAO.md](ai-gd1/BAO_CAO.md), [nguoi_mau_2026-11-04.md](ai-gd1/nguoi_mau_2026-11-04.md) |
 | [ai-gd2](ai-gd2/) | v0.5.4-dev | Pipeline AI GĐ2: hệ gợi ý 3 tầng (luật, nội dung Gemini/TF-IDF, KNN chiều chung), G-3 ba danh sách, mục tiêu học, thẻ Dashboard (04/11) | [BAO_CAO.md](ai-gd2/BAO_CAO.md) |
+| [ai-gd3](ai-gd3/) | v0.5.4-dev | Pipeline AI GĐ3: AI Tutor có trích dẫn (RAG Gemini + BM25), kiểm Music Engine, chống prompt injection, giải thích lỗi 3 mức, khung chat nổi (04/11) | [BAO_CAO.md](ai-gd3/BAO_CAO.md) |
 
 ## Quy ước cho giai đoạn sau
 

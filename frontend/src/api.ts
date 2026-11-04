@@ -247,6 +247,21 @@ export type Recommendations = {
 export type Goal = { goal_text: string | null; embedded: boolean; embedding_model: string | null };
 export type PlacementSubmitResult = { status: "completed"; results: { skill_id: string; correct: boolean; score: number }[] };
 
+// Pipeline AI GĐ3: AI Tutor (04 mục 3.3, Bảng 13). Nhãn "đã kiểm" do máy chủ quyết, giao diện chỉ hiển thị.
+export type ChatIntent = "concept" | "explain_error" | "quiz" | "study_advice" | "composition" | "out_of_scope";
+export type ChatCitation = { lesson_id: string; block_id: string; title: string; lesson_title: string };
+export type EngineClaim = {
+  tool: string; args: Record<string, string>; claimed: string; engine: string | null;
+  status: "verified" | "contradicted" | "unsupported"; origin: string;
+};
+export type ChatReply = {
+  message_id: number; session_id: string; reply: string; citations: ChatCitation[]; engine_claims: EngineClaim[];
+  verified: boolean; verified_label: string | null; intent: ChatIntent; hint_level: number;
+  status: "ok" | "failed" | "fallback"; suggested_actions: string[]; fallback_reason: string | null;
+  retrieval_method: string | null; quota_remaining_today: number; attempt_id?: string | null; next_hint_level?: number | null;
+};
+export type ChatContext = { page?: string; lesson_id?: string; block_id?: string };
+
 export const api = {
   // Legacy Practice routes retained during migration.
   transpose: (note: string, interval: string) =>
@@ -309,6 +324,12 @@ export const api = {
   clickRecommendation: (logId: string, lessonId: string) =>
     apiPost<void>(`/recommend/${encodeURIComponent(logId)}/click`, { lesson_id: lessonId }),
   myGoal: () => apiCall<Goal>("/me/goal"),
+  chatMessage: (message: string, sessionId: string | null, context?: ChatContext) =>
+    apiPost<ChatReply>("/chat/message", { message, session_id: sessionId, context }),
+  explainAttempt: (attemptId: string, sessionId: string | null, hintLevel?: number) =>
+    apiPost<ChatReply>("/chat/explain-attempt", { attempt_id: attemptId, session_id: sessionId, hint_level: hintLevel }),
+  rateChatMessage: (messageId: number, stars: number) =>
+    apiPost<void>(`/chat/messages/${messageId}/rating`, { stars }),
   setGoal: (goalText: string) => apiCall<Goal>("/me/goal", { method: "PUT", body: JSON.stringify({ goal_text: goalText }) }),
   answerReview: (reviewItemId: string, answer: unknown, rating = "auto") =>
     apiPost<ReviewAnswerResult>(`/review/${encodeURIComponent(reviewItemId)}/answer`, { answer, rating }),

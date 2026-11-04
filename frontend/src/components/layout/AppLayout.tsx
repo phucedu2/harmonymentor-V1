@@ -3,6 +3,7 @@ import { NavLink, Outlet, useNavigate } from "react-router";
 import { useAuth } from "../../auth/AuthProvider";
 import { PageLoader } from "../ui/PageLoader";
 import { Logo } from "./Logo";
+import FloatingTutorDrawer from "../learning/FloatingTutorDrawer";
 
 // Bố cục khung lấy từ v0.5.3-dev (thanh bên tối, mục đang mở nổi khối), logic giữ của main:
 // NavLink theo route, RequireAuth ở App.tsx, đăng xuất về trang chủ.
@@ -68,6 +69,7 @@ export default function AppLayout() {
       <main id="noi-dung" className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
         <Suspense fallback={<PageLoader />}><Outlet /></Suspense>
       </main>
+      <FloatingTutorDrawer />
     </div>
   );
 }

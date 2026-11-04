@@ -124,3 +124,84 @@ class GoalOut(BaseModel):
     goal_text: Optional[str] = None
     embedded: bool
     embedding_model: Optional[str] = None
+
+
+# --- AI Tutor (GĐ3, 04 mục 3.3 "Hỏi AI Tutor", Bảng 12, Bảng 13) ----------------------------------
+
+class ChatContextIn(BaseModel):
+    page: Optional[str] = Field(None, max_length=40)
+    lesson_id: Optional[str] = Field(None, max_length=16)
+    block_id: Optional[str] = Field(None, max_length=40)
+
+
+class ChatMessageIn(BaseModel):
+    session_id: Optional[str] = Field(None, max_length=36)
+    message: str = Field(min_length=1, max_length=1000)
+    context: Optional[ChatContextIn] = None
+
+
+class ExplainAttemptIn(BaseModel):
+    attempt_id: str = Field(min_length=1, max_length=64)
+    # Bỏ trống: máy chủ tự tăng mức theo số lần đã hỏi cho lượt này (1 → 3).
+    hint_level: Optional[int] = Field(None, ge=1, le=3)
+    session_id: Optional[str] = Field(None, max_length=36)
+
+
+class ChatCitationOut(BaseModel):
+    lesson_id: str
+    block_id: str
+    title: str
+    lesson_title: str
+
+
+class EngineClaimOut(BaseModel):
+    tool: str
+    args: dict[str, str]
+    claimed: str
+    engine: Optional[str]
+    status: Literal["verified", "contradicted", "unsupported"]
+    origin: str
+
+
+class ChatReplyOut(BaseModel):
+    message_id: int
+    session_id: str
+    reply: str
+    citations: list[ChatCitationOut]
+    engine_claims: list[EngineClaimOut]
+    verified: bool
+    verified_label: Optional[str]
+    intent: Literal["concept", "explain_error", "quiz", "study_advice", "composition", "out_of_scope"]
+    hint_level: int
+    status: Literal["ok", "failed", "fallback"]
+    suggested_actions: list[str]
+    fallback_reason: Optional[str]
+    retrieval_method: Optional[str]
+    quiz: Optional[dict[str, Any]] = None
+    quota_remaining_today: int
+    attempt_id: Optional[str] = None
+    next_hint_level: Optional[int] = None
+
+
+class ChatSessionOut(BaseModel):
+    id: str
+    mode: str
+    created_at: datetime
+    updated_at: datetime
+
+
+class ChatHistoryItem(BaseModel):
+    id: int
+    role: str
+    content: str
+    intent: Optional[str]
+    citations: list[dict[str, Any]]
+    engine_claims: list[dict[str, Any]]
+    hint_level: Optional[int]
+    status: str
+    created_at: datetime
+
+
+class ChatRatingIn(BaseModel):
+    stars: int = Field(ge=1, le=5)
+    comment: Optional[str] = Field(None, max_length=1000)
