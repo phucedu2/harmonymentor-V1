@@ -57,7 +57,7 @@ Các điểm "chờ Thắng" của ADR-008 (D-2, R-1, ngưỡng số chiều chu
 | Embedding | `backend/app/ai/embedder.py`, `backend/app/ai/build_skill_embeddings.py` |
 | Nội dung | `backend/app/content/skill_descriptions.{json,py}`, `backend/app/content/skill_embeddings.json` |
 | Dịch vụ, API | `backend/app/services/recommendation_service.py`, `backend/app/api/ai_recommend.py`, `backend/app/api/router.py`, `backend/app/contracts/ai.py` |
-| CSDL | `backend/app/db/models.py` (`User.goal_embedding`, `goal_embedding_model`, `RecommendationLog`), `backend/migrations/versions/20261105_ai_gd2_recommend.py`, `backend/app/db/session.py` (báo CSDL cũ) |
+| CSDL | `backend/app/db/models.py` (`User.goal_embedding`, `goal_embedding_model`, `RecommendationLog`), `backend/migrations/versions/20261104_ai_gd2_recommend.py`, `backend/app/db/session.py` (báo CSDL cũ) |
 | Cấu hình | `backend/app/core/config.py`, `.env.example`, `backend/requirements.txt` (numpy, scikit-learn, google-genai), `backend/pytest.ini` (dấu `live`) |
 | Test | `test_ai_gd2_vector_knn.py`, `test_ai_gd2_cf_scoring.py`, `test_ai_gd2_recommend_api.py`, `test_ai_gd2_embedder_content.py`, `test_ai_gd2_migration.py`, `test_ai_gd2_live.py`; sửa `test_ai_gd1_migration.py` (head đổi) |
 | Frontend | `frontend/src/components/learning/RecommendedLessons.tsx`, `pages/Dashboard.tsx`, `pages/Learn.tsx` (`?bai=`), `api.ts` |
