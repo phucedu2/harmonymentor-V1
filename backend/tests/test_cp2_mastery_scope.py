@@ -17,6 +17,13 @@ from tests.auth_helpers import auth, correct_answer
 client = TestClient(app)
 
 
+@pytest.fixture(scope="module", autouse=True)
+def _schema_and_seed():
+    # Chạy lifespan của app (create_schema + seed) để file test chạy riêng lẻ trên CSDL mới vẫn được.
+    with TestClient(app):
+        yield
+
+
 def make_user(role: str = "learner") -> str:
     user_id = "cp2s-" + uuid4().hex[:12]
     with SessionLocal() as db:
@@ -32,10 +39,10 @@ def version_and_answer(lesson_id: str, exercise_id: str):
     return version_id, correct_answer(spec)
 
 
-def submit(user_id: str, lesson_id: str, exercise_id: str, role: str = "learner", wrong: bool = False):
+def submit(user_id: str, lesson_id: str, exercise_id: str, role: str = "learner", wrong_answer=None):
     version_id, answer = version_and_answer(lesson_id, exercise_id)
     response = client.post("/api/v1/attempts", headers=auth(user_id, role), json={
-        "exercise_version_id": version_id, "answer": "zzz" if wrong else answer,
+        "exercise_version_id": version_id, "answer": answer if wrong_answer is None else wrong_answer,
     })
     assert response.status_code == 200, response.text
     return response.json()
@@ -73,7 +80,8 @@ def test_s12b_repeat_correct_counts_attempt_but_not_score():
 
 def test_s12c_wrong_records_last_error():
     user_id = make_user()
-    submit(user_id, "L02", "L02-Q02", wrong=True)
+    # Cmaj7 = C E G B; gửi Bb là sai chất lượng quãng bảy (đọc được, chỉ sai).
+    assert not submit(user_id, "L02", "L02-Q02", wrong_answer="C E G Bb")["correct"]
     row = state(user_id, "chord.seventh_build")
     assert row.score == pytest.approx(0.0) and row.attempts_count == 1
     assert row.last_error_code

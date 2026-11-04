@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { api, type LearningOverview } from "../api";
+import { api, type LearningOverview, type PlacementStatus } from "../api";
 import { useAuth } from "../auth/AuthProvider";
 import { ButtonLink } from "../components/ui/Button";
 import { Badge, Card, CardTitle, Kicker, Metric, PageHeading, ProgressBar } from "../components/ui/Page";
@@ -7,7 +7,9 @@ import { Badge, Card, CardTitle, Kicker, Metric, PageHeading, ProgressBar } from
 export default function DashboardPage() {
   const { user } = useAuth();
   const [overview, setOverview] = useState<LearningOverview | null>(null);
+  const [placement, setPlacement] = useState<PlacementStatus | null>(null);
   useEffect(() => { api.learningOverview().then(setOverview).catch(() => setOverview(null)); }, []);
+  useEffect(() => { api.placement().then((p) => setPlacement(p.status)).catch(() => setPlacement(null)); }, []);
 
   const nextLesson = useMemo(() => {
     if (!overview) return null;
@@ -24,6 +26,11 @@ export default function DashboardPage() {
         ? "Bạn chưa cần biết gì về nhạc lý. Hãy bắt đầu từ Bài 1: chỉ cần nhìn bàn phím piano và đếm."
         : "Học tiếp bài đang dở, rồi ôn các thẻ đến hạn để nhớ lâu."}
     </PageHeading>
+
+    {placement === "not_started" && overview?.started_lessons === 0 && <Card className="mb-4 p-4">
+      <p className="mb-2">Đã biết chút nhạc lý? Làm bài kiểm tra đầu vào 12 câu để hệ thống gợi ý bài phù hợp hơn.</p>
+      <ButtonLink to="/app/kiem-tra-dau-vao" variant="secondary">Làm bài kiểm tra đầu vào</ButtonLink>
+    </Card>}
 
     {/* Một việc chính: học tiếp. Nút chính đặt ngay đầu trang để luôn thấy trên màn 360px. */}
     <Card className="mb-4 border-primary/30 p-6">

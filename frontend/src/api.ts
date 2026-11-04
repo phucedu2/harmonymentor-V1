@@ -217,6 +217,20 @@ const apiCall = <T,>(path: string, init?: RequestInit) => http<T>(path, init);
 const enginePost = <T,>(path: string, data: unknown) => engineCall<T>(path, { method: "POST", body: JSON.stringify(data) });
 const apiPost = <T,>(path: string, data: unknown) => apiCall<T>(path, { method: "POST", body: JSON.stringify(data) });
 
+// Pipeline AI GĐ1: mastery và bài kiểm tra đầu vào (UC-06).
+export type MasteryLevel = "not_assessed" | "learning" | "weak" | "ready" | "mastered";
+export type SkillMastery = {
+  skill_id: string; name: string; srs_code: string; group_code: string;
+  assessed: boolean; score: number | null; attempts_count: number; level: MasteryLevel;
+  ready_threshold: number; mastery_threshold: number;
+};
+export type PlacementQuestion = {
+  exercise_id: string; exercise_version_id: string; skill_id: string; kind: string; prompt: string; options?: string[] | null;
+};
+export type PlacementStatus = "not_started" | "completed" | "skipped";
+export type Placement = { status: PlacementStatus; questions: PlacementQuestion[] };
+export type PlacementSubmitResult = { status: "completed"; results: { skill_id: string; correct: boolean; score: number }[] };
+
 export const api = {
   // Legacy Practice routes retained during migration.
   transpose: (note: string, interval: string) =>
@@ -270,6 +284,11 @@ export const api = {
     apiPost<CompleteLessonResult>(`/lessons/${encodeURIComponent(lessonId)}/complete`, {}),
   dueReviews: (includeFuture = false) =>
     apiCall<ReviewState[]>(`/review/due?include_future=${includeFuture}`),
+  myMastery: () => apiCall<{ skill_group_map_version: string; skills: SkillMastery[] }>("/me/mastery"),
+  placement: () => apiCall<Placement>("/placement"),
+  submitPlacement: (answers: { exercise_version_id: string; answer: unknown }[], confirmRetake = false) =>
+    apiPost<PlacementSubmitResult>("/placement/submit", { answers, confirm_retake: confirmRetake }),
+  skipPlacement: () => apiPost<Placement>("/placement/skip", {}),
   answerReview: (reviewItemId: string, answer: unknown, rating = "auto") =>
     apiPost<ReviewAnswerResult>(`/review/${encodeURIComponent(reviewItemId)}/answer`, { answer, rating }),
 };
