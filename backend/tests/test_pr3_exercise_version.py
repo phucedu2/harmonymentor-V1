@@ -40,6 +40,8 @@ KNOWN_SNAPSHOTS = json.loads(
     (Path(__file__).resolve().parents[1] / "migrations" / "data" / "pr3_anh_chup_lich_su.json").read_text(encoding="utf-8")
 )["versions"]
 
+DEMO_1011_IDS = {"L01-Q07", "L01-Q08", "L02-Q07", "L02-Q08", "L02-Q09", "L02-Q10"}
+
 CURRENT_VERSION_IDS = {
     "L01-Q01-v4", "L01-Q02-v4", "L01-Q03-v5", "L01-Q04-v4", "L01-Q05-v5", "L01-Q06-v4",
     "L02-Q01-v1", "L02-Q02-v1", "L02-Q03-v1", "L02-Q04-v1", "L02-Q05-v1", "L02-Q06-v1",
@@ -62,10 +64,10 @@ def drafts_visible(monkeypatch):
 
 
 def specs() -> list[dict]:
-    # Bộ câu PR-3 là bộ đã phát hành; câu nháp thật trong nguồn (demo 10/11) có test riêng.
+    # Bộ câu PR-3 là 24 câu đã phát hành lúc PR-3 (ảnh chụp git); 6 câu demo 10/11 có test riêng.
     changed = copy.deepcopy(LESSON_SPECS)
     for lesson in changed:
-        lesson["exercises"] = [x for x in lesson["exercises"] if x.get("status", "published") != "draft"]
+        lesson["exercises"] = [x for x in lesson["exercises"] if x["id"] not in DEMO_1011_IDS]
     return changed
 
 

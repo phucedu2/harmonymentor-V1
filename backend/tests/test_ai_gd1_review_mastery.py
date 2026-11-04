@@ -85,18 +85,20 @@ def review_events(user_id: str, skill_id: str) -> int:
             MasteryEvent.source == "review", MasteryEvent.counted.is_(True))).all())
 
 
-def test_c1_reproduce_exercises_alone_cap_roman_at_030():
-    """Tái hiện C1: một câu duy nhất → roman.major_seventh tối đa 0,30, L03 không bao giờ đủ điều kiện."""
+def test_c1_three_independent_questions_lift_roman_to_0657():
+    """C1 đã gỡ (demo 10/11, Thắng + Đạt duyệt 04/11): roman.major_seventh có 3 câu độc lập (L02-Q03/Q09/Q10).
+
+    Trước đó chỉ có 1 câu nên tối đa 0,30 và L03 không bao giờ đủ điều kiện nếu bỏ placement."""
     user_id = make_user()
     learn_lesson(user_id, "L01", DAY0)
     learn_lesson(user_id, "L02", DAY0)
-    assert score(user_id, "roman.major_seventh") == pytest.approx(0.30)
-    # Làm lại đúng câu đó không cộng (S7).
+    assert score(user_id, "roman.major_seventh") == pytest.approx(1 - 0.7 ** 3)
+    # Làm lại đúng các câu đó không cộng (S7).
     learn_lesson(user_id, "L02", DAY0 + timedelta(hours=1))
-    assert score(user_id, "roman.major_seventh") == pytest.approx(0.30)
+    assert score(user_id, "roman.major_seventh") == pytest.approx(1 - 0.7 ** 3)
 
 
-def test_2a_due_reviews_unlock_l03_on_day_3():
+def test_2a_due_reviews_count_once_per_day_and_only_when_due():
     user_id = make_user()
     learn_lesson(user_id, "L01", DAY0)
     learn_lesson(user_id, "L02", DAY0 + timedelta(days=1))
@@ -105,15 +107,15 @@ def test_2a_due_reviews_unlock_l03_on_day_3():
     day1 = DAY0 + timedelta(days=1, minutes=10)
     for cid in roman_cards:  # cả 4 thẻ đến hạn ngay sau khi xong bài
         review(user_id, cid, day1)
-    # Chỉ 1 sự kiện ôn/kỹ năng/ngày: 0,30 → 0,51, không phải 0,83.
-    assert score(user_id, "roman.major_seventh") == pytest.approx(0.51)
+    # Chỉ 1 sự kiện ôn/kỹ năng/ngày: 0,657 → 0,7599 (1 − 0,7⁴), không cộng 4 lần.
+    assert score(user_id, "roman.major_seventh") == pytest.approx(1 - 0.7 ** 4)
     assert review_events(user_id, "roman.major_seventh") == 1
     # Ngày 2: thẻ ở hộp 2 hẹn sau 2 ngày, chưa đến hạn → ôn trước hạn không tính.
     review(user_id, roman_cards[0], DAY0 + timedelta(days=2))
-    assert score(user_id, "roman.major_seventh") == pytest.approx(0.51)
-    # Ngày 3: đến hạn → 0,657 ≥ 0,60.
+    assert score(user_id, "roman.major_seventh") == pytest.approx(1 - 0.7 ** 4)
+    # Ngày 3: đến hạn → cộng thêm một lần.
     review(user_id, roman_cards[1], DAY0 + timedelta(days=3, minutes=20))
-    assert score(user_id, "roman.major_seventh") == pytest.approx(0.657)
+    assert score(user_id, "roman.major_seventh") == pytest.approx(1 - 0.7 ** 5)
 
 
 def test_2a_wrong_due_review_counts_zero():
@@ -130,7 +132,7 @@ def test_2a_self_check_card_never_counts():
     card = next(cid for cid, self_check in cards(user_id, "pitch.spelling") if self_check)
     with SessionLocal() as db:
         ls.answer_review(db, user_id, card, "", "good", None, now=DAY0 + timedelta(minutes=5))
-    assert score(user_id, "pitch.spelling") == pytest.approx(0.30)
+    assert score(user_id, "pitch.spelling") == pytest.approx(1 - 0.7 ** 3)  # chỉ 3 câu bài tập
     assert review_events(user_id, "pitch.spelling") == 0
 
 

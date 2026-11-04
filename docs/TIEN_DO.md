@@ -9,10 +9,10 @@ File này ghi lại việc đã xong, việc đang dở, lệnh để chạy l�
 - AI Tutor: 5 câu vàng của Thắng, guardrail kiểm thêm khẳng định quãng trong lời AI.
 - 2 kịch bản trên giao diện thật (video + 7 ảnh), 1 lần giải thích lỗi bằng Gemini thật.
 - Đổi câu chữ CF (C4), test `/recommend` trên PostgreSQL (C8), ghi trạng thái duyệt vào ADR-008/014.
-- pytest 909 (không tính postgres/live).
+- pytest 917 (không tính postgres/live).
 
 **Đang dở / chờ**
-- Thắng + Đạt duyệt câu chữ 6 câu rồi mới phát hành. Đạt duyệt 4 bản sửa mô tả kỹ năng. Thắng: quy ước IM7/Imaj7, thêm `roman_numeral` vào guardrail.
+- Đã xong 04/11: 6 câu phát hành, 4 mô tả kỹ năng mới + vector, ADR-016 (Imaj7/IM7). Còn: Thắng quyết thêm `roman_numeral` vào guardrail; Đạt quyết thêm câu "V7 của G là D7" vào L02-B08.
 
 **Lệnh chạy lại**
 ```bash

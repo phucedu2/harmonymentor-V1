@@ -2,8 +2,8 @@
 
 Cùng cách cô lập với HM-010: schema ngẫu nhiên trong CSDL tên kết thúc `_test`, xóa đúng schema đó khi xong.
 Kiểm: người mới được gợi ý L01 (nền tảng); làm xong L01 thì /recommend vẫn 200 và ghi nhật ký; bấm gợi ý ghi
-clicked_lesson_id; PUT /me/goal khi AI tắt lưu chữ, không lưu vector; khi câu nháp demo 10/11 được phát hành
-(mô phỏng) thì L02 vào danh sách "next".
+clicked_lesson_id; PUT /me/goal khi AI tắt lưu chữ, không lưu vector; làm xong L01 (không placement) thì L02 vào
+danh sách "next".
 """
 
 from __future__ import annotations
@@ -17,7 +17,6 @@ from sqlalchemy import select, text
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.api import ai_recommend
-from app.content import versioning
 from app.core.config import settings
 from app.db.base import Base
 from app.db.models import RecommendationLog, User
@@ -118,8 +117,8 @@ def test_goal_saved_without_vector_when_ai_off(client, factory):
     assert recommend(client, uid)["next"]
 
 
-def test_l02_suggested_once_demo_drafts_are_published(client, factory, monkeypatch):
-    monkeypatch.setattr(versioning, "visible_statuses", lambda: {"draft", "published"})
+def test_l02_suggested_after_l01_without_placement(client, factory):
+    # 6 câu demo 10/11 đã phát hành: pitch.spelling đủ 3 câu nên L02 mở mà không cần placement.
     uid = new_user(factory)
     answer_lesson_correctly(client, "L01", auth(uid))
     assert client.post("/api/v1/lessons/L01/complete", headers=auth(uid)).status_code == 200

@@ -7,12 +7,12 @@ Nhánh `ai/demo-1011` (xếp chồng trên `ai/gd4-danh-gia`), Draft PR #25 vào
 
 | Việc | Trạng thái | Sẵn sàng demo? |
 |---|---|---|
-| A. 6 câu bài tập mới | Đã soạn, `status="draft"`, chờ Thắng + Đạt duyệt nội dung | Chỉ sau khi đổi sang `published` |
-| B. Rà 5 mô tả kỹ năng | Đã đối chiếu nguồn, có bản sửa đề xuất, **chưa ghi vào file** | Không đổi gì tới khi Đạt duyệt câu chữ |
+| A. 6 câu bài tập mới | **Đã phát hành 04/11** (Thắng + Đạt duyệt) | Có |
+| B. Rà 5 mô tả kỹ năng | 4 bản sửa Đạt duyệt đã ghi, 3 vector tính lại; `roman.major_seventh` giữ nguyên (ADR-016) | Có |
 | C. AI Tutor RAG | Đã có từ GĐ3; thêm 5 câu vàng, kiểm khẳng định quãng trong lời AI | Có, nhưng Gemini free tier hay quá giờ |
-| D. 2 kịch bản E2E | Chạy trên giao diện thật, có video + 7 ảnh | Có (kịch bản 1 cần câu nháp được phát hành) |
+| D. 2 kịch bản E2E | Chạy trên giao diện thật, có video + 7 ảnh | Có |
 
-Kiểm thử: pytest SQLite **909 đạt** (`-m "not postgres and not live"`), PostgreSQL 16 cục bộ: 13 test HM-010 + `/recommend` đạt (12 test migration cần pgvector, máy này không có, CI có). CI `--min-passed` 909 / 25.
+Kiểm thử: pytest SQLite **917 đạt** (sau khi phát hành và ADR-016) (`-m "not postgres and not live"`), PostgreSQL 16 cục bộ: 13 test HM-010 + `/recommend` đạt (12 test migration cần pgvector, máy này không có, CI có). CI `--min-passed` 917 / 25.
 
 ## 1. Nhiệm vụ A: 6 câu mới
 
@@ -33,7 +33,7 @@ Commit `feat(content): 6 câu nháp demo 10/11…`. File: `backend/app/content/c
 - **Mô phỏng sau phát hành** (cho hiện bản nháp trong test, không đổi nguồn): ba câu độc lập đúng lần đầu đưa `pitch.spelling`, `chord.seventh_quality`, `chord.seventh_build`, `roman.major_seventh` lên 0,657 = 1 − 0,7³. Người mới bỏ placement đi L01 → gợi ý L02 → L02 → gợi ý L03 → L03 → gợi ý L04 qua API thật. Không hạ ngưỡng 0,60/0,80.
 - Test cũ phải sửa: bộ PR-3 nay chỉ dùng câu đã phát hành; id nháp giả trong test đổi `L02-Q07` → `L02-Q99` (trùng id mới); test migration chấp nhận seed thêm đúng 6 bản nháp.
 
-**Để phát hành**: Thắng + Đạt duyệt câu chữ, rồi đổi `status="draft"` → bỏ tham số (mặc định published) ở 6 dòng. Seed tự chuyển draft → published, không tạo phiên bản mới.
+**Đã phát hành 04/11/2026** (Phúc báo "Thắng và Đạt duyệt"): bỏ `status="draft"` ở 6 dòng. Seed tự chuyển draft → published, không tạo phiên bản mới. L01 nay có 8 câu, L02 có 10 câu. Test GĐ1 dùng roman.major_seventh làm ví dụ 2A đổi số kỳ vọng (0,657 → 0,7599 → 0,832) vì kỹ năng nay có 3 câu; luật 2A không đổi.
 
 ## 2. Nhiệm vụ C: AI Tutor RAG
 
@@ -55,7 +55,9 @@ Thêm trong đợt này (commit `feat(ai-tutor): 5 câu vàng…`):
 
 Không có khẳng định sai nào lọt tới người học. Đo riêng: `gemini-3.5-flash-lite` mất 25 s cho một yêu cầu rỗng, `gemini-3.6-flash` 9 s.
 
-## 3. Nhiệm vụ B: mô tả kỹ năng (chưa sửa file)
+## 3. Nhiệm vụ B: mô tả kỹ năng
+
+Cập nhật 04/11: Đạt duyệt 4 bản sửa dưới đây; đã ghi vào `skill_descriptions.json` và tính lại vector bằng Gemini (`function.tonic`, `progression.ii_v_i`, `chord.seventh_quality`; `harmony.secondary_dominant.identify` là post_mvp nên không có vector). 10 vector khác giữ nguyên. Mô tả `roman.major_seventh` giữ nguyên vì nay `Imaj7` được chấm đúng (ADR-016).
 
 `approved` trong `skill_descriptions.json` là do Claude ghi theo lời Phúc báo, chưa có văn bản của Đạt. Đối chiếu MT21C §9.4, §17.2, §19.1, §8.1, §8.3 (mở được 04/11) và OMT v2 (locator đợt 0.4B, chưa mở lại):
 
@@ -73,7 +75,7 @@ Sửa xong thì chạy lại `python -m app.ai.build_skill_embeddings` (gọi Ge
 
 Script `scripts/e2e/demo_1011.cjs` (Playwright), đáp án lấy từ `scripts/e2e/dap_an_demo_1011.py`. Minh chứng: `docs/minh-chung/anh/demo-1011/01..07*.png`, video `docs/minh-chung/video/demo-1011-goi-y-va-giai-thich-loi.webm`.
 
-Môi trường: backend uvicorn + CSDL SQLite test mới (alembic head), frontend Vite, `AI_ENABLED=1`, khóa Gemini chỉ trong biến môi trường, **`SHOW_DRAFT_CONTENT=1` để mô phỏng 6 câu đã phát hành**.
+Môi trường: backend uvicorn + CSDL SQLite test mới (alembic head), frontend Vite, `AI_ENABLED=1`, khóa Gemini chỉ trong biến môi trường, `SHOW_DRAFT_CONTENT=1` (lúc chạy 6 câu còn là nháp; nay đã phát hành nên không cần cờ này).
 
 1. Recommender: đăng ký → bỏ placement → gợi ý "Bắt đầu từ nền tảng: Bài 1" → làm đủ 8 câu L01 trên giao diện → hoàn thành → gợi ý **Bài 2, "Củng cố kỹ năng yếu", lý do "Giúp bạn củng cố 'Dựng hợp âm bảy'…"**, mở "Vì sao gợi ý bài này?" → bấm "Mở bài" → L02 mở; `recommendation_logs.clicked_lesson_id = L02`.
 2. AI Tutor: trong L02 gõ `G B D F#` cho "Dựng G7" → Engine: "Bạn đang dùng quãng 7 trưởng thay vì quãng 7 thứ (F# → F)" (SEVENTH_QUALITY) → "Giải thích lỗi này" → Gemini thật (6,5 s, 1.062 token vào, 170 ra), gợi ý mức 1/3, trích dẫn [L02] "4. Giải mã maj7, m7, 7, ø7…", không lộ đáp án. Lần chạy đầu Gemini quá 15 s, app trả dự phòng từ bài học (đúng thiết kế).
@@ -95,7 +97,7 @@ Test CI không gọi mạng tương ứng: `test_demo1011_cau_nhap.py::test_new_
 1. **Khẳng định số La Mã chưa được kiểm**: "V7 trong G trưởng là G7 = G B D F" qua được guardrail và còn mang nhãn "đã kiểm" (vì G7 = G B D F đúng). Cần thêm công cụ `roman_numeral` vào guardrail (cần Thắng duyệt, đổi danh sách công cụ của ADR-015).
 2. **D03 không trả lời được**: bài L02 chỉ dạy V7 = G7 trong C trưởng, không có đoạn nào nói D7 là V7 của G; Gemini từ chối. Cần thêm một câu vào khối L02-B08 hoặc đưa dữ kiện Engine (bậc + hợp âm) vào prompt.
 3. **Gemini free tier**: 3/5 câu live và 1/2 lần giải thích lỗi rơi vào dự phòng (quá 15 s hoặc 503). Demo vẫn chạy (dự phòng đúng thiết kế), nhưng muốn trình diễn câu trả lời của AI ổn định thì nên dùng khóa trả phí hoặc đổi `GEMINI_MODEL` sang mô hình nhanh hơn trong `.env` lúc demo.
-4. Quy ước `Imaj7` (bài) và `IM7` (Engine) lệch nhau (mục 3).
+4. ~~Quy ước `Imaj7` (bài) và `IM7` (Engine) lệch nhau.~~ Đã xử lý: chấm nhận cả hai (ADR-016).
 5. Trang OMT trả 403 cho máy kiểm; nguồn OMT trong 6 câu là locator cũ, chưa mở lại.
 
 ## 7. Không tuyên bố
@@ -104,8 +106,8 @@ Không có số liệu nào cho thấy mô hình giúp học tốt hơn. Kết q
 
 ## 8. Câu hỏi còn mở
 
-- Q-A1 (Thắng + Đạt): duyệt câu chữ 6 câu để phát hành?
-- Q-B1 (Thắng): số La Mã hợp âm maj7 dùng `IM7` (Engine, MT21C) hay `Imaj7` (bài L02)? Đổi Engine cần test + ADR; đổi bài là đổi câu chữ đã phát hành.
-- Q-B2 (Đạt): duyệt 4 bản sửa mô tả ở mục 3.
+- ~~Q-A1~~ Thắng + Đạt duyệt, đã phát hành.
+- ~~Q-B1~~ Phúc giao Claude chọn: chấm nhận cả hai, ADR-016.
+- ~~Q-B2~~ Đạt duyệt, đã ghi.
 - Q-C1 (Thắng): thêm `roman_numeral` vào guardrail?
 - Q-C2 (Đạt): thêm câu "V7 của G trưởng là D7" vào L02-B08?

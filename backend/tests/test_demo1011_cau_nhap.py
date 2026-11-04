@@ -1,8 +1,8 @@
-"""Demo 10/11, nhiệm vụ A: 6 câu nháp L01-Q07/Q08, L02-Q07..Q10.
+"""Demo 10/11, nhiệm vụ A: 6 câu mới (đã phát hành 04/11) L01-Q07/Q08, L02-Q07..Q10.
 
 Kiểm bốn điều Thắng yêu cầu: (1) đáp án đúng được chấm đúng, mọi phương án nhiễu bị từ chối, tên đồng âm
-không được nhận; (2) đáp án khớp Music Engine; (3) khi còn là nháp thì người học không thấy và không cần
-làm để hoàn thành bài; (4) SAU KHI phát hành (ở đây mô phỏng bằng cách cho hiện bản nháp), ba câu độc lập
+không được nhận; (2) đáp án khớp Music Engine; (3) đã phát hành (Thắng + Đạt duyệt 04/11/2026) nên hiện với người học và bắt buộc để
+hoàn thành bài; (4) ba câu độc lập
 đúng lần đầu đưa mastery kỹ năng lên 1 − 0,7³ = 0,657 và người học bỏ qua placement đi được L01 → L02 →
 L03 → L04 qua API thật, không hạ ngưỡng 0,60/0,80.
 """
@@ -16,7 +16,6 @@ from fastapi.testclient import TestClient
 from sqlalchemy import select
 
 from app.api import ai_recommend
-from app.content import versioning
 from app.content.curriculum_specs import lesson_by_id
 from app.content.source_registry import SOURCE_REGISTRY
 from app.db.models import MasteryState, User
@@ -28,7 +27,7 @@ from app.music_engine.tools import get_chord_tones, identify_interval
 from app.services.grading_service import grade_payload
 from tests.auth_helpers import auth, correct_answer
 
-DRAFT_IDS = ["L01-Q07", "L01-Q08", "L02-Q07", "L02-Q08", "L02-Q09", "L02-Q10"]
+NEW_IDS = ["L01-Q07", "L01-Q08", "L02-Q07", "L02-Q08", "L02-Q09", "L02-Q10"]
 
 
 def item(exercise_id: str) -> dict:
@@ -42,10 +41,10 @@ def grade(exercise_id: str, answer):
 
 # --- Nội dung và nguồn -----------------------------------------------------------------------------
 
-def test_six_new_questions_are_draft_with_two_sources_and_known_source_ids():
-    for exercise_id in DRAFT_IDS:
+def test_six_new_questions_are_published_with_two_sources_and_known_source_ids():
+    for exercise_id in NEW_IDS:
         spec = item(exercise_id)
-        assert spec["status"] == "draft", exercise_id
+        assert spec["status"] == "published", exercise_id
         assert spec["version"] is None  # câu mới, chưa phát hành lần nào
         sources = {p["source_id"] for p in spec["provenance"]}
         assert {"MT21C", "OMT_V2"} <= sources, exercise_id
@@ -171,24 +170,17 @@ def next_lessons(client, uid: str) -> list[str]:
     return [x["lesson_id"] for x in r.json()["next"]]
 
 
-def test_drafts_hidden_and_not_required_while_unapproved(client):
-    for lesson_id in ("L01", "L02"):
+def test_published_questions_are_shown_and_required(client):
+    """Thắng + Đạt duyệt 04/11/2026: 6 câu đã phát hành, hiện cho người học và cần đúng để hoàn thành bài."""
+    for lesson_id, n in (("L01", 8), ("L02", 10)):
         shown = [x["id"] for x in client.get(f"/api/v1/lessons/{lesson_id}").json()["exercises"]]
-        assert not set(shown) & set(DRAFT_IDS)
-        assert len(shown) == 6
+        assert len(shown) == n and {i for i in NEW_IDS if i[:3] == lesson_id} <= set(shown)
     uid = new_user()
-    learn_via_api(client, uid, "L01")  # hoàn thành được mà không có câu nháp
-    r = client.post("/api/v1/attempts", headers=auth(uid), json={"exercise_version_id": "L02-Q07-v1", "answer": "D7"})
-    assert r.status_code == 404
+    r = client.post("/api/v1/lessons/L01/complete", headers=auth(uid))
+    assert r.status_code == 409
 
 
-@pytest.fixture
-def published(monkeypatch):
-    """Mô phỏng lúc Thắng + Đạt đã duyệt: cho hiện bản nháp. Không đổi status trong nguồn."""
-    monkeypatch.setattr(versioning, "visible_statuses", lambda: {"draft", "published"})
-
-
-def test_three_independent_first_correct_answers_reach_0657(client, published):
+def test_three_independent_first_correct_answers_reach_0657(client):
     uid = new_user()
     learn_via_api(client, uid, "L01")
     learn_via_api(client, uid, "L02")
@@ -197,7 +189,7 @@ def test_three_independent_first_correct_answers_reach_0657(client, published):
         assert m[skill] == pytest.approx(1 - 0.7 ** 3, abs=1e-3), (skill, m[skill])
 
 
-def test_new_learner_without_placement_walks_l01_to_l04(client, published):
+def test_new_learner_without_placement_walks_l01_to_l04(client):
     uid = new_user()
     steps = []
     for done, target in (("L01", "L02"), ("L02", "L03"), ("L03", "L04")):

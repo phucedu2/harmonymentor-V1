@@ -27,9 +27,9 @@
       "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; Đạt duyệt 04/11/2026 (Phúc báo trong thread)"
     },
     "chord.seventh_quality": {
-      "text": "Phân biệt tính chất hợp âm bảy: maj7, 7 át, m7, m7b5, dim7. Hợp âm bảy tạo màu sắc mềm mại cho nhạc pop, R&B, ballad và là nền của hòa âm jazz.",
+      "text": "Phân biệt năm loại hợp âm bảy maj7, 7 (át), m7, m7b5 (ø7), dim7 theo triad bên dưới và quãng 7 tính từ nốt gốc.",
       "status": "approved",
-      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; Đạt duyệt 04/11/2026 (Phúc báo trong thread)"
+      "source": "Claude sửa 04/11/2026 theo rà soát demo 10/11 (đối chiếu MT21C §8.1, §9.4, §17.2, §19.1 và OMT v2); Đạt duyệt 04/11/2026 (Phúc báo trong thread)"
     },
     "chord.seventh_build": {
       "text": "Dựng hợp âm bảy từ nốt gốc và ký hiệu như Cmaj7, G7, Dm7, Bm7b5, viết đúng tên nốt. Dùng khi đệm đàn theo bản hợp âm có hợp âm bảy.",
@@ -42,9 +42,9 @@
       "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; Đạt duyệt 04/11/2026 (Phúc báo trong thread)"
     },
     "function.tonic": {
-      "text": "Nhận ra chức năng chủ (tonic) của hợp âm I, iii, vi: cảm giác ổn định, nơi bài hát nghỉ và kết thúc câu.",
+      "text": "Nhận ra chức năng chủ: hợp âm I ổn định, là nơi câu nhạc nghỉ và kết. vi và iii chung hai nốt với I nên có lúc kéo dài vùng chủ, nhưng không phải lúc nào cũng mang chức năng chủ.",
       "status": "approved",
-      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; Đạt duyệt 04/11/2026 (Phúc báo trong thread)"
+      "source": "Claude sửa 04/11/2026 theo rà soát demo 10/11 (đối chiếu MT21C §8.1, §9.4, §17.2, §19.1 và OMT v2); Đạt duyệt 04/11/2026 (Phúc báo trong thread)"
     },
     "function.predominant": {
       "text": "Nhận ra chức năng hạ át (predominant, subdominant) của hợp âm ii, IV: tạo chuyển động rời chủ, chuẩn bị cho át. Thường gặp trong vòng hòa âm pop.",
@@ -62,9 +62,9 @@
       "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; Đạt duyệt 04/11/2026 (Phúc báo trong thread)"
     },
     "progression.ii_v_i": {
-      "text": "Nhận diện và dựng tiến trình ii–V–I với hợp âm bảy trong giọng trưởng. Đây là tiến trình quan trọng nhất của jazz, cũng hay xuất hiện trong pop, bossa nova.",
+      "text": "Nhận diện và dựng tiến trình ii–V–I với hợp âm bảy trong giọng trưởng, ví dụ Dm7–G7–Cmaj7 trong C trưởng: tiền át, át, rồi về chủ. Gặp nhiều trong jazz, cũng có trong pop và bossa nova.",
       "status": "approved",
-      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; Đạt duyệt 04/11/2026 (Phúc báo trong thread)"
+      "source": "Claude sửa 04/11/2026 theo rà soát demo 10/11 (đối chiếu MT21C §8.1, §9.4, §17.2, §19.1 và OMT v2); Đạt duyệt 04/11/2026 (Phúc báo trong thread)"
     },
     "voicing.guide_tones": {
       "text": "Tìm guide tones (quãng ba và quãng bảy) của hợp âm bảy, phần nốt quyết định màu hợp âm. Dùng cho đệm piano jazz gọn và dẫn giọng mượt.",
@@ -82,9 +82,9 @@
       "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; Đạt duyệt 04/11/2026 (Phúc báo trong thread)"
     },
     "harmony.secondary_dominant.identify": {
-      "text": "Nhận diện hợp âm át phụ như V/V, V/ii, V/vi trong bài hát: hợp âm bảy át mượn tạm để nhấn vào một hợp âm khác ngoài chủ.",
+      "text": "Nhận diện hợp âm át phụ như V/V, V/ii, V/vi: triad trưởng hoặc hợp âm bảy át đi tới một hợp âm khác I, làm hợp âm đó tạm nghe như chủ. Khác với hợp âm mượn từ giọng thứ cùng tên.",
       "status": "approved",
-      "source": "Claude soạn nháp 04/11/2026 từ skill_graph.py và mục tiêu bài trong curriculum_specs; Đạt duyệt 04/11/2026 (Phúc báo trong thread)"
+      "source": "Claude sửa 04/11/2026 theo rà soát demo 10/11 (đối chiếu MT21C §8.1, §9.4, §17.2, §19.1 và OMT v2); Đạt duyệt 04/11/2026 (Phúc báo trong thread)"
     },
     "harmony.secondary_dominant.build": {
       "text": "Dựng hợp âm át phụ cho một hợp âm đích trong giọng, viết đúng nốt có dấu hóa bất thường.",

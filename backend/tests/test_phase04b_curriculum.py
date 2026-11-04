@@ -25,17 +25,16 @@ def make_user() -> str:
     return user_id
 
 
-def test_curriculum_bank_is_exactly_8_48_64_and_ids_are_unique():
+def test_curriculum_bank_is_exactly_8_54_64_and_ids_are_unique():
     assert len(LESSON_SPECS) == 8
     everything = all_exercises()
     exercises = [x for x in everything if x.get("status", "published") != "draft"]
     reviews = all_review_items()
-    assert len(exercises) == 48
+    # 48 câu gốc + 6 câu demo 10/11 (Thắng + Đạt duyệt, phát hành 04/11/2026).
+    assert len(exercises) == 54
     assert len(reviews) == 64
     assert len({x["id"] for x in everything}) == len(everything)
-    # Câu nháp demo 10/11: chỉ đúng 6 câu này, chờ Thắng + Đạt duyệt mới đổi sang published.
-    assert sorted(x["id"] for x in everything if x.get("status") == "draft") == [
-        "L01-Q07", "L01-Q08", "L02-Q07", "L02-Q08", "L02-Q09", "L02-Q10"]
+    assert not [x["id"] for x in everything if x.get("status") == "draft"]
     assert len({x["id"] for x in reviews}) == 64
 
 
@@ -89,7 +88,7 @@ def test_lessons_1_to_4_are_migrated_and_5_to_8_are_specs_only():
         assert set(MIGRATED_LESSON_IDS) == {"L01", "L02", "L03", "L04"}
         expected_block_counts = {"L01": 14, "L02": 10, "L03": 9, "L04": 11}
         for lesson_id in ["L01", "L02", "L03", "L04"]:
-            assert lessons[lesson_id]["exercise_count"] == 6
+            assert lessons[lesson_id]["exercise_count"] == {"L01": 8, "L02": 10}.get(lesson_id, 6)
             assert lessons[lesson_id]["review_item_count"] == 8
             assert lessons[lesson_id]["block_count"] == expected_block_counts[lesson_id]
             assert lessons[lesson_id]["status"] == "reviewed"
