@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { api, type LearningOverview, type PlacementStatus } from "../api";
 import { useAuth } from "../auth/AuthProvider";
+import RecommendedLessons from "../components/learning/RecommendedLessons";
 import { ButtonLink } from "../components/ui/Button";
 import { Badge, Card, CardTitle, Kicker, Metric, PageHeading, ProgressBar } from "../components/ui/Page";
 
@@ -45,6 +46,8 @@ export default function DashboardPage() {
         <ButtonLink to="/app/luyen-tap" variant="secondary" size="lg">Luyện tập tự do</ButtonLink>
       </div>
     </Card>
+
+    <RecommendedLessons />
 
     <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-4">
       <Metric value={`${overview?.completed_lessons ?? "–"}/${runnable ?? "–"}`} label="bài đã hoàn thành" />

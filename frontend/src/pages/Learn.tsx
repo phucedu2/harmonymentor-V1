@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router";
 import { api, type ApiError, type LearningOverview, type LessonDetail, type LessonSummary } from "../api";
 import LessonErrorBoundary from "../components/learning/LessonErrorBoundary";
 import LessonRunner from "../components/learning/LessonRunner";
@@ -12,6 +13,9 @@ export default function LearnPage() {
   const [selected, setSelected] = useState<LessonDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // ?bai=L02: mở thẳng bài được gợi ý từ Dashboard (RecommendedLessons). Chỉ mở một lần.
+  const [params, setParams] = useSearchParams();
+  const deepLinked = useRef(false);
 
   const refreshProgress = async () => {
     try { setOverview(await api.learningOverview()); }
@@ -41,6 +45,14 @@ export default function LearnPage() {
       setError(err.message ?? err.code);
     } finally { setLoading(false); }
   };
+
+  useEffect(() => {
+    const wanted = params.get("bai");
+    if (!wanted || deepLinked.current || loading || !lessons.some((l) => l.id === wanted)) return;
+    deepLinked.current = true;
+    setParams({}, { replace: true });
+    void open(wanted);
+  }, [params, loading, lessons]);
 
   if (selected) return (
     <LessonErrorBoundary key={selected.id} onReset={() => { setSelected(null); void refreshProgress(); }}>

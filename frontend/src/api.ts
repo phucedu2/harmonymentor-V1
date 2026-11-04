@@ -229,6 +229,22 @@ export type PlacementQuestion = {
 };
 export type PlacementStatus = "not_started" | "completed" | "skipped";
 export type Placement = { status: PlacementStatus; questions: PlacementQuestion[] };
+// Pipeline AI GĐ2: gợi ý bài học (04 mục 6.5) và mục tiêu học.
+export type RecReasonCode = "content" | "mastery" | "due" | "cf";
+export type RecLesson = {
+  lesson_id: string; order: number; title: string; score: number;
+  components: { content: number; mastery: number; due: number; cf: number | null };
+  reason_code: RecReasonCode; reason: string; badge: string; skills: string[]; label?: string | null;
+};
+export type Recommendations = {
+  generated_at: string; log_id: string; weights_mode: "full" | "cold";
+  cf_source: "real" | "synthetic" | "none"; fallback_reason: "no_assessed_dims" | "no_valid_neighbors" | null;
+  neighbors_count: number; content_source: "embedding" | "tfidf" | "none"; draft_descriptions: boolean;
+  few_eligible: boolean;
+  continue: { lesson_id: string; order: number; title: string; status: "started" }[];
+  next: RecLesson[]; review: RecLesson[];
+};
+export type Goal = { goal_text: string | null; embedded: boolean; embedding_model: string | null };
 export type PlacementSubmitResult = { status: "completed"; results: { skill_id: string; correct: boolean; score: number }[] };
 
 export const api = {
@@ -289,6 +305,11 @@ export const api = {
   submitPlacement: (answers: { exercise_version_id: string; answer: unknown }[], confirmRetake = false) =>
     apiPost<PlacementSubmitResult>("/placement/submit", { answers, confirm_retake: confirmRetake }),
   skipPlacement: () => apiPost<Placement>("/placement/skip", {}),
+  recommend: (k = 5) => apiCall<Recommendations>(`/recommend?k=${k}`),
+  clickRecommendation: (logId: string, lessonId: string) =>
+    apiPost<void>(`/recommend/${encodeURIComponent(logId)}/click`, { lesson_id: lessonId }),
+  myGoal: () => apiCall<Goal>("/me/goal"),
+  setGoal: (goalText: string) => apiCall<Goal>("/me/goal", { method: "PUT", body: JSON.stringify({ goal_text: goalText }) }),
   answerReview: (reviewItemId: string, answer: unknown, rating = "auto") =>
     apiPost<ReviewAnswerResult>(`/review/${encodeURIComponent(reviewItemId)}/answer`, { answer, rating }),
 };
