@@ -2,6 +2,22 @@
 
 File này ghi lại việc đã xong, việc đang dở, lệnh để chạy lại và việc tiếp theo. Cập nhật sau mỗi phiên việc. Lịch sử trước 27/10/2026 xem `docs/AI_USAGE.md` và các báo cáo trong `docs/giai-doan/`.
 
+## 04/11/2026: pipeline AI GĐ1 (nhánh `ai/gd1-mastery`, xếp chồng trên `ai/gd0-ke-hoach`)
+
+**Đã xong** (báo cáo `docs/giai-doan/ai-gd1/BAO_CAO.md`)
+- Cherry-pick PR #17 + PR #14. Ánh xạ kỹ năng ADR-008, mastery EMA + luật ôn 2A, `rebuild_mastery`, bài kiểm tra đầu vào 12 câu, `GET /me/mastery`, trang `/app/kiem-tra-dau-vao`.
+- pytest 647 passed + 21 skipped; Vitest 259; `npm run build` đạt; Alembic upgrade + check (SQLite) đạt.
+
+**Đang dở / chờ**
+- Thắng duyệt migration `c1a2b3d4e5f6` (Q-D). Đạt duyệt 12 kỹ năng placement. GĐ2 làm tiếp trên `ai/gd2-goi-y`.
+
+**Lệnh chạy lại**
+```bash
+cd backend && alembic -c alembic.ini upgrade head && python -m app.ai.rebuild_mastery
+cd backend && python -m pytest -q                       # 647 passed + 21 skipped
+python scripts/ai/gd1_nguoi_mau.py                      # PowerShell: python scripts\ai\gd1_nguoi_mau.py
+```
+
 ## 04/11/2026: pipeline AI của giảng viên, GĐ0 (nhánh `ai/gd0-ke-hoach`, từ `phuc-music`)
 
 **Đã xong** (kế hoạch `docs/giai-doan/ai-gd0/KE_HOACH_AI.md`)

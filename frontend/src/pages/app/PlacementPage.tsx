@@ -77,7 +77,7 @@ export default function PlacementPage() {
                 })}
               </div>
             : <input aria-labelledby={`${id}-label`} className="w-full rounded-lg border border-line bg-surface px-3 py-2"
-                value={answers[q.exercise_version_id] ?? ""} placeholder="Ví dụ: C E G"
+                value={answers[q.exercise_version_id] ?? ""} placeholder="Gõ câu trả lời, hoặc để trống"
                 onChange={(e) => setAnswers((a) => ({ ...a, [q.exercise_version_id]: e.target.value }))} />}
         </Card>;
       })}
