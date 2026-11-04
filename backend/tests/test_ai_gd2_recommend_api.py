@@ -120,7 +120,11 @@ def test_due_card_marks_skill_due():
         assert "interval.naming" in rs.due_skills(db, uid, now)
 
 
-def test_knn_uses_synthetic_pool_when_few_real_users():
+def test_knn_uses_synthetic_pool_when_few_real_users(monkeypatch):
+    # CSDL dev dùng chung giữa các lần chạy tích lũy người thật từ test khác: ép "chưa đủ người thật" cho chắc.
+    from app.services import recommendation_service as rs_mod
+
+    monkeypatch.setattr(rs_mod, "settings", replace(rs_mod.settings, knn_real_min_users=10**6))
     vec = dict(pitch__spelling=0.7, interval__naming=0.6, chord__triad_formula=0.65, chord__triad_build=0.7)
     for _ in range(3):
         make_user(synthetic=True, scale__major=0.8, **vec)
@@ -265,3 +269,79 @@ def test_weights_come_from_config(monkeypatch):
     # Người chưa có láng giềng: content 0,10 + cf 0,10 = 0,20; (1 − mastery) nhân 0,70.
     c = l01["components"]
     assert l01["score"] == pytest.approx(0.20 * c["content"] + 0.70 * (1 - c["mastery"]) + 0.10 * c["due"], abs=1e-3)
+
+
+# --- Rà soát GĐ1–GĐ2 (04/11, C3 Thắng duyệt): đổi mô hình hoặc số chiều embedding ---------------------------
+
+def _user_with_goal_vector(model: str, dim: int) -> str:
+    uid = make_user()
+    with SessionLocal() as db:
+        user = db.get(User, uid)
+        user.goal_text, user.goal_embedding, user.goal_embedding_model = "đệm hát pop", [0.1] * dim, model
+        db.commit()
+    return uid
+
+
+def test_r1_goal_vector_of_old_model_is_recomputed(monkeypatch):
+    # Vector mục tiêu tính bằng mô hình cũ không so được với vector kỹ năng: phải tính lại một lần, không "none" mãi.
+    fake = FakeEmbedder()
+    store = _fake_store(fake)
+    fake.calls.clear()
+    monkeypatch.setattr(rs.sd, "load_embeddings", lambda: store)
+    uid = _user_with_goal_vector("text-embedding-004", fake.dim)
+    with SessionLocal() as db:
+        out = rs.recommend_for_user(db, db.get(User, uid), embedder=fake)
+    assert fake.calls == [(["đệm hát pop"], "RETRIEVAL_QUERY")]  # chỉ văn bản mục tiêu (03 Bảng 3)
+    n = len(fake.calls)
+    assert out["content_source"] == "embedding"
+    with SessionLocal() as db:
+        assert db.get(User, uid).goal_embedding_model == fake.model
+    with SessionLocal() as db:  # lần sau dùng lại, không gọi thêm
+        rs.recommend_for_user(db, db.get(User, uid), embedder=fake)
+    assert len(fake.calls) == n
+
+
+def test_r2_dimension_mismatch_does_not_break_recommend(monkeypatch):
+    # Cùng tên mô hình nhưng khác số chiều (đổi EMBEDDING_DIM mà chưa tính lại file): trước đây lỗi 500.
+    fake = FakeEmbedder()
+    monkeypatch.setattr(rs.sd, "load_embeddings", lambda: _fake_store(fake))
+    uid = _user_with_goal_vector(fake.model, fake.dim * 2)
+    body = get(uid)
+    assert body["content_source"] == "none"
+    assert all(x["components"]["content"] == 0 for x in body["next"])
+
+
+def test_r2_embedder_with_other_dim_is_not_called_every_request(monkeypatch):
+    # Embedder hiện tại cho số chiều khác file kỹ năng: tính lại cũng vô ích, nên không gọi Gemini mỗi lượt.
+    store_fake, other = FakeEmbedder(), FakeEmbedder(dim=128)
+    store = _fake_store(store_fake)
+    monkeypatch.setattr(rs.sd, "load_embeddings", lambda: store)
+    uid = _user_with_goal_vector(store_fake.model, 128)
+    with SessionLocal() as db:
+        out = rs.recommend_for_user(db, db.get(User, uid), embedder=other)
+    assert other.calls == [] and out["content_source"] == "none"
+
+
+def test_r2_skill_vector_of_wrong_length_is_skipped(monkeypatch):
+    fake = FakeEmbedder()
+    store = _fake_store(fake)
+    broken = next(iter(store["skills"]))
+    store["skills"][broken]["vector"] = store["skills"][broken]["vector"][:10]
+    monkeypatch.setattr(rs.sd, "load_embeddings", lambda: store)
+    uid = make_user()
+    with SessionLocal() as db:
+        user = db.get(User, uid)
+        user.goal_text = "đệm hát pop"
+        rs.embed_goal(db, user, fake)
+        db.commit()
+        content, source, _ = rs.content_scores(user)
+    assert source == "embedding" and broken not in content and content
+
+
+def test_startup_warns_when_embedding_config_differs_from_skill_file(monkeypatch):
+    store = rs.sd.load_embeddings()
+    on = replace(rs.settings, ai_enabled=True)
+    assert rs.embedding_config_mismatch(replace(on, gemini_embed_model=store["model"], gemini_embed_dim=store["dim"])) is None
+    msg = rs.embedding_config_mismatch(replace(on, gemini_embed_model=store["model"], gemini_embed_dim=1536))
+    assert msg and "1536" in msg and "build_skill_embeddings" in msg
+    assert rs.embedding_config_mismatch(replace(rs.settings, ai_enabled=False, gemini_embed_dim=1536)) is None
