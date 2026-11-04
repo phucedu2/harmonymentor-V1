@@ -27,11 +27,15 @@ def make_user() -> str:
 
 def test_curriculum_bank_is_exactly_8_48_64_and_ids_are_unique():
     assert len(LESSON_SPECS) == 8
-    exercises = all_exercises()
+    everything = all_exercises()
+    exercises = [x for x in everything if x.get("status", "published") != "draft"]
     reviews = all_review_items()
     assert len(exercises) == 48
     assert len(reviews) == 64
-    assert len({x["id"] for x in exercises}) == 48
+    assert len({x["id"] for x in everything}) == len(everything)
+    # Câu nháp demo 10/11: chỉ đúng 6 câu này, chờ Thắng + Đạt duyệt mới đổi sang published.
+    assert sorted(x["id"] for x in everything if x.get("status") == "draft") == [
+        "L01-Q07", "L01-Q08", "L02-Q07", "L02-Q08", "L02-Q09", "L02-Q10"]
     assert len({x["id"] for x in reviews}) == 64
 
 

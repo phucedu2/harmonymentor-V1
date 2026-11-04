@@ -46,6 +46,8 @@ def learn_lesson(user_id: str, lesson_id: str, now: datetime) -> None:
         for spec in lesson_by_id(lesson_id)["exercises"]:
             ex = db.get(ls.Exercise, spec["id"])
             version = ls.versioning.current_version(ex)
+            if version is None:
+                continue  # câu nháp: người học không thấy, không làm
             attempt, _ = ls.submit_attempt(db, user_id, version.id, correct_answer(spec), now=now)
             assert attempt.correct, spec["id"]
         ls.complete_lesson(db, user_id, lesson_id, now=now)
