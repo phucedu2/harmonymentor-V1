@@ -2,6 +2,8 @@
 
 Trạng thái: **Đề xuất, chưa có hiệu lực** (cập nhật 30/10/2026, bản 4). Thắng đã chốt bốn điểm: tên 14 nhóm (mục 2), quy ước vector độ dài 0 (mục 3), kỹ năng voicing L04 (mục 5) và `scale.parallel_minor` (mục 6). Các điểm còn phải xin quyết định nằm ở mục "Cần quyết định". Bảng ánh xạ ở [`docs/CP2_ANH_XA_KY_NANG.md`](../CP2_ANH_XA_KY_NANG.md), hợp đồng test ở [`docs/CP2_HOP_DONG_TEST.md`](../CP2_HOP_DONG_TEST.md). Cả hai đều đang ở trạng thái DRAFT. Số 007 đã được PR #16 (logo) dùng.
 
+Cập nhật 04/11/2026 (demo 10/11): Thắng duyệt các quyết định kỹ thuật và migration GĐ1–GĐ2 (tin nhắn "Thắng duyệt hết" Phúc gửi trong thread, kèm trả lời câu 1A): P-1 (3 chiều chung, dự phòng a), D-2 (giữ CF theo trạng thái thành thạo, đổi câu chữ giao diện), R-1, Q-D, Q-E. Các điểm này **có hiệu lực**. P-2 (co giãn tầng nội dung) và các mục còn lại trong "Cần quyết định" vẫn mở.
+
 ## Bối cảnh
 
 - **ADR-003** (chốt 18–19/10, theo SRS v1.3): cột `skills.srs_code` lấy một trong 10 mã SRS hoặc `post_mvp`. Vector mastery cho KNN có **10 chiều**.

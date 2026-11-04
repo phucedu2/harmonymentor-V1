@@ -2,6 +2,24 @@
 
 File này ghi lại việc đã xong, việc đang dở, lệnh để chạy lại và việc tiếp theo. Cập nhật sau mỗi phiên việc. Lịch sử trước 27/10/2026 xem `docs/AI_USAGE.md` và các báo cáo trong `docs/giai-doan/`.
 
+## 04/11/2026: demo AI 10/11 (nhánh `ai/demo-1011`, Draft PR #25, xếp chồng trên `ai/gd4-danh-gia`)
+
+**Đã xong** (báo cáo `docs/giai-doan/demo-1011/BAO_CAO.md`)
+- 6 câu nháp L01-Q07/Q08, L02-Q07..Q10 (nguồn MT21C + OMT), test chấm, mô phỏng sau phát hành: 4 kỹ năng lên 0,657, người mới đi L01 → L04 không cần placement.
+- AI Tutor: 5 câu vàng của Thắng, guardrail kiểm thêm khẳng định quãng trong lời AI.
+- 2 kịch bản trên giao diện thật (video + 7 ảnh), 1 lần giải thích lỗi bằng Gemini thật.
+- Đổi câu chữ CF (C4), test `/recommend` trên PostgreSQL (C8), ghi trạng thái duyệt vào ADR-008/014.
+- pytest 909 (không tính postgres/live).
+
+**Đang dở / chờ**
+- Thắng + Đạt duyệt câu chữ 6 câu rồi mới phát hành. Đạt duyệt 4 bản sửa mô tả kỹ năng. Thắng: quy ước IM7/Imaj7, thêm `roman_numeral` vào guardrail.
+
+**Lệnh chạy lại**
+```bash
+cd backend && pytest -q tests/test_demo1011_cau_nhap.py tests/test_demo1011_tutor_gold.py
+cd backend && RUN_LIVE=1 AI_ENABLED=1 GEMINI_API_KEY=... pytest -q -m live tests/test_demo1011_live.py
+```
+
 ## 04/11/2026: pipeline AI GĐ4 (nhánh `ai/gd4-danh-gia`, xếp chồng trên `ai/gd3-tutor`)
 
 **Đã xong** (báo cáo `docs/giai-doan/ai-gd4/BAO_CAO_THUC_NGHIEM.md`)

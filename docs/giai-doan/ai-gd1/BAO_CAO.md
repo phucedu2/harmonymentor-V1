@@ -109,7 +109,7 @@ Bảng này cho thấy một điều quan trọng: chỉ cần **sai một lần
 
 ## G. Việc tiếp theo và người duyệt
 
-1. Thắng: duyệt migration (Q-D: `mastery_events`, `review_attempts.due_before`) và cách hiểu D-3/2A trong code.
+1. ~~Thắng: duyệt migration (Q-D: `mastery_events`, `review_attempts.due_before`) và cách hiểu D-3/2A trong code.~~ Thắng đã duyệt 04/11/2026 (demo 10/11, "Thắng duyệt hết").
 2. Đạt: duyệt danh sách 12 kỹ năng placement (bỏ `function.predominant`).
 3. Phúc: xem ảnh trang kiểm tra đầu vào ở `docs/minh-chung/anh/ai-gd1/`.
 4. GĐ2: hệ gợi ý 3 tầng, mô tả 26 kỹ năng (nháp), embedder Gemini/Fake.

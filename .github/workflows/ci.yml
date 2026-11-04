@@ -140,7 +140,7 @@ jobs:
       # pytest vẫn trả mã 0 khi các test này bị skip, nên phải đếm riêng.
       - name: Kiểm số test (0 skip, ít nhất 21 đạt)
         if: ${{ !cancelled() }}
-        run: python ../scripts/ci/kiem_junit.py ../ket-qua-postgres.xml --min-passed 21 --title "PostgreSQL HM-010 + PR-3"
+        run: python ../scripts/ci/kiem_junit.py ../ket-qua-postgres.xml --min-passed 25 --title "PostgreSQL HM-010 + PR-3"
 
       # Test tự xóa schema hm_pgtest_* của mình; còn sót là lớp dọn dẹp của PR-1 hỏng.
       - name: Không còn schema test sót lại

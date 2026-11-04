@@ -11,7 +11,7 @@ from .scoring import Components, LessonScore, Weights
 # Khi bằng điểm, ưu tiên theo thứ tự này để kết quả tất định.
 _ORDER = ("due", "content", "mastery", "cf")
 BADGES = {"due": "Cần ôn tập", "content": "Theo mục tiêu", "mastery": "Củng cố kỹ năng yếu",
-          "cf": "Người giống bạn chọn", "foundation": "Bắt đầu từ nền tảng"}
+          "cf": "Người cùng trình độ đã vững", "foundation": "Bắt đầu từ nền tảng"}
 
 
 def _short(goal: str, limit: int = 40) -> str:
@@ -51,6 +51,7 @@ def reason_for(c: Components | LessonScore, w: Weights, goal_text: str | None,
                 else "Giúp bạn củng cố kỹ năng còn yếu.")
     else:
         top = max(skills, key=lambda s: (s.cf or 0.0, s.skill_id), default=None)
-        text = (f"Người học có trình độ giống bạn thường học tốt “{_name(top.skill_id, names)}” ở bước này." if top
-                else "Người học có trình độ giống bạn thường học tốt bài này ở bước tiếp theo.")
+        # CF đo trạng thái thành thạo hiện tại của láng giềng, không đo thứ tự hay việc chọn bài (rà soát NV3, C4).
+        text = (f"Phần lớn người học có trình độ giống bạn hiện đã vững “{_name(top.skill_id, names)}”." if top
+                else "Phần lớn người học có trình độ giống bạn hiện đã vững các kỹ năng của bài này.")
     return code, text, BADGES[code]

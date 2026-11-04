@@ -1,6 +1,6 @@
 # ADR-014 · Embedding Gemini thay MiniLM, lưu vector trong file JSON kèm hash
 
-Trạng thái: **Đã chọn mô hình** (Q-B, Thắng và Đạt duyệt 04/11/2026, Phúc báo trong thread). Phần lưu trữ (mục 3) **chờ Thắng duyệt** cùng GĐ3.
+Trạng thái: **Đã chọn mô hình** (Q-B, Thắng và Đạt duyệt 04/11/2026, Phúc báo trong thread). Phần lưu trữ (mục 3) **Thắng duyệt 04/11/2026** cùng các migration GĐ1–GĐ2 (tin nhắn "Thắng duyệt hết" Phúc gửi trong thread). Có hiệu lực.
 
 ## Bối cảnh
 
