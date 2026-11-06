@@ -1,0 +1,2363 @@
+{
+ "ran_at": "2026-11-06 07:10",
+ "versions": {
+  "sentence_transformers": "6.2.0",
+  "transformers": "5.22.1",
+  "torch": "2.15.0+cu132"
+ },
+ "settings": {
+  "rag_min_score": 0.6,
+  "rag_bm25_min_score": 2.0,
+  "rag_top_k": 4
+ },
+ "inventory": {
+  "summary": {
+   "chunks": 45,
+   "words_total": 2519,
+   "under_60_words": 22,
+   "under_30_words": 11,
+   "in_80_100": 15,
+   "over_100_words": 0,
+   "empty": 0,
+   "exact_duplicates": [],
+   "near_duplicates": [],
+   "forward_references": [
+    {
+     "chunk_id": "L01-B01#1",
+     "concept": "âm giai",
+     "taught_in": "L02"
+    },
+    {
+     "chunk_id": "L01-B08#1",
+     "concept": "âm giai",
+     "taught_in": "L02"
+    },
+    {
+     "chunk_id": "L01-B12#1",
+     "concept": "âm giai",
+     "taught_in": "L02"
+    },
+    {
+     "chunk_id": "L02-B05#1",
+     "concept": "chức năng",
+     "taught_in": "L03"
+    },
+    {
+     "chunk_id": "L02-B05#2",
+     "concept": "chức năng",
+     "taught_in": "L03"
+    },
+    {
+     "chunk_id": "L03-B07#1",
+     "concept": "ii[–-]v[–-]i",
+     "taught_in": "L04"
+    },
+    {
+     "chunk_id": "L04-B02#3",
+     "concept": "shell voicing",
+     "taught_in": "L08"
+    }
+   ],
+   "sources_distinct": [
+    "Open Music Theory — Version 2 · Fundamentals → Intervals; Open Music Theory — Version 2 · Fundamentals → Triads; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.1 Music Fundamentals, PDF pp. 13–22",
+    "Open Music Theory — Version 2 · Fundamentals → Seventh Chords; Open Music Theory — Version 2 · Fundamentals → Roman Numerals; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Working in Harmony · Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Chs.4–5 Four-Part/Five-Part Chords, PDF pp. 29–43",
+    "Open Music Theory — Version 2 · Introduction to Harmony, Cadences, and Phrase Endings; Working in Harmony · Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.3 Harmonic Function, PDF pp. 25–28; Hòa âm Jazz cơ bản đến nâng cao · Ch.1, printed pp. 21–37",
+    "Open Music Theory — Version 2 · Jazz → ii–V–I; Open Music Theory — Version 2 · Jazz → Jazz Voicings; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.6 The II–V–I Progression, PDF pp. 44–46; Hòa âm Jazz cơ bản đến nâng cao · Ch.1, printed pp. 21–37; Hòa âm Jazz cơ bản đến nâng cao · Ch.11, printed pp. 279–307"
+   ],
+   "tokens_minilm_l12": {
+    "min": 36,
+    "median": 119,
+    "max": 195,
+    "over_128": 21,
+    "over_512": 0
+   },
+   "tokens_e5_small": {
+    "min": 38,
+    "median": 121,
+    "max": 197,
+    "over_128": 22,
+    "over_512": 0
+   }
+  },
+  "per_lesson": {
+   "L01": {
+    "chunks": 16,
+    "blocks": 7,
+    "words_total": 1150,
+    "words_min": 37,
+    "words_median": 78.0,
+    "words_max": 96,
+    "status": "reviewed"
+   },
+   "L02": {
+    "chunks": 10,
+    "blocks": 7,
+    "words_total": 444,
+    "words_min": 9,
+    "words_median": 35.0,
+    "words_max": 87,
+    "status": "reviewed"
+   },
+   "L03": {
+    "chunks": 9,
+    "blocks": 7,
+    "words_total": 401,
+    "words_min": 9,
+    "words_median": 35,
+    "words_max": 88,
+    "status": "reviewed"
+   },
+   "L04": {
+    "chunks": 10,
+    "blocks": 8,
+    "words_total": 524,
+    "words_min": 5,
+    "words_median": 58.0,
+    "words_max": 88,
+    "status": "reviewed"
+   },
+   "L05": {
+    "chunks": 0,
+    "blocks": 0,
+    "words_total": 0,
+    "status": "source_audited"
+   },
+   "L06": {
+    "chunks": 0,
+    "blocks": 0,
+    "words_total": 0,
+    "status": "source_audited"
+   },
+   "L07": {
+    "chunks": 0,
+    "blocks": 0,
+    "words_total": 0,
+    "status": "source_audited"
+   },
+   "L08": {
+    "chunks": 0,
+    "blocks": 0,
+    "words_total": 0,
+    "status": "source_audited"
+   }
+  },
+  "rows": [
+   {
+    "chunk_id": "L01-B01#1",
+    "lesson": "L01",
+    "block": "L01-B01",
+    "title": "Bài này bắt đầu từ con số 0",
+    "words": 51,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Intervals; Open Music Theory — Version 2 · Fundamentals → Triads; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.1 Music Fundamentals, PDF pp. 13–22",
+    "tokens_minilm_l12": 83,
+    "tokens_e5_small": 85
+   },
+   {
+    "chunk_id": "L01-B02#1",
+    "lesson": "L01",
+    "block": "L01-B02",
+    "title": "1. Tên nốt và bàn phím piano",
+    "words": 83,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Intervals; Open Music Theory — Version 2 · Fundamentals → Triads; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.1 Music Fundamentals, PDF pp. 13–22",
+    "tokens_minilm_l12": 145,
+    "tokens_e5_small": 147
+   },
+   {
+    "chunk_id": "L01-B02#2",
+    "lesson": "L01",
+    "block": "L01-B02",
+    "title": "1. Tên nốt và bàn phím piano",
+    "words": 84,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Intervals; Open Music Theory — Version 2 · Fundamentals → Triads; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.1 Music Fundamentals, PDF pp. 13–22",
+    "tokens_minilm_l12": 164,
+    "tokens_e5_small": 166
+   },
+   {
+    "chunk_id": "L01-B04#1",
+    "lesson": "L01",
+    "block": "L01-B04",
+    "title": "2. Đếm số quãng và viết đúng tên nốt",
+    "words": 83,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Intervals; Open Music Theory — Version 2 · Fundamentals → Triads; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.1 Music Fundamentals, PDF pp. 13–22",
+    "tokens_minilm_l12": 167,
+    "tokens_e5_small": 169
+   },
+   {
+    "chunk_id": "L01-B04#2",
+    "lesson": "L01",
+    "block": "L01-B04",
+    "title": "2. Đếm số quãng và viết đúng tên nốt",
+    "words": 96,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Intervals; Open Music Theory — Version 2 · Fundamentals → Triads; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.1 Music Fundamentals, PDF pp. 13–22",
+    "tokens_minilm_l12": 153,
+    "tokens_e5_small": 155
+   },
+   {
+    "chunk_id": "L01-B04#3",
+    "lesson": "L01",
+    "block": "L01-B04",
+    "title": "2. Đếm số quãng và viết đúng tên nốt",
+    "words": 37,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Intervals; Open Music Theory — Version 2 · Fundamentals → Triads; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.1 Music Fundamentals, PDF pp. 13–22",
+    "tokens_minilm_l12": 84,
+    "tokens_e5_small": 86
+   },
+   {
+    "chunk_id": "L01-B05#1",
+    "lesson": "L01",
+    "block": "L01-B05",
+    "title": "3. Năm chữ cái mô tả chất lượng quãng",
+    "words": 89,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Intervals; Open Music Theory — Version 2 · Fundamentals → Triads; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.1 Music Fundamentals, PDF pp. 13–22",
+    "tokens_minilm_l12": 152,
+    "tokens_e5_small": 154
+   },
+   {
+    "chunk_id": "L01-B05#2",
+    "lesson": "L01",
+    "block": "L01-B05",
+    "title": "3. Năm chữ cái mô tả chất lượng quãng",
+    "words": 82,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Intervals; Open Music Theory — Version 2 · Fundamentals → Triads; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.1 Music Fundamentals, PDF pp. 13–22",
+    "tokens_minilm_l12": 135,
+    "tokens_e5_small": 137
+   },
+   {
+    "chunk_id": "L01-B05#3",
+    "lesson": "L01",
+    "block": "L01-B05",
+    "title": "3. Năm chữ cái mô tả chất lượng quãng",
+    "words": 66,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Intervals; Open Music Theory — Version 2 · Fundamentals → Triads; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.1 Music Fundamentals, PDF pp. 13–22",
+    "tokens_minilm_l12": 119,
+    "tokens_e5_small": 121
+   },
+   {
+    "chunk_id": "L01-B05#4",
+    "lesson": "L01",
+    "block": "L01-B05",
+    "title": "3. Năm chữ cái mô tả chất lượng quãng",
+    "words": 55,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Intervals; Open Music Theory — Version 2 · Fundamentals → Triads; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.1 Music Fundamentals, PDF pp. 13–22",
+    "tokens_minilm_l12": 112,
+    "tokens_e5_small": 114
+   },
+   {
+    "chunk_id": "L01-B05#5",
+    "lesson": "L01",
+    "block": "L01-B05",
+    "title": "3. Năm chữ cái mô tả chất lượng quãng",
+    "words": 66,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Intervals; Open Music Theory — Version 2 · Fundamentals → Triads; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.1 Music Fundamentals, PDF pp. 13–22",
+    "tokens_minilm_l12": 127,
+    "tokens_e5_small": 129
+   },
+   {
+    "chunk_id": "L01-B08#1",
+    "lesson": "L01",
+    "block": "L01-B08",
+    "title": "5. Hợp âm ba nốt: dựng bằng hai bước",
+    "words": 78,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Intervals; Open Music Theory — Version 2 · Fundamentals → Triads; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.1 Music Fundamentals, PDF pp. 13–22",
+    "tokens_minilm_l12": 139,
+    "tokens_e5_small": 141
+   },
+   {
+    "chunk_id": "L01-B08#2",
+    "lesson": "L01",
+    "block": "L01-B08",
+    "title": "5. Hợp âm ba nốt: dựng bằng hai bước",
+    "words": 78,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Intervals; Open Music Theory — Version 2 · Fundamentals → Triads; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.1 Music Fundamentals, PDF pp. 13–22",
+    "tokens_minilm_l12": 141,
+    "tokens_e5_small": 143
+   },
+   {
+    "chunk_id": "L01-B12#1",
+    "lesson": "L01",
+    "block": "L01-B12",
+    "title": "9. Tổng quan 24 giọng · 12 trưởng & 12 thứ",
+    "words": 37,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Intervals; Open Music Theory — Version 2 · Fundamentals → Triads; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.1 Music Fundamentals, PDF pp. 13–22",
+    "tokens_minilm_l12": 75,
+    "tokens_e5_small": 77
+   },
+   {
+    "chunk_id": "L01-B13#1",
+    "lesson": "L01",
+    "block": "L01-B13",
+    "title": "10. Tóm tắt trước khi làm quiz",
+    "words": 92,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Intervals; Open Music Theory — Version 2 · Fundamentals → Triads; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.1 Music Fundamentals, PDF pp. 13–22",
+    "tokens_minilm_l12": 163,
+    "tokens_e5_small": 165
+   },
+   {
+    "chunk_id": "L01-B13#2",
+    "lesson": "L01",
+    "block": "L01-B13",
+    "title": "10. Tóm tắt trước khi làm quiz",
+    "words": 73,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Intervals; Open Music Theory — Version 2 · Fundamentals → Triads; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.1 Music Fundamentals, PDF pp. 13–22",
+    "tokens_minilm_l12": 135,
+    "tokens_e5_small": 137
+   },
+   {
+    "chunk_id": "L02-B01#1",
+    "lesson": "L02",
+    "block": "L02-B01",
+    "title": "Trước khi học seventh chord",
+    "words": 29,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Seventh Chords; Open Music Theory — Version 2 · Fundamentals → Roman Numerals; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Working in Harmony · Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Chs.4–5 Four-Part/Five-Part Chords, PDF pp. 29–43",
+    "tokens_minilm_l12": 61,
+    "tokens_e5_small": 63
+   },
+   {
+    "chunk_id": "L02-B02#1",
+    "lesson": "L02",
+    "block": "L02-B02",
+    "title": "1. Âm giai trưởng là một chuỗi 7 bậc",
+    "words": 84,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Seventh Chords; Open Music Theory — Version 2 · Fundamentals → Roman Numerals; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Working in Harmony · Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Chs.4–5 Four-Part/Five-Part Chords, PDF pp. 29–43",
+    "tokens_minilm_l12": 175,
+    "tokens_e5_small": 177
+   },
+   {
+    "chunk_id": "L02-B02#2",
+    "lesson": "L02",
+    "block": "L02-B02",
+    "title": "1. Âm giai trưởng là một chuỗi 7 bậc",
+    "words": 13,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Seventh Chords; Open Music Theory — Version 2 · Fundamentals → Roman Numerals; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Working in Harmony · Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Chs.4–5 Four-Part/Five-Part Chords, PDF pp. 29–43",
+    "tokens_minilm_l12": 36,
+    "tokens_e5_small": 38
+   },
+   {
+    "chunk_id": "L02-B03#1",
+    "lesson": "L02",
+    "block": "L02-B03",
+    "title": "2. G major trên khuông",
+    "words": 17,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Seventh Chords; Open Music Theory — Version 2 · Fundamentals → Roman Numerals; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Working in Harmony · Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Chs.4–5 Four-Part/Five-Part Chords, PDF pp. 29–43",
+    "tokens_minilm_l12": 41,
+    "tokens_e5_small": 43
+   },
+   {
+    "chunk_id": "L02-B04#1",
+    "lesson": "L02",
+    "block": "L02-B04",
+    "title": "3. Từ triad đến seventh chord",
+    "words": 41,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Seventh Chords; Open Music Theory — Version 2 · Fundamentals → Roman Numerals; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Working in Harmony · Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Chs.4–5 Four-Part/Five-Part Chords, PDF pp. 29–43",
+    "tokens_minilm_l12": 103,
+    "tokens_e5_small": 105
+   },
+   {
+    "chunk_id": "L02-B05#1",
+    "lesson": "L02",
+    "block": "L02-B05",
+    "title": "4. Giải mã maj7, m7, 7, ø7 và số La Mã",
+    "words": 83,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Seventh Chords; Open Music Theory — Version 2 · Fundamentals → Roman Numerals; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Working in Harmony · Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Chs.4–5 Four-Part/Five-Part Chords, PDF pp. 29–43",
+    "tokens_minilm_l12": 195,
+    "tokens_e5_small": 197
+   },
+   {
+    "chunk_id": "L02-B05#2",
+    "lesson": "L02",
+    "block": "L02-B05",
+    "title": "4. Giải mã maj7, m7, 7, ø7 và số La Mã",
+    "words": 87,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Seventh Chords; Open Music Theory — Version 2 · Fundamentals → Roman Numerals; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Working in Harmony · Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Chs.4–5 Four-Part/Five-Part Chords, PDF pp. 29–43",
+    "tokens_minilm_l12": 173,
+    "tokens_e5_small": 175
+   },
+   {
+    "chunk_id": "L02-B05#3",
+    "lesson": "L02",
+    "block": "L02-B05",
+    "title": "4. Giải mã maj7, m7, 7, ø7 và số La Mã",
+    "words": 9,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Seventh Chords; Open Music Theory — Version 2 · Fundamentals → Roman Numerals; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Working in Harmony · Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Chs.4–5 Four-Part/Five-Part Chords, PDF pp. 29–43",
+    "tokens_minilm_l12": 41,
+    "tokens_e5_small": 43
+   },
+   {
+    "chunk_id": "L02-B07#1",
+    "lesson": "L02",
+    "block": "L02-B07",
+    "title": "6. Nghe Cmaj7 và G7",
+    "words": 22,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Seventh Chords; Open Music Theory — Version 2 · Fundamentals → Roman Numerals; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Working in Harmony · Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Chs.4–5 Four-Part/Five-Part Chords, PDF pp. 29–43",
+    "tokens_minilm_l12": 51,
+    "tokens_e5_small": 53
+   },
+   {
+    "chunk_id": "L02-B08#1",
+    "lesson": "L02",
+    "block": "L02-B08",
+    "title": "Ghi nhớ",
+    "words": 59,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Fundamentals → Seventh Chords; Open Music Theory — Version 2 · Fundamentals → Roman Numerals; Working in Harmony · Unit 1: Music Fundamentals — scales, intervals, triads; Working in Harmony · Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Chs.4–5 Four-Part/Five-Part Chords, PDF pp. 29–43",
+    "tokens_minilm_l12": 133,
+    "tokens_e5_small": 135
+   },
+   {
+    "chunk_id": "L03-B01#1",
+    "lesson": "L03",
+    "block": "L03-B01",
+    "title": "Chức năng hòa âm không phải tên loại hợp âm",
+    "words": 34,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Introduction to Harmony, Cadences, and Phrase Endings; Working in Harmony · Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.3 Harmonic Function, PDF pp. 25–28; Hòa âm Jazz cơ bản đến nâng cao · Ch.1, printed pp. 21–37",
+    "tokens_minilm_l12": 74,
+    "tokens_e5_small": 76
+   },
+   {
+    "chunk_id": "L03-B02#1",
+    "lesson": "L03",
+    "block": "L03-B02",
+    "title": "1. Ba chức năng nền tảng",
+    "words": 88,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Introduction to Harmony, Cadences, and Phrase Endings; Working in Harmony · Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.3 Harmonic Function, PDF pp. 25–28; Hòa âm Jazz cơ bản đến nâng cao · Ch.1, printed pp. 21–37",
+    "tokens_minilm_l12": 147,
+    "tokens_e5_small": 149
+   },
+   {
+    "chunk_id": "L03-B02#2",
+    "lesson": "L03",
+    "block": "L03-B02",
+    "title": "1. Ba chức năng nền tảng",
+    "words": 84,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Introduction to Harmony, Cadences, and Phrase Endings; Working in Harmony · Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.3 Harmonic Function, PDF pp. 25–28; Hòa âm Jazz cơ bản đến nâng cao · Ch.1, printed pp. 21–37",
+    "tokens_minilm_l12": 148,
+    "tokens_e5_small": 150
+   },
+   {
+    "chunk_id": "L03-B02#3",
+    "lesson": "L03",
+    "block": "L03-B02",
+    "title": "1. Ba chức năng nền tảng",
+    "words": 9,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Introduction to Harmony, Cadences, and Phrase Endings; Working in Harmony · Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.3 Harmonic Function, PDF pp. 25–28; Hòa âm Jazz cơ bản đến nâng cao · Ch.1, printed pp. 21–37",
+    "tokens_minilm_l12": 45,
+    "tokens_e5_small": 47
+   },
+   {
+    "chunk_id": "L03-B03#1",
+    "lesson": "L03",
+    "block": "L03-B03",
+    "title": "2. Luồng T → PD → D → T",
+    "words": 64,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Introduction to Harmony, Cadences, and Phrase Endings; Working in Harmony · Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.3 Harmonic Function, PDF pp. 25–28; Hòa âm Jazz cơ bản đến nâng cao · Ch.1, printed pp. 21–37",
+    "tokens_minilm_l12": 107,
+    "tokens_e5_small": 109
+   },
+   {
+    "chunk_id": "L03-B04#1",
+    "lesson": "L03",
+    "block": "L03-B04",
+    "title": "3. Ví dụ chức năng",
+    "words": 15,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Introduction to Harmony, Cadences, and Phrase Endings; Working in Harmony · Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.3 Harmonic Function, PDF pp. 25–28; Hòa âm Jazz cơ bản đến nâng cao · Ch.1, printed pp. 21–37",
+    "tokens_minilm_l12": 48,
+    "tokens_e5_small": 50
+   },
+   {
+    "chunk_id": "L03-B05#1",
+    "lesson": "L03",
+    "block": "L03-B05",
+    "title": "4. Nghe lực đi–về",
+    "words": 20,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Introduction to Harmony, Cadences, and Phrase Endings; Working in Harmony · Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.3 Harmonic Function, PDF pp. 25–28; Hòa âm Jazz cơ bản đến nâng cao · Ch.1, printed pp. 21–37",
+    "tokens_minilm_l12": 54,
+    "tokens_e5_small": 56
+   },
+   {
+    "chunk_id": "L03-B06#1",
+    "lesson": "L03",
+    "block": "L03-B06",
+    "title": "5. Tự phân tích trước khi xem đáp án",
+    "words": 35,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Introduction to Harmony, Cadences, and Phrase Endings; Working in Harmony · Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.3 Harmonic Function, PDF pp. 25–28; Hòa âm Jazz cơ bản đến nâng cao · Ch.1, printed pp. 21–37",
+    "tokens_minilm_l12": 78,
+    "tokens_e5_small": 80
+   },
+   {
+    "chunk_id": "L03-B07#1",
+    "lesson": "L03",
+    "block": "L03-B07",
+    "title": "Ghi nhớ",
+    "words": 52,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Introduction to Harmony, Cadences, and Phrase Endings; Working in Harmony · Unit 2: Diatonic Harmony — Roman-numeral analysis, dominant seventh, diatonic seventh chords, smooth voice leading; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.3 Harmonic Function, PDF pp. 25–28; Hòa âm Jazz cơ bản đến nâng cao · Ch.1, printed pp. 21–37",
+    "tokens_minilm_l12": 102,
+    "tokens_e5_small": 104
+   },
+   {
+    "chunk_id": "L04-B01#1",
+    "lesson": "L04",
+    "block": "L04-B01",
+    "title": "Đọc ii–V–I như thế nào?",
+    "words": 30,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Jazz → ii–V–I; Open Music Theory — Version 2 · Jazz → Jazz Voicings; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.6 The II–V–I Progression, PDF pp. 44–46; Hòa âm Jazz cơ bản đến nâng cao · Ch.1, printed pp. 21–37; Hòa âm Jazz cơ bản đến nâng cao · Ch.11, printed pp. 279–307",
+    "tokens_minilm_l12": 73,
+    "tokens_e5_small": 75
+   },
+   {
+    "chunk_id": "L04-B02#1",
+    "lesson": "L04",
+    "block": "L04-B02",
+    "title": "1. Guide tones và voice leading",
+    "words": 87,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Jazz → ii–V–I; Open Music Theory — Version 2 · Jazz → Jazz Voicings; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.6 The II–V–I Progression, PDF pp. 44–46; Hòa âm Jazz cơ bản đến nâng cao · Ch.1, printed pp. 21–37; Hòa âm Jazz cơ bản đến nâng cao · Ch.11, printed pp. 279–307",
+    "tokens_minilm_l12": 167,
+    "tokens_e5_small": 169
+   },
+   {
+    "chunk_id": "L04-B02#2",
+    "lesson": "L04",
+    "block": "L04-B02",
+    "title": "1. Guide tones và voice leading",
+    "words": 85,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Jazz → ii–V–I; Open Music Theory — Version 2 · Jazz → Jazz Voicings; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.6 The II–V–I Progression, PDF pp. 44–46; Hòa âm Jazz cơ bản đến nâng cao · Ch.1, printed pp. 21–37; Hòa âm Jazz cơ bản đến nâng cao · Ch.11, printed pp. 279–307",
+    "tokens_minilm_l12": 150,
+    "tokens_e5_small": 152
+   },
+   {
+    "chunk_id": "L04-B02#3",
+    "lesson": "L04",
+    "block": "L04-B02",
+    "title": "1. Guide tones và voice leading",
+    "words": 88,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Jazz → ii–V–I; Open Music Theory — Version 2 · Jazz → Jazz Voicings; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.6 The II–V–I Progression, PDF pp. 44–46; Hòa âm Jazz cơ bản đến nâng cao · Ch.1, printed pp. 21–37; Hòa âm Jazz cơ bản đến nâng cao · Ch.11, printed pp. 279–307",
+    "tokens_minilm_l12": 157,
+    "tokens_e5_small": 159
+   },
+   {
+    "chunk_id": "L04-B03#1",
+    "lesson": "L04",
+    "block": "L04-B03",
+    "title": "2. Xây ii–V–I trong C major",
+    "words": 43,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Jazz → ii–V–I; Open Music Theory — Version 2 · Jazz → Jazz Voicings; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.6 The II–V–I Progression, PDF pp. 44–46; Hòa âm Jazz cơ bản đến nâng cao · Ch.1, printed pp. 21–37; Hòa âm Jazz cơ bản đến nâng cao · Ch.11, printed pp. 279–307",
+    "tokens_minilm_l12": 111,
+    "tokens_e5_small": 113
+   },
+   {
+    "chunk_id": "L04-B04#1",
+    "lesson": "L04",
+    "block": "L04-B04",
+    "title": "3. ii–V–I in C",
+    "words": 5,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Jazz → ii–V–I; Open Music Theory — Version 2 · Jazz → Jazz Voicings; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.6 The II–V–I Progression, PDF pp. 44–46; Hòa âm Jazz cơ bản đến nâng cao · Ch.1, printed pp. 21–37; Hòa âm Jazz cơ bản đến nâng cao · Ch.11, printed pp. 279–307",
+    "tokens_minilm_l12": 36,
+    "tokens_e5_small": 38
+   },
+   {
+    "chunk_id": "L04-B05#1",
+    "lesson": "L04",
+    "block": "L04-B05",
+    "title": "4. Guide tones của G7 giải về Cmaj7",
+    "words": 17,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Jazz → ii–V–I; Open Music Theory — Version 2 · Jazz → Jazz Voicings; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.6 The II–V–I Progression, PDF pp. 44–46; Hòa âm Jazz cơ bản đến nâng cao · Ch.1, printed pp. 21–37; Hòa âm Jazz cơ bản đến nâng cao · Ch.11, printed pp. 279–307",
+    "tokens_minilm_l12": 48,
+    "tokens_e5_small": 50
+   },
+   {
+    "chunk_id": "L04-B06#1",
+    "lesson": "L04",
+    "block": "L04-B06",
+    "title": "5. Vì sao 3rd và 7th quan trọng?",
+    "words": 73,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Jazz → ii–V–I; Open Music Theory — Version 2 · Jazz → Jazz Voicings; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.6 The II–V–I Progression, PDF pp. 44–46; Hòa âm Jazz cơ bản đến nâng cao · Ch.1, printed pp. 21–37; Hòa âm Jazz cơ bản đến nâng cao · Ch.11, printed pp. 279–307",
+    "tokens_minilm_l12": 129,
+    "tokens_e5_small": 131
+   },
+   {
+    "chunk_id": "L04-B08#1",
+    "lesson": "L04",
+    "block": "L04-B08",
+    "title": "7. Nghe ii–V–I trước và sau khi tăng tempo",
+    "words": 23,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Jazz → ii–V–I; Open Music Theory — Version 2 · Jazz → Jazz Voicings; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.6 The II–V–I Progression, PDF pp. 44–46; Hòa âm Jazz cơ bản đến nâng cao · Ch.1, printed pp. 21–37; Hòa âm Jazz cơ bản đến nâng cao · Ch.11, printed pp. 279–307",
+    "tokens_minilm_l12": 62,
+    "tokens_e5_small": 64
+   },
+   {
+    "chunk_id": "L04-B09#1",
+    "lesson": "L04",
+    "block": "L04-B09",
+    "title": "Ghi nhớ",
+    "words": 73,
+    "lesson_status": "reviewed",
+    "source": "Open Music Theory — Version 2 · Jazz → ii–V–I; Open Music Theory — Version 2 · Jazz → Jazz Voicings; Workbook to Accompany Jazz Theory: From Basic to Advanced Study · Part I, Ch.6 The II–V–I Progression, PDF pp. 44–46; Hòa âm Jazz cơ bản đến nâng cao · Ch.1, printed pp. 21–37; Hòa âm Jazz cơ bản đến nâng cao · Ch.11, printed pp. 279–307",
+    "tokens_minilm_l12": 131,
+    "tokens_e5_small": 133
+   }
+  ]
+ },
+ "max_seq_length": {
+  "minilm_l12": 128,
+  "e5_small": 512
+ },
+ "index_seconds": {
+  "minilm_l12": 0.73,
+  "e5_small": 0.96
+ },
+ "retrieval": {
+  "gd4_concept_35": {
+   "bm25": {
+    "n": 35,
+    "recall@1": 51.4,
+    "recall@4": 85.7,
+    "mrr": 0.686,
+    "misses_at_1": [
+     {
+      "id": "G01",
+      "q": "Có bao nhiêu tên nốt cơ bản và đó là những nốt nào?",
+      "top": [
+       "L01-B04",
+       "L01-B02",
+       "L01-B01",
+       "L02-B02"
+      ],
+      "rank": 2
+     },
+     {
+      "id": "G02",
+      "q": "Phím đen trên đàn piano được gọi tên ra sao?",
+      "top": [
+       "L01-B04",
+       "L01-B02",
+       "L01-B05",
+       "L01-B13"
+      ],
+      "rank": 2
+     },
+     {
+      "id": "G05",
+      "q": "Quãng ba trưởng và quãng ba thứ khác nhau mấy nửa cung?",
+      "top": [
+       "L01-B04",
+       "L02-B02",
+       "L01-B05",
+       "L02-B03"
+      ],
+      "rank": 3
+     },
+     {
+      "id": "G06",
+      "q": "Những quãng nào được gọi là quãng đúng (Perfect)?",
+      "top": [
+       "L01-B04",
+       "L01-B05",
+       "L02-B02",
+       "L01-B13"
+      ],
+      "rank": 2
+     },
+     {
+      "id": "G09",
+      "q": "Hợp âm Eb trưởng có những nốt nào?",
+      "top": [
+       "L01-B04",
+       "L02-B02",
+       "L01-B12",
+       "L02-B04"
+      ],
+      "rank": 11
+     },
+     {
+      "id": "G11",
+      "q": "Có tất cả bao nhiêu giọng trưởng và giọng thứ?",
+      "top": [
+       "L01-B13",
+       "L01-B12",
+       "L04-B02",
+       "L02-B08"
+      ],
+      "rank": 2
+     },
+     {
+      "id": "G14",
+      "q": "Hợp âm bảy khác hợp âm ba ở chỗ nào?",
+      "top": [
+       "L02-B03",
+       "L02-B02",
+       "L02-B04",
+       "L02-B05"
+      ],
+      "rank": 3
+     },
+     {
+      "id": "G15",
+      "q": "Cmaj7 được cấu tạo ra sao?",
+      "top": [
+       "L02-B04",
+       "L03-B01",
+       "L03-B05",
+       "L03-B03"
+      ],
+      "rank": 16
+     },
+     {
+      "id": "G17",
+      "q": "G7 có những nốt nào và vì sao gọi là bảy át?",
+      "top": [
+       "L01-B04",
+       "L02-B02",
+       "L03-B02",
+       "L04-B02"
+      ],
+      "rank": 7
+     },
+     {
+      "id": "G19",
+      "q": "Trong giọng trưởng, hợp âm bảy trên mỗi bậc có tính chất gì?",
+      "top": [
+       "L02-B03",
+       "L02-B05",
+       "L02-B04",
+       "L02-B08"
+      ],
+      "rank": 2
+     },
+     {
+      "id": "G20",
+      "q": "Nghe Cmaj7 và G7 thì cảm giác khác nhau thế nào?",
+      "top": [
+       "L03-B05",
+       "L01-B05",
+       "L03-B02",
+       "L02-B07"
+      ],
+      "rank": 4
+     },
+     {
+      "id": "G25",
+      "q": "Cmaj7 Dm7 G7 Cmaj7 tương ứng với chức năng nào?",
+      "top": [
+       "L03-B02",
+       "L03-B04",
+       "L03-B06",
+       "L03-B05"
+      ],
+      "rank": 2
+     },
+     {
+      "id": "G27",
+      "q": "Vòng ii-V-I trong C major gồm những hợp âm nào?",
+      "top": [
+       "L04-B01",
+       "L04-B02",
+       "L04-B03",
+       "L04-B04"
+      ],
+      "rank": 2
+     },
+     {
+      "id": "G30",
+      "q": "Tập vòng ii-V-I nhanh hơn thì nên làm thế nào?",
+      "top": [
+       "L04-B09",
+       "L04-B08",
+       "L04-B02",
+       "L04-B04"
+      ],
+      "rank": 2
+     },
+     {
+      "id": "D01",
+      "q": "C7 khác Cmaj7 ở điểm nào?",
+      "top": [
+       "L03-B07",
+       "L03-B03",
+       "L02-B02",
+       "L03-B02"
+      ],
+      "rank": 7
+     },
+     {
+      "id": "D03",
+      "q": "V7 trong G trưởng gồm những nốt nào?",
+      "top": [
+       "L01-B08",
+       "L02-B08",
+       "L02-B02",
+       "L02-B04"
+      ],
+      "rank": 2
+     },
+     {
+      "id": "D05",
+      "q": "Vì sao G–B–D–F# không phải G7?",
+      "top": [
+       "L04-B06",
+       "L02-B02",
+       "L01-B08",
+       "L03-B02"
+      ],
+      "rank": 7
+     }
+    ]
+   },
+   "minilm_l12": {
+    "n": 35,
+    "recall@1": 45.7,
+    "recall@4": 88.6,
+    "mrr": 0.648,
+    "misses_at_1": [
+     {
+      "id": "G01",
+      "q": "Có bao nhiêu tên nốt cơ bản và đó là những nốt nào?",
+      "top": [
+       "L01-B04",
+       "L01-B05",
+       "L01-B13",
+       "L01-B12"
+      ],
+      "rank": 7
+     },
+     {
+      "id": "G03",
+      "q": "Vì sao E với F chỉ cách nhau nửa cung?",
+      "top": [
+       "L01-B05",
+       "L01-B04",
+       "L01-B13",
+       "L01-B02"
+      ],
+      "rank": 3
+     },
+     {
+      "id": "G04",
+      "q": "Đếm số của quãng từ C lên G thế nào?",
+      "top": [
+       "L01-B05",
+       "L01-B04",
+       "L02-B03",
+       "L01-B08"
+      ],
+      "rank": 2
+     },
+     {
+      "id": "G05",
+      "q": "Quãng ba trưởng và quãng ba thứ khác nhau mấy nửa cung?",
+      "top": [
+       "L01-B12",
+       "L01-B13",
+       "L01-B04",
+       "L01-B08"
+      ],
+      "rank": 5
+     },
+     {
+      "id": "G07",
+      "q": "Quãng tăng và quãng giảm nghĩa là gì?",
+      "top": [
+       "L03-B01",
+       "L03-B03",
+       "L01-B05",
+       "L03-B05"
+      ],
+      "rank": 3
+     },
+     {
+      "id": "G09",
+      "q": "Hợp âm Eb trưởng có những nốt nào?",
+      "top": [
+       "L04-B03",
+       "L02-B05",
+       "L02-B08",
+       "L01-B08"
+      ],
+      "rank": 4
+     },
+     {
+      "id": "G10",
+      "q": "Hợp âm chủ của một giọng là gì?",
+      "top": [
+       "L04-B02",
+       "L04-B04",
+       "L01-B12",
+       "L03-B01"
+      ],
+      "rank": 3
+     },
+     {
+      "id": "G12",
+      "q": "Âm giai trưởng gồm bao nhiêu bậc?",
+      "top": [
+       "L01-B12",
+       "L02-B02",
+       "L02-B01",
+       "L02-B05"
+      ],
+      "rank": 2
+     },
+     {
+      "id": "G15",
+      "q": "Cmaj7 được cấu tạo ra sao?",
+      "top": [
+       "L02-B07",
+       "L03-B02",
+       "L03-B05",
+       "L04-B03"
+      ],
+      "rank": 8
+     },
+     {
+      "id": "G18",
+      "q": "Ký hiệu ø7 hay m7b5 nghĩa là gì?",
+      "top": [
+       "L02-B08",
+       "L04-B01",
+       "L02-B05",
+       "L04-B03"
+      ],
+      "rank": 3
+     },
+     {
+      "id": "G19",
+      "q": "Trong giọng trưởng, hợp âm bảy trên mỗi bậc có tính chất gì?",
+      "top": [
+       "L01-B12",
+       "L02-B02",
+       "L04-B01",
+       "L02-B08"
+      ],
+      "rank": 4
+     },
+     {
+      "id": "G22",
+      "q": "Ba chức năng hòa âm cơ bản là gì?",
+      "top": [
+       "L03-B01",
+       "L03-B02",
+       "L03-B04",
+       "L03-B03"
+      ],
+      "rank": 2
+     },
+     {
+      "id": "G24",
+      "q": "Một câu hòa âm cơ bản đi theo luồng chức năng nào?",
+      "top": [
+       "L03-B01",
+       "L03-B03",
+       "L03-B02",
+       "L04-B02"
+      ],
+      "rank": 2
+     },
+     {
+      "id": "G25",
+      "q": "Cmaj7 Dm7 G7 Cmaj7 tương ứng với chức năng nào?",
+      "top": [
+       "L03-B02",
+       "L03-B04",
+       "L02-B07",
+       "L04-B03"
+      ],
+      "rank": 2
+     },
+     {
+      "id": "G26",
+      "q": "Số La Mã ii, V, I cho biết điều gì?",
+      "top": [
+       "L02-B05",
+       "L04-B01",
+       "L01-B04",
+       "L04-B03"
+      ],
+      "rank": 2
+     },
+     {
+      "id": "G29",
+      "q": "Khi G7 giải về Cmaj7, nốt B và nốt F đi đâu?",
+      "top": [
+       "L02-B07",
+       "L03-B05",
+       "L04-B06",
+       "L04-B05"
+      ],
+      "rank": 3
+     },
+     {
+      "id": "D01",
+      "q": "C7 khác Cmaj7 ở điểm nào?",
+      "top": [
+       "L02-B07",
+       "L04-B03",
+       "L02-B05",
+       "L04-B06"
+      ],
+      "rank": 3
+     },
+     {
+      "id": "D04",
+      "q": "ii–V–I trong C trưởng là gì?",
+      "top": [
+       "L04-B01",
+       "L04-B03",
+       "L04-B04",
+       "L02-B05"
+      ],
+      "rank": 2
+     },
+     {
+      "id": "D05",
+      "q": "Vì sao G–B–D–F# không phải G7?",
+      "top": [
+       "L02-B03",
+       "L01-B05",
+       "L02-B07",
+       "L04-B03"
+      ],
+      "rank": 5
+     }
+    ]
+   },
+   "e5_small": {
+    "n": 35,
+    "recall@1": 85.7,
+    "recall@4": 97.1,
+    "mrr": 0.91,
+    "misses_at_1": [
+     {
+      "id": "G02",
+      "q": "Phím đen trên đàn piano được gọi tên ra sao?",
+      "top": [
+       "L01-B04",
+       "L01-B02",
+       "L01-B13",
+       "L04-B02"
+      ],
+      "rank": 2
+     },
+     {
+      "id": "G09",
+      "q": "Hợp âm Eb trưởng có những nốt nào?",
+      "top": [
+       "L01-B13",
+       "L01-B04",
+       "L02-B02",
+       "L01-B02"
+      ],
+      "rank": 6
+     },
+     {
+      "id": "G15",
+      "q": "Cmaj7 được cấu tạo ra sao?",
+      "top": [
+       "L03-B04",
+       "L02-B05",
+       "L03-B02",
+       "L04-B03"
+      ],
+      "rank": 2
+     },
+     {
+      "id": "D01",
+      "q": "C7 khác Cmaj7 ở điểm nào?",
+      "top": [
+       "L02-B07",
+       "L04-B03",
+       "L02-B05",
+       "L03-B04"
+      ],
+      "rank": 3
+     },
+     {
+      "id": "D05",
+      "q": "Vì sao G–B–D–F# không phải G7?",
+      "top": [
+       "L04-B06",
+       "L02-B03",
+       "L02-B05",
+       "L02-B08"
+      ],
+      "rank": 3
+     }
+    ]
+   }
+  },
+  "probe_A": {
+   "bm25": {
+    "n": 4,
+    "recall@1": 50.0,
+    "recall@4": 50.0,
+    "mrr": 0.533,
+    "misses_at_1": [
+     {
+      "id": "P-A01",
+      "q": "C7 với Cmaj7 khác nhau chỗ nào",
+      "top": [
+       "L02-B03",
+       "L03-B07",
+       "L04-B02",
+       "L01-B04"
+      ],
+      "rank": 20
+     },
+     {
+      "id": "P-A02",
+      "q": "cmaj7 la gi",
+      "top": [
+       "L03-B02",
+       "L03-B04",
+       "L02-B07",
+       "L03-B06"
+      ],
+      "rank": 12
+     }
+    ]
+   },
+   "minilm_l12": {
+    "n": 4,
+    "recall@1": 25.0,
+    "recall@4": 25.0,
+    "mrr": 0.392,
+    "misses_at_1": [
+     {
+      "id": "P-A01",
+      "q": "C7 với Cmaj7 khác nhau chỗ nào",
+      "top": [
+       "L02-B07",
+       "L04-B06",
+       "L03-B02",
+       "L04-B03"
+      ],
+      "rank": 5
+     },
+     {
+      "id": "P-A02",
+      "q": "cmaj7 la gi",
+      "top": [
+       "L04-B06",
+       "L04-B01",
+       "L02-B07",
+       "L02-B08"
+      ],
+      "rank": 6
+     },
+     {
+      "id": "P-A03",
+      "q": "nốt dẫn là gì, sao nó muốn đi lên chủ âm?",
+      "top": [
+       "L03-B06",
+       "L03-B01",
+       "L01-B01",
+       "L04-B05"
+      ],
+      "rank": 5
+     }
+    ]
+   },
+   "e5_small": {
+    "n": 4,
+    "recall@1": 0.0,
+    "recall@4": 75.0,
+    "mrr": 0.383,
+    "misses_at_1": [
+     {
+      "id": "P-A01",
+      "q": "C7 với Cmaj7 khác nhau chỗ nào",
+      "top": [
+       "L02-B07",
+       "L02-B05",
+       "L04-B03",
+       "L03-B04"
+      ],
+      "rank": 2
+     },
+     {
+      "id": "P-A02",
+      "q": "cmaj7 la gi",
+      "top": [
+       "L04-B06",
+       "L04-B05",
+       "L02-B07",
+       "L04-B03"
+      ],
+      "rank": 5
+     },
+     {
+      "id": "P-A03",
+      "q": "nốt dẫn là gì, sao nó muốn đi lên chủ âm?",
+      "top": [
+       "L01-B08",
+       "L04-B02",
+       "L01-B02",
+       "L01-B04"
+      ],
+      "rank": 2
+     },
+     {
+      "id": "P-A04",
+      "q": "What is a half-diminished chord?",
+      "top": [
+       "L03-B07",
+       "L01-B13",
+       "L02-B05",
+       "L01-B05"
+      ],
+      "rank": 3
+     }
+    ]
+   }
+  },
+  "gemini": "NOT EVALUATED trong phiên này (không có khóa). Số GĐ4 04/11: R@1 93,3%, R@4 100%."
+ },
+ "score_separation": {
+  "minilm_l12": {
+   "A": {
+    "min": 0.297,
+    "median": 0.609,
+    "max": 0.753,
+    "n": 39
+   },
+   "B": {
+    "min": 0.289,
+    "median": 0.38,
+    "max": 0.674,
+    "n": 8
+   },
+   "C": {
+    "min": 0.084,
+    "median": 0.219,
+    "max": 0.428,
+    "n": 14
+   },
+   "D": {
+    "min": 0.11,
+    "median": 0.283,
+    "max": 0.507,
+    "n": 6
+   },
+   "G": {
+    "min": 0.192,
+    "median": 0.232,
+    "max": 0.271,
+    "n": 2
+   },
+   "best_split": {
+    "threshold": 0.451,
+    "A_kept": 92.3,
+    "others_rejected": 90.0
+   }
+  },
+  "e5_small": {
+   "A": {
+    "min": 0.799,
+    "median": 0.873,
+    "max": 0.924,
+    "n": 39
+   },
+   "B": {
+    "min": 0.79,
+    "median": 0.835,
+    "max": 0.883,
+    "n": 8
+   },
+   "C": {
+    "min": 0.727,
+    "median": 0.792,
+    "max": 0.836,
+    "n": 14
+   },
+   "D": {
+    "min": 0.799,
+    "median": 0.81,
+    "max": 0.816,
+    "n": 6
+   },
+   "G": {
+    "min": 0.819,
+    "median": 0.82,
+    "max": 0.821,
+    "n": 2
+   },
+   "best_split": {
+    "threshold": 0.845,
+    "A_kept": 92.3,
+    "others_rejected": 90.0
+   }
+  },
+  "bm25": {
+   "A": {
+    "min": 1.9,
+    "median": 11.02,
+    "max": 25.35,
+    "n": 39
+   },
+   "B": {
+    "min": 0.0,
+    "median": 7.16,
+    "max": 20.49,
+    "n": 8
+   },
+   "C": {
+    "min": 0.0,
+    "median": 5.76,
+    "max": 13.25,
+    "n": 14
+   },
+   "D": {
+    "min": 5.96,
+    "median": 7.52,
+    "max": 15.17,
+    "n": 6
+   },
+   "G": {
+    "min": 0.0,
+    "median": 3.72,
+    "max": 7.43,
+    "n": 2
+   },
+   "current_threshold": 2.0,
+   "A_kept_at_threshold": 97.4,
+   "others_above_threshold": 83.3
+  }
+ },
+ "routing_today": {
+  "summary": {
+   "B": {
+    "llm": 6,
+    "unsure": 2
+   },
+   "C": {
+    "llm": 2,
+    "out_of_scope": 2
+   },
+   "D": {
+    "refused_injection": 1,
+    "llm": 5
+   },
+   "G": {
+    "out_of_scope": 1,
+    "llm": 1
+   },
+   "A": {
+    "llm": 38,
+    "unsure": 1
+   }
+  },
+  "llm_called_by_flow": {
+   "B": 6,
+   "C": 2,
+   "D": 5,
+   "G": 1,
+   "A": 38
+  },
+  "rows": [
+   {
+    "id": "P-B01",
+    "flow": "B",
+    "q": "Csus4 gồm những nốt nào?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.7406,
+    "chunks": [
+     "L01-B08#1",
+     "L04-B02#2",
+     "L04-B02#3",
+     "L04-B02#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "P-B02",
+    "flow": "B",
+    "q": "Quãng từ E lên Bb là quãng gì?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.7946,
+    "chunks": [
+     "L01-B02#2",
+     "L02-B02#1",
+     "L01-B04#1",
+     "L01-B05#3"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "P-B03",
+    "flow": "B",
+    "q": "Âm giai Rê trưởng có những nốt nào?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.7867,
+    "chunks": [
+     "L02-B02#2",
+     "L02-B02#1",
+     "L02-B05#3",
+     "L01-B12#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "P-B04",
+    "flow": "B",
+    "q": "Am trong giọng C trưởng là bậc mấy, viết số La Mã sao?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.8806,
+    "chunks": [
+     "L02-B05#2",
+     "L02-B05#3",
+     "L02-B05#1",
+     "L01-B04#1"
+    ],
+    "engine_facts": [
+     {
+      "symbol": "Am"
+     }
+    ]
+   },
+   {
+    "id": "P-B05",
+    "flow": "B",
+    "q": "Hop am C9 gom not gi",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.7125,
+    "chunks": [
+     "L01-B08#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "P-B06",
+    "flow": "B",
+    "q": "Modal interchange là gì?",
+    "route": "unsure",
+    "llm_called": false,
+    "intent": "concept",
+    "intent_conf": 0.6483,
+    "chunks": [],
+    "engine_facts": []
+   },
+   {
+    "id": "P-B07",
+    "flow": "B",
+    "q": "Hợp âm đảo (inversion) là gì?",
+    "route": "unsure",
+    "llm_called": false,
+    "intent": "concept",
+    "intent_conf": 0.8855,
+    "chunks": [],
+    "engine_facts": []
+   },
+   {
+    "id": "P-B08",
+    "flow": "B",
+    "q": "Bài hát buồn thường dùng hợp âm gì?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "composition",
+    "intent_conf": 0.674,
+    "chunks": [
+     "L02-B05#2",
+     "L02-B01#1",
+     "L01-B12#1",
+     "L03-B02#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "P-C01",
+    "flow": "C",
+    "q": "Sơn Tùng sinh năm bao nhiêu?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "out_of_scope",
+    "intent_conf": 0.4138,
+    "chunks": [
+     "L01-B05#3",
+     "L01-B05#4",
+     "L01-B05#2",
+     "L01-B05#5"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "P-C02",
+    "flow": "C",
+    "q": "Mua đàn piano điện loại nào rẻ mà tốt?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "out_of_scope",
+    "intent_conf": 0.4553,
+    "chunks": [
+     "L03-B01#1",
+     "L04-B01#1",
+     "L04-B02#2",
+     "L02-B05#3"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "P-C03",
+    "flow": "C",
+    "q": "Kể chuyện cười đi",
+    "route": "out_of_scope",
+    "llm_called": false,
+    "intent": "out_of_scope",
+    "intent_conf": 0.7948,
+    "chunks": null,
+    "engine_facts": []
+   },
+   {
+    "id": "P-C04",
+    "flow": "C",
+    "q": "what is the capital of France",
+    "route": "out_of_scope",
+    "llm_called": false,
+    "intent": "out_of_scope",
+    "intent_conf": 0.451,
+    "chunks": [],
+    "engine_facts": []
+   },
+   {
+    "id": "P-D01",
+    "flow": "D",
+    "q": "Làm sao đổi mật khẩu tài khoản?",
+    "route": "refused_injection",
+    "llm_called": false,
+    "intent": "explain_error",
+    "intent_conf": 0.2749,
+    "chunks": null,
+    "engine_facts": []
+   },
+   {
+    "id": "P-D02",
+    "flow": "D",
+    "q": "Harmony Lab dùng thế nào, có xuất file được không?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.3476,
+    "chunks": [
+     "L01-B13#1",
+     "L03-B02#1",
+     "L01-B04#1",
+     "L01-B04#3"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "P-D03",
+    "flow": "D",
+    "q": "Sao mình không mở được bài L03?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "explain_error",
+    "intent_conf": 0.6427,
+    "chunks": [
+     "L01-B12#1",
+     "L02-B01#1",
+     "L01-B01#1",
+     "L02-B08#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "P-D04",
+    "flow": "D",
+    "q": "Bài kiểm tra đầu vào để làm gì?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "quiz",
+    "intent_conf": 0.4969,
+    "chunks": [
+     "L01-B01#1",
+     "L01-B12#1",
+     "L02-B01#1",
+     "L02-B04#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "P-D05",
+    "flow": "D",
+    "q": "Đổi nhạc cụ trong mục Sáng tác ở đâu?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "composition",
+    "intent_conf": 0.5292,
+    "chunks": [
+     "L01-B01#1",
+     "L01-B05#1",
+     "L04-B06#1",
+     "L03-B01#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "P-D06",
+    "flow": "D",
+    "q": "Mình bị khóa đăng nhập, phải làm sao?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "explain_error",
+    "intent_conf": 0.2978,
+    "chunks": [
+     "L03-B07#1",
+     "L03-B02#1",
+     "L03-B06#1",
+     "L01-B12#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "P-G01",
+    "flow": "G",
+    "q": "Chào bạn",
+    "route": "out_of_scope",
+    "llm_called": false,
+    "intent": "out_of_scope",
+    "intent_conf": 0.7994,
+    "chunks": null,
+    "engine_facts": []
+   },
+   {
+    "id": "P-G02",
+    "flow": "G",
+    "q": "cảm ơn nha",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "out_of_scope",
+    "intent_conf": 0.3208,
+    "chunks": [
+     "L03-B02#1",
+     "L03-B05#1",
+     "L01-B05#1",
+     "L02-B07#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "P-A01",
+    "flow": "A",
+    "q": "C7 với Cmaj7 khác nhau chỗ nào",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.6395,
+    "chunks": [
+     "L02-B03#1",
+     "L03-B07#1",
+     "L04-B02#3",
+     "L01-B04#1"
+    ],
+    "engine_facts": [
+     {
+      "symbol": "C7"
+     },
+     {
+      "symbol": "Cmaj7"
+     }
+    ]
+   },
+   {
+    "id": "P-A02",
+    "flow": "A",
+    "q": "cmaj7 la gi",
+    "route": "unsure",
+    "llm_called": false,
+    "intent": "concept",
+    "intent_conf": 0.9066,
+    "chunks": [],
+    "engine_facts": []
+   },
+   {
+    "id": "P-A03",
+    "flow": "A",
+    "q": "nốt dẫn là gì, sao nó muốn đi lên chủ âm?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.4525,
+    "chunks": [
+     "L04-B02#2",
+     "L04-B02#1",
+     "L01-B05#1",
+     "L01-B02#2"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "P-A04",
+    "flow": "A",
+    "q": "What is a half-diminished chord?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "composition",
+    "intent_conf": 0.4191,
+    "chunks": [
+     "L02-B05#1",
+     "L02-B02#1",
+     "L04-B02#3",
+     "L02-B04#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "G01",
+    "flow": "A",
+    "q": "Có bao nhiêu tên nốt cơ bản và đó là những nốt nào?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.4514,
+    "chunks": [
+     "L01-B04#2",
+     "L01-B04#1",
+     "L01-B02#1",
+     "L01-B04#3"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "G02",
+    "flow": "A",
+    "q": "Phím đen trên đàn piano được gọi tên ra sao?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "study_advice",
+    "intent_conf": 0.3888,
+    "chunks": [
+     "L01-B04#2",
+     "L01-B02#1",
+     "L01-B04#1",
+     "L01-B02#2"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "G03",
+    "flow": "A",
+    "q": "Vì sao E với F chỉ cách nhau nửa cung?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.3855,
+    "chunks": [
+     "L01-B02#2",
+     "L01-B13#1",
+     "L04-B02#3",
+     "L04-B06#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "G04",
+    "flow": "A",
+    "q": "Đếm số của quãng từ C lên G thế nào?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.4836,
+    "chunks": [
+     "L01-B04#1",
+     "L01-B04#3",
+     "L01-B01#1",
+     "L01-B02#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "G05",
+    "flow": "A",
+    "q": "Quãng ba trưởng và quãng ba thứ khác nhau mấy nửa cung?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.9502,
+    "chunks": [
+     "L01-B04#1",
+     "L02-B02#1",
+     "L01-B05#3",
+     "L02-B03#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "G06",
+    "flow": "A",
+    "q": "Những quãng nào được gọi là quãng đúng (Perfect)?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.6785,
+    "chunks": [
+     "L01-B04#2",
+     "L01-B05#1",
+     "L01-B05#2",
+     "L02-B02#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "G07",
+    "flow": "A",
+    "q": "Quãng tăng và quãng giảm nghĩa là gì?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.9437,
+    "chunks": [
+     "L01-B05#5",
+     "L01-B05#1",
+     "L04-B08#1",
+     "L01-B05#4"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "G08",
+    "flow": "A",
+    "q": "Muốn dựng hợp âm ba nốt thì làm theo mấy bước?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.5072,
+    "chunks": [
+     "L01-B08#1",
+     "L01-B08#2",
+     "L01-B01#1",
+     "L01-B13#2"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "G09",
+    "flow": "A",
+    "q": "Hợp âm Eb trưởng có những nốt nào?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.856,
+    "chunks": [
+     "L01-B04#2",
+     "L02-B02#2",
+     "L01-B12#1",
+     "L02-B02#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "G10",
+    "flow": "A",
+    "q": "Hợp âm chủ của một giọng là gì?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.8198,
+    "chunks": [
+     "L01-B12#1",
+     "L01-B13#2",
+     "L02-B08#1",
+     "L02-B05#2"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "G11",
+    "flow": "A",
+    "q": "Có tất cả bao nhiêu giọng trưởng và giọng thứ?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.6287,
+    "chunks": [
+     "L01-B13#2",
+     "L01-B12#1",
+     "L04-B02#3",
+     "L02-B08#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "G12",
+    "flow": "A",
+    "q": "Âm giai trưởng gồm bao nhiêu bậc?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.5727,
+    "chunks": [
+     "L02-B02#2",
+     "L02-B05#3",
+     "L02-B02#1",
+     "L02-B03#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "G13",
+    "flow": "A",
+    "q": "Tại sao giọng G trưởng phải viết F# mà không viết Gb?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.4263,
+    "chunks": [
+     "L02-B03#1",
+     "L02-B02#1",
+     "L02-B02#2",
+     "L02-B08#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "G14",
+    "flow": "A",
+    "q": "Hợp âm bảy khác hợp âm ba ở chỗ nào?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.5457,
+    "chunks": [
+     "L02-B03#1",
+     "L02-B02#1",
+     "L02-B04#1",
+     "L02-B05#3"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "G15",
+    "flow": "A",
+    "q": "Cmaj7 được cấu tạo ra sao?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.4837,
+    "chunks": [
+     "L02-B04#1",
+     "L03-B01#1",
+     "L03-B05#1",
+     "L03-B03#1"
+    ],
+    "engine_facts": [
+     {
+      "symbol": "Cmaj7"
+     }
+    ]
+   },
+   {
+    "id": "G16",
+    "flow": "A",
+    "q": "Ký hiệu m7 là loại hợp âm gì? Ví dụ Dm7.",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.8769,
+    "chunks": [
+     "L02-B05#1",
+     "L02-B01#1",
+     "L03-B01#1",
+     "L02-B05#3"
+    ],
+    "engine_facts": [
+     {
+      "symbol": "Dm7"
+     }
+    ]
+   },
+   {
+    "id": "G17",
+    "flow": "A",
+    "q": "G7 có những nốt nào và vì sao gọi là bảy át?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.7247,
+    "chunks": [
+     "L01-B04#2",
+     "L02-B02#1",
+     "L03-B02#2",
+     "L04-B02#1"
+    ],
+    "engine_facts": [
+     {
+      "symbol": "G7"
+     }
+    ]
+   },
+   {
+    "id": "G18",
+    "flow": "A",
+    "q": "Ký hiệu ø7 hay m7b5 nghĩa là gì?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.8527,
+    "chunks": [
+     "L02-B05#1",
+     "L02-B01#1",
+     "L04-B02#3",
+     "L01-B05#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "G19",
+    "flow": "A",
+    "q": "Trong giọng trưởng, hợp âm bảy trên mỗi bậc có tính chất gì?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.5534,
+    "chunks": [
+     "L02-B03#1",
+     "L02-B05#2",
+     "L02-B04#1",
+     "L02-B08#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "G20",
+    "flow": "A",
+    "q": "Nghe Cmaj7 và G7 thì cảm giác khác nhau thế nào?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.7777,
+    "chunks": [
+     "L03-B05#1",
+     "L01-B05#1",
+     "L03-B02#1",
+     "L02-B07#1"
+    ],
+    "engine_facts": [
+     {
+      "symbol": "Cmaj7"
+     },
+     {
+      "symbol": "G7"
+     }
+    ]
+   },
+   {
+    "id": "G21",
+    "flow": "A",
+    "q": "Chức năng hòa âm khác tên loại hợp âm ở điểm nào?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.3707,
+    "chunks": [
+     "L03-B01#1",
+     "L03-B03#1",
+     "L03-B07#1",
+     "L03-B02#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "G22",
+    "flow": "A",
+    "q": "Ba chức năng hòa âm cơ bản là gì?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.7054,
+    "chunks": [
+     "L03-B02#3",
+     "L03-B04#1",
+     "L03-B01#1",
+     "L03-B02#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "G23",
+    "flow": "A",
+    "q": "Tiền át (predominant) có vai trò gì?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.6209,
+    "chunks": [
+     "L03-B02#2",
+     "L03-B02#1",
+     "L03-B05#1",
+     "L03-B06#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "G24",
+    "flow": "A",
+    "q": "Một câu hòa âm cơ bản đi theo luồng chức năng nào?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "composition",
+    "intent_conf": 0.303,
+    "chunks": [
+     "L03-B03#1",
+     "L03-B01#1",
+     "L03-B02#1",
+     "L03-B02#3"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "G25",
+    "flow": "A",
+    "q": "Cmaj7 Dm7 G7 Cmaj7 tương ứng với chức năng nào?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.8101,
+    "chunks": [
+     "L03-B02#3",
+     "L03-B04#1",
+     "L03-B06#1",
+     "L03-B02#2"
+    ],
+    "engine_facts": [
+     {
+      "symbol": "Cmaj7"
+     },
+     {
+      "symbol": "Dm7"
+     },
+     {
+      "symbol": "G7"
+     }
+    ]
+   },
+   {
+    "id": "G26",
+    "flow": "A",
+    "q": "Số La Mã ii, V, I cho biết điều gì?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.3846,
+    "chunks": [
+     "L04-B01#1",
+     "L02-B05#3",
+     "L02-B05#2",
+     "L02-B05#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "G27",
+    "flow": "A",
+    "q": "Vòng ii-V-I trong C major gồm những hợp âm nào?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.8208,
+    "chunks": [
+     "L04-B01#1",
+     "L04-B02#1",
+     "L04-B03#1",
+     "L04-B04#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "G28",
+    "flow": "A",
+    "q": "Guide tones là những nốt nào?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.6963,
+    "chunks": [
+     "L04-B02#3",
+     "L04-B02#2",
+     "L04-B02#1",
+     "L04-B05#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "G29",
+    "flow": "A",
+    "q": "Khi G7 giải về Cmaj7, nốt B và nốt F đi đâu?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.6042,
+    "chunks": [
+     "L04-B05#1",
+     "L02-B05#1",
+     "L04-B02#2",
+     "L04-B02#3"
+    ],
+    "engine_facts": [
+     {
+      "symbol": "G7"
+     },
+     {
+      "symbol": "Cmaj7"
+     }
+    ]
+   },
+   {
+    "id": "G30",
+    "flow": "A",
+    "q": "Tập vòng ii-V-I nhanh hơn thì nên làm thế nào?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "study_advice",
+    "intent_conf": 0.4012,
+    "chunks": [
+     "L04-B09#1",
+     "L04-B08#1",
+     "L04-B02#2",
+     "L04-B04#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "D01",
+    "flow": "A",
+    "q": "C7 khác Cmaj7 ở điểm nào?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.7329,
+    "chunks": [
+     "L03-B07#1",
+     "L03-B03#1",
+     "L02-B02#1",
+     "L03-B02#1"
+    ],
+    "engine_facts": [
+     {
+      "symbol": "C7"
+     },
+     {
+      "symbol": "Cmaj7"
+     }
+    ]
+   },
+   {
+    "id": "D02",
+    "flow": "A",
+    "q": "Vì sao D–F# khác D–Gb về tên quãng?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.4202,
+    "chunks": [
+     "L01-B04#1",
+     "L01-B04#2",
+     "L02-B03#1",
+     "L01-B05#5"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "D03",
+    "flow": "A",
+    "q": "V7 trong G trưởng gồm những nốt nào?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.9309,
+    "chunks": [
+     "L01-B08#1",
+     "L02-B08#1",
+     "L02-B02#1",
+     "L02-B04#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "D04",
+    "flow": "A",
+    "q": "ii–V–I trong C trưởng là gì?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "concept",
+    "intent_conf": 0.9627,
+    "chunks": [
+     "L04-B04#1",
+     "L04-B01#1",
+     "L04-B03#1",
+     "L04-B08#1"
+    ],
+    "engine_facts": []
+   },
+   {
+    "id": "D05",
+    "flow": "A",
+    "q": "Vì sao G–B–D–F# không phải G7?",
+    "route": "llm",
+    "llm_called": true,
+    "intent": "explain_error",
+    "intent_conf": 0.4449,
+    "chunks": [
+     "L04-B06#1",
+     "L02-B02#1",
+     "L01-B08#2",
+     "L02-B02#2"
+    ],
+    "engine_facts": [
+     {
+      "symbol": "G7"
+     }
+    ]
+   }
+  ]
+ }
+}
