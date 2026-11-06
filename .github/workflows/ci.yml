@@ -52,15 +52,26 @@ jobs:
       - name: Kiểm tra cú pháp Python
         run: python -m compileall -q app tests migrations ../scripts
 
+      # ADR-017: mô hình nhúng e5-small (470 MB) không nằm trong git. Tải một lần, lưu cache theo bản cố định
+      # (HF_REVISION trong app/ai/local_embedder.py) để test định tuyến bằng e5 chạy thật, không bị skip.
+      - name: Cache mô hình e5-small
+        uses: actions/cache@v4
+        with:
+          path: backend/models
+          key: e5-small-${{ hashFiles('backend/app/ai/local_embedder.py') }}
+
+      - name: Tải mô hình e5-small (kiểm SHA-256)
+        run: python -m app.ai.local_embedder download
+
       # Nhóm postgres chạy ở job riêng; ở đây không đặt TEST_DATABASE_URL nên phải loại ra, nếu không sẽ bị skip.
       # Nhóm live gọi Gemini thật, CI không có khóa và không gọi mạng (nhiệm vụ AI mục 5.4).
       - name: Chạy pytest
         run: pytest -q -m "not postgres and not live" --junitxml=../ket-qua-sqlite.xml
 
       # Mức tối thiểu = số test đạt sau PR-3 (27/10/2026): 281 cũ + 38 test phiên bản câu hỏi; ai xóa test thì CI đỏ.
-      - name: Kiểm số test (0 skip, ít nhất 747 đạt)
+      - name: Kiểm số test (0 skip, ít nhất 966 đạt)
         if: ${{ !cancelled() }}
-        run: python ../scripts/ci/kiem_junit.py ../ket-qua-sqlite.xml --min-passed 928 --title "Backend SQLite"
+        run: python ../scripts/ci/kiem_junit.py ../ket-qua-sqlite.xml --min-passed 966 --title "Backend SQLite"
 
       - name: Lưu kết quả JUnit
         if: ${{ !cancelled() }}

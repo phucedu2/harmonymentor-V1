@@ -171,7 +171,8 @@ class ChatReplyOut(BaseModel):
     engine_claims: list[EngineClaimOut]
     verified: bool
     verified_label: Optional[str]
-    intent: Literal["concept", "explain_error", "quiz", "study_advice", "composition", "out_of_scope"]
+    intent: Literal["concept", "explain_error", "quiz", "study_advice", "composition", "out_of_scope",
+                    "greeting", "help"]
     hint_level: int
     status: Literal["ok", "failed", "fallback"]
     suggested_actions: list[str]
@@ -181,6 +182,12 @@ class ChatReplyOut(BaseModel):
     quota_remaining_today: int
     attempt_id: Optional[str] = None
     next_hint_level: Optional[int] = None
+    # Bộ định tuyến 4 luồng (ADR-017): luồng nào trả lời, nhãn nguồn hiện trên giao diện, bài gợi ý khi "không biết",
+    # trang hướng dẫn khi hỏi cách dùng.
+    flow: Optional[Literal["A", "B", "C", "D", "G"]] = None
+    source_label: Optional[str] = None
+    suggested_lesson: Optional[dict[str, Any]] = None
+    help_page: Optional[dict[str, str]] = None
 
 
 class ChatSessionOut(BaseModel):

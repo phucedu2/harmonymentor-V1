@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, Response
 from sqlalchemy.orm import Session
 
 from ..ai.embedder import Embedder, get_embedder
+from ..ai.local_embedder import get_local_embedder
 from ..ai.tutor.llm import LLMProvider, get_provider
 from ..auth.deps import get_current_user
 from ..contracts.ai import (ChatHistoryItem, ChatMessageIn, ChatRatingIn, ChatReplyOut, ChatSessionOut,
@@ -24,7 +25,13 @@ _provider_cache: dict[tuple, LLMProvider | None] = {}
 
 
 def embedder_dep() -> Embedder | None:
-    return get_embedder(settings)
+    """Mặc định e5-small cục bộ (ADR-017); thiếu file mô hình thì None → BM25, không hỏng yêu cầu."""
+    choice = settings.tutor_embedder.lower()
+    if choice == "gemini":
+        return get_embedder(settings)
+    if choice == "bm25":
+        return None
+    return get_local_embedder()
 
 
 def provider_dep() -> LLMProvider | None:

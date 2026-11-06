@@ -78,6 +78,26 @@ def _cached_vectors(model: str) -> tuple[tuple[float, ...], ...] | None:
     return tuple(tuple(v) for v in vecs) if vecs is not None else None
 
 
+_computed: dict[tuple[str, tuple[str, ...]], list[list[float]]] = {}
+
+
+def vectors_for(embedder: Embedder, chunks: Sequence[Chunk]) -> Sequence[Sequence[float]] | None:
+    """Vector đoạn cho một embedder.
+
+    Gemini: đọc file tính sẵn (gọi mạng tốn hạn mức). Mô hình cục bộ (ADR-017): tự tính lúc dùng lần đầu rồi giữ
+    trong bộ nhớ, khóa theo hash nội dung, nên sửa bài là vector tự tính lại, không có chuyện file cũ lệch bài."""
+    if not getattr(embedder, "local", False):
+        if list(chunks) == list(knowledge_base()):
+            return _cached_vectors(embedder.model)
+        return None
+    key = (embedder.model, tuple(c.content_hash for c in chunks))
+    if key not in _computed:
+        titles = lesson_titles()
+        _computed[key] = embedder.embed([c.embed_text(titles.get(c.lesson_id, "")) for c in chunks],
+                                        "RETRIEVAL_DOCUMENT")
+    return _computed[key]
+
+
 def _dot(a: Sequence[float], b: Sequence[float]) -> float:
     return sum(x * y for x, y in zip(a, b))
 
@@ -95,10 +115,13 @@ def retrieve(query: str, embedder: Embedder | None, *, top_k: int = 4, min_score
     if embedder is None:
         reason = "ai_disabled"
     else:
+        try:
+            if vectors is None:
+                vectors = vectors_for(embedder, chunks)
+        except EmbeddingUnavailable:
+            vectors, reason = None, "embedding_unavailable"
         if vectors is None:
-            vectors = _cached_vectors(embedder.model)
-        if vectors is None:
-            reason = "index_stale"
+            reason = reason or "index_stale"
         else:
             try:
                 q = embedder.embed([query], "RETRIEVAL_QUERY")[0]
@@ -113,6 +136,36 @@ def retrieve(query: str, embedder: Embedder | None, *, top_k: int = 4, min_score
     return Retrieval(_top(chunks, scores, top_k, bm25_min_score), "bm25", round(best, 4), reason)
 
 
+@lru_cache(maxsize=1)
+def help_base() -> tuple[Chunk, ...]:
+    """Kho hướng dẫn sử dụng cho luồng D (app/content/help/help_entries.json, nằm trong backend để Docker có). Mỗi mục là một đoạn, lesson_id = HELP."""
+    import hashlib
+
+    path = Path(__file__).resolve().parents[2] / "content" / "help" / "help_entries.json"
+    if not path.exists():
+        return ()
+    data = json.loads(path.read_text(encoding="utf-8"))
+    out = []
+    for e in data["entries"]:
+        text = f"{e['text']}"
+        # "hoi": cách người học hay hỏi về mục này. Thiếu nó thì "đổi mật khẩu" khớp mục Đăng ký (nhắc "mật khẩu"
+        # 3 lần) hơn mục Đổi mật khẩu. Chỉ dùng để tìm, câu trả lời vẫn là text.
+        hint = " ".join(e.get("hoi", []))
+        h = hashlib.sha256(f"{e['id']}\x1f{e['title']}\x1f{hint}\x1f{text}".encode("utf-8")).hexdigest()[:16]
+        out.append(Chunk(f"{e['id']}#1", "HELP", e["id"], e["title"], text, f"Trang {e['page_title']} ({e['page']})", h,
+                         hint))
+    return tuple(out)
+
+
+def help_page(block_id: str) -> tuple[str, str] | None:
+    """(đường dẫn trang, tên trang) của một mục hướng dẫn, để giao diện gắn nút mở trang."""
+    for c in help_base():
+        if c.block_id == block_id:
+            name, path = c.source.removeprefix("Trang ").rsplit(" (", 1)
+            return path.rstrip(")"), name
+    return None
+
+
 def retrieve_for_skill(query: str, embedder: Embedder | None, lesson_ids: Sequence[str], *,
                        top_k: int = 3) -> Retrieval:
     """Cho giải thích lỗi: chỉ tìm trong bài dạy kỹ năng của câu sai, không lọc ngưỡng (đã biết chủ đề).
@@ -125,7 +178,10 @@ def retrieve_for_skill(query: str, embedder: Embedder | None, lesson_ids: Sequen
     chunks = [kb[i] for i in idx]
     vectors = None
     if embedder is not None:
-        full = _cached_vectors(embedder.model)
+        try:
+            full = vectors_for(embedder, kb)
+        except EmbeddingUnavailable:
+            full = None
         vectors = [full[i] for i in idx] if full is not None else None
         if vectors is None:
             embedder = None

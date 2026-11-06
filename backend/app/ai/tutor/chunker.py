@@ -29,10 +29,12 @@ class Chunk:
     text: str
     source: str
     content_hash: str
+    search_hint: str = ""   # chỉ dùng để tìm (câu hỏi mẫu của mục hướng dẫn), không hiện cho người học
 
     def embed_text(self, lesson_title: str = "") -> str:
         head = f"{lesson_title} — {self.title}" if lesson_title else self.title
-        return f"{head}\n{self.text}"
+        hint = f"\n{self.search_hint}" if self.search_hint else ""
+        return f"{head}{hint}\n{self.text}"
 
     def as_dict(self) -> dict[str, Any]:
         return asdict(self)

@@ -24,6 +24,14 @@ const FALLBACK_NOTE: Record<string, string> = {
   prompt_leak: "Câu trả lời bị chặn vì không an toàn.",
 };
 
+// Màu nhãn nguồn theo luồng: người học thấy ngay câu trả lời lấy từ đâu (góp ý thầy G1/G3).
+const FLOW_STYLE: Record<string, string> = {
+  A: "bg-primary-soft text-primary",
+  B: "bg-warning-soft text-warning",
+  C: "bg-surface text-muted border border-line",
+  D: "bg-success-soft text-success",
+};
+
 let seq = 0;
 const nextId = () => `m${++seq}`;
 
@@ -47,17 +55,31 @@ function Stars({ messageId }: { messageId: number }) {
   </div>;
 }
 
-function AssistantBubble({ data, onCite, onMoreHint, busy }: {
-  data: ChatReply; onCite: (lesson: string, block: string) => void; onMoreHint?: () => void; busy: boolean;
+export function AssistantBubble({ data, onCite, onOpen, onMoreHint, busy }: {
+  data: ChatReply; onCite: (lesson: string, block: string) => void; onOpen: (path: string) => void;
+  onMoreHint?: () => void; busy: boolean;
 }) {
   const contradicted = data.engine_claims.some((c) => c.status !== "verified");
+  const lessonCites = data.citations.filter((c) => c.lesson_id !== "HELP");
   return <div className="max-w-[92%] rounded-2xl rounded-bl-sm border border-line bg-surface px-3 py-2 text-sm text-ink">
+    {data.source_label && data.flow && <p className={`mb-1 inline-block rounded-full px-2 py-0.5 text-xs font-semibold ${FLOW_STYLE[data.flow] ?? "text-muted"}`}>
+      {data.source_label}
+    </p>}
     {data.hint_level > 0 && <p className="mb-1 text-xs font-semibold text-muted">Gợi ý mức {data.hint_level}/3</p>}
     <p className="whitespace-pre-line">{data.reply}</p>
-    {data.citations.length > 0 && <div className="mt-2 flex flex-wrap gap-1.5" aria-label="Nguồn trong bài học">
-      {data.citations.map((c) => <button key={c.block_id} type="button" title={`${c.lesson_title} · ${c.title}`}
+    {lessonCites.length > 0 && <div className="mt-2 flex flex-wrap gap-1.5" aria-label="Nguồn trong bài học">
+      {lessonCites.map((c) => <button key={c.block_id} type="button" title={`${c.lesson_title} · ${c.title}`}
         className="rounded-md border border-primary/40 bg-primary-soft px-2 py-0.5 text-xs font-semibold text-primary hover:border-primary"
         onClick={() => onCite(c.lesson_id, c.block_id)}>[{c.lesson_id}] {c.title}</button>)}
+    </div>}
+    {(data.help_page || (data.flow === "B" && data.suggested_lesson)) && <div className="mt-2 flex flex-wrap gap-1.5">
+      {data.help_page && <button type="button" onClick={() => onOpen(data.help_page!.path)}
+        className="rounded-md border border-success/40 bg-success-soft px-2 py-0.5 text-xs font-semibold text-success hover:border-success">
+        Mở trang {data.help_page.title}</button>}
+      {data.flow === "B" && data.suggested_lesson && <button type="button"
+        onClick={() => onOpen(`/app/hoc?bai=${encodeURIComponent(data.suggested_lesson!.lesson_id)}`)}
+        className="rounded-md border border-primary/40 bg-primary-soft px-2 py-0.5 text-xs font-semibold text-primary hover:border-primary">
+        Mở bài {data.suggested_lesson.lesson_id}: {data.suggested_lesson.title}</button>}
     </div>}
     <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
       {data.verified_label && <span className="rounded-full bg-success-soft px-2 py-0.5 font-semibold text-success">✓ {data.verified_label}</span>}
@@ -149,7 +171,7 @@ export default function FloatingTutorDrawer() {
       </header>
       <div ref={listRef} className="flex flex-1 flex-col gap-2 overflow-y-auto px-3 py-3" aria-live="polite">
         {items.length === 0 && <p className="rounded-lg bg-primary-soft px-3 py-2 text-sm text-ink">
-          Hỏi mình về nốt, quãng, hợp âm, âm giai hay vòng hòa âm, ví dụ “C7 khác Cmaj7 thế nào?”. Sau khi làm sai một câu, bấm “Giải thích lỗi này” để nhận gợi ý từng bước.
+          Hỏi mình về nốt, quãng, hợp âm, âm giai hay vòng hòa âm trong các bài, ví dụ “C7 khác Cmaj7 thế nào?”, hoặc cách dùng trang web. Câu ngoài bài học mình sẽ ghi rõ nguồn, không biết thì nói không biết. Sau khi làm sai một câu, bấm “Giải thích lỗi này” để nhận gợi ý từng bước.
         </p>}
         {items.map((item) => item.kind === "user"
           ? <p key={item.id} className="ml-auto max-w-[85%] rounded-2xl rounded-br-sm bg-primary px-3 py-2 text-sm text-white">{item.text}</p>
@@ -157,7 +179,7 @@ export default function FloatingTutorDrawer() {
             ? <div key={item.id} role="alert" className="rounded-lg bg-danger-soft px-3 py-2 text-sm text-danger">
                 {item.text}{item.retry && <button type="button" className="ml-2 font-semibold underline" onClick={item.retry}>Thử lại</button>}
               </div>
-            : <AssistantBubble key={item.id} data={item.data} onCite={cite} busy={busy}
+            : <AssistantBubble key={item.id} data={item.data} onCite={cite} onOpen={(path) => navigate(path)} busy={busy}
                 onMoreHint={item.explainFor && item.data.next_hint_level && lastExplainId.get(item.explainFor.attemptId) === item.id
                   ? () => explain(item.explainFor!.attemptId, item.explainFor!.prompt, item.data.next_hint_level!) : undefined} />)}
         {busy && <p className="flex items-center gap-2 text-sm text-muted"><Spinner /> Mình đang soạn câu trả lời…</p>}

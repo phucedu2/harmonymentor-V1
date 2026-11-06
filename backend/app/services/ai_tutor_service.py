@@ -31,7 +31,9 @@ from ..ai.tutor.injection import looks_like_injection
 from ..ai.tutor.intent import classify
 from ..ai.tutor.llm import LLMProvider, LLMResult, LLMUnavailable
 from ..ai.tutor.notes import solfege_to_letters, split_notes
-from ..ai.tutor.retriever import Hit, Retrieval, retrieve, retrieve_for_skill
+from ..ai.tutor.engine_query import fact_text
+from ..ai.tutor.retriever import Hit, Retrieval, help_page, retrieve, retrieve_for_skill
+from ..ai.tutor.router import decide
 from ..ai.tutor.schema import LLM_SCHEMA, TutorAnswer, parse_answer
 from ..ai.tutor.chunker import lesson_titles
 from ..content.skill_graph import SKILLS
@@ -77,6 +79,10 @@ class Draft:
     llm: LLMResult | None = None
     llm_calls: int = 0
     fallback_reason: str | None = None
+    flow: str = "A"                       # ADR-017: A trong bài | B ngoài bài (Engine) | C ngoài phạm vi | D hướng dẫn | G chào
+    source_label: str | None = None       # nhãn nhỏ dưới câu trả lời: "Từ bài học", "Ngoài bài học, theo Music Engine"...
+    suggested_lesson: str | None = None   # bài để mở khi "không biết"
+    help_page: dict[str, str] | None = None
 
 
 # --- Phiên và lịch sử --------------------------------------------------------------------------
@@ -239,57 +245,116 @@ def _weak_skill_names(db: Session, user_id: str, limit: int = 3) -> list[str]:
 
 # --- Hỏi đáp ------------------------------------------------------------------------------------
 
+def _engine_facts(dec_facts: Sequence[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Dữ kiện Engine dạng cũ {tool, args, result} cho prompt và nhãn kiểm (không gửi cờ nội bộ)."""
+    return [{"tool": f["tool"], "args": f["args"], "result": f["result"]} for f in dec_facts]
+
+
+def _engine_only_answer(dec, titles: dict[str, str]) -> Draft:
+    """Luồng B có dữ kiện: câu viết sẵn từ Music Engine, không gọi LLM, không trích bài (bài chưa dạy)."""
+    lines = [fb.OUTSIDE_LESSON] + [fact_text(f) for f in dec.engine.facts]
+    if any(not f.get("sourced", True) for f in dec.engine.facts):
+        lines.append(fb.NOT_SOURCED)
+    text = " ".join(lines) + _pointer(dec, titles)
+    facts = _engine_facts(dec.engine.facts)
+    actions = [f"Mở bài {dec.nearest_lesson}"] if dec.nearest_lesson else []
+    return Draft(text, "concept", [], _fact_claims(facts), "ok", "engine_only", 0, actions, flow="B",
+                 source_label=fb.LABEL_ENGINE, suggested_lesson=dec.nearest_lesson)
+
+
+def _pointer(dec, titles: dict[str, str]) -> str:
+    if dec.later_lesson:
+        return fb.later_lesson_line(dec.later_lesson, titles)
+    return fb.nearest_lesson_line(dec.nearest_lesson, titles)
+
+
+def _dont_know(dec, titles: dict[str, str]) -> Draft:
+    text = (fb.DONT_KNOW_LATER if dec.later_lesson else fb.DONT_KNOW) + _pointer(dec, titles)
+    actions = [f"Mở bài {dec.nearest_lesson}"] if dec.nearest_lesson else []
+    label = fb.LABEL_LATER if dec.later_lesson else fb.LABEL_UNKNOWN
+    return Draft(text, "concept", [], [], "ok", "unsure", 0, actions, flow="B", source_label=label,
+                 suggested_lesson=dec.nearest_lesson)
+
+
+def _help_answer(dec) -> Draft:
+    if not dec.help_hits:
+        return Draft(fb.HELP_UNKNOWN, "help", [], [], "ok", "help_unknown", 0, [], flow="D",
+                     source_label=fb.LABEL_HELP)
+    h = dec.help_hits[0].chunk
+    path, name = help_page(h.block_id) or ("/app", "Tổng quan")
+    text = f"{fb.HELP_LEAD.format(page=name)} {h.text}"
+    cite = {"lesson_id": "HELP", "block_id": h.block_id, "title": h.title, "lesson_title": f"Hướng dẫn · {name}"}
+    return Draft(text, "help", [cite], [], "ok", "help", 0, [f"Mở trang {name}"], flow="D",
+                 source_label=fb.LABEL_HELP, help_page={"path": path, "title": name})
+
+
 def answer_question(db: Session, user: User, question: str, turns: Sequence[tuple[str, str]],
                     embedder: Embedder | None, provider: LLMProvider | None, now: datetime) -> tuple[Draft, dict]:
     titles = lesson_titles()
     meta: dict[str, Any] = {}
     if looks_like_injection(question):
-        return Draft(fb.INJECTION, "out_of_scope", [], [], "ok", "refused_injection"), meta
+        return Draft(fb.INJECTION, "out_of_scope", [], [], "ok", "refused_injection", flow="C",
+                     source_label=fb.LABEL_REFUSE), meta
+    dec = decide(question, embedder, top_k=settings.rag_top_k)
+    meta["router"] = dec.log()
     intent = classify(question)
     meta["intent_local"] = {"intent": intent.intent, "confidence": intent.confidence}
-    if intent.intent == "out_of_scope" and intent.confidence >= 0.5:
-        return Draft(fb.OUT_OF_SCOPE, "out_of_scope", [], [], "ok", "out_of_scope"), meta  # không tốn lượt embedding
-    r: Retrieval = retrieve(question, embedder, top_k=settings.rag_top_k, min_score=settings.rag_min_score,
-                            bm25_min_score=settings.rag_bm25_min_score)
-    meta["retrieval"] = {"method": r.method, "best_score": r.best_score, "fallback_reason": r.fallback_reason,
-                         "chunks": [h.chunk.chunk_id for h in r.hits]}
-    if intent.intent == "out_of_scope" and not r.hits:
-        return Draft(fb.OUT_OF_SCOPE, "out_of_scope", [], [], "ok", "out_of_scope"), meta
-    facts = engine_facts_for(question)
+    meta["retrieval"] = {"method": dec.lesson.method, "best_score": dec.lesson.best_score,
+                         "fallback_reason": dec.lesson.fallback_reason, "chunks": [h.chunk.chunk_id for h in dec.hits]}
+    facts = _engine_facts(dec.engine.facts)
     meta["engine"] = facts
-    if not r.hits and not facts:
-        top = retrieve(question, embedder, top_k=1, min_score=-1.0, bm25_min_score=0.0).hits
-        d = Draft(fb.UNSURE + fb.lesson_pointer(top, titles), intent.intent, [], [], "ok", "unsure", 0,
-                  [f"Mở bài {top[0].chunk.lesson_id}"] if top else [])
-        return d, meta
+    if dec.flow == "G":
+        thanks = any(w in question.lower() for w in ("cảm ơn", "cam on", "thank", "thanks", "thx"))
+        return Draft(fb.THANKS if thanks else fb.GREETING, "greeting", [], [], "ok", "greeting", flow="G"), meta
+    if dec.flow == "C":
+        return Draft(fb.OUT_OF_SCOPE, "out_of_scope", [], [], "ok", "out_of_scope", flow="C",
+                     source_label=fb.LABEL_REFUSE), meta
+    if dec.flow == "D":
+        return _help_answer(dec), meta
+    if dec.flow == "B":
+        return (_engine_only_answer(dec, titles) if dec.kind == "engine" else _dont_know(dec, titles)), meta
+
+    # Luồng A: có đoạn bài đủ điểm.
+    hits = dec.hits
     if provider is None:
-        return offline_answer(r.hits, facts, titles, "ai_disabled"), meta
+        d = offline_answer(hits, facts, titles, "ai_disabled")
+        d.flow, d.source_label = "A", fb.LABEL_LESSON
+        return d, meta
     if _llm_rows_today(db, now, None) >= settings.ai_global_daily_budget:
-        return offline_answer(r.hits, facts, titles, "global_budget"), meta
+        d = offline_answer(hits, facts, titles, "global_budget")
+        d.flow, d.source_label = "A", fb.LABEL_LESSON
+        return d, meta
     used = _llm_rows_today(db, now, user.id)
     if used >= settings.ai_daily_quota:
         raise QuotaExceeded(used, settings.ai_daily_quota)
-    allowed = {h.chunk.block_id: h for h in r.hits}
+    allowed = {h.chunk.block_id: h for h in hits}
     weak = _weak_skill_names(db, user.id)
 
     def build(correction: str | None) -> str:
-        return pr.chat_prompt(question, r.hits, titles, turns, facts, user.goal_text, weak, correction)
+        return pr.chat_prompt(question, hits, titles, turns, facts, user.goal_text, weak, correction)
 
     try:
         ans, guard, results, reason = _llm_round(provider, build, allowed, titles)
     except LLMUnavailable as exc:
-        d = offline_answer(r.hits, facts, titles, exc.reason)
-        d.llm_calls = 1
+        d = offline_answer(hits, facts, titles, exc.reason)
+        d.llm_calls, d.flow, d.source_label = 1, "A", fb.LABEL_LESSON
         return d, meta
     if ans is None:
-        d = offline_answer(r.hits, facts, titles, reason or "invalid")
+        d = offline_answer(hits, facts, titles, reason or "invalid")
         d.llm_calls, d.llm = len(results), results[-1] if results else None
+        d.flow, d.source_label = "A", fb.LABEL_LESSON
         return d, meta
-    return _finish(ans, guard, allowed, titles, results, facts), meta
+    d = _finish(ans, guard, allowed, titles, results, facts)
+    # Câu LLM không trích được đoạn nào (trích dẫn bịa đã bị bỏ, hoặc LLM tự nói "không biết") thì không gắn nhãn
+    # "Từ bài học": người học thấy rõ câu này chưa có nguồn trong bài (góp ý thầy G1).
+    d.flow, d.source_label = "A", (fb.LABEL_LESSON if d.citations else fb.LABEL_UNCITED)
+    return d, meta
 
 
 def _save(db: Session, session: ChatSession, draft: Draft, meta: dict, started: float, now: datetime) -> ChatMessage:
-    tool_calls = {"route": draft.route, "llm_calls": draft.llm_calls, **meta}
+    tool_calls = {"route": draft.route, "llm_calls": draft.llm_calls, "flow": draft.flow,
+                  "source_label": draft.source_label, "suggested_lesson": draft.suggested_lesson,
+                  "help_page": draft.help_page, **meta}
     if draft.llm:
         tool_calls["model"] = draft.llm.model
     if draft.fallback_reason:
@@ -306,6 +371,12 @@ def _save(db: Session, session: ChatSession, draft: Draft, meta: dict, started: 
     return msg
 
 
+def _lesson_ref(lesson_id: str | None) -> dict[str, str] | None:
+    if not lesson_id:
+        return None
+    return {"lesson_id": lesson_id, "title": lesson_titles().get(lesson_id, lesson_id)}
+
+
 def out(msg: ChatMessage, session: ChatSession, remaining: int) -> dict[str, Any]:
     claims = msg.engine_claims or []
     verified = bool(claims) and all(c.get("status") == "verified" for c in claims)
@@ -315,6 +386,8 @@ def out(msg: ChatMessage, session: ChatSession, remaining: int) -> dict[str, Any
             "intent": msg.intent, "hint_level": msg.hint_level or 0, "status": msg.status,
             "suggested_actions": tc.get("suggested_actions", []), "fallback_reason": tc.get("fallback_reason"),
             "retrieval_method": (tc.get("retrieval") or {}).get("method"), "quiz": None,
+            "flow": tc.get("flow"), "source_label": tc.get("source_label"),
+            "suggested_lesson": _lesson_ref(tc.get("suggested_lesson")), "help_page": tc.get("help_page"),
             "quota_remaining_today": remaining}
 
 
