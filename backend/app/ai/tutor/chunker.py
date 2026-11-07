@@ -90,12 +90,15 @@ def chunk_block(lesson_id: str, block_id: str, title: str, text: str, source: st
             groups.append(cur)
             cur = []
     if cur:
+        # GĐ2 đã thử gộp đuôi ngắn (< 30 từ) vào đoạn trước và thêm ngữ cảnh tìm kiếm cho khối ngắn (GĐ0 lỗ hổng 7):
+        # R@1 bộ chuẩn GĐ4 với e5 giảm 90,0% → 83,3% nên KHÔNG giữ (docs/giai-doan/ai-gop-y/02_DU_LIEU.md).
         groups.append(cur)
     out = []
     for n, group in enumerate(groups, start=1):
         body = " ".join(group)
+        # Hash chỉ gồm phần được nhúng (không gồm nguồn): đổi nguồn không làm vector cũ "lệch" (GĐ2, nguồn theo khối).
         out.append(Chunk(f"{block_id}#{n}", lesson_id, block_id, _nfc(title), body, source,
-                         _hash(lesson_id, block_id, title, body, source)))
+                         _hash(lesson_id, block_id, title, body)))
     return out
 
 
@@ -106,6 +109,35 @@ def lesson_source(spec: dict[str, Any], registry: dict[str, Any]) -> str:
         title = work.get("title", s["source_id"]) if isinstance(work, dict) else getattr(work, "title", s["source_id"])
         names.append(f"{title} · {s['locator']}")
     return "; ".join(names)
+
+
+# Nguồn theo KHỐI (GĐ0 lỗ hổng 8): trước đây mọi đoạn mang nguồn của cả bài, nên câu trả lời về quãng có thể ghi
+# tên chương hợp âm bảy. Gắn chủ đề cho khối và cho từng nguồn của bài bằng cùng một bảng từ khóa, rồi giữ các nguồn
+# trùng chủ đề. Không trùng chủ đề nào thì giữ nguồn của cả bài (như cũ) chứ không bỏ trống.
+# Bảng chủ đề viết dựa trên locator/note của nguồn trong curriculum_specs; nhãn "draft", chờ Đạt duyệt (GĐ2 10A).
+_TOPICS = {
+    "interval": ("quãng", "nửa cung", "interval", "enharmonic", "đồng âm", "bàn phím", "phím", "tên nốt", "notation"),
+    "triad": ("triad", "hợp âm ba", "ba nốt"),
+    "scale": ("âm giai", "scale", "major scale", "bậc 1", "giọng"),
+    "seventh": ("seventh", "hợp âm bảy", "maj7", "m7", "ø7", "four-part", "four/five-part"),
+    "roman": ("la mã", "roman", "diatonic"),
+    "function": ("chức năng", "function", "tonic", "predominant", "subdominant", "dominant", "phrase", "cadence"),
+    "iivi": ("ii–v–i", "ii-v-i", "ii–v", "guide", "voice leading", "voicing", "common tone"),
+}
+
+
+def topics(text: str) -> set[str]:
+    low = text.lower()
+    return {t for t, words in _TOPICS.items() if any(w in low for w in words)}
+
+
+def block_source(spec: dict[str, Any], registry: dict[str, Any], title: str, text: str) -> str:
+    """Nguồn của một khối: các nguồn của bài có chủ đề trùng với khối; không trùng thì nguồn cả bài."""
+    # Tiêu đề khối nói đúng chủ đề; lời giảng hay nhắc lại khái niệm bài trước ("nửa cung", "triad") nên chỉ dùng
+    # khi tiêu đề không mang chủ đề nào.
+    want = topics(title) or topics(text)
+    picked = [s for s in spec.get("sources", []) if want & topics(f"{s['locator']} {s.get('note', '')}")]
+    return lesson_source({"sources": picked}, registry) if picked else lesson_source(spec, registry)
 
 
 def published_lesson_specs() -> Iterable[dict[str, Any]]:
@@ -121,7 +153,6 @@ def lesson_chunks() -> list[Chunk]:
 
     out: list[Chunk] = []
     for spec in published_lesson_specs():
-        source = lesson_source(spec, SOURCE_REGISTRY)
         for block_id, block_type, payload in blocks_with_drafts(spec):
             if block_type not in TEXT_BLOCKS or (payload or {}).get("status") == "draft":
                 continue
@@ -130,7 +161,9 @@ def lesson_chunks() -> list[Chunk]:
             text = block_text(block_type, payload)
             if _words(text) < 5:
                 continue
-            out.extend(chunk_block(spec["id"], block_id, payload.get("title", block_id), text, source))
+            title = payload.get("title", block_id)
+            source = block_source(spec, SOURCE_REGISTRY, title, text)
+            out.extend(chunk_block(spec["id"], block_id, title, text, source))
     return out
 
 

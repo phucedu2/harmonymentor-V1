@@ -1,6 +1,7 @@
 """Tính vector cho kho đoạn bài học bằng Gemini và ghi app/content/lesson_embeddings.json (đề GĐ3 mục 1).
 
     cd backend && AI_ENABLED=1 GEMINI_API_KEY=... python -m app.ai.build_index
+    cd backend && python -m app.ai.build_index rehash      # chỉ đổi hash khi văn bản không đổi, không gọi mạng
 
 Chỉ văn bản lý thuyết đã phát hành được gửi đi (không đáp án, không nháp, không dữ liệu người dùng).
 File ghi mô hình, số chiều và hash từng đoạn; retriever chỉ dùng vector khi hash khớp nội dung hiện tại.
@@ -40,5 +41,30 @@ def main() -> int:
     return 0
 
 
+def rehash() -> int:
+    """Đổi công thức hash (GĐ2: bỏ nguồn khỏi hash) mà không gọi Gemini. Một đoạn chỉ được nhận hash mới khi hash cũ
+    trong file khớp đúng công thức GĐ1 (cùng id, tiêu đề, nội dung, nguồn cả bài): tức văn bản được nhúng không đổi,
+    vector cũ vẫn đúng. Đoạn nào không khớp giữ nguyên để retriever tự rơi về BM25 tới khi chạy lại main()."""
+    from ..content.curriculum_specs import LESSON_SPECS
+    from ..content.source_registry import SOURCE_REGISTRY
+    from .tutor.chunker import _hash, lesson_source
+
+    index = json.loads(INDEX_PATH.read_text(encoding="utf-8"))
+    whole = {s["id"]: lesson_source(s, SOURCE_REGISTRY) for s in LESSON_SPECS}
+    moved = kept = 0
+    for c in lesson_chunks():
+        row = index["chunks"].get(c.chunk_id)
+        if row and row["hash"] == c.content_hash:
+            moved += 1          # đã đổi ở lần chạy trước
+        elif row and row["hash"] == _hash(c.lesson_id, c.block_id, c.title, c.text, whole[c.lesson_id]):
+            row["hash"] = c.content_hash
+            moved += 1
+        else:
+            kept += 1
+    INDEX_PATH.write_text(json.dumps(index, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
+    print(f"Đổi hash {moved} đoạn (văn bản không đổi); {kept} đoạn không khớp, cần chạy lại build_index với Gemini.")
+    return 0 if kept == 0 else 1
+
+
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(rehash() if sys.argv[1:] == ["rehash"] else main())
