@@ -15,6 +15,11 @@ RUN pip install -r requirements.txt
 COPY app/__init__.py app/
 COPY app/ai/__init__.py app/ai/embedder.py app/ai/local_embedder.py app/ai/
 RUN python -m app.ai.local_embedder download || echo "Chưa tải được e5-small: AI Tutor sẽ dùng BM25."
+# Bản fine-tune GĐ2b (ADR-018) chỉ tải khi build với --build-arg E5_HM=1, vì thêm 470 MB mà mặc định chưa dùng.
+# Bật lúc chạy: LOCAL_EMBED_DIR=/app/models/multilingual-e5-small-hm trong .env.
+ARG E5_HM=0
+RUN if [ "$E5_HM" = "1" ]; then python -m app.ai.local_embedder download-hm \
+      || echo "Chưa tải được bản fine-tune: AI Tutor dùng bản gốc."; fi
 
 COPY . .
 

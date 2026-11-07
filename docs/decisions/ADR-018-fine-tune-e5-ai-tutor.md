@@ -25,7 +25,8 @@ Trạng thái: **Đề xuất 07/11/2026**, chờ nhóm duyệt qua Draft PR GĐ
    - Lý do: trên test tạm, bản mới giảm mạnh lỗi trả lời sai nhưng tăng lỗi từ chối sai. CP3 ngày 10/11 cần ổn định.
 4. **File mô hình 470 MB không vào git.**
    - Đề xuất đăng làm file đính kèm của GitHub Release trong repo nhóm, có SHA-256 (ghi trong `gd2b_model_info.json`).
-   - Dockerfile sẽ tải từ đó. **Release chỉ tạo khi Phúc đồng ý** (quyết định 9A).
+   - Phúc đồng ý 07/11/2026: Release tag `e5-hm-gd2b`. Dockerfile chỉ tải khi build với `E5_HM=1` (`python -m app.ai.local_embedder download-hm`, kiểm SHA-256).
+3b. Phúc giữ bản gốc làm mặc định (07/11/2026); đổi mặc định khi có số đo trên phiếu nhóm.
 
 ## Phương án đã cân nhắc
 

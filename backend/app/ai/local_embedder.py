@@ -8,7 +8,7 @@ e5 được huấn luyện với tiền tố "query: " cho câu hỏi và "passa
 Vector = trung bình các token (bỏ token đệm) rồi chuẩn hóa độ dài 1, đúng cách của mô hình gốc.
 
 File mô hình không nằm trong git (470 MB). Tải bằng `python -m app.ai.local_embedder download` (Dockerfile làm sẵn),
-có kiểm SHA-256 để chắc đúng bản đã đo."""
+có kiểm SHA-256 để chắc đúng bản đã đo. Bản fine-tune GĐ2b: `download-hm` (tải từ GitHub Release)."""
 
 from __future__ import annotations
 
@@ -31,6 +31,17 @@ MODEL_NAME = "multilingual-e5-small"
 DIM = 384
 MAX_TOKENS = 512
 DEFAULT_DIR = Path(__file__).resolve().parents[2] / "models" / MODEL_NAME
+
+# Bản fine-tune GĐ2b (ADR-018): đăng ở GitHub Release của repo nhóm (Phúc đồng ý 07/11/2026, quyết định 9A).
+# Mặc định AI Tutor vẫn dùng bản gốc; bản này chỉ chạy khi đặt LOCAL_EMBED_DIR=models/multilingual-e5-small-hm.
+HM_TAG = "e5-hm-gd2b"
+HM_RELEASE = f"https://github.com/phucedu2/harmonymentor-V1/releases/download/{HM_TAG}"
+HM_DIR = DEFAULT_DIR.parent / "multilingual-e5-small-hm"
+HM_FILES = {   # SHA-256 khớp docs/giai-doan/ai-gop-y/gd2b_model_info.json
+    "model.onnx": "17afeaa6964650bdd1d40f2af49051118bd136d7a60a97249eff1bf76050e363",
+    "tokenizer.json": "0b44a9d7b51c3c62626640cda0e2c2f70fdacdc25bbbd68038369d14ebdf4c39",
+    "model_info.json": "bcefcf4ac0fa4401863ebe47e8c40489446a986be1ea608b969d21968c4ab0cf",
+}
 PREFIX = {"RETRIEVAL_QUERY": "query: ", "RETRIEVAL_DOCUMENT": "passage: "}
 
 
@@ -121,15 +132,14 @@ def _sha256(path: Path) -> str:
     return h.hexdigest()
 
 
-def download(dest: Path | None = None) -> int:
-    dest = dest or model_dir()
+def _fetch(dest: Path, files: dict[str, tuple[str, str]]) -> int:
+    """Tải từng file về dest, kiểm SHA-256; sai thì xóa và dừng để không chạy nhầm bản chưa đo."""
     dest.mkdir(parents=True, exist_ok=True)
-    for name, (remote, digest) in FILES.items():
+    for name, (url, digest) in files.items():
         target = dest / name
         if target.exists() and _sha256(target) == digest:
             print(f"{name}: đã có, đúng SHA-256")
             continue
-        url = f"https://huggingface.co/{HF_REPO}/resolve/{HF_REVISION}/{remote}"
         print(f"Tải {url}")
         tmp = target.with_suffix(".part")
         urllib.request.urlretrieve(url, tmp)
@@ -143,8 +153,20 @@ def download(dest: Path | None = None) -> int:
     return 0
 
 
+def download(dest: Path | None = None) -> int:
+    base = f"https://huggingface.co/{HF_REPO}/resolve/{HF_REVISION}"
+    return _fetch(dest or model_dir(), {n: (f"{base}/{r}", d) for n, (r, d) in FILES.items()})
+
+
+def download_hm(dest: Path | None = None) -> int:
+    return _fetch(dest or HM_DIR, {n: (f"{HM_RELEASE}/{n}", d) for n, d in HM_FILES.items()})
+
+
 if __name__ == "__main__":
-    if sys.argv[1:] == ["download"]:
+    cmd = sys.argv[1:]
+    if cmd == ["download"]:
         raise SystemExit(download())
-    print("Dùng: python -m app.ai.local_embedder download", file=sys.stderr)
+    if cmd == ["download-hm"]:
+        raise SystemExit(download_hm())
+    print("Dùng: python -m app.ai.local_embedder download | download-hm", file=sys.stderr)
     raise SystemExit(2)
