@@ -22,6 +22,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "backend"))
 DEV = ROOT / "scripts" / "ai" / "data" / "router_dev.json"
+GD2_DEV = ROOT / "scripts" / "ai" / "data" / "gd2" / "dev.json"
+EXTRA_MODEL_DIRS = [ROOT / "backend" / "models" / "multilingual-e5-small-hm"]
 OUT = ROOT / "backend" / "app" / "ai" / "tutor" / "router_thresholds.json"
 FIXED = {"greet_conf": 0.5, "help_conf": 0.45, "oos_conf": 0.5, "music_min": 0.3}
 FLOWS = ("A", "B", "C", "D", "G")
@@ -37,9 +39,13 @@ def embedders() -> dict[str, object]:
     from app.ai.tutor.router import method_key
 
     out = {"bm25": None}
-    e = get_local_embedder()
-    if e is not None:
-        out[method_key(e)] = e
+    # Mô hình đang cấu hình (LOCAL_EMBED_DIR) + các thư mục mô hình khác đã có trên máy (bản gốc, bản fine-tune GĐ2b),
+    # để một lần chạy ghi ngưỡng cho mọi bản và đổi bản không cần chạy lại.
+    from app.ai.local_embedder import DEFAULT_DIR, model_dir
+    for path in dict.fromkeys([model_dir(), DEFAULT_DIR, *EXTRA_MODEL_DIRS]):
+        e = get_local_embedder(path)
+        if e is not None:
+            out[method_key(e)] = e
     _EMB.update(out)
     return out
 
@@ -82,13 +88,21 @@ def score(router, items, sigs, table) -> dict:
             "confusion": conf, "per_flow": per, "rows": rows}
 
 
+def _thin(values: list[float], k: int) -> list[float]:
+    """Giữ tối đa k điểm thật, rải đều theo thứ hạng (phân vị). Tập dev GĐ2 có vài trăm điểm khác nhau; dò hết
+    tổ hợp thì hàng chục triệu lượt. Vẫn là điểm thật trên dev, không phải số tròn chọn tay."""
+    if len(values) <= k:
+        return values
+    return sorted({values[round(i * (len(values) - 1) / (k - 1))] for i in range(k)})
+
+
 def calibrate(router, items, emb) -> tuple[dict, dict]:
     sigs = [router.gather(it["q"], emb) for it in items]
     # Ngưỡng ứng viên = các điểm thật xuất hiện trên tập dev, không phải số tròn chọn tay.
     # Làm tròn (cosine 3 chữ số, BM25 1 chữ số) để lưới đủ mịn mà chạy vài phút.
     nd = 3 if emb is not None else 1
-    lesson = sorted({round(s.lesson.best_score, nd) for s in sigs if s.lesson.hits})
-    helps = sorted({round(s.help.best_score, nd) for s in sigs if s.help.hits})
+    lesson = _thin(sorted({round(s.lesson.best_score, nd) for s in sigs if s.lesson.hits}), 40)
+    helps = _thin(sorted({round(s.help.best_score, nd) for s in sigs if s.help.hits}), 25)
     best_key, best = None, None
     for gray, accept in itertools.combinations_with_replacement(lesson, 2):
         for h, margin in itertools.product(helps, MARGINS if emb is not None else (1.0,)):
@@ -106,13 +120,15 @@ def calibrate(router, items, emb) -> tuple[dict, dict]:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dev", type=Path, default=DEV)
+    ap.add_argument("--dev", type=Path, nargs="+", default=[DEV, GD2_DEV],
+                    help="một hay nhiều file dev, gộp lại (mặc định: dev GĐ1 + dev GĐ2)")
     ap.add_argument("--out", type=Path, default=OUT)
     args = ap.parse_args(argv)
     from app.ai.tutor import router
-    items = load_items(args.dev)
+    items = [it for p in args.dev for it in load_items(p)]
+    names = [str(p.resolve().relative_to(ROOT)) if p.resolve().is_relative_to(ROOT) else str(p) for p in args.dev]
     result = {"note": "Do scripts/ai/gop_y/hieu_chinh_nguong.py chọn trên tập dev, không sửa tay (ADR-017).",
-              "dev_set": str(args.dev.relative_to(ROOT)) if args.dev.is_relative_to(ROOT) else str(args.dev),
+              "dev_set": " + ".join(names),
               "dev_size": len(items), "date": date.today().isoformat(), "thresholds": {}, "dev_metrics": {}}
     for key, emb in embedders().items():
         table, m = calibrate(router, items, emb)

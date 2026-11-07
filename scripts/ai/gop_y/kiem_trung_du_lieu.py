@@ -45,6 +45,11 @@ def sets(test: Path | None = None) -> dict[str, list[str]]:
     out["help_hints"] = [q for e in help_kb["entries"] for q in e.get("hoi", [])]
     gold = json.loads(GOLD.read_text(encoding="utf-8"))
     out["gd4_gold"] = [x["q"] for x in gold["concept"]] + gold["out_of_scope"] + gold["attacks"]
+    gd2 = ROOT / "scripts" / "ai" / "data" / "gd2"
+    for name in ("train", "dev", "test_tam"):
+        f = gd2 / f"{name}.json"
+        if f.exists():
+            out[f"gd2_{name}"] = [it["q"] for it in json.loads(f.read_text(encoding="utf-8"))["items"]]
     if test:
         out["test"] = [it["q"] for it in json.loads(test.read_text(encoding="utf-8"))["items"]]
     return out

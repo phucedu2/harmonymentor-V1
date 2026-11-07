@@ -27,6 +27,7 @@ Các giai đoạn 0.2 → 2.3 là lộ trình của bản code gốc (zip v0.1.0
 | [wow-ui-thu-nghiem](wow-ui-thu-nghiem/) | 0.5.4-dev | Thử nghiệm trang chủ "wow": cuộn GSAP + âm thanh, Đồng & Gỉ (gộp vào phuc-music 04/11) | [BAO_CAO_WOW_UI.md](wow-ui-thu-nghiem/BAO_CAO_WOW_UI.md) |
 | [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Góp ý thầy G1–G7, GĐ0: kiểm kê kho RAG, đo lại BM25 / MiniLM / e5-small, 10 lỗ hổng định tuyến (06/11) | [00_KIEM_KE_RAG.md](ai-gop-y/00_KIEM_KE_RAG.md) |
 | [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Góp ý thầy G1/G3, GĐ1: AI Tutor định tuyến 4 luồng (trong bài / ngoài bài theo Music Engine hoặc "không biết" / từ chối / hướng dẫn sử dụng), e5-small cục bộ, ngưỡng do script chọn, ADR-017 (06/11) | [01_DINH_TUYEN.md](ai-gop-y/01_DINH_TUYEN.md) |
+| [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Góp ý thầy GĐ2: dữ liệu AI Tutor 1.011 câu (train/dev/test tạm, Claude viết đóng vai người học, tách theo nhóm), train lại tầng 1, sửa luật định tuyến, nguồn theo khối (07/11) | [02_DU_LIEU.md](ai-gop-y/02_DU_LIEU.md) |
 
 ## Quy ước cho giai đoạn sau
 

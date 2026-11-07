@@ -210,7 +210,7 @@ def test_no_overlap_between_train_dev_and_eval_sets():
 
 def test_local_embedder_missing_model_falls_back(tmp_path, monkeypatch):
     monkeypatch.setenv("LOCAL_EMBED_DIR", str(tmp_path))
-    monkeypatch.setattr(local_embedder, "_shared", None)
+    monkeypatch.setattr(local_embedder, "_shared", {})
     assert not local_embedder.available()
     assert local_embedder.get_local_embedder() is None
 

@@ -1,16 +1,16 @@
 {
   "note": "Do scripts/ai/gop_y/hieu_chinh_nguong.py chọn trên tập dev, không sửa tay (ADR-017).",
-  "dev_set": "scripts/ai/data/router_dev.json",
-  "dev_size": 105,
-  "date": "2026-11-06",
+  "dev_set": "scripts/ai/data/router_dev.json + scripts/ai/data/gd2/dev.json",
+  "dev_size": 275,
+  "date": "2026-11-07",
   "thresholds": {
     "bm25": {
       "greet_conf": 0.5,
       "help_conf": 0.45,
       "oos_conf": 0.5,
       "music_min": 0.3,
-      "lesson_gray": 1.8,
-      "lesson_accept": 3.9,
+      "lesson_gray": 4.3,
+      "lesson_accept": 4.6,
       "help_accept": 0.0,
       "help_margin": 1.0
     },
@@ -19,150 +19,150 @@
       "help_conf": 0.45,
       "oos_conf": 0.5,
       "music_min": 0.3,
-      "lesson_gray": 0.832,
-      "lesson_accept": 0.832,
-      "help_accept": 0.687,
-      "help_margin": 1.0
+      "lesson_gray": 0.838,
+      "lesson_accept": 0.841,
+      "help_accept": 0.823,
+      "help_margin": 0.0
     }
   },
   "dev_metrics": {
     "bm25": {
-      "accuracy": 0.9429,
-      "bc_answered_wrong": 0.0889,
-      "a_refused_wrong": 0.0,
-      "a_engine_instead_of_lesson": 0.0,
+      "accuracy": 0.8,
+      "bc_answered_wrong": 0.2062,
+      "a_refused_wrong": 0.1032,
+      "a_engine_instead_of_lesson": 0.0317,
       "confusion": {
         "A": {
-          "A": 35,
-          "B": 0,
+          "A": 109,
+          "B": 17,
           "C": 0,
           "D": 0,
           "G": 0
         },
         "B": {
-          "A": 4,
-          "B": 21,
+          "A": 15,
+          "B": 45,
           "C": 0,
           "D": 0,
           "G": 0
         },
         "C": {
-          "A": 0,
-          "B": 1,
-          "C": 19,
-          "D": 0,
+          "A": 5,
+          "B": 3,
+          "C": 26,
+          "D": 3,
           "G": 0
         },
         "D": {
-          "A": 0,
-          "B": 0,
-          "C": 0,
-          "D": 15,
+          "A": 2,
+          "B": 2,
+          "C": 5,
+          "D": 29,
           "G": 0
         },
         "G": {
           "A": 0,
-          "B": 0,
-          "C": 1,
+          "B": 1,
+          "C": 2,
           "D": 0,
-          "G": 9
+          "G": 11
         }
       },
       "per_flow": {
         "A": {
-          "precision": 0.897,
-          "recall": 1.0,
-          "n": 35
+          "precision": 0.832,
+          "recall": 0.865,
+          "n": 126
         },
         "B": {
-          "precision": 0.955,
-          "recall": 0.84,
-          "n": 25
+          "precision": 0.662,
+          "recall": 0.75,
+          "n": 60
         },
         "C": {
-          "precision": 0.95,
-          "recall": 0.95,
-          "n": 20
+          "precision": 0.788,
+          "recall": 0.703,
+          "n": 37
         },
         "D": {
-          "precision": 1.0,
-          "recall": 1.0,
-          "n": 15
+          "precision": 0.906,
+          "recall": 0.763,
+          "n": 38
         },
         "G": {
           "precision": 1.0,
-          "recall": 0.9,
-          "n": 10
+          "recall": 0.786,
+          "n": 14
         }
       }
     },
     "embedding:multilingual-e5-small": {
-      "accuracy": 0.9333,
-      "bc_answered_wrong": 0.0889,
-      "a_refused_wrong": 0.0286,
+      "accuracy": 0.7745,
+      "bc_answered_wrong": 0.0825,
+      "a_refused_wrong": 0.2619,
       "a_engine_instead_of_lesson": 0.0,
       "confusion": {
         "A": {
-          "A": 34,
-          "B": 1,
+          "A": 93,
+          "B": 33,
           "C": 0,
           "D": 0,
           "G": 0
         },
         "B": {
-          "A": 4,
-          "B": 21,
+          "A": 8,
+          "B": 52,
           "C": 0,
           "D": 0,
           "G": 0
         },
         "C": {
           "A": 0,
-          "B": 0,
-          "C": 19,
-          "D": 1,
+          "B": 8,
+          "C": 27,
+          "D": 2,
           "G": 0
         },
         "D": {
           "A": 0,
-          "B": 0,
-          "C": 0,
-          "D": 15,
+          "B": 3,
+          "C": 5,
+          "D": 30,
           "G": 0
         },
         "G": {
           "A": 0,
-          "B": 0,
-          "C": 1,
+          "B": 1,
+          "C": 2,
           "D": 0,
-          "G": 9
+          "G": 11
         }
       },
       "per_flow": {
         "A": {
-          "precision": 0.895,
-          "recall": 0.971,
-          "n": 35
+          "precision": 0.921,
+          "recall": 0.738,
+          "n": 126
         },
         "B": {
-          "precision": 0.955,
-          "recall": 0.84,
-          "n": 25
+          "precision": 0.536,
+          "recall": 0.867,
+          "n": 60
         },
         "C": {
-          "precision": 0.95,
-          "recall": 0.95,
-          "n": 20
+          "precision": 0.794,
+          "recall": 0.73,
+          "n": 37
         },
         "D": {
           "precision": 0.938,
-          "recall": 1.0,
-          "n": 15
+          "recall": 0.789,
+          "n": 38
         },
         "G": {
           "precision": 1.0,
-          "recall": 0.9,
-          "n": 10
+          "recall": 0.786,
+          "n": 14
         }
       }
     }

@@ -46,9 +46,10 @@ _CHORD_WORDS = {"maj": ("hợp âm trưởng", "triad trưởng", "major"), "min
 # Khái niệm của bài chưa có trong kho (quyết định 8A: trả lời "bạn sẽ học sau ở bài …"). Luật tự tắt khi bài vào kho,
 # nên không phải sửa tay lúc mở L05–L08. Từ khóa lấy từ tiêu đề và mục tiêu bài trong curriculum_specs.
 _LATER_CONCEPTS = {
-    "L05": r"secondary dominant|át phụ|\bV7?/[IVvi]+",
-    "L06": r"modal interchange|mượn hợp âm|borrowed chord|giọng song song",
-    "L07": r"\btensions\b|chord[- ]scale|điệu thức|\bmodes?\b|lydian|mixolydian|phrygian|locrian|aeolian|ionian",
+    # So trên chữ thường (later_lesson hạ chữ), nên mẫu số La Mã viết thường: "V7/V" → "v7/v".
+    "L05": r"secondary dominant|át phụ|\bv7?/[iv]+\b",
+    "L06": r"modal interchange|mượn hợp âm|borrowed chord|giọng song song|\bb(?:vii|vi|iii)\b",
+    "L07": r"\btensions?\b|chord[- ]scale|điệu thức|\bmodes?\b|lydian|mixolydian|phrygian|locrian|aeolian|ionian",
     "L08": r"voicing|thế bấm",
 }
 _SYM_IN_KB = re.compile(r"(?<![A-Za-z0-9#])([A-G](?:#|b)?(?:maj7|M7|m7b5|ø7|dim7|°7|dim|°|aug|\+|m7|m|7|sus2|sus4|6|9)?)"
@@ -128,11 +129,28 @@ def known_words() -> frozenset[str]:
     words: set[str] = set()
     for c in [*knowledge_base(), *help_base()]:
         words.update(_words(f"{c.title} {c.text}"))
-    for label, rows in load_data()["train"].items():
+    data = load_data()
+    for label, rows in data["train"].items():
         if label != "nhac_ly":
             for r in rows:
                 words.update(_words(r))
+    # Câu train GĐ2 luồng A (kho CÓ dạy): từ trong đó là từ "đã biết", kể cả cách gõ tắt của người học ("ko", "fai",
+    # "vs"). Câu B không được tính vì chứa đúng thuật ngữ kho chưa dạy.
+    for r in data.get("a_rows", []):
+        words.update(_words(r))
     return frozenset(words)
+
+
+_INTERVAL_TOKEN = re.compile(r"[pmad]\d{1,2}")   # m3, P5, d5, A4: ký hiệu quãng L01 đã dạy
+
+
+@lru_cache(maxsize=4096)
+def _near_known(word: str) -> bool:
+    """Lỗi gõ của một từ đã biết ("enharmonci", "cug"): không coi là thuật ngữ lạ. Chỉ xét từ ≥ 3 chữ để từ ngắn
+    lạ thật ("fa") không bị nuốt."""
+    import difflib
+
+    return len(word) >= 3 and bool(difflib.get_close_matches(word, known_words(), n=1, cutoff=0.8))
 
 
 _VI_SYLLABLE = re.compile(r"(ngh|ng|nh|ch|gh|gi|kh|ph|qu|th|tr|[bcdghklmnprstvx])?[aeiouy]{1,3}(ch|ng|nh|[cmnptiyou])?")
@@ -151,9 +169,10 @@ def unknown_terms(question: str) -> list[str]:
     originals = re.findall(r"[^\W_]+|#", unicodedata.normalize("NFC", question.lower()))
     for raw in originals:
         for w in _words(raw):
-            if w in known_words() or len(w) < 2 or w.isdigit() or re.fullmatch(r"l\d\d", w):
+            if (w in known_words() or len(w) < 2 or w.isdigit() or re.fullmatch(r"l\d\d", w)
+                    or _INTERVAL_TOKEN.fullmatch(w)):
                 continue
-            if not _foreign(w, raw):
+            if not _foreign(w, raw) or _near_known(w):
                 continue
             if not any(_parses(sym) for sym in (w[0].upper() + w[1:], "C" + w)):   # "Bm7b5", hoặc hậu tố "m7b5"
                 out.append(w)

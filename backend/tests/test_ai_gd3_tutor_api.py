@@ -234,13 +234,16 @@ def test_daily_quota_429_and_message_saved(monkeypatch):
     uid = make_user()
     assert ask(uid, "C7 khác Cmaj7 thế nào?")["quota_remaining_today"] == 1
     sid = ask(uid, "C7 khác Cmaj7 thế nào?")["session_id"]
-    r = client.post("/api/v1/chat/message", headers=auth(uid), json={"message": "Cmaj7 là gì?", "session_id": sid})
+    # Câu thứ ba phải là câu luồng A (gọi LLM). GĐ2: với BM25 và ngưỡng mới, câu rất ngắn "Cmaj7 là gì?" được trả
+    # bằng dữ kiện Engine (luồng B, không tốn lượt), nên dùng câu so sánh có đoạn bài rõ ràng.
+    r = client.post("/api/v1/chat/message", headers=auth(uid), json={"message": "Cmaj7 với C7 khác gì nhau?",
+                                                                     "session_id": sid})
     assert r.status_code == 429 and r.json()["error"]["code"] == "AI_QUOTA_EXCEEDED"
     # Câu ngoài phạm vi không tốn lượt nên vẫn được trả lời.
     assert ask(uid, "Cách nấu phở bò ngon")["intent"] == "out_of_scope"
     with SessionLocal() as db:
         assert db.scalars(select(ChatMessage).where(ChatMessage.session_id == sid,
-                                                    ChatMessage.content == "Cmaj7 là gì?")).first() is not None
+                                                    ChatMessage.content == "Cmaj7 với C7 khác gì nhau?")).first() is not None
 
 
 def test_global_budget_uses_fallback(monkeypatch):

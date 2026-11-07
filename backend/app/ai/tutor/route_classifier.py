@@ -10,6 +10,7 @@ lời được thì là A, không có thì là B. Phần đó do tầng 2 (đi�
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
@@ -17,6 +18,9 @@ from pathlib import Path
 from .intent import _prep
 
 DATA_PATH = Path(__file__).with_name("route_data.json")
+# Câu train GĐ2 (scripts/ai/gop_y/tao_du_lieu_gd2.py), gộp vào train của route_data.json. Tách file để dữ liệu sinh
+# tự động không trộn với dữ liệu viết tay GĐ1, và để bỏ ra được khi so sánh trước/sau.
+GD2_PATH = Path(__file__).with_name("route_data_gd2.json")
 LABELS = ("nhac_ly", "huong_dan", "chao_hoi", "ngoai_pham_vi")
 
 
@@ -27,8 +31,16 @@ class RouteLabel:
     probs: dict[str, float]
 
 
-def load_data(path: Path = DATA_PATH) -> dict:
-    return json.loads(path.read_text(encoding="utf-8"))
+def load_data(path: Path = DATA_PATH, *, gd2: bool | None = None) -> dict:
+    # ROUTE_GD2=0 tắt dữ liệu GĐ2, chỉ để đo "trước/sau" (scripts/ai/gop_y); chạy thật luôn bật.
+    if gd2 is None:
+        gd2 = os.getenv("ROUTE_GD2", "1") != "0"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if gd2 and path == DATA_PATH and GD2_PATH.exists():
+        gd2_data = json.loads(GD2_PATH.read_text(encoding="utf-8"))
+        data["train"] = {lab: [*rows, *gd2_data["train"].get(lab, [])] for lab, rows in data["train"].items()}
+        data["a_rows"] = gd2_data.get("a_rows", [])
+    return data
 
 
 def pairs(split: dict) -> tuple[list[str], list[str]]:

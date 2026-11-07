@@ -43,6 +43,17 @@ def available(path: Path | None = None) -> bool:
     return all((p / name).exists() for name in FILES)
 
 
+def model_name(path: Path) -> str:
+    """Tên mô hình = khóa ngưỡng trong router_thresholds.json. Bản fine-tune GĐ2b ghi tên riêng trong model_info.json
+    nên KHÔNG dùng nhầm ngưỡng của bản gốc (điểm hai bản khác thang)."""
+    info = path / "model_info.json"
+    if info.exists():
+        import json
+
+        return json.loads(info.read_text(encoding="utf-8")).get("name") or MODEL_NAME
+    return MODEL_NAME
+
+
 class LocalEmbedder:
     """Cùng giao diện Embedder (model, dim, embed) với GeminiEmbedder để retriever không phải biết khác nhau."""
 
@@ -57,6 +68,7 @@ class LocalEmbedder:
         p = path or model_dir()
         if not available(p):
             raise EmbeddingUnavailable("local_model_missing")
+        self.model = model_name(p)
         self.tok = Tokenizer.from_file(str(p / "tokenizer.json"))
         self.tok.enable_truncation(MAX_TOKENS)
         self.tok.enable_padding(pad_id=1, pad_token="<pad>")
@@ -87,18 +99,18 @@ class LocalEmbedder:
         return out
 
 
-_shared: LocalEmbedder | None = None
+_shared: dict[Path, LocalEmbedder] = {}
 
 
-def get_local_embedder() -> LocalEmbedder | None:
+def get_local_embedder(path: Path | None = None) -> LocalEmbedder | None:
     """None khi chưa tải mô hình: AI Tutor lùi về BM25 như trước, không hỏng yêu cầu."""
-    global _shared
-    if _shared is None and available():
+    p = path or model_dir()
+    if p not in _shared and available(p):
         try:
-            _shared = LocalEmbedder()
+            _shared[p] = LocalEmbedder(p)
         except Exception:   # thiếu thư viện hoặc file hỏng: vẫn chạy được bằng BM25
             return None
-    return _shared
+    return _shared.get(p)
 
 
 def _sha256(path: Path) -> str:
