@@ -29,6 +29,7 @@ Các giai đoạn 0.2 → 2.3 là lộ trình của bản code gốc (zip v0.1.0
 | [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Góp ý thầy G1/G3, GĐ1: AI Tutor định tuyến 4 luồng (trong bài / ngoài bài theo Music Engine hoặc "không biết" / từ chối / hướng dẫn sử dụng), e5-small cục bộ, ngưỡng do script chọn, ADR-017 (06/11) | [01_DINH_TUYEN.md](ai-gop-y/01_DINH_TUYEN.md) |
 | [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Góp ý thầy GĐ2: dữ liệu AI Tutor 1.011 câu (train/dev/test tạm, Claude viết đóng vai người học, tách theo nhóm), train lại tầng 1, sửa luật định tuyến, nguồn theo khối (07/11) | [02_DU_LIEU.md](ai-gop-y/02_DU_LIEU.md) |
 | [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Góp ý thầy G6, GĐ2b: fine-tune e5-small trên CPU (AUC tách A khỏi B/C 0,79 → 0,88), ngưỡng riêng, ADR-018; chưa bật mặc định (07/11) | [03_FINETUNE.md](ai-gop-y/03_FINETUNE.md) |
+| [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Góp ý thầy G2, GĐ3: nháp lý thuyết L05 Secondary Dominants (11 khối, đối chiếu Music Engine bằng test, ẩn tới khi Astra/Đạt duyệt) (07/11) | [04_L05_NHAP.md](ai-gop-y/04_L05_NHAP.md) |
 
 ## Quy ước cho giai đoạn sau
 
