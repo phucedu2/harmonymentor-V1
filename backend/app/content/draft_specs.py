@@ -205,9 +205,106 @@ DRAFT_REVIEW_ITEMS: dict[str, list[dict[str, Any]]] = {
 }
 
 
+# Khối lý thuyết NHÁP cho L05 (GĐ3 góp ý thầy G2). Claude soạn 07/11/2026; mọi nốt/hợp âm đã kiểm bằng Music Engine
+# (test_ai_gd3_l05.py). status "draft": người học không thấy, AI Tutor không trích, tới khi Astra/Đạt duyệt.
+L05_DRAFT_BLOCKS: list[tuple[str, str, dict[str, Any]]] = [
+    ("L05-B01", "callout", {
+        "status": DRAFT, "title": "Trước khi học át phụ",
+        "prompt": "Bài này dùng lại ba thứ đã học: hợp âm bảy át (V7) ở Lesson 2, chức năng Dominant ở Lesson 3 và "
+                  "tiến trình ii–V–I ở Lesson 4. Nếu chưa chắc G7 trong C major gồm G–B–D–F và vì sao nó muốn về C, "
+                  "hãy ôn lại Lesson 2 và Lesson 3 trước."}),
+    ("L05-B02", "theory", {
+        "status": DRAFT, "title": "1. Át phụ là gì",
+        "paragraphs": [
+            "Trong một key, hợp âm V7 có lực kéo mạnh về tonic. Ví dụ trong C major, G7 kéo về C.",
+            "Át phụ (secondary dominant, còn gọi là applied dominant) mượn đúng lực kéo đó nhưng hướng nó vào một "
+            "hợp âm khác trong key, không phải tonic. Hợp âm được hướng tới gọi là chord đích. Trong khoảnh khắc "
+            "ngắn đó, chord đích nghe như một tonic tạm thời.",
+            "Ký hiệu đọc là \"V7 của chord đích\" và viết V7/x. Ví dụ V7/V đọc là \"V7 của V\": trong C major, V là "
+            "G, nên V7/V là hợp âm V7 của giọng G, tức D7.",
+        ]}),
+    ("L05-B03", "glossary", {
+        "status": DRAFT, "title": "2. Thuật ngữ",
+        "intro": "Bốn thuật ngữ dùng trong cả bài.",
+        "terms": [
+            {"symbol": "V7/x", "term": "Át phụ · secondary dominant",
+             "definition": "Hợp âm bảy át (dominant seventh) dựng trên nốt cách root của chord đích một quãng 5 "
+                           "đúng đi lên. Nó thường đi ngay vào chord đích.",
+             "example": "V7/ii trong C major = A7, đi vào Dm7"},
+            {"symbol": "x", "term": "Chord đích · target chord",
+             "definition": "Hợp âm trong key mà át phụ hướng tới. Chord đích phải là hợp âm trưởng hoặc thứ; "
+                           "hợp âm giảm (như Bdim, bậc vii° của C major) không làm tonic tạm thời được.",
+             "example": "Dm7 là chord đích của A7"},
+            {"symbol": "Tonicization", "term": "Tạo chủ tạm thời",
+             "definition": "Làm một hợp âm không phải tonic nghe như tonic trong thời gian ngắn, thường chỉ một "
+                           "hai hợp âm, rồi quay lại key chính.",
+             "example": "C → A7 → Dm7 → G7 → C"},
+            {"symbol": "Modulation", "term": "Chuyển giọng",
+             "definition": "Đổi hẳn sang key mới và ở lại đó đủ lâu, thường có một cadence trong key mới. "
+                           "Một át phụ đơn lẻ chưa phải là chuyển giọng.",
+             "example": "Một đoạn nhạc chuyển từ C major sang G major và kết ở G"},
+        ]}),
+    ("L05-B04", "theory", {
+        "status": DRAFT, "title": "3. Dựng V7/x bằng hai bước",
+        "paragraphs": [
+            "Bước 1: tìm root của át phụ. Lấy root của chord đích rồi đi lên một quãng 5 đúng. Chord đích Dm7 có "
+            "root D; D lên quãng 5 đúng là A.",
+            "Bước 2: dựng hợp âm bảy át trên root đó, đúng công thức dominant seventh ở Lesson 2 (major triad + "
+            "minor seventh). Trên A ta được A7 = A–C#–E–G.",
+            "Dấu hiệu nhận ra át phụ: nó có nốt không thuộc key. A7 chứa C#, mà C major không có C#. C# cách D nửa "
+            "cung, nên nó kéo lên D giống như B trong G7 kéo lên C. Nốt này đóng vai cảm âm (leading tone) của "
+            "chord đích.",
+        ]}),
+    ("L05-B05", "theory", {
+        "status": DRAFT, "title": "4. Năm át phụ trong C major",
+        "items": [
+            "V7/ii = A7 (A–C#–E–G), đi vào Dm7. Nốt ngoài key: C#.",
+            "V7/iii = B7 (B–D#–F#–A), đi vào Em7. Nốt ngoài key: D# và F#.",
+            "V7/IV = C7 (C–E–G–Bb), đi vào Fmaj7. Nốt ngoài key: Bb, là quãng 7 của C7 và đi xuống A.",
+            "V7/V = D7 (D–F#–A–C), đi vào G7. Nốt ngoài key: F#.",
+            "V7/vi = E7 (E–G#–B–D), đi vào Am7. Nốt ngoài key: G#.",
+            "Không có V7/vii° vì Bdim là hợp âm giảm, không làm tonic tạm thời được.",
+        ]}),
+    ("L05-BCP1", "checkpoint", {
+        "status": DRAFT, "title": "Dựng V7/V", "exercise_id": "L05-Q02",
+        "note": "Tìm root của V trong C major, đi lên quãng 5 đúng, rồi dựng hợp âm bảy át."}),
+    ("L05-B06", "progression", {
+        "status": DRAFT, "title": "5. Ví dụ: chèn át phụ vào I–ii–V–I",
+        "prompt": "Cmaj7 → A7 → Dm7 → G7 → Cmaj7  =  I → V7/ii → ii7 → V7 → I", "key": "C"}),
+    ("L05-B07", "audio", {
+        "status": DRAFT, "title": "6. Nghe trước và sau khi thêm át phụ",
+        "prompt": "Nghe Cmaj7 → Dm7 → G7 → Cmaj7, rồi nghe bản có A7 chen trước Dm7. Chú ý C# trong A7 làm Dm7 "
+                  "nghe như một điểm đến, rồi G7 vẫn kéo về Cmaj7 như cũ.",
+        "progression": ["Cmaj7", "A7", "Dm7", "G7", "Cmaj7"], "key": "C", "bpm": 72}),
+    ("L05-B08", "theory", {
+        "status": DRAFT, "title": "7. Tạo chủ tạm thời hay chuyển giọng?",
+        "paragraphs": [
+            "Át phụ chỉ làm chord đích nghe như tonic trong một khoảnh khắc. Ngay sau đó tiến trình quay về key "
+            "chính, nên C major vẫn là key của cả đoạn. Đó là tonicization.",
+            "Chuyển giọng (modulation) khác ở chỗ key mới được giữ lâu và thường có một cadence V–I trong key mới. "
+            "Ở mức nhập môn, hãy hỏi: sau át phụ, nhạc có quay về key cũ không? Có thì là tonicization.",
+        ]}),
+    ("L05-BCP2", "checkpoint", {
+        "status": DRAFT, "title": "Tạo chủ tạm thời hay chuyển giọng", "exercise_id": "L05-Q06",
+        "note": "Hỏi: sau át phụ, nhạc có quay về key cũ không?"}),
+    ("L05-B09", "summary", {
+        "status": DRAFT, "title": "Ghi nhớ",
+        "items": [
+            "V7/x là hợp âm bảy át hướng vào chord đích x, không phải vào tonic.",
+            "Root của V7/x cách root của chord đích một quãng 5 đúng đi lên; hợp âm luôn là dominant seventh.",
+            "Trong C major: V7/ii = A7, V7/iii = B7, V7/IV = C7, V7/V = D7, V7/vi = E7.",
+            "Nốt ngoài key của át phụ (như C# trong A7) kéo nửa cung vào chord đích.",
+            "Một át phụ là tonicization ngắn, chưa phải chuyển giọng.",
+        ]}),
+]
+
+# Bài chưa có khối lý thuyết đã phát hành: dùng khối nháp GĐ3 (ẩn với người học, không vào kho AI Tutor).
+DRAFT_LESSON_BLOCKS: dict[str, list[tuple[str, str, dict[str, Any]]]] = {"L05": L05_DRAFT_BLOCKS}
+
+
 def blocks_with_drafts(spec: dict[str, Any]) -> list[tuple[str, str, dict[str, Any]]]:
     """Khối của bài kèm các khối nháp ("Dùng vào sáng tác", thẻ ôn đề xuất) chèn trước khối tóm tắt cuối."""
-    blocks = list(spec["blocks"])
+    blocks = list(spec["blocks"]) or list(DRAFT_LESSON_BLOCKS.get(spec["id"], []))
     drafts = []
     items = COMPOSE_BLOCKS.get(spec["id"])
     if items:
