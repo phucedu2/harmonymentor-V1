@@ -115,8 +115,19 @@ def evaluate(enc, lessons, texts, dev: list[dict]) -> dict:
 def export_onnx(enc, out: Path) -> None:
     torch = enc.torch
     enc.model.eval()
+
+    class Wrap(torch.nn.Module):
+        """Gọi bằng tên tham số: BertModel.forward nhận nhiều tham số vị trí, truyền thẳng sẽ lệch chỗ."""
+
+        def __init__(self, m):
+            super().__init__()
+            self.m = m
+
+        def forward(self, input_ids, attention_mask):
+            return self.m(input_ids=input_ids, attention_mask=attention_mask).last_hidden_state
+
     dummy = enc.tok(["query: xin chào"], return_tensors="pt")
-    torch.onnx.export(enc.model, (dummy["input_ids"], dummy["attention_mask"]), str(out / "model.onnx"),
+    torch.onnx.export(Wrap(enc.model), (dummy["input_ids"], dummy["attention_mask"]), str(out / "model.onnx"),
                       input_names=["input_ids", "attention_mask"], output_names=["last_hidden_state"],
                       dynamic_axes={"input_ids": {0: "b", 1: "s"}, "attention_mask": {0: "b", 1: "s"},
                                     "last_hidden_state": {0: "b", 1: "s"}},
@@ -129,6 +140,17 @@ def sha(path: Path) -> str:
         for block in iter(lambda: f.read(1 << 20), b""):
             h.update(block)
     return h.hexdigest()
+
+
+def finish(tmp: Path, out: Path, src: str) -> None:
+    """Xuất ONNX từ bản đã chọn (thư mục .tmp), chép tokenizer gốc, ghi SHA-256 vào model_info.json."""
+    enc = Encoder(str(tmp))
+    export_onnx(enc, out)
+    shutil.copy(Path(src) / "tokenizer.json", out / "tokenizer.json")
+    info = json.loads((out / "model_info.json").read_text(encoding="utf-8"))
+    info["files"] = {n: sha(out / n) for n in ("model.onnx", "tokenizer.json")}
+    (out / "model_info.json").write_text(json.dumps(info, ensure_ascii=False, indent=2), encoding="utf-8")
+    shutil.rmtree(tmp)
 
 
 def main(argv=None) -> int:
@@ -232,15 +254,8 @@ def main(argv=None) -> int:
         (args.out / "model_info.json").write_text(json.dumps(info, ensure_ascii=False, indent=2), encoding="utf-8")
         print("Không epoch nào giữ được R@1 của bản gốc: không xuất mô hình.")
         return 1
-    from transformers import AutoModel, AutoTokenizer
-
-    enc.model = AutoModel.from_pretrained(tmp)
-    enc.tok = AutoTokenizer.from_pretrained(tmp)
-    export_onnx(enc, args.out)
-    shutil.copy(Path(src) / "tokenizer.json", args.out / "tokenizer.json")
-    info["files"] = {n: sha(args.out / n) for n in ("model.onnx", "tokenizer.json")}
     (args.out / "model_info.json").write_text(json.dumps(info, ensure_ascii=False, indent=2), encoding="utf-8")
-    shutil.rmtree(tmp)
+    finish(tmp, args.out, src)
     print("Đã xuất", args.out, json.dumps(best, ensure_ascii=False))
     return 0
 

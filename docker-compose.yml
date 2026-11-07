@@ -25,7 +25,10 @@ services:
       retries: 20
 
   api:
-    build: ./backend
+    build:
+      context: ./backend
+      args:
+        E5_HM: ${E5_HM:-0}   # 1 = tải thêm bản fine-tune GĐ2b (470 MB) từ GitHub Release, ADR-018
     env_file: .env
     environment:
       DATABASE_URL: postgresql+psycopg://harmony:${DB_PASSWORD}@db:5432/harmony
