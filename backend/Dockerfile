@@ -10,6 +10,12 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
+# Mô hình nhúng e5-small cho AI Tutor (ADR-017), tải một lần ở lớp riêng nên sửa code không phải tải lại.
+# Không tải được (mất mạng, phần mềm diệt virus chặn HTTPS) thì build vẫn chạy tiếp, AI Tutor dùng BM25.
+COPY app/__init__.py app/
+COPY app/ai/__init__.py app/ai/embedder.py app/ai/local_embedder.py app/ai/
+RUN python -m app.ai.local_embedder download || echo "Chưa tải được e5-small: AI Tutor sẽ dùng BM25."
+
 COPY . .
 
 # Không chạy bằng root trong container.

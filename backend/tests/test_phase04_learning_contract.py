@@ -27,14 +27,14 @@ def test_lesson_index_and_lesson1_content_are_served_from_backend():
         lessons = index.json()
         assert len(lessons) == 8
         l01 = next(x for x in lessons if x["id"] == "L01")
-        assert l01["exercise_count"] == 6
+        assert l01["exercise_count"] == 8
         assert l01["review_item_count"] == 8
         assert l01["block_count"] == 14
 
         detail = client.get("/api/v1/lessons/L01")
         assert detail.status_code == 200
         body = detail.json()
-        assert len(body["exercises"]) == 6
+        assert len(body["exercises"]) == 8
         assert len(body["review_items"]) == 8
         assert len(body["sources"]) == 4
         # Quiz answer keys are server-side only.

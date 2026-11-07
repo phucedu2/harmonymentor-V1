@@ -1,0 +1,277 @@
+"""Bộ định tuyến 4 luồng của AI Tutor (ADR-017, góp ý thầy G1/G3, 06/11/2026).
+
+  A "trong bài học"     câu nhạc lý mà kho có đoạn đủ điểm → RAG (+ Gemini nếu có) + trích dẫn + guardrail.
+  B "ngoài bài học"     câu nhạc lý bài chưa dạy → Music Engine tính được thì trả lời bằng dữ kiện Engine, nhãn
+                        "Ngoài bài học, theo Music Engine"; không tính được thì "không biết" + gợi ý bài. KHÔNG gọi LLM.
+  C "không liên quan"   từ chối lịch sự. KHÔNG gọi LLM.
+  D "hướng dẫn sử dụng" tra kho hướng dẫn (app/content/help), trả lời bằng mục hướng dẫn, trích trang.
+  G "chào hỏi"          trả lời ngắn.
+
+Hai tầng:
+  Tầng 1 (route_classifier): đoán loại câu theo câu chữ, cục bộ, miễn phí.
+  Tầng 2: điểm truy xuất trên kho bài (và kho hướng dẫn) + Music Engine. Ngưỡng đọc từ router_thresholds.json,
+          do scripts/ai/gop_y/hieu_chinh_nguong.py chọn trên tập dev, không chọn tay.
+Vùng xám (điểm giữa ngưỡng xám và ngưỡng nhận): luật bảo thủ, nghiêng về "không biết" (quyết định GĐ1).
+
+Thêm một luật tất định "phủ kiến thức": câu hỏi về loại hợp âm / âm giai mà KHÔNG bài nào trong kho nhắc tới
+(ví dụ sus4, thứ hòa âm) thì là luồng B dù điểm truy xuất cao, vì đoạn tìm được chỉ "giống chữ", không dạy điều đó.
+Ví dụ GĐ0: "Csus4 gồm nốt gì" lấy về đoạn hợp âm ba L01-B08 với điểm cao.
+"""
+
+from __future__ import annotations
+
+import json
+import re
+import unicodedata
+from dataclasses import dataclass, field
+from functools import lru_cache
+from pathlib import Path
+from typing import Any
+
+from ...music_engine.chord import parse_chord_symbol
+from ..embedder import Embedder
+from .engine_query import EngineAnswer, engine_answer
+from .retriever import Hit, Retrieval, help_base, knowledge_base, retrieve
+from .route_classifier import RouteLabel, classify_route
+
+THRESHOLDS_PATH = Path(__file__).with_name("router_thresholds.json")
+_SCALE_WORDS = {"major": ("trưởng", "major"), "natural_minor": ("thứ tự nhiên", "natural minor", "giọng thứ"),
+                "harmonic_minor": ("thứ hòa âm", "harmonic minor"), "melodic_minor": ("thứ giai điệu", "melodic minor"),
+                "dorian": ("dorian",)}
+# Kho thường gọi loại hợp âm bằng chữ ("hợp âm thứ", "nửa giảm") chứ không chỉ bằng ký hiệu.
+_CHORD_WORDS = {"maj": ("hợp âm trưởng", "triad trưởng", "major"), "min": ("hợp âm thứ", "triad thứ", "minor"),
+                "dim": ("hợp âm giảm", "triad giảm", "diminished", "dim"), "aug": ("hợp âm tăng", "triad tăng", "augmented", "aug"),
+                "m7b5": ("nửa giảm", "half-diminished", "ø7", "m7b5"), "dim7": ("dim7", "bảy giảm", "°7"),
+                "7": ("bảy át", "dominant seventh"), "maj7": ("maj7",), "m7": ("m7",)}
+# Khái niệm của bài chưa có trong kho (quyết định 8A: trả lời "bạn sẽ học sau ở bài …"). Luật tự tắt khi bài vào kho,
+# nên không phải sửa tay lúc mở L05–L08. Từ khóa lấy từ tiêu đề và mục tiêu bài trong curriculum_specs.
+_LATER_CONCEPTS = {
+    "L05": r"secondary dominant|át phụ|\bV7?/[IVvi]+",
+    "L06": r"modal interchange|mượn hợp âm|borrowed chord|giọng song song",
+    "L07": r"\btensions\b|chord[- ]scale|điệu thức|\bmodes?\b|lydian|mixolydian|phrygian|locrian|aeolian|ionian",
+    "L08": r"voicing|thế bấm",
+}
+_SYM_IN_KB = re.compile(r"(?<![A-Za-z0-9#])([A-G](?:#|b)?(?:maj7|M7|m7b5|ø7|dim7|°7|dim|°|aug|\+|m7|m|7|sus2|sus4|6|9)?)"
+                        r"(?![A-Za-z0-9#])")
+
+
+@dataclass
+class Decision:
+    flow: str                      # A | B | C | D | G
+    kind: str                      # lesson | engine | unknown | refuse | help | help_unknown | greeting
+    label: RouteLabel
+    lesson: Retrieval
+    help: Retrieval | None
+    engine: EngineAnswer
+    reason: str
+    hits: list[Hit] = field(default_factory=list)          # đoạn bài được dùng (chỉ luồng A)
+    help_hits: list[Hit] = field(default_factory=list)     # mục hướng dẫn được dùng (chỉ luồng D)
+    nearest_lesson: str | None = None                      # bài gần nhất để gợi ý khi "không biết"
+    later_lesson: str | None = None                        # bài chưa mở dạy khái niệm này (luồng B)
+
+    def log(self) -> dict[str, Any]:
+        return {"flow": self.flow, "kind": self.kind, "reason": self.reason,
+                "label": {"label": self.label.label, "confidence": self.label.confidence},
+                "lesson_best": self.lesson.best_score, "method": self.lesson.method,
+                "help_best": self.help.best_score if self.help else None,
+                "engine_unknown": self.engine.unknown, "nearest_lesson": self.nearest_lesson,
+                "later_lesson": self.later_lesson}
+
+
+@lru_cache(maxsize=1)
+def thresholds() -> dict[str, dict[str, float]]:
+    return json.loads(THRESHOLDS_PATH.read_text(encoding="utf-8"))["thresholds"]
+
+
+def method_key(embedder: Embedder | None) -> str:
+    return f"embedding:{embedder.model}" if embedder is not None else "bm25"
+
+
+def _th(embedder: Embedder | None) -> dict[str, float]:
+    table = thresholds()
+    return table.get(method_key(embedder)) or table["bm25"]
+
+
+@lru_cache(maxsize=1)
+def kb_coverage() -> tuple[frozenset[str], frozenset[str]]:
+    """(loại hợp âm, loại âm giai) mà ít nhất một đoạn bài nhắc tới. Tính từ chính kho, không ghi tay."""
+    chords, scales = set(), set()
+    for c in knowledge_base():
+        text = f"{c.title} {c.text}"
+        for m in _SYM_IN_KB.finditer(text):
+            try:
+                chords.add(parse_chord_symbol(m[1]).type.id)
+            except Exception:
+                continue
+        low = text.lower()
+        for kind, words in _CHORD_WORDS.items():
+            if any(w.lower() in low for w in words):
+                chords.add(kind)
+        for kind, words in _SCALE_WORDS.items():
+            if any(w in low for w in words):
+                scales.add(kind)
+    return frozenset(chords), frozenset(scales)
+
+
+def _words(text: str) -> list[str]:
+    """Chữ thường, bỏ dấu (để câu gõ không dấu vẫn so được), tách theo chữ và số."""
+    t = unicodedata.normalize("NFD", text.lower()).replace("đ", "d")
+    return re.findall(r"[a-z0-9#]+", "".join(ch for ch in t if unicodedata.category(ch) != "Mn"))
+
+
+@lru_cache(maxsize=1)
+def known_words() -> frozenset[str]:
+    """Từ "đã biết": có trong kho bài, kho hướng dẫn, hoặc câu train KHÔNG phải nhạc lý (từ hỏi thường ngày).
+    Lấy từ dữ liệu, không lập danh sách tay. Câu train nhạc lý không được tính vì chứa thuật ngữ kho chưa dạy."""
+    from .route_classifier import load_data
+
+    words: set[str] = set()
+    for c in [*knowledge_base(), *help_base()]:
+        words.update(_words(f"{c.title} {c.text}"))
+    for label, rows in load_data()["train"].items():
+        if label != "nhac_ly":
+            for r in rows:
+                words.update(_words(r))
+    return frozenset(words)
+
+
+_VI_SYLLABLE = re.compile(r"(ngh|ng|nh|ch|gh|gi|kh|ph|qu|th|tr|[bcdghklmnprstvx])?[aeiouy]{1,3}(ch|ng|nh|[cmnptiyou])?")
+
+
+def _foreign(word: str, original: str) -> bool:
+    """Từ không thể là một âm tiết tiếng Việt: "pentatonic", "fugue", "blues", "fa". Từ tiếng Việt lạ ("cuối",
+    "buồn") KHÔNG tính, vì danh sách từ thường ngày lấy từ dữ liệu train còn nhỏ, tính vào thì chặn nhầm câu A."""
+    return not any(ord(ch) > 127 for ch in original) and not _VI_SYLLABLE.fullmatch(word)
+
+
+def unknown_terms(question: str) -> list[str]:
+    """Thuật ngữ ngoại trong câu hỏi mà kho bài, kho hướng dẫn và câu thường ngày đều không có, ví dụ "pentatonic",
+    "fugue". Ký hiệu hợp âm bỏ qua vì đã có luật phủ kiến thức theo Engine. Có thuật ngữ lạ = kho chưa dạy chủ đề đó."""
+    out = []
+    originals = re.findall(r"[^\W_]+|#", unicodedata.normalize("NFC", question.lower()))
+    for raw in originals:
+        for w in _words(raw):
+            if w in known_words() or len(w) < 2 or w.isdigit() or re.fullmatch(r"l\d\d", w):
+                continue
+            if not _foreign(w, raw):
+                continue
+            if not any(_parses(sym) for sym in (w[0].upper() + w[1:], "C" + w)):   # "Bm7b5", hoặc hậu tố "m7b5"
+                out.append(w)
+    return out
+
+
+def _parses(symbol: str) -> bool:
+    try:
+        parse_chord_symbol(symbol)
+        return True
+    except Exception:
+        return False
+
+
+def later_lesson(question: str) -> str | None:
+    """Bài CHƯA có trong kho mà dạy khái niệm câu hỏi nhắc tới; None nếu không có."""
+    in_kb = {c.lesson_id for c in knowledge_base()}
+    low = question.lower()
+    for lesson_id, pattern in _LATER_CONCEPTS.items():
+        if lesson_id not in in_kb and re.search(pattern, low):
+            return lesson_id
+    return None
+
+
+def outside_kb(eng: EngineAnswer) -> bool:
+    """Câu hỏi về thứ kho chưa dạy: loại hợp âm/âm giai không đoạn nào nhắc, hoặc ký hiệu Engine không hiểu."""
+    if eng.unknown:
+        return True
+    chords, scales = kb_coverage()
+    for f in eng.facts:
+        if f["tool"] == "get_chord_tones":
+            try:
+                if parse_chord_symbol(f["args"]["symbol"]).type.id not in chords:
+                    return True
+            except Exception:
+                return True
+        if f["tool"] == "get_scale" and f["args"]["scale_type"] not in scales:
+            return True
+    return False
+
+
+@dataclass
+class Signals:
+    """Mọi tín hiệu của một câu hỏi, tính một lần. route() chỉ so với ngưỡng nên dò lưới ngưỡng chạy nhanh."""
+    question: str
+    label: RouteLabel
+    engine: EngineAnswer
+    lesson: Retrieval
+    help: Retrieval
+    later_lesson: str | None
+    outside_kb: bool
+    unknown_terms: list[str]
+
+
+def gather(question: str, embedder: Embedder | None, *, top_k: int = 4) -> Signals:
+    eng = engine_answer(question)
+    return Signals(question, classify_route(question), eng,
+                   retrieve(question, embedder, top_k=top_k, min_score=-1.0, bm25_min_score=-1.0),
+                   retrieve(question, embedder, top_k=2, min_score=-1.0, bm25_min_score=-1.0, chunks=list(help_base())),
+                   later_lesson(question), outside_kb(eng), unknown_terms(question))
+
+
+def route(sig: Signals, th: dict[str, float]) -> Decision:
+    label, eng, lesson, question = sig.label, sig.engine, sig.lesson, sig.question
+    nearest = lesson.hits[0].chunk.lesson_id if lesson.hits else None
+    gray, accept = th["lesson_gray"], th["lesson_accept"]
+    keep = [h for h in lesson.hits if h.score >= gray]
+
+    def d(flow, kind, reason, **kw):
+        near = kw.get("later_lesson") or nearest
+        return Decision(flow, kind, label, lesson, kw.pop("help", None), eng, reason, nearest_lesson=near, **kw)
+
+    probs = label.probs
+    music_like = label.label == "nhac_ly" or probs.get("nhac_ly", 0) >= th["music_min"] or eng.facts or eng.unknown
+    if label.label == "chao_hoi" and label.confidence >= th["greet_conf"] and len(question.split()) <= 8:
+        return d("G", "greeting", "label_greeting")
+
+    if label.label == "huong_dan" and label.confidence >= th["help_conf"]:
+        hits = [h for h in sig.help.hits if h.score >= th["help_accept"]]
+        # Câu nhạc lý hỏi kiểu "… làm thế nào" hay bị tầng 1 đoán là hướng dẫn. Kho bài trả lời được (điểm đạt ngưỡng
+        # nhận) và xác suất nhạc lý không thấp thì ưu tiên bài học.
+        # Với nhúng, điểm hai kho cùng thang (cosine) nên so trực tiếp: đoạn bài hơn mục hướng dẫn một khoảng thì là bài.
+        same_scale = lesson.method == "embedding" and sig.help.method == "embedding"
+        lesson_wins = ((lesson.best_score >= accept and probs.get("nhac_ly", 0) >= th["music_min"]) or
+                       (same_scale and lesson.best_score >= sig.help.best_score + th.get("help_margin", 1.0)))
+        if hits and not lesson_wins:
+            return d("D", "help", "label_help+help_hit", help=sig.help, help_hits=hits[:1])
+        # Tầng 1 hay nhầm câu nhạc lý kiểu "… đếm thế nào" thành hướng dẫn; kho hướng dẫn không có mục nào thì
+        # xét tiếp như câu nhạc lý thay vì trả "chưa có hướng dẫn".
+        if not hits and not (music_like and probs.get("nhac_ly", 0) >= th["music_min"]):
+            return d("D", "help_unknown", "label_help_no_hit", help=sig.help)
+
+    if label.label == "ngoai_pham_vi" and label.confidence >= th["oos_conf"] and not eng.facts:
+        return d("C", "refuse", "label_out_of_scope")
+
+    # Từ đây: câu nhạc lý (hoặc tầng 1 không chắc). A hay B do kho + Engine quyết.
+    if not music_like:
+        return d("C", "refuse", "not_music_low_score")
+    if sig.later_lesson:
+        kind = "engine" if eng.facts and not eng.unknown else "unknown"
+        return d("B", kind, "later_lesson", later_lesson=sig.later_lesson)
+    if sig.outside_kb:
+        if eng.facts:
+            return d("B", "engine", "outside_kb_engine")
+        return d("B", "unknown", "outside_kb_unknown")
+    if sig.unknown_terms:
+        return d("B", "engine" if eng.facts else "unknown", "unknown_terms")
+    if lesson.best_score >= accept:
+        return d("A", "lesson", "lesson_hit", hits=keep or lesson.hits[:1])
+    # Dữ kiện Engine thuộc loại kho đã dạy và có đoạn bài ở vùng xám: trả lời từ bài kèm dữ kiện Engine.
+    if eng.facts and keep:
+        return d("A", "lesson", "engine_in_kb", hits=keep)
+    if eng.facts:
+        return d("B", "engine", "below_threshold_engine")
+    if lesson.best_score >= gray:
+        return d("B", "unknown", "gray_zone_conservative")
+    return d("B", "unknown", "no_lesson_hit")
+
+
+def decide(question: str, embedder: Embedder | None, *, top_k: int = 4) -> Decision:
+    return route(gather(question, embedder, top_k=top_k), _th(embedder))

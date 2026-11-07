@@ -121,7 +121,8 @@ def test_upgrade_keeps_every_row_and_restores_only_existing_versions(legacy_engi
     versions_before = snapshot_table(legacy_engine, VERSION_CORE_SQL)
     exercises_before = snapshot_table(legacy_engine, "SELECT id, lesson_id, skill_id FROM exercises ORDER BY id")
 
-    alembic_to(legacy_engine, "head")
+    # Nâng đúng tới PR-3 (không phải "head"): migration sau PR-3 (vd practice_attempts) có test riêng.
+    alembic_to(legacy_engine, PR3)
 
     # Không mất, không đổi, không thêm dòng nào; chỉ thêm cột.
     assert snapshot_table(legacy_engine, ATTEMPTS_SQL) == attempts_before
@@ -170,7 +171,11 @@ def test_seed_after_upgrade_is_idempotent(legacy_engine):
     for _ in range(2):
         with factory() as db:
             seed_initial_data(db)
-    assert snapshot_table(legacy_engine, "SELECT id, content_hash, snapshot_origin, status FROM exercise_versions ORDER BY id") == before
+    after = snapshot_table(legacy_engine, "SELECT id, content_hash, snapshot_origin, status FROM exercise_versions ORDER BY id")
+    # Seed chỉ được THÊM câu mới của nguồn (6 câu demo 10/11, đã phát hành), không đổi dòng nào đã có từ migration.
+    assert [row for row in after if row[0] in {r[0] for r in before}] == before
+    added = sorted((row[0].rsplit("-v", 1)[0], row[3]) for row in after if row[0] not in {r[0] for r in before})
+    assert added == [(x, "published") for x in ("L01-Q07", "L01-Q08", "L02-Q07", "L02-Q08", "L02-Q09", "L02-Q10")]
     with factory() as db:
         # Câu L01-Q01 vẫn hiện bằng v4 dù có một bản cũ v1 không khôi phục được.
         assert current_version(db.get(Exercise, "L01-Q01")).id == "L01-Q01-v4"
@@ -198,7 +203,7 @@ def test_current_version_not_matching_source_is_marked_missing(legacy_engine):
 
 def test_downgrade_is_refused(legacy_engine):
     load_fixture(legacy_engine)
-    alembic_to(legacy_engine, "head")
+    alembic_to(legacy_engine, PR3)
     with pytest.raises(RuntimeError, match="khôi phục CSDL từ bản sao lưu"):
         alembic_to(legacy_engine, BEFORE_PR3, downgrade=True)
     assert snapshot_table(legacy_engine, "SELECT version_num FROM alembic_version") == [(PR3,)]

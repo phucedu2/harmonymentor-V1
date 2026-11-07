@@ -15,19 +15,30 @@ from ..contracts.learning import (
     StartLessonOut,
 )
 from ..auth.deps import get_current_user
-from ..content.versioning import current_version
+from ..content.versioning import block_visible, current_version, lesson_visible
 from ..db.models import Lesson, LessonSource, SourceWork, User
 from ..db.session import get_db
 from ..core.errors import AppError
-from ..services.learning_service import LessonHasNoExercises, LessonNotMastered, complete_lesson, start_lesson
+from ..services.learning_service import (
+    LessonHasNoExercises,
+    LessonNotMastered,
+    complete_lesson,
+    display_order,
+    start_lesson,
+    visible_lessons,
+)
 
 router = APIRouter(prefix="/api/v1/lessons", tags=["lessons"])
 
 
-def _summary(lesson: Lesson) -> LessonSummaryOut:
+def _visible_blocks(lesson: Lesson) -> list:
+    return [b for b in sorted(lesson.blocks, key=lambda x: x.position) if block_visible(b.payload)]
+
+
+def _summary(lesson: Lesson, order: int) -> LessonSummaryOut:
     return LessonSummaryOut(
-        id=lesson.id, order=lesson.order_index, track=lesson.track, title=lesson.title,
-        status=lesson.status, objectives=lesson.objectives or [], block_count=len(lesson.blocks),
+        id=lesson.id, order=order, track=lesson.track, title=lesson.title,
+        status=lesson.status, objectives=lesson.objectives or [], block_count=len(_visible_blocks(lesson)),
         exercise_count=len([x for x in lesson.exercises if current_version(x) is not None]),
         review_item_count=len(lesson.review_items),
     )
@@ -35,14 +46,15 @@ def _summary(lesson: Lesson) -> LessonSummaryOut:
 
 @router.get("", response_model=list[LessonSummaryOut])
 def list_lessons(db: Session = Depends(get_db)):
-    lessons = db.scalars(select(Lesson).order_by(Lesson.order_index)).unique().all()
-    return [_summary(lesson) for lesson in lessons]
+    lessons = visible_lessons(db)
+    orders = display_order(lessons)
+    return [_summary(lesson, orders[lesson.id]) for lesson in lessons]
 
 
 @router.get("/{lesson_id}", response_model=LessonDetailOut)
 def get_lesson(lesson_id: str, db: Session = Depends(get_db)):
     lesson = db.get(Lesson, lesson_id)
-    if lesson is None:
+    if lesson is None or not lesson_visible(lesson):
         raise HTTPException(status_code=404, detail={"code": "LESSON_NOT_FOUND"})
 
     sources = db.execute(
@@ -63,11 +75,11 @@ def get_lesson(lesson_id: str, db: Session = Depends(get_db)):
             grading_strategy=version.grading_strategy, skill_id=exercise.skill_id,
         ))
 
-    base = _summary(lesson).model_dump()
+    base = _summary(lesson, display_order(visible_lessons(db))[lesson.id]).model_dump()
     return LessonDetailOut(
         **base,
         blocks=[LessonBlockOut(id=b.id, position=b.position, block_type=b.block_type, payload=b.payload)
-                for b in sorted(lesson.blocks, key=lambda x: x.position)],
+                for b in _visible_blocks(lesson)],
         exercises=exercises,
         review_items=[ReviewItemOut(id=r.id, mode=r.mode, front=r.front, back=r.back, skill_id=r.skill_id)
                       for r in sorted(lesson.review_items, key=lambda x: x.id)],

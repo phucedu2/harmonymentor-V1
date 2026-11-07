@@ -76,6 +76,16 @@ def visible_statuses() -> set[str]:
     return {STATUS_PUBLISHED}
 
 
+def lesson_visible(lesson: Any) -> bool:
+    """Bài nháp (status draft, phuc-music L09–L12) chỉ hiện khi bật SHOW_DRAFT_CONTENT."""
+    return lesson.status != STATUS_DRAFT or settings.show_draft_content
+
+
+def block_visible(payload: dict[str, Any] | None) -> bool:
+    """Khối nháp trong bài đã phát hành (mục "Dùng vào sáng tác") ẩn với người học cho tới khi Đạt duyệt."""
+    return (payload or {}).get("status") != STATUS_DRAFT or settings.show_draft_content
+
+
 def current_version(exercise: Any, statuses: set[str] | None = None) -> Any | None:
     """Phiên bản người học được làm lúc này, hoặc None nếu câu bị ẩn.
 

@@ -18,6 +18,7 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from app.content import versioning
 from app.content.curriculum_specs import LESSON_SPECS, q
+from app.content.draft_specs import DRAFT_LESSON_SPECS
 from app.content.seed_data import seed_initial_data
 from app.content.versioning import ImmutableVersionError, SeedConflictError, content_hash, current_version
 from app.core.config import Settings, _flag, check_runtime_settings
@@ -38,6 +39,8 @@ from tests.auth_helpers import auth, correct_answer
 KNOWN_SNAPSHOTS = json.loads(
     (Path(__file__).resolve().parents[1] / "migrations" / "data" / "pr3_anh_chup_lich_su.json").read_text(encoding="utf-8")
 )["versions"]
+
+DEMO_1011_IDS = {"L01-Q07", "L01-Q08", "L02-Q07", "L02-Q08", "L02-Q09", "L02-Q10"}
 
 CURRENT_VERSION_IDS = {
     "L01-Q01-v4", "L01-Q02-v4", "L01-Q03-v5", "L01-Q04-v4", "L01-Q05-v5", "L01-Q06-v4",
@@ -61,7 +64,11 @@ def drafts_visible(monkeypatch):
 
 
 def specs() -> list[dict]:
-    return copy.deepcopy(LESSON_SPECS)
+    # Bộ câu PR-3 là 24 câu đã phát hành lúc PR-3 (ảnh chụp git); 6 câu demo 10/11 có test riêng.
+    changed = copy.deepcopy(LESSON_SPECS)
+    for lesson in changed:
+        lesson["exercises"] = [x for x in lesson["exercises"] if x["id"] not in DEMO_1011_IDS]
+    return changed
 
 
 def item_of(lesson_specs: list[dict], exercise_id: str) -> dict:
@@ -71,7 +78,7 @@ def item_of(lesson_specs: list[dict], exercise_id: str) -> dict:
 
 def seed(factory, lesson_specs=None) -> None:
     with factory() as db:
-        seed_initial_data(db, lesson_specs)
+        seed_initial_data(db, lesson_specs if lesson_specs is not None else specs() + copy.deepcopy(DRAFT_LESSON_SPECS))
 
 
 def new_user(factory) -> str:
@@ -243,7 +250,7 @@ def draft_spec(prompt: str = "Câu nháp: quãng từ C lên E là gì?", status
     changed = specs()
     lesson = next(s for s in changed if s["id"] == "L02")
     lesson["exercises"].append(q(
-        "L02-Q07", "active_recall", prompt, "interval.identify", "exact", {"expected": "M3"},
+        "L02-Q99", "active_recall", prompt, "interval.identify", "exact", {"expected": "M3"},
         explanation="C lên E là quãng ba trưởng.", provenance=[{"source_id": "omt", "locator": "Intervals"}],
         status=status,
     ))
@@ -255,11 +262,11 @@ def test_draft_hidden_by_default_and_not_required_for_completion(factory):
     user = new_user(factory)
     client = client_for(factory)
     lesson = client.get("/api/v1/lessons/L02").json()
-    assert "L02-Q07" not in [x["id"] for x in lesson["exercises"]]
+    assert "L02-Q99" not in [x["id"] for x in lesson["exercises"]]
     assert lesson["exercise_count"] == 6
-    response = client.post("/api/v1/attempts", headers=auth(user), json={"exercise_version_id": "L02-Q07-v1", "answer": "M3"})
+    response = client.post("/api/v1/attempts", headers=auth(user), json={"exercise_version_id": "L02-Q99-v1", "answer": "M3"})
     assert response.status_code == 404
-    for item in next(s for s in LESSON_SPECS if s["id"] == "L02")["exercises"]:
+    for item in next(s for s in specs() if s["id"] == "L02")["exercises"]:
         answer(factory, user, f'{item["id"]}-v1', correct_answer(item))
     with factory() as db:
         progress, _ = complete_lesson(db, user, "L02")
@@ -269,19 +276,19 @@ def test_draft_hidden_by_default_and_not_required_for_completion(factory):
 def test_draft_visible_only_when_enabled(factory, drafts_visible):
     seed(factory, draft_spec())
     lesson = client_for(factory).get("/api/v1/lessons/L02").json()
-    draft = next(x for x in lesson["exercises"] if x["id"] == "L02-Q07")
-    assert draft["version_id"] == "L02-Q07-v1"
+    draft = next(x for x in lesson["exercises"] if x["id"] == "L02-Q99")
+    assert draft["version_id"] == "L02-Q99-v1"
 
 
 def test_draft_editable_until_attempted_then_locked(factory, drafts_visible):
     seed(factory, draft_spec())
     seed(factory, draft_spec(prompt="Câu nháp đã sửa: quãng từ C lên E là gì?"))
     with factory() as db:
-        version = db.get(ExerciseVersion, "L02-Q07-v1")
+        version = db.get(ExerciseVersion, "L02-Q99-v1")
         assert version.prompt.startswith("Câu nháp đã sửa")
         assert version.content_hash == content_hash(version.__dict__)
     user = new_user(factory)
-    answer(factory, user, "L02-Q07-v1", "M3")
+    answer(factory, user, "L02-Q99-v1", "M3")
     with pytest.raises(SeedConflictError) as caught:
         seed(factory, draft_spec(prompt="Sửa lần ba"))
     assert caught.value.conflicts[0].code == "SEED_VERSION_CHANGED"
@@ -291,7 +298,7 @@ def test_publish_draft_then_it_is_locked(factory):
     seed(factory, draft_spec())
     seed(factory, draft_spec(status="published"))
     with factory() as db:
-        version = db.get(ExerciseVersion, "L02-Q07-v1")
+        version = db.get(ExerciseVersion, "L02-Q99-v1")
         assert version.status == "published" and version.published_at is not None
     with pytest.raises(SeedConflictError) as caught:
         seed(factory, draft_spec(status="draft"))
@@ -457,7 +464,7 @@ def test_started_lesson_must_answer_new_question(factory):
     with factory() as db:
         with pytest.raises(LessonNotMastered) as caught:
             complete_lesson(db, user, "L02")
-        assert caught.value.remaining == ["L02-Q07"]
+        assert caught.value.remaining == ["L02-Q99"]
         assert db.scalar(select(func.count()).select_from(LessonProgress).where(
             LessonProgress.user_id == user, LessonProgress.status == "completed")) == 0
 
