@@ -156,3 +156,16 @@ def test_finetune_trains_only_on_train_split():
 
     src = Path(finetune_e5.__file__).read_text(encoding="utf-8")
     assert 'load("train")' in src and 'load("dev")' in src and "test_tam" not in src.split('"""', 2)[2]
+
+
+def test_release_files_match_model_card():
+    """File tải từ GitHub Release phải đúng bản đã đo: SHA-256 trùng thẻ mô hình; model_info.json đăng kèm
+    chính là thẻ mô hình trong docs (nên tên mô hình và hàng ngưỡng khớp)."""
+    import hashlib
+
+    card_path = ROOT / "docs" / "giai-doan" / "ai-gop-y" / "gd2b_model_info.json"
+    card = json.loads(card_path.read_text(encoding="utf-8"))
+    for name, digest in card["files"].items():
+        assert local_embedder.HM_FILES[name] == digest, name
+    assert local_embedder.HM_FILES["model_info.json"] == hashlib.sha256(card_path.read_bytes()).hexdigest()
+    assert local_embedder.HM_DIR.name == "multilingual-e5-small-hm"

@@ -46,14 +46,21 @@ Lịch sử train trên dev:
 
 ## 3. Dùng thử bản mới
 
+Phúc đồng ý đăng mô hình lên GitHub Release và **giữ bản gốc làm mặc định** (07/11/2026, quyết định 9A).
+
+- Release: tag `e5-hm-gd2b`, ba file `model.onnx`, `tokenizer.json`, `model_info.json`. SHA-256 ghi trong `local_embedder.HM_FILES`, khớp `gd2b_model_info.json` (có test).
+- Tải về và bật:
+
 ```bash
-# File mô hình (470 MB) chưa có trên GitHub: chờ Phúc đồng ý tạo Release. Tạm thời train lại trên máy:
-cd backend && pip install onnx && python ../scripts/ai/gop_y/finetune_e5.py --out models/multilingual-e5-small-hm --epochs 3
-# Bật cho AI Tutor (mặc định vẫn là bản gốc):
+# Docker: build thêm bản fine-tune (thêm 470 MB), rồi đặt biến trong .env
+E5_HM=1 docker compose up --build        # .env: LOCAL_EMBED_DIR=/app/models/multilingual-e5-small-hm
+# Chạy ngoài Docker
+cd backend && python -m app.ai.local_embedder download-hm
 LOCAL_EMBED_DIR=models/multilingual-e5-small-hm uvicorn app.main:app
 ```
 
-Train lại thì chạy tiếp `hieu_chinh_nguong.py` để ghi ngưỡng cho bản vừa train.
+- Không đặt `LOCAL_EMBED_DIR` thì AI Tutor vẫn dùng bản gốc. Tải sai SHA-256 thì dừng và giữ bản gốc.
+- Train lại trên máy (khoảng 15 phút): `pip install onnx && python ../scripts/ai/gop_y/finetune_e5.py --out models/multilingual-e5-small-hm --epochs 3`, rồi chạy `hieu_chinh_nguong.py`. Bản train lại có SHA-256 khác nên phải đăng Release mới.
 
 ## 4. Giải thích cho nhóm
 
@@ -63,8 +70,6 @@ Train lại thì chạy tiếp `hieu_chinh_nguong.py` để ghi ngưỡng cho b�
 
 ## 5. Rủi ro, việc còn chờ
 
-- **Chờ Phúc:**
-  - Tạo GitHub Release chứa mô hình (quyết định 9A).
-  - Chọn có bật bản mới làm mặc định không.
+- **Đã quyết (Phúc, 07/11):** đăng Release, giữ bản gốc làm mặc định. Đổi mặc định sau khi có số trên phiếu nhóm.
 - Đo lại trên phiếu nhóm khi có. Nếu bản mới vẫn từ chối sai nhiều: thêm câu học kiểu "hóa biểu / số dấu" vào train (nếu Astra xác nhận đó là nội dung L02), hoặc thử reranker.
 - `onnx` chỉ cần khi xuất mô hình, không thêm vào `requirements.txt` của backend.
