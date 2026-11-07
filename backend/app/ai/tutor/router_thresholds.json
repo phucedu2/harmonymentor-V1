@@ -23,6 +23,16 @@
       "lesson_accept": 0.841,
       "help_accept": 0.823,
       "help_margin": 0.0
+    },
+    "embedding:multilingual-e5-small-hm-gd2b": {
+      "greet_conf": 0.5,
+      "help_conf": 0.45,
+      "oos_conf": 0.5,
+      "music_min": 0.3,
+      "lesson_gray": 0.42,
+      "lesson_accept": 0.42,
+      "help_accept": 0.048,
+      "help_margin": 1.0
     }
   },
   "dev_metrics": {
@@ -156,6 +166,76 @@
         },
         "D": {
           "precision": 0.938,
+          "recall": 0.789,
+          "n": 38
+        },
+        "G": {
+          "precision": 1.0,
+          "recall": 0.786,
+          "n": 14
+        }
+      }
+    },
+    "embedding:multilingual-e5-small-hm-gd2b": {
+      "accuracy": 0.84,
+      "bc_answered_wrong": 0.0515,
+      "a_refused_wrong": 0.1349,
+      "a_engine_instead_of_lesson": 0.0,
+      "confusion": {
+        "A": {
+          "A": 109,
+          "B": 17,
+          "C": 0,
+          "D": 0,
+          "G": 0
+        },
+        "B": {
+          "A": 5,
+          "B": 55,
+          "C": 0,
+          "D": 0,
+          "G": 0
+        },
+        "C": {
+          "A": 0,
+          "B": 8,
+          "C": 26,
+          "D": 3,
+          "G": 0
+        },
+        "D": {
+          "A": 0,
+          "B": 3,
+          "C": 5,
+          "D": 30,
+          "G": 0
+        },
+        "G": {
+          "A": 0,
+          "B": 1,
+          "C": 2,
+          "D": 0,
+          "G": 11
+        }
+      },
+      "per_flow": {
+        "A": {
+          "precision": 0.956,
+          "recall": 0.865,
+          "n": 126
+        },
+        "B": {
+          "precision": 0.655,
+          "recall": 0.917,
+          "n": 60
+        },
+        "C": {
+          "precision": 0.788,
+          "recall": 0.703,
+          "n": 37
+        },
+        "D": {
+          "precision": 0.909,
           "recall": 0.789,
           "n": 38
         },

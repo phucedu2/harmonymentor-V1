@@ -132,3 +132,27 @@ def test_model_name_from_model_info(tmp_path):
     assert local_embedder.model_name(tmp_path) == local_embedder.MODEL_NAME
     (tmp_path / "model_info.json").write_text(json.dumps({"name": "e5-thu"}), encoding="utf-8")
     assert local_embedder.model_name(tmp_path) == "e5-thu"
+
+
+# --- GĐ2b: mô hình fine-tune -----------------------------------------------------------------------
+
+def test_finetuned_model_has_own_thresholds():
+    """Bản fine-tune mang tên riêng nên có hàng ngưỡng riêng; dùng nhầm ngưỡng bản gốc (khác thang điểm) là sai."""
+    import finetune_e5
+
+    card = json.loads((ROOT / "docs" / "giai-doan" / "ai-gop-y" / "gd2b_model_info.json").read_text(encoding="utf-8"))
+    th = router.thresholds()
+    key = f"embedding:{card['name']}"
+    assert key in th and key != f"embedding:{local_embedder.MODEL_NAME}"
+    assert card["base"] == f"{finetune_e5.HF_REPO}@{finetune_e5.HF_REVISION}"
+    assert finetune_e5.HF_REVISION == local_embedder.HF_REVISION
+    # Bản được chọn không làm giảm R@1 bộ chuẩn GĐ4 so với bản gốc (epoch 0), đúng luật chọn của script.
+    assert card["chosen"]["r_at_1"] >= card["history"][0]["r_at_1"]
+    assert len(card["files"]["model.onnx"]) == 64
+
+
+def test_finetune_trains_only_on_train_split():
+    import finetune_e5
+
+    src = Path(finetune_e5.__file__).read_text(encoding="utf-8")
+    assert 'load("train")' in src and 'load("dev")' in src and "test_tam" not in src.split('"""', 2)[2]
