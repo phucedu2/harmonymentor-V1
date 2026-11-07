@@ -44,6 +44,9 @@ class Settings:
     gemini_api_key: str = field(default_factory=lambda: os.getenv("GEMINI_API_KEY", ""), repr=False)
     gemini_embed_model: str = os.getenv("EMBEDDING_MODEL", "gemini-embedding-001")  # tên biến theo 03 Bảng cấu hình
     gemini_embed_dim: int = int(os.getenv("EMBEDDING_DIM", "768"))
+    # Bộ nhúng của AI Tutor (ADR-017): local = e5-small chạy cục bộ (mặc định, không cần khóa, chạy cả khi AI tắt),
+    # gemini = gemini-embedding (cần khóa), bm25 = không nhúng. Gợi ý bài học vẫn dùng Gemini như GĐ2.
+    tutor_embedder: str = os.getenv("TUTOR_EMBEDDER", "local")
     # Mô tả kỹ năng còn nháp (chờ Đạt/Astra duyệt) chỉ dùng cho tầng nội dung khi bật tường minh.
     allow_draft_skill_descriptions: bool = _flag("ALLOW_DRAFT_SKILL_DESCRIPTIONS", "0")
     # Hệ gợi ý (ADR-008 mục 5). Ngưỡng số chiều chung chưa chốt: 3 là giá trị tạm tới khi có thử nghiệm GĐ4.

@@ -10,6 +10,25 @@ OUT_OF_SCOPE = ("Mình chỉ hỗ trợ nhạc lý trong khóa HarmonyMentor (n�
                 "vòng hòa âm). Bạn thử hỏi một câu về các chủ đề đó nhé.")
 INJECTION = "Mình không làm theo yêu cầu đó được. Mình ở đây để giúp bạn học nhạc lý trong khóa."
 UNSURE = "Mình chưa chắc về câu này vì bài học hiện có chưa nói rõ."
+# Luồng B, C, D, G (ADR-017). Viết sẵn, không qua LLM, để chắc chắn không có kiến thức "tự nghĩ ra".
+DONT_KNOW = ("Mình không biết câu này. Các bài học hiện có chưa dạy nội dung đó, và Music Engine cũng không tính "
+             "được, nên mình không đoán.")
+OUTSIDE_LESSON = "Ngoài bài học, theo Music Engine:"
+NOT_SOURCED = "(Music Engine tính được, nhưng giáo trình của khóa chưa đối chiếu nội dung này.)"
+HELP_LEAD = "Hướng dẫn sử dụng, trang {page}:"
+HELP_UNKNOWN = ("Mình chưa có hướng dẫn cho việc này. Bạn thử xem các mục Học, Luyện tập, Tiến độ, Sáng tác ở menu "
+                "bên trái, hoặc hỏi nhóm quản trị.")
+GREETING = ("Chào bạn! Mình là trợ lý nhạc lý của HarmonyMentor. Bạn hỏi mình về nốt, quãng, hợp âm, âm giai trong "
+            "các bài học, hoặc cách dùng trang web nhé.")
+THANKS = "Không có gì! Cần gì về nhạc lý trong khóa thì bạn cứ hỏi mình."
+LABEL_LESSON = "Từ bài học"
+LABEL_ENGINE = "Ngoài bài học, theo Music Engine"
+LABEL_HELP = "Hướng dẫn sử dụng"
+LABEL_UNKNOWN = "Không biết"
+LABEL_REFUSE = "Ngoài phạm vi"
+LABEL_LATER = "Bạn sẽ học sau"
+LABEL_UNCITED = "Chưa có trích dẫn bài học"
+DONT_KNOW_LATER = "Mình chưa trả lời câu này vì nội dung đó thuộc bài bạn sẽ học sau, mình không đoán trước."
 UNAVAILABLE = "Trợ lý AI đang tạm nghỉ, nên mình trả lời bằng phần bài học liên quan nhất."
 BUSY = "Trợ lý AI chưa trả lời được lúc này, nên mình trả lời bằng phần bài học liên quan nhất."
 
@@ -53,6 +72,16 @@ def explain_text(codes: Sequence[str], level: int, explanation: str | None) -> s
     if level == 2:
         return f"{l1} {l2}"
     return f"{l1} {l2} {explanation}" if explanation else f"{l1} {l2}"
+
+
+def nearest_lesson_line(lesson_id: str | None, titles: dict[str, str]) -> str:
+    if not lesson_id:
+        return ""
+    return f" Bài gần nhất với câu hỏi: {lesson_id} “{titles.get(lesson_id, lesson_id)}”."
+
+
+def later_lesson_line(lesson_id: str, titles: dict[str, str]) -> str:
+    return f" Bạn sẽ học nội dung này ở bài {lesson_id} “{titles.get(lesson_id, lesson_id)}”."
 
 
 def lesson_pointer(hits: Sequence[Hit], titles: dict[str, str]) -> str:

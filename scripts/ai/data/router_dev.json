@@ -1,0 +1,427 @@
+{
+  "note": "Tập dev định tuyến 4 luồng (ADR-017), Claude soạn 06/11/2026, status draft. CHỈ dùng để chọn ngưỡng (hieu_chinh_nguong.py) cho tới khi có tập dev 30 câu của Phúc (hạn 08/11); khi đó chạy lại script với --dev của Phúc. Không trùng câu với route_data.json (kiểm bằng kiem_trung_du_lieu.py), không trùng bộ chuẩn rag_gold.json. Tập test khóa do Đạt + Thắng viết, Claude không xem trước. A = kho bài dạy điều này; B = nhạc lý nhưng bài chưa dạy; C = ngoài phạm vi; D = hướng dẫn dùng app; G = chào hỏi.",
+  "author": "Claude",
+  "status": "draft",
+  "items": [
+    {
+      "flow": "A",
+      "q": "Nửa cung là gì, trên bàn phím đếm thế nào?"
+    },
+    {
+      "flow": "A",
+      "q": "C# và Db có phải cùng một phím không?"
+    },
+    {
+      "flow": "A",
+      "q": "Giữa B và C có phím đen không?"
+    },
+    {
+      "flow": "A",
+      "q": "Từ C lên E là quãng mấy?"
+    },
+    {
+      "flow": "A",
+      "q": "Từ C lên F cách nhau mấy nửa cung?"
+    },
+    {
+      "flow": "A",
+      "q": "M3 khác m3 chỗ nào?"
+    },
+    {
+      "flow": "A",
+      "q": "Quãng năm giảm viết tắt là gì?"
+    },
+    {
+      "flow": "A",
+      "q": "Hợp âm thứ được dựng từ những quãng nào?"
+    },
+    {
+      "flow": "A",
+      "q": "Hợp âm D thứ gồm nốt nào?"
+    },
+    {
+      "flow": "A",
+      "q": "Hợp âm giảm có công thức gì?"
+    },
+    {
+      "flow": "A",
+      "q": "Hợp âm tăng dùng quãng năm tăng đúng không?"
+    },
+    {
+      "flow": "A",
+      "q": "Giọng trưởng và giọng thứ có tổng cộng bao nhiêu?"
+    },
+    {
+      "flow": "A",
+      "q": "Tonic của một key là gì?"
+    },
+    {
+      "flow": "A",
+      "q": "Vì sao G major phải có F thăng?"
+    },
+    {
+      "flow": "A",
+      "q": "Major scale có mấy bậc?"
+    },
+    {
+      "flow": "A",
+      "q": "Seventh chord là gì?"
+    },
+    {
+      "flow": "A",
+      "q": "Cmaj7 gồm những nốt nào?"
+    },
+    {
+      "flow": "A",
+      "q": "Dm7 là hợp âm gì?"
+    },
+    {
+      "flow": "A",
+      "q": "Bm7b5 có các nốt nào?"
+    },
+    {
+      "flow": "A",
+      "q": "Hợp âm nửa giảm là gì?"
+    },
+    {
+      "flow": "A",
+      "q": "C7 và Cmaj7 khác nhau thế nào?"
+    },
+    {
+      "flow": "A",
+      "q": "Chữ hoa và chữ thường trong số La Mã nghĩa là gì?"
+    },
+    {
+      "flow": "A",
+      "q": "Vì sao G7 nghe như muốn về C?"
+    },
+    {
+      "flow": "A",
+      "q": "Harmonic function là gì?"
+    },
+    {
+      "flow": "A",
+      "q": "Tonic, predominant, dominant khác nhau ra sao?"
+    },
+    {
+      "flow": "A",
+      "q": "Dm7 trong C major đóng vai trò gì?"
+    },
+    {
+      "flow": "A",
+      "q": "T PD D T là gì?"
+    },
+    {
+      "flow": "A",
+      "q": "Tiến trình ii-V-I là gì?"
+    },
+    {
+      "flow": "A",
+      "q": "ii V I ở C trưởng chơi hợp âm nào?"
+    },
+    {
+      "flow": "A",
+      "q": "Nốt chung (common tone) là gì?"
+    },
+    {
+      "flow": "A",
+      "q": "Vì sao bậc 3 và bậc 7 quan trọng trong hợp âm bảy?"
+    },
+    {
+      "flow": "A",
+      "q": "F trong G7 đi đâu khi về Cmaj7?"
+    },
+    {
+      "flow": "A",
+      "q": "hop am ba not dung the nao"
+    },
+    {
+      "flow": "A",
+      "q": "quang 3 truong bao nhieu nua cung"
+    },
+    {
+      "flow": "A",
+      "q": "G7 gồm những nốt nào?"
+    },
+    {
+      "flow": "B",
+      "q": "Hợp âm Gsus2 có những nốt gì?"
+    },
+    {
+      "flow": "B",
+      "q": "Dsus4 gồm nốt nào?"
+    },
+    {
+      "flow": "B",
+      "q": "Âm giai A thứ hòa âm gồm những nốt nào?"
+    },
+    {
+      "flow": "B",
+      "q": "Âm giai D dorian là gì?"
+    },
+    {
+      "flow": "B",
+      "q": "Gam E thứ giai điệu đi lên có nốt nào?"
+    },
+    {
+      "flow": "B",
+      "q": "Hợp âm Fadd9 có nốt nào?"
+    },
+    {
+      "flow": "B",
+      "q": "Hợp âm G13 có nốt nào?"
+    },
+    {
+      "flow": "B",
+      "q": "Hợp âm C6 là gì?"
+    },
+    {
+      "flow": "B",
+      "q": "Mượn hợp âm từ giọng song song là gì?"
+    },
+    {
+      "flow": "B",
+      "q": "Át phụ (secondary dominant) dùng để làm gì?"
+    },
+    {
+      "flow": "B",
+      "q": "Điệu thức Lydian nghe thế nào?"
+    },
+    {
+      "flow": "B",
+      "q": "Thế bấm shell voicing là gì?"
+    },
+    {
+      "flow": "B",
+      "q": "Thế đảo hai của hợp âm ba là sao?"
+    },
+    {
+      "flow": "B",
+      "q": "Tritone substitution là gì?"
+    },
+    {
+      "flow": "B",
+      "q": "Nhịp 6/8 đếm thế nào?"
+    },
+    {
+      "flow": "B",
+      "q": "Nốt móc đơn dài mấy phách?"
+    },
+    {
+      "flow": "B",
+      "q": "Khóa Fa đọc nốt thế nào?"
+    },
+    {
+      "flow": "B",
+      "q": "Vòng tròn quãng năm dùng để làm gì?"
+    },
+    {
+      "flow": "B",
+      "q": "Hòa âm bốn bè cấm quãng năm song song vì sao?"
+    },
+    {
+      "flow": "B",
+      "q": "Pentatonic scale có mấy nốt?"
+    },
+    {
+      "flow": "B",
+      "q": "Blues scale khác pentatonic chỗ nào?"
+    },
+    {
+      "flow": "B",
+      "q": "Kết cấu fugue là gì?"
+    },
+    {
+      "flow": "B",
+      "q": "Hợp âm E7#9 có nốt gì?"
+    },
+    {
+      "flow": "B",
+      "q": "Chuyển giọng (modulation) là gì?"
+    },
+    {
+      "flow": "B",
+      "q": "Cadence plagal là gì?"
+    },
+    {
+      "flow": "C",
+      "q": "Thời tiết Sài Gòn mai thế nào?"
+    },
+    {
+      "flow": "C",
+      "q": "Tóm tắt truyện Kiều giúp mình"
+    },
+    {
+      "flow": "C",
+      "q": "Đội nào vô địch Ngoại hạng Anh mùa trước?"
+    },
+    {
+      "flow": "C",
+      "q": "Giải thích vòng lặp for trong JavaScript"
+    },
+    {
+      "flow": "C",
+      "q": "Mua tai nghe chống ồn loại nào?"
+    },
+    {
+      "flow": "C",
+      "q": "Ca sĩ nào hát bài Lạc trôi?"
+    },
+    {
+      "flow": "C",
+      "q": "Kể cho mình một câu chuyện ma"
+    },
+    {
+      "flow": "C",
+      "q": "Dịch câu này sang tiếng Anh giúp mình"
+    },
+    {
+      "flow": "C",
+      "q": "Lịch thi THPT quốc gia năm nay khi nào?"
+    },
+    {
+      "flow": "C",
+      "q": "Công thức nấu chè đậu đỏ"
+    },
+    {
+      "flow": "C",
+      "q": "Who won the World Cup 2022?"
+    },
+    {
+      "flow": "C",
+      "q": "Mua vé concert ở đâu rẻ?"
+    },
+    {
+      "flow": "C",
+      "q": "Bạn thích màu gì nhất?"
+    },
+    {
+      "flow": "C",
+      "q": "Tỷ giá đô la hôm nay"
+    },
+    {
+      "flow": "C",
+      "q": "Gợi ý phim hay cuối tuần"
+    },
+    {
+      "flow": "C",
+      "q": "Làm sao để giảm cân nhanh?"
+    },
+    {
+      "flow": "C",
+      "q": "Viết giúp mình bài văn nghị luận"
+    },
+    {
+      "flow": "C",
+      "q": "Chơi game gì vui trên điện thoại?"
+    },
+    {
+      "flow": "C",
+      "q": "Cách sửa wifi bị chậm"
+    },
+    {
+      "flow": "C",
+      "q": "Đội tuyển Việt Nam đá trận tới với ai?"
+    },
+    {
+      "flow": "D",
+      "q": "Mình quên mật khẩu thì làm sao?"
+    },
+    {
+      "flow": "D",
+      "q": "Sao mình không đăng nhập được, nó bảo khóa tạm?"
+    },
+    {
+      "flow": "D",
+      "q": "Bài kiểm tra xếp lớp có bao nhiêu câu?"
+    },
+    {
+      "flow": "D",
+      "q": "Ôn tập theo hộp Leitner hoạt động thế nào?"
+    },
+    {
+      "flow": "D",
+      "q": "Xem tiến độ học ở trang nào?"
+    },
+    {
+      "flow": "D",
+      "q": "Làm sao tạo một bài sáng tác mới?"
+    },
+    {
+      "flow": "D",
+      "q": "Chế độ Bài hát trong xưởng sáng tác dùng thế nào?"
+    },
+    {
+      "flow": "D",
+      "q": "Bài sáng tác có tải về máy dạng MIDI được không?"
+    },
+    {
+      "flow": "D",
+      "q": "Nút gợi ý 3 mức trong lúc làm bài là gì?"
+    },
+    {
+      "flow": "D",
+      "q": "Bài ghi Sắp có là sao?"
+    },
+    {
+      "flow": "D",
+      "q": "Làm sao biết mình đã hoàn thành bài?"
+    },
+    {
+      "flow": "D",
+      "q": "Trang chủ có những mục gợi ý nào?"
+    },
+    {
+      "flow": "D",
+      "q": "Mình muốn tạo tài khoản mới thì bấm vào đâu?"
+    },
+    {
+      "flow": "D",
+      "q": "Đổi nhạc cụ cho từng kênh được không?"
+    },
+    {
+      "flow": "D",
+      "q": "AI Tutor trả lời được những gì?"
+    },
+    {
+      "flow": "G",
+      "q": "Chào bạn nha"
+    },
+    {
+      "flow": "G",
+      "q": "Chào buổi sáng nha"
+    },
+    {
+      "flow": "G",
+      "q": "Cám ơn nha, hiểu rồi"
+    },
+    {
+      "flow": "G",
+      "q": "hi bot"
+    },
+    {
+      "flow": "G",
+      "q": "Xin chào, mình mới vào"
+    },
+    {
+      "flow": "G",
+      "q": "tks bot"
+    },
+    {
+      "flow": "G",
+      "q": "Chúc bạn ngủ ngon"
+    },
+    {
+      "flow": "G",
+      "q": "Bạn khỏe không?"
+    },
+    {
+      "flow": "G",
+      "q": "ok cảm ơn nhé"
+    },
+    {
+      "flow": "G",
+      "q": "Bye nhé, mai học tiếp"
+    }
+  ]
+}

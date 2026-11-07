@@ -248,7 +248,11 @@ export type Goal = { goal_text: string | null; embedded: boolean; embedding_mode
 export type PlacementSubmitResult = { status: "completed"; results: { skill_id: string; correct: boolean; score: number }[] };
 
 // Pipeline AI GĐ3: AI Tutor (04 mục 3.3, Bảng 13). Nhãn "đã kiểm" do máy chủ quyết, giao diện chỉ hiển thị.
-export type ChatIntent = "concept" | "explain_error" | "quiz" | "study_advice" | "composition" | "out_of_scope";
+export type ChatIntent = "concept" | "explain_error" | "quiz" | "study_advice" | "composition" | "out_of_scope"
+  | "greeting" | "help";
+// Bộ định tuyến 4 luồng (ADR-017): A từ bài học, B ngoài bài học (Music Engine hoặc "không biết"), C ngoài phạm vi,
+// D hướng dẫn sử dụng, G chào hỏi. Nhãn nguồn do máy chủ đặt.
+export type ChatFlow = "A" | "B" | "C" | "D" | "G";
 export type ChatCitation = { lesson_id: string; block_id: string; title: string; lesson_title: string };
 export type EngineClaim = {
   tool: string; args: Record<string, string>; claimed: string; engine: string | null;
@@ -259,6 +263,8 @@ export type ChatReply = {
   verified: boolean; verified_label: string | null; intent: ChatIntent; hint_level: number;
   status: "ok" | "failed" | "fallback"; suggested_actions: string[]; fallback_reason: string | null;
   retrieval_method: string | null; quota_remaining_today: number; attempt_id?: string | null; next_hint_level?: number | null;
+  flow?: ChatFlow | null; source_label?: string | null;
+  suggested_lesson?: { lesson_id: string; title: string } | null; help_page?: { path: string; title: string } | null;
 };
 export type ChatContext = { page?: string; lesson_id?: string; block_id?: string };
 

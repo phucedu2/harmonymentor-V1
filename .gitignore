@@ -28,3 +28,4 @@ Thumbs.db
 .vscode/
 .cache/
 docs/backing-track/nghe-thu/artifact.html
+backend/models/
