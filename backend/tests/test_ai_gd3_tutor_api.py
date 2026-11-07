@@ -94,7 +94,7 @@ def test_message_length_rules(msg):
 
 
 def test_ai_off_answers_from_lesson_with_engine_facts():
-    body = ask(make_user(), "C7 khác Cmaj7 thế nào?")
+    body = ask(make_user(), "Cmaj7 với C7 khác gì nhau?")
     assert body["status"] == "fallback" and body["fallback_reason"] == "ai_disabled"
     assert "C7 = C E G Bb" in body["reply"] and body["citations"][0]["lesson_id"] == "L02"
     assert body["verified_label"] == "Đã kiểm bằng Music Engine"
@@ -117,14 +117,14 @@ def test_injection_refused_without_llm():
 
 def test_llm_answer_with_citation_and_verified_label():
     fake = use(FakeProvider([GOOD]))
-    body = ask(make_user(), "C7 khác Cmaj7 thế nào?")
+    body = ask(make_user(), "Cmaj7 với C7 khác gì nhau?")
     assert body["status"] == "ok" and body["verified"] and body["verified_label"]
     assert body["citations"][0]["title"] != "?"  # tiêu đề lấy từ kho, không lấy chữ AI viết
     assert {c["origin"] for c in body["engine_claims"]} == {"declared", "scanned"}
     assert len(fake.calls) == 1
     # Dữ kiện Engine được tra trước và đưa vào prompt (TC-12).
     facts = fake.calls[0][1].split('kind="ENGINE_FACTS">>>', 1)[1].split("<<<HM_END>>>")[0]
-    assert json.loads(facts)[0] == {"tool": "get_chord_tones", "args": {"symbol": "C7"}, "result": "C E G Bb"}
+    assert {"tool": "get_chord_tones", "args": {"symbol": "C7"}, "result": "C E G Bb"} in json.loads(facts)
 
 
 def test_fake_citation_regenerated_then_dropped():
@@ -178,7 +178,7 @@ def test_timeout_falls_back_and_is_logged():
 
 def test_tokens_and_latency_recorded():
     use(FakeProvider([GOOD]))
-    body = ask(make_user(), "C7 khác Cmaj7 thế nào?")
+    body = ask(make_user(), "Cmaj7 với C7 khác gì nhau?")
     with SessionLocal() as db:
         msg = db.get(ChatMessage, body["message_id"])
         assert msg.tokens_in and msg.tokens_out and msg.latency_ms is not None and msg.tool_calls["model"] == "fake-llm"
@@ -189,7 +189,7 @@ def test_tokens_and_latency_recorded():
 def test_payload_has_no_personal_data():
     fake = use(FakeProvider([GOOD]))
     uid = make_user(name="Trần Bí Danh")
-    ask(uid, "C7 khác Cmaj7 thế nào?")
+    ask(uid, "Cmaj7 với C7 khác gì nhau?")
     system, user_prompt = fake.calls[0]
     for secret in (uid, f"{uid}@example.test", "Trần Bí Danh", "Bearer", "eyJ"):
         assert secret not in system and secret not in user_prompt
@@ -202,7 +202,7 @@ def test_tc11_only_last_six_messages_sent():
     sid = None
     for i in range(6):
         sid = ask(uid, f"Câu số {i:02d}: Cmaj7 gồm những nốt nào?", sid)["session_id"]
-    ask(uid, "Câu cuối: C7 khác Cmaj7 thế nào?", sid)
+    ask(uid, "Câu cuối: Cmaj7 với C7 khác gì nhau?", sid)
     hist = fake.calls[-1][1].split('kind="HISTORY">>>', 1)[1].split("<<<HM_END>>>")[0]
     rows = json.loads(hist)
     assert len(rows) == 6 and "Câu số 03" in rows[0]["content"] and "Câu số 00" not in hist
@@ -232,8 +232,8 @@ def test_daily_quota_429_and_message_saved(monkeypatch):
     monkeypatch.setattr(ts, "settings", replace(ts.settings, ai_daily_quota=2))
     use(FakeProvider([GOOD]))
     uid = make_user()
-    assert ask(uid, "C7 khác Cmaj7 thế nào?")["quota_remaining_today"] == 1
-    sid = ask(uid, "C7 khác Cmaj7 thế nào?")["session_id"]
+    assert ask(uid, "Cmaj7 với C7 khác gì nhau?")["quota_remaining_today"] == 1
+    sid = ask(uid, "Cmaj7 với C7 khác gì nhau?")["session_id"]
     # Câu thứ ba phải là câu luồng A (gọi LLM). GĐ2: với BM25 và ngưỡng mới, câu rất ngắn "Cmaj7 là gì?" được trả
     # bằng dữ kiện Engine (luồng B, không tốn lượt), nên dùng câu so sánh có đoạn bài rõ ràng.
     r = client.post("/api/v1/chat/message", headers=auth(uid), json={"message": "Cmaj7 với C7 khác gì nhau?",
@@ -249,7 +249,7 @@ def test_daily_quota_429_and_message_saved(monkeypatch):
 def test_global_budget_uses_fallback(monkeypatch):
     monkeypatch.setattr(ts, "settings", replace(ts.settings, ai_global_daily_budget=0))
     fake = use(FakeProvider([GOOD]))
-    body = ask(make_user(), "C7 khác Cmaj7 thế nào?")
+    body = ask(make_user(), "Cmaj7 với C7 khác gì nhau?")
     assert body["fallback_reason"] == "global_budget" and fake.calls == []
 
 

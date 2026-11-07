@@ -41,3 +41,26 @@ Duyệt xong thì bỏ `"status": DRAFT` ở từng khối trong `backend/app/co
 
 - L06–L08 chưa soạn. Phúc cho phép làm GĐ3 "nếu kịp" trong ngày; ưu tiên L05 cho CP3.
 - Chưa chụp ảnh giao diện của bài nháp.
+
+## 5. Phát hành sau khi Đạt duyệt (07/11/2026)
+
+Phúc báo trong thread "Đạt duyệt nhánh L05". Nhánh `ai-gop-y/gd3-l05-phat-hanh`:
+
+- **11 khối L05 bỏ `status: draft`.** Người học thấy bài mà không cần `SHOW_DRAFT_CONTENT`. AI Tutor trích được 9 khối lý thuyết; 2 khối checkpoint vẫn không vào kho vì gắn đề bài tập. Luật "Bạn sẽ học sau ở L05" tự tắt, không sửa code.
+- **Đổi nhãn 13 câu "át phụ" từ B sang A:** 8 câu train, 4 câu dev GĐ2, 1 câu `router_dev.json`. Test tạm không có câu L05. Lý do đổi là kho thay đổi, không phải kết quả đo. `tao_du_lieu_gd2.py` đổi nhãn SAU khi chia tập (hàm `relabel`), nên không câu nào đổi tập.
+- **Chọn lại ngưỡng trên dev** (vì thêm 9 khối làm điểm truy xuất của mọi câu thay đổi). Bản fine-tune không train lại.
+
+| Bộ đo | Mô hình | B/C bị trả lời như bài học (≤ 2%) | A bị từ chối sai (≤ 5%) | Đúng luồng |
+|---|---|---|---|---|
+| Dev GĐ1 + GĐ2 (dùng để chọn) | e5 gốc: trước → sau | 8,3% → 12,0% | 26,2% → 21,4% | 77,5% → 78,2% |
+| | fine-tune: trước → sau | 5,2% → 5,4% | 13,5% → 16,8% | 84,0% → 82,2% |
+| Bộ đo GĐ1 (74 câu) | e5 gốc: trước → sau | 0,0% → 0,0% | 8,1% → 8,1% | 93,2% → 93,2% |
+| | fine-tune: trước → sau | 0,0% → 0,0% | 2,7% → 5,4% | 97,3% → 94,6% |
+| Test tạm GĐ2 | e5 gốc: trước → sau | 13,3% → 16,7% | 24,4% → 23,3% | 70,1% → 69,5% |
+| | fine-tune: trước → sau | 3,3% → 3,3% | 32,6% → 32,6% | 69,0% → 68,4% |
+
+- **Đọc kết quả:** thêm bài làm kho rộng hơn, nên câu ngoài bài dễ "trúng" một đoạn hơn. Với e5 gốc, lỗi trả lời sai trên test tạm tăng 3,4 điểm. Bản fine-tune gần như giữ nguyên. Trên dev GĐ2, 3/4 câu át phụ sau khi đổi nhãn được trả lời bằng bài (bản fine-tune; câu sai: "bạn ơi V/ii nghĩa là gì ạ"). Khi có phiếu nhóm, train lại e5 với kho mới (khoảng 15 phút).
+- **Chỉ mục Gemini (`lesson_embeddings.json`) phải dựng lại** bằng khóa Gemini (`python -m app.ai.build_index`). Trước khi dựng lại, chế độ `TUTOR_EMBEDDER=gemini` rơi về BM25. Chế độ mặc định (e5 cục bộ) không cần.
+- Số đo: `gd3_l05_bo_do_gd1.*`, `gd3_l05_test_tam.*`.
+- **Chế độ BM25** (khi không có mô hình nhúng): ngưỡng mới cao hơn (4,6 → 5,8) vì thêm đoạn làm điểm BM25 dịch lên. Giữ ngưỡng cũ thì trên dev câu B/C bị trả lời như bài học tới 31,5% (ngưỡng mới 19,6%). Hệ quả: câu demo "C7 khác Cmaj7 thế nào?" ở chế độ BM25 được trả bằng Engine (đúng nốt, không trích bài); "Cmaj7 với C7 khác gì nhau?" vẫn trích L02. Ở chế độ mặc định e5 (gốc và fine-tune), cả hai câu đều trả lời bằng bài L02. Test API đổi sang câu thứ hai.
+- `pytest -q`: 1004 passed, 2 failed (`test_index_file_matches_current_chunks`, `test_retriever_falls_back_to_bm25`) chờ dựng lại chỉ mục Gemini. CI nâng `--min-passed` lên 1006 (tính cả 2 test này sau khi có chỉ mục).

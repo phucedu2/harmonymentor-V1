@@ -84,8 +84,9 @@ def test_route_gd2_switch(monkeypatch):
 # --- Luật định tuyến -------------------------------------------------------------------------------
 
 @pytest.mark.parametrize("q, lesson", [
-    ("V7/V trong C trưởng là hợp âm nào", "L05"),
-    ("v/ii nghĩa là gì", "L05"),
+    ("V7/V trong C trưởng là hợp âm nào", None),   # L05 đã vào kho (07/11/2026): luật "bài sau" tự tắt
+    ("v/ii nghĩa là gì", None),
+    ("bvi trong C trưởng là hợp âm gì", "L06"),
     ("bVII trong pop là gì", "L06"),
     ("tension 9 11 13 là gì", "L07"),
     ("vi7 trong C trưởng là bậc mấy", None),

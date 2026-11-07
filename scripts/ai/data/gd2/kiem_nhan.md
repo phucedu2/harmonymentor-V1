@@ -4,8 +4,8 @@ Sinh bởi `scripts/ai/gop_y/tao_du_lieu_gd2.py`. Claude viết 07/11/2026, đó
 
 | Tập | Câu | Nhóm | Theo luồng | Theo kiểu |
 |---|---|---|---|---|
-| train | 667 | 71 | {'A': 399, 'B': 120, 'C': 70, 'D': 60, 'G': 18} | {'chu_thuong': 48, 'go_tat': 48, 'goc': 249, 'khong_dau': 82, 'khong_dau_go_tat': 71, 'loi_go': 77, 'loi_goi': 92} |
-| dev | 170 | 28 | {'A': 91, 'B': 35, 'C': 17, 'D': 23, 'G': 4} | {'chu_thuong': 16, 'go_tat': 24, 'goc': 43, 'khong_dau': 25, 'khong_dau_go_tat': 25, 'loi_go': 15, 'loi_goi': 22} |
+| train | 667 | 71 | {'A': 407, 'B': 112, 'C': 70, 'D': 60, 'G': 18} | {'chu_thuong': 48, 'go_tat': 48, 'goc': 249, 'khong_dau': 82, 'khong_dau_go_tat': 71, 'loi_go': 77, 'loi_goi': 92} |
+| dev | 170 | 28 | {'A': 95, 'B': 31, 'C': 17, 'D': 23, 'G': 4} | {'chu_thuong': 16, 'go_tat': 24, 'goc': 43, 'khong_dau': 25, 'khong_dau_go_tat': 25, 'loi_go': 15, 'loi_goi': 22} |
 | test_tam | 174 | 27 | {'A': 86, 'B': 39, 'C': 21, 'D': 21, 'G': 7} | {'chu_thuong': 15, 'go_tat': 11, 'goc': 52, 'khong_dau': 20, 'khong_dau_go_tat': 33, 'loi_go': 22, 'loi_goi': 21} |
 
 Lệch nhãn cần người xem: 0

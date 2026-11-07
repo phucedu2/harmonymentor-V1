@@ -764,73 +764,39 @@
   },
   {
    "q": "bạn ơi V/ii nghĩa là gì ạ",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L05",
-   "expect": "Bạn sẽ học sau ở L05",
    "group": "B-L05#1",
    "style": "loi_goi",
-   "base": "V/ii nghĩa là gì"
+   "base": "V/ii nghĩa là gì",
+   "relabel": "B→A: L05 đã vào kho"
   },
   {
    "q": "v/ii nghĩa là gì",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L05",
-   "expect": "Bạn sẽ học sau ở L05",
    "group": "B-L05#1",
    "style": "chu_thuong",
-   "base": "V/ii nghĩa là gì"
+   "base": "V/ii nghĩa là gì",
+   "relabel": "B→A: L05 đã vào kho"
   },
   {
    "q": "tại sao có D7 trong bài giọng Đô trưởng, có phải át phụ không",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L05",
-   "expect": "Bạn sẽ học sau ở L05",
    "group": "B-L05#1",
    "style": "goc",
    "base": "tại sao có D7 trong bài giọng Đô trưởng, có phải át phụ không",
-   "engine": [
-    {
-     "tool": "get_scale",
-     "args": {
-      "tonic": "C",
-      "scale_type": "major"
-     },
-     "result": "C D E F G A B"
-    },
-    {
-     "tool": "get_chord_tones",
-     "args": {
-      "symbol": "D7"
-     },
-     "result": "D F# A C"
-    }
-   ]
+   "relabel": "B→A: L05 đã vào kho"
   },
   {
    "q": "tại sao có D7 trong bài giọng Đô trưởng, có fai át phụ ko",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L05",
-   "expect": "Bạn sẽ học sau ở L05",
    "group": "B-L05#1",
    "style": "go_tat",
    "base": "tại sao có D7 trong bài giọng Đô trưởng, có phải át phụ không",
-   "engine": [
-    {
-     "tool": "get_scale",
-     "args": {
-      "tonic": "C",
-      "scale_type": "major"
-     },
-     "result": "C D E F G A B"
-    },
-    {
-     "tool": "get_chord_tones",
-     "args": {
-      "symbol": "D7"
-     },
-     "result": "D F# A C"
-    }
-   ]
+   "relabel": "B→A: L05 đã vào kho"
   },
   {
    "q": "hợp âm sus là gì",
