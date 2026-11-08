@@ -180,8 +180,9 @@
       "q": "Mượn hợp âm từ giọng song song là gì?"
     },
     {
-      "flow": "B",
-      "q": "Át phụ (secondary dominant) dùng để làm gì?"
+      "flow": "A",
+      "q": "Át phụ (secondary dominant) dùng để làm gì?",
+      "relabel": "B→A: L05 đã vào kho 07/11/2026"
     },
     {
       "flow": "B",

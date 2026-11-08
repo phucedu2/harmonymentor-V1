@@ -1,7 +1,7 @@
 """GĐ3 góp ý thầy G2: nháp lý thuyết L05 (Secondary Dominants), Claude soạn 07/11/2026.
 
-Mọi hợp âm và nốt ghi trong nháp phải khớp Music Engine (nguyên tắc 1). Nháp không được lộ ra người học hay vào kho
-AI Tutor trước khi Astra/Đạt duyệt."""
+Mọi hợp âm và nốt ghi trong bài phải khớp Music Engine (nguyên tắc 1). Đạt duyệt 07/11/2026: khối bỏ status draft,
+người học thấy và AI Tutor trích được."""
 
 from __future__ import annotations
 
@@ -14,6 +14,7 @@ from app.ai.tutor.guardrail import run_tool
 from app.ai.tutor.router import later_lesson
 from app.content.curriculum_specs import LESSON_SPECS
 from app.content.draft_specs import DRAFT, L05_DRAFT_BLOCKS, blocks_with_drafts
+from app.content.versioning import block_visible
 
 SPEC = next(s for s in LESSON_SPECS if s["id"] == "L05")
 TEXT = " ".join(str(p) for _, _, p in L05_DRAFT_BLOCKS)
@@ -27,16 +28,18 @@ def tones(symbol: str) -> list[str]:
     return value.split()
 
 
-def test_all_l05_blocks_are_draft_and_ids_unique():
-    assert SPEC["blocks"] == []      # chưa có bản phát hành: dùng nháp
+def test_l05_blocks_published_and_ids_unique():
+    assert SPEC["blocks"] == []      # khối L05 nằm ở draft_specs, blocks_with_drafts lấy ra
     ids = [b[0] for b in blocks_with_drafts(SPEC)]
     assert len(ids) == len(set(ids)) and all(i.startswith("L05-") for i in ids)
-    assert all(p.get("status") == DRAFT for _, _, p in L05_DRAFT_BLOCKS)
+    assert all(p.get("status") != DRAFT and block_visible(p) for _, _, p in L05_DRAFT_BLOCKS)
 
 
-def test_draft_not_in_tutor_knowledge_base_and_later_lesson_rule_still_on():
-    assert not any(c.lesson_id == "L05" for c in lesson_chunks())
-    assert later_lesson("át phụ là gì") == "L05"
+def test_l05_in_tutor_knowledge_base_and_later_lesson_rule_off():
+    """Đã duyệt nên vào kho AI Tutor (trừ khối checkpoint gắn đề), và luật "bạn sẽ học sau ở L05" tự tắt."""
+    blocks = {c.block_id for c in lesson_chunks() if c.lesson_id == "L05"}
+    assert blocks and not blocks & {"L05-BCP1", "L05-BCP2"}
+    assert later_lesson("át phụ là gì") is None
 
 
 def test_checkpoints_point_to_existing_l05_exercises():

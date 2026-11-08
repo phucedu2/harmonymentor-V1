@@ -9,8 +9,8 @@
       "help_conf": 0.45,
       "oos_conf": 0.5,
       "music_min": 0.3,
-      "lesson_gray": 4.3,
-      "lesson_accept": 4.6,
+      "lesson_gray": 5.8,
+      "lesson_accept": 5.8,
       "help_accept": 0.0,
       "help_margin": 1.0
     },
@@ -19,8 +19,8 @@
       "help_conf": 0.45,
       "oos_conf": 0.5,
       "music_min": 0.3,
-      "lesson_gray": 0.838,
-      "lesson_accept": 0.841,
+      "lesson_gray": 0.837,
+      "lesson_accept": 0.837,
       "help_accept": 0.823,
       "help_margin": 0.0
     },
@@ -29,36 +29,36 @@
       "help_conf": 0.45,
       "oos_conf": 0.5,
       "music_min": 0.3,
-      "lesson_gray": 0.42,
-      "lesson_accept": 0.42,
+      "lesson_gray": 0.434,
+      "lesson_accept": 0.434,
       "help_accept": 0.048,
       "help_margin": 1.0
     }
   },
   "dev_metrics": {
     "bm25": {
-      "accuracy": 0.8,
-      "bc_answered_wrong": 0.2062,
-      "a_refused_wrong": 0.1032,
-      "a_engine_instead_of_lesson": 0.0317,
+      "accuracy": 0.7527,
+      "bc_answered_wrong": 0.1957,
+      "a_refused_wrong": 0.1756,
+      "a_engine_instead_of_lesson": 0.0534,
       "confusion": {
         "A": {
-          "A": 109,
-          "B": 17,
+          "A": 101,
+          "B": 30,
           "C": 0,
           "D": 0,
           "G": 0
         },
         "B": {
           "A": 15,
-          "B": 45,
+          "B": 40,
           "C": 0,
           "D": 0,
           "G": 0
         },
         "C": {
-          "A": 5,
-          "B": 3,
+          "A": 3,
+          "B": 5,
           "C": 26,
           "D": 3,
           "G": 0
@@ -80,14 +80,14 @@
       },
       "per_flow": {
         "A": {
-          "precision": 0.832,
-          "recall": 0.865,
-          "n": 126
+          "precision": 0.835,
+          "recall": 0.771,
+          "n": 131
         },
         "B": {
-          "precision": 0.662,
-          "recall": 0.75,
-          "n": 60
+          "precision": 0.513,
+          "recall": 0.727,
+          "n": 55
         },
         "C": {
           "precision": 0.788,
@@ -107,21 +107,21 @@
       }
     },
     "embedding:multilingual-e5-small": {
-      "accuracy": 0.7745,
-      "bc_answered_wrong": 0.0825,
-      "a_refused_wrong": 0.2619,
+      "accuracy": 0.7818,
+      "bc_answered_wrong": 0.1196,
+      "a_refused_wrong": 0.2137,
       "a_engine_instead_of_lesson": 0.0,
       "confusion": {
         "A": {
-          "A": 93,
-          "B": 33,
+          "A": 103,
+          "B": 28,
           "C": 0,
           "D": 0,
           "G": 0
         },
         "B": {
-          "A": 8,
-          "B": 52,
+          "A": 11,
+          "B": 44,
           "C": 0,
           "D": 0,
           "G": 0
@@ -150,14 +150,14 @@
       },
       "per_flow": {
         "A": {
-          "precision": 0.921,
-          "recall": 0.738,
-          "n": 126
+          "precision": 0.904,
+          "recall": 0.786,
+          "n": 131
         },
         "B": {
-          "precision": 0.536,
-          "recall": 0.867,
-          "n": 60
+          "precision": 0.524,
+          "recall": 0.8,
+          "n": 55
         },
         "C": {
           "precision": 0.794,
@@ -177,21 +177,21 @@
       }
     },
     "embedding:multilingual-e5-small-hm-gd2b": {
-      "accuracy": 0.84,
-      "bc_answered_wrong": 0.0515,
-      "a_refused_wrong": 0.1349,
+      "accuracy": 0.8218,
+      "bc_answered_wrong": 0.0543,
+      "a_refused_wrong": 0.1679,
       "a_engine_instead_of_lesson": 0.0,
       "confusion": {
         "A": {
           "A": 109,
-          "B": 17,
+          "B": 22,
           "C": 0,
           "D": 0,
           "G": 0
         },
         "B": {
           "A": 5,
-          "B": 55,
+          "B": 50,
           "C": 0,
           "D": 0,
           "G": 0
@@ -221,13 +221,13 @@
       "per_flow": {
         "A": {
           "precision": 0.956,
-          "recall": 0.865,
-          "n": 126
+          "recall": 0.832,
+          "n": 131
         },
         "B": {
-          "precision": 0.655,
-          "recall": 0.917,
-          "n": 60
+          "precision": 0.595,
+          "recall": 0.909,
+          "n": 55
         },
         "C": {
           "precision": 0.788,

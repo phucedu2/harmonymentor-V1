@@ -207,12 +207,26 @@ def check_labels(rows: list[dict]) -> list[str]:
     return notes
 
 
+def relabel(data: dict[str, list[dict]]) -> None:
+    """Câu B "bài sau" của bài nay đã vào kho thì đúng luồng là A. Đổi nhãn SAU khi chia tập để không câu nào đổi
+    tập. Lý do đổi là nội dung kho thay đổi (L05 phát hành 07/11/2026), không phải kết quả đo."""
+    from app.ai.tutor.retriever import knowledge_base
+
+    kb_lessons = {c.lesson_id for c in knowledge_base()}
+    for rows in data.values():
+        for r in rows:
+            if r["flow"] == "B" and r.get("lesson") in kb_lessons:
+                r["flow"], r["relabel"] = "A", f"B→A: {r['lesson']} đã vào kho"
+                r.pop("expect", None)
+
+
 def main() -> int:
     rng = random.Random(SEED)
     groups = expand()
     parts = split_groups(groups, rng)
     data = {name: items_for(name, gs, rng) for name, gs in parts.items()}
     data, dropped = drop_overlaps(data)
+    relabel(data)
     # Gán dữ kiện Engine cho mọi dòng B (cả biến thể) qua câu gốc.
     all_rows = [r for rows in data.values() for r in rows]
     notes = check_labels(all_rows)

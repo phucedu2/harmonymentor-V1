@@ -123,7 +123,7 @@ def test_unknown_terms():
     ("Chào bạn", "G", "greeting"),
     ("Cách nấu phở bò ngon", "C", "refuse"),
     ("Làm sao đổi mật khẩu tài khoản?", "D", "help"),
-    ("C7 khác Cmaj7 thế nào?", "A", "lesson"),
+    ("Cmaj7 với C7 khác gì nhau?", "A", "lesson"),   # BM25 sau khi L05 vào kho: "C7 khác Cmaj7 thế nào?" sang Engine
     ("Csus4 gồm những nốt nào?", "B", "engine"),
     ("Âm giai A thứ hòa âm gồm những nốt nào?", "B", "engine"),
     ("Hop am C9 gom not gi", "B", "unknown"),

@@ -3408,128 +3408,75 @@
   },
   {
    "q": "át phụ là gì",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L05",
-   "expect": "Bạn sẽ học sau ở L05",
    "group": "B-L05#0",
    "style": "goc",
    "base": "át phụ là gì",
-   "engine": null
+   "relabel": "B→A: L05 đã vào kho"
   },
   {
    "q": "át phụ là j",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L05",
-   "expect": "Bạn sẽ học sau ở L05",
    "group": "B-L05#0",
    "style": "go_tat",
-   "base": "át phụ là gì"
+   "base": "át phụ là gì",
+   "relabel": "B→A: L05 đã vào kho"
   },
   {
    "q": "at phu la gi",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L05",
-   "expect": "Bạn sẽ học sau ở L05",
    "group": "B-L05#0",
    "style": "khong_dau",
-   "base": "át phụ là gì"
+   "base": "át phụ là gì",
+   "relabel": "B→A: L05 đã vào kho"
   },
   {
    "q": "V7/V trong C trưởng là hợp âm nào",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L05",
-   "expect": "Bạn sẽ học sau ở L05",
    "group": "B-L05#0",
    "style": "goc",
    "base": "V7/V trong C trưởng là hợp âm nào",
-   "engine": [
-    {
-     "tool": "get_roman_numeral",
-     "args": {
-      "key": "C",
-      "chord": "G"
-     },
-     "result": "V"
-    },
-    {
-     "tool": "get_chord_tones",
-     "args": {
-      "symbol": "G"
-     },
-     "result": "G B D"
-    }
-   ]
+   "relabel": "B→A: L05 đã vào kho"
   },
   {
    "q": "em hỏi xíu V7/V trong C trưởng là hợp âm nào nhỉ",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L05",
-   "expect": "Bạn sẽ học sau ở L05",
    "group": "B-L05#0",
    "style": "loi_goi",
    "base": "V7/V trong C trưởng là hợp âm nào",
-   "engine": [
-    {
-     "tool": "get_roman_numeral",
-     "args": {
-      "key": "C",
-      "chord": "G"
-     },
-     "result": "V"
-    },
-    {
-     "tool": "get_chord_tones",
-     "args": {
-      "symbol": "G"
-     },
-     "result": "G B D"
-    }
-   ]
+   "relabel": "B→A: L05 đã vào kho"
   },
   {
    "q": "V7/V trong C truong la hop am nao",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L05",
-   "expect": "Bạn sẽ học sau ở L05",
    "group": "B-L05#0",
    "style": "khong_dau_go_tat",
    "base": "V7/V trong C trưởng là hợp âm nào",
-   "engine": [
-    {
-     "tool": "get_roman_numeral",
-     "args": {
-      "key": "C",
-      "chord": "G"
-     },
-     "result": "V"
-    },
-    {
-     "tool": "get_chord_tones",
-     "args": {
-      "symbol": "G"
-     },
-     "result": "G B D"
-    }
-   ]
+   "relabel": "B→A: L05 đã vào kho"
   },
   {
    "q": "hợp âm át phụ dùng để làm gì",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L05",
-   "expect": "Bạn sẽ học sau ở L05",
    "group": "B-L05#0",
    "style": "goc",
    "base": "hợp âm át phụ dùng để làm gì",
-   "engine": null
+   "relabel": "B→A: L05 đã vào kho"
   },
   {
    "q": "hop am at phu dung de lam gi",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L05",
-   "expect": "Bạn sẽ học sau ở L05",
    "group": "B-L05#0",
    "style": "khong_dau",
-   "base": "hợp âm át phụ dùng để làm gì"
+   "base": "hợp âm át phụ dùng để làm gì",
+   "relabel": "B→A: L05 đã vào kho"
   },
   {
    "q": "bVII trong pop là gì",
