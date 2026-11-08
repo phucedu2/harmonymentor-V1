@@ -77,3 +77,10 @@ Module mới đặt theo SRS 10.4: `backend/app/{auth,learning,recommender,nlp,e
 - Quyết định không hiển nhiên ghi `docs/decisions/ADR-xxx.md`. Ghi việc dùng AI vào `docs/AI_USAGE.md`.
 - Comment/docstring tiếng Việt, ngắn, giải thích "vì sao". Giao diện tiếng Việt, ký hiệu nhạc quốc tế.
 - Cuối mỗi giai đoạn: dừng và báo cáo (đã làm gì theo FR, file, lệnh, kết quả test, giải thích cho nhóm, rủi ro/câu hỏi).
+
+## Cách trả lời Phúc
+
+- Trả lời tiếng Việt, kết luận trước, tối đa ~150 từ trừ khi tôi nói "giải thích kỹ".
+- Khi giải thích: 1 ví dụ code ngắn, bỏ lời dẫn và đoạn tóm tắt lặp lại.
+- Chỉ đọc file tôi nêu, trừ khi thật sự cần.
+- Báo kết quả và file đã sửa, không kể lại từng bước.
