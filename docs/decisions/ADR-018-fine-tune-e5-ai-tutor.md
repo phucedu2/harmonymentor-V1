@@ -51,3 +51,9 @@ Trạng thái: **Đề xuất 07/11/2026**, chờ nhóm duyệt qua Draft PR GĐ
   - R@1 không giảm.
   - Script chỉ train trên tập train.
 - Báo cáo và số đo: `docs/giai-doan/ai-gop-y/03_FINETUNE.md`, `gd2b_test_tam.*`, `gd2b_bo_do_gd1.*`, `gd2b_model_info.json`.
+
+## Bổ sung 08/11/2026 (GĐ2c, train lại sau khi L05 vào kho)
+
+- Train lại bản `multilingual-e5-small-hm-gd2c` với dữ liệu mới (742 câu) và kho L01–L05 (76 đoạn). Script có thêm `--grad-ckpt` (kho lớn hơn làm hết RAM 16 GB) và `--name`.
+- Kết quả trong [05_TRAIN_LAI_KHO_L05.md](../giai-doan/ai-gop-y/05_TRAIN_LAI_KHO_L05.md): cải thiện chủ yếu nhờ dữ liệu và ngưỡng; GĐ2c không hơn GĐ2b rõ rệt.
+- **Không đăng Release mới.** Mặc định vẫn là e5 gốc. Release `e5-hm-gd2b` giữ nguyên, dùng ngưỡng chọn lại trên dev mới.

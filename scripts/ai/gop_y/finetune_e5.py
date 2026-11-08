@@ -156,6 +156,7 @@ def finish(tmp: Path, out: Path, src: str) -> None:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", type=Path, required=True)
+    ap.add_argument("--name", default="multilingual-e5-small-hm-gd2b", help="tên mô hình ghi vào model_info.json (khóa ngưỡng định tuyến)")
     ap.add_argument("--epochs", type=int, default=4)
     ap.add_argument("--lr", type=float, default=2e-5)
     ap.add_argument("--seed", type=int, default=20261107)
@@ -163,6 +164,7 @@ def main(argv=None) -> int:
     ap.add_argument("--batch-neg", type=int, default=16)
     ap.add_argument("--margin", type=float, default=0.03)
     ap.add_argument("--hinge-weight", type=float, default=1.0)
+    ap.add_argument("--grad-ckpt", action="store_true", help="checkpoint gradient: bớt RAM (kho 76 đoạn × 256 token vượt 14 GB), chậm hơn ~30%, kết quả toán học như nhau")
     args = ap.parse_args(argv)
     seed_all(args.seed)
 
@@ -174,6 +176,8 @@ def main(argv=None) -> int:
     enc = Encoder(src)
     for p in enc.model.embeddings.parameters():
         p.requires_grad = False
+    if args.grad_ckpt:
+        enc.model.gradient_checkpointing_enable()
 
     lessons, helps, texts = passages()
     n_les = len(lessons)
@@ -244,7 +248,7 @@ def main(argv=None) -> int:
             enc.tok.save_pretrained(tmp)
 
     args.out.mkdir(parents=True, exist_ok=True)
-    info = {"name": "multilingual-e5-small-hm-gd2b", "base": f"{HF_REPO}@{HF_REVISION}", "seed": args.seed,
+    info = {"name": args.name, "base": f"{HF_REPO}@{HF_REVISION}", "seed": args.seed,
             "args": {k: (str(v) if isinstance(v, Path) else v) for k, v in vars(args).items()},
             "train_sha256": sha(GD2 / "train.json"), "dev_sha256": sha(GD2 / "dev.json"),
             "history": history, "chosen": best,
