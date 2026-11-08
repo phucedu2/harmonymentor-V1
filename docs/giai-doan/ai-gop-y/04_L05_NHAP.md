@@ -63,4 +63,5 @@ Phúc báo trong thread "Đạt duyệt nhánh L05". Nhánh `ai-gop-y/gd3-l05-ph
 - **Chỉ mục Gemini (`lesson_embeddings.json`) phải dựng lại** bằng khóa Gemini (`python -m app.ai.build_index`). Trước khi dựng lại, chế độ `TUTOR_EMBEDDER=gemini` rơi về BM25. Chế độ mặc định (e5 cục bộ) không cần.
 - Số đo: `gd3_l05_bo_do_gd1.*`, `gd3_l05_test_tam.*`.
 - **Chế độ BM25** (khi không có mô hình nhúng): ngưỡng mới cao hơn (4,6 → 5,8) vì thêm đoạn làm điểm BM25 dịch lên. Giữ ngưỡng cũ thì trên dev câu B/C bị trả lời như bài học tới 31,5% (ngưỡng mới 19,6%). Hệ quả: câu demo "C7 khác Cmaj7 thế nào?" ở chế độ BM25 được trả bằng Engine (đúng nốt, không trích bài); "Cmaj7 với C7 khác gì nhau?" vẫn trích L02. Ở chế độ mặc định e5 (gốc và fine-tune), cả hai câu đều trả lời bằng bài L02. Test API đổi sang câu thứ hai.
-- `pytest -q`: 1004 passed, 2 failed (`test_index_file_matches_current_chunks`, `test_retriever_falls_back_to_bm25`) chờ dựng lại chỉ mục Gemini. CI nâng `--min-passed` lên 1006 (tính cả 2 test này sau khi có chỉ mục).
+- **Chỉ mục Gemini đã dựng lại** (08/11/2026, trên máy Phúc bằng image Docker backend vì Python trên máy lỗi chứng chỉ SSL): 58 đoạn (trước 45), `gemini-embedding-001`, 768 chiều. Không có chuỗi khóa trong file.
+- `pytest -q`: 1004 passed, 43 skipped, 0 failed. CI nâng `--min-passed` lên 1004.
