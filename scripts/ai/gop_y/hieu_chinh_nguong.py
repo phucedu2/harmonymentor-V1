@@ -23,7 +23,7 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "backend"))
 DEV = ROOT / "scripts" / "ai" / "data" / "router_dev.json"
 GD2_DEV = ROOT / "scripts" / "ai" / "data" / "gd2" / "dev.json"
-EXTRA_MODEL_DIRS = [ROOT / "backend" / "models" / "multilingual-e5-small-hm"]
+EXTRA_MODEL_DIRS = [ROOT / "backend" / "models" / "multilingual-e5-small-hm", ROOT / "backend" / "models" / "multilingual-e5-small-hm-gd2c"]
 OUT = ROOT / "backend" / "app" / "ai" / "tutor" / "router_thresholds.json"
 FIXED = {"greet_conf": 0.5, "help_conf": 0.45, "oos_conf": 0.5, "music_min": 0.3}
 FLOWS = ("A", "B", "C", "D", "G")
