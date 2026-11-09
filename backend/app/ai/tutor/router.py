@@ -71,7 +71,7 @@ _UNTAUGHT = {
     "circle_of_fifths": dict(pattern=r"\bvong (?:tron )?quang (?:5|nam)\b|\bcircle of fifths\b", marker=r"\bvong (?:tron )?quang\b|\bcircle of fifths\b"),
     # Thêm 09/11 từ tập dev router_dev/gd2 (không từ tập test): kho L01–L05 không có các mẫu dưới.
     "time_signature": dict(pattern=r"\bnhip \d+ ?/ ?\d+\b|\bso chi nhip\b|\btime signatures?\b", marker=r"\bnhip \d+ ?/ ?\d+\b|\bso chi nhip\b"),
-    "note_value": dict(pattern=r"\bnot moc\b|\bmoc (?:don|kep)\b|\bnot (?:den|trang|tron)\b|\bdau cham doi\b",
+    "note_value": dict(pattern=r"\bnot moc\b|\bmoc (?:don|kep)\b|\bnot (?:den|trang|tron)\b|\bcham doi\b",
                        marker=r"\bnot moc\b|\bmoc (?:don|kep)\b|\bnot (?:den|trang|tron)\b"),
     "clef": dict(pattern=r"\bkhoa (?:fa|sol|son|do)\b|\bclefs?\b", marker=r"\bkhoa (?:fa|sol|son)\b|\bclef\b"),
     "bass_note": dict(pattern=r"\bnot bass\b", marker=r"\bnot bass\b"),
@@ -167,6 +167,24 @@ def known_words() -> frozenset[str]:
     for r in data.get("a_rows", []):
         words.update(_words(r))
     return frozenset(words)
+
+
+@lru_cache(maxsize=1)
+def _kb_words() -> frozenset[str]:
+    return frozenset(w for c in knowledge_base() for w in _words(f"{c.title} {c.text}"))
+
+
+def _all_terms_in_kb(question: str) -> bool:
+    """Mọi chữ của câu đều "đã biết" (kho bài, kho hướng dẫn, câu thường ngày; cho phép lỗi gõ) và có chữ của kho bài."""
+    import difflib
+
+    words = _words(question)
+    in_kb = [w for w in words if w in _kb_words()
+             or (len(w) >= 4 and difflib.get_close_matches(w, _kb_words(), n=1, cutoff=0.8))]
+    # Thuật ngữ = chữ của kho không phải âm tiết tiếng Việt ("triad", "tonic", "perfetc") hoặc con số ("quang 8").
+    # Âm tiết tiếng Việt bỏ dấu dễ trùng ("hoa tri" ~ "hòa", "trí") nên không tính là thuật ngữ.
+    terms = [w for w in in_kb if w.isdigit() or _foreign(w, w)]
+    return bool(terms) and all(w.isdigit() or w in known_words() or w in in_kb for w in words)
 
 
 _INTERVAL_TOKEN = re.compile(r"[pmad]\d{1,2}")   # m3, P5, d5, A4: ký hiệu quãng L01 đã dạy
@@ -354,6 +372,13 @@ def route(sig: Signals, th: dict[str, float]) -> Decision:
     if eng.facts:
         return d("B", "engine", "below_threshold_engine")
     if lesson.best_score >= gray:
+        # Câu định nghĩa ngắn ("triad la gi", "tonic va dominant la gi") có ít chữ nên điểm truy xuất thấp, rơi vào
+        # vùng xám. Mọi chữ đều là chữ kho bài hoặc chữ hỏi thường ngày (cho phép lỗi gõ "perfetc") và có ít nhất một
+        # chữ của kho bài: kho có dạy, trả lời từ bài. Chỉ với câu ngắn (≤ 8 chữ) mà tầng 1 chắc là nhạc lý (≥ 0,5),
+        # vì văn bài có nhiều chữ thường ("giảm", "hóa") nên câu ngoài lề cũng "toàn chữ của kho". Đặt SAU mọi luật
+        # "chưa dạy" ở trên nên không mở cửa cho câu B.
+        if probs.get("nhac_ly", 0) >= 0.5 and len(_words(question)) <= 8 and _all_terms_in_kb(question):
+            return d("A", "lesson", "gray_zone_kb_terms", hits=keep or lesson.hits[:1])
         return d("B", "unknown", "gray_zone_conservative")
     return d("B", "unknown", "no_lesson_hit")
 

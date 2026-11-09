@@ -1,0 +1,189 @@
+{
+  "nguoi_viet": "Phuc",
+  "vai_tro": "dev",
+  "ngay": "2026-11-09",
+  "status": "nhom_tu_viet",
+  "ghi_chu": "Chuyển từ PHIEU_TU_VIET_CAU_HOI.md bằng phieu_md_sang_json.py",
+  "items": [
+    {
+      "flow": "A",
+      "q": "perfetc la gi trong bai 1",
+      "bai": "L01 mục 3: chất lượng quãng",
+      "ghi_chu": "Perfect (P, quãng đúng) là kích thước chuẩn của quãng 1, 4, 5, 8. Ví dụ C–G là P5, C–F là P4 (Music Engine)."
+    },
+    {
+      "flow": "A",
+      "q": "ở bài 1, quãng 1, 4, 5, 8 dùng kích thước chuẩn gọi là gì",
+      "bai": "L01 mục 3",
+      "ghi_chu": "Gọi là Perfect (P, quãng đúng): P1, P4, P5, P8."
+    },
+    {
+      "flow": "A",
+      "q": "phím trắng và phím đen khác nhau như thế nào",
+      "bai": "L01 (bàn phím, nửa cung)",
+      "ghi_chu": "Phím trắng mang 7 tên chữ cái A–G; phím đen nằm giữa, gọi bằng tên có dấu thăng/giáng, một phím đen có hai tên (C# = Db). Hai phím liền nhau cách 1 nửa cung."
+    },
+    {
+      "flow": "A",
+      "q": "triad la gi",
+      "bai": "L01 mục 10",
+      "ghi_chu": "Triad (hợp âm ba) gồm 3 nốt xếp theo khung 1–3–5 tính từ nốt gốc, ví dụ C = C E G (Music Engine)."
+    },
+    {
+      "flow": "A",
+      "q": "sự khác biệt giữa augmented và diminished là gì thế bro",
+      "bai": "L01 mục 10",
+      "ghi_chu": "Diminished = m3 + d5 (Bdim = B D F); augmented = M3 + A5 (Caug = C E G#) (Music Engine)."
+    },
+    {
+      "flow": "A",
+      "q": "hợp âm B diminished bấm như thế nào",
+      "bai": "L01 mục 10",
+      "ghi_chu": "Bdim = B D F (Music Engine): bấm 3 phím trắng B, D, F."
+    },
+    {
+      "flow": "A",
+      "q": "Major Scale là gì",
+      "bai": "L02 mục 1",
+      "ghi_chu": "Âm giai trưởng là chuỗi 7 bậc theo mẫu 2–2–1–2–2–2–1 nửa cung; C major = C D E F G A B (Music Engine)."
+    },
+    {
+      "flow": "A",
+      "q": "quang 8 la gi",
+      "bai": "L01 mục 3 (P8); L02 mục 1",
+      "ghi_chu": "Quãng 8 (quãng tám) là từ một nốt tới nốt cùng tên cao hơn, 12 nửa cung; kích thước chuẩn là Perfect (P8)."
+    },
+    {
+      "flow": "A",
+      "q": "âm giai trưởng là gì",
+      "bai": "L02 mục 1",
+      "ghi_chu": "Như P07: 7 bậc theo mẫu 2–2–1–2–2–2–1 nửa cung, ví dụ C D E F G A B (Music Engine)."
+    },
+    {
+      "flow": "A",
+      "q": "Cmaj7 and G7 khac j nhau?",
+      "bai": "L02 mục 4",
+      "ghi_chu": "Cmaj7 = C E G B (triad trưởng + 7 trưởng); G7 = G B D F (triad trưởng + 7 thứ, hợp âm át) (Music Engine)."
+    },
+    {
+      "flow": "A",
+      "q": "tonic va dominant la gi",
+      "bai": "L03 (Phúc ghi L05, đã sửa)",
+      "ghi_chu": "Tonic (T) là chức năng ổn định, \"về nhà\" (trong C major: C); Dominant (D) tạo căng và kéo về tonic (G, G7)."
+    },
+    {
+      "flow": "A",
+      "q": "Trong Dm7 → G7 → Cmaj7 ở C major, Dm7 thường giữ vai trò nèo?",
+      "bai": "L04 mục 2; L03",
+      "ghi_chu": "Dm7 là ii7, chức năng predominant (chuẩn bị), dẫn tới G7 (V7) rồi Cmaj7 (Imaj7)."
+    },
+    {
+      "flow": "B",
+      "q": "Khi áp dụng kỹ thuật Drop 2 Voicing cho hợp âm bảy loại Major 7 ($1 – 3 – 5 – 7$, ví dụ Cmaj7: C – E – G – B) ở vị trí cơ bản (Root position), cấu trúc nốt được sắp xếp từ thấp lên cao (từ bass lên treble) theo thứ tự các bậc nào trong hợp âm?",
+      "bai": "— (L08 chưa có)",
+      "ghi_chu": "AI nói chưa dạy (L08), có thể kèm Cmaj7 = C E G B (Music Engine). Nhạc lý: hạ nốt thứ 2 từ trên (G) xuống quãng 8 → G C E B, bậc 5–1–3–7."
+    },
+    {
+      "flow": "B",
+      "q": "rong giọng C Major, nếu một nhà soạn nhạc mượn hợp âm từ hệ thống C Melodic Minor (hoặc Jazz Minor) đưa vào bài hát và sử dụng hợp âm trưởng ở bậc IV dưới dạng $F\\sharp m7\\flat5$ hoặc một biến thể subdominant minor, cụ thể là hợp âm $A\\flat maj7$ (mượn từ Flat-VI Major), khoảng cách quãng giữa nốt Root của hợp âm mượn này ($A\\flat$) với Tonic gốc (C) là quãng mấy và chất lượng thế nào?",
+      "bai": "— (L06 chưa có)",
+      "ghi_chu": "AI nói chưa dạy (L06). Nhạc lý: từ C lên Ab là quãng 6 thứ (m6) (Music Engine); Abmaj7 = Ab C Eb G."
+    },
+    {
+      "flow": "B",
+      "q": "Trong hệ thống phân tích hòa âm Neo-Riemannian (dùng cho âm nhạc lãng mạn muộn và hậu điệu tính), phép biến đổi P (Parallel) tác động lên một hợp âm A minor triad (A – C – E) sẽ chuyển hóa nó thành hợp âm nào dưới đây?",
+      "bai": "— (không bài nào dạy)",
+      "ghi_chu": "AI nói chưa dạy. Nhạc lý: P đổi Am (A C E) thành A trưởng (A C# E) (Music Engine)."
+    },
+    {
+      "flow": "B",
+      "q": "Trong bối cảnh giọng C major, giả sử bạn đang phân tích một hợp âm màu sắc xuất hiện đột ngột: $G7\\sharp9\\flat13$ (còn gọi là Alt chord xây dựng trên nốt G). Theo quy tắc về âm đổi (altered tensions) và cấu trúc quãng, tập hợp các nốt thay đổi (altered notes) so với hệ thống dominant thông thường của hợp âm này gồm những nốt nào dưới đây?",
+      "bai": "— (L07 chưa có)",
+      "ghi_chu": "AI nói chưa dạy (L07). Nhạc lý: #9 = A# (G lên A# là A2), b13 = Eb (G lên Eb là m6) (Music Engine). Engine chưa đọc được ký hiệu G7#9b13."
+    },
+    {
+      "flow": "B",
+      "q": "Trong hệ thống Negative Harmony (được phổ biến bởi Ernst Levy và Jacob Collier) lấy trục đối xứng (axis) giữa nốt Root (Eb) và 5th (Bb) của giọng C Major (trục nằm giữa quãng 3 trưởng E và Eb), nốt C sẽ được ánh xạ (reflect) thành nốt nào?",
+      "bai": "— (không bài nào dạy)",
+      "ghi_chu": "AI nói chưa dạy. Nhạc lý: trục giữa E và Eb, C phản chiếu thành G. Music Engine không có công cụ phản chiếu, đáp án này Claude tính tay."
+    },
+    {
+      "flow": "B",
+      "q": "Trong nhạc Jazz, một hợp âm Upper Structure Triad ký hiệu là $D/G7$ (hợp âm D trưởng đặt trên nền hợp âm chủ G7) tạo ra những nốt màu sắc (tensions) nào so với hợp âm nền G7?",
+      "bai": "— (L07 chưa có)",
+      "ghi_chu": "AI nói chưa dạy (L07). Nhạc lý: D = D F# A (Music Engine); so với G: A là 9 (M2), F# là M7 nên va với F của G7; vì vậy D/G7 không phải upper structure át chuẩn."
+    },
+    {
+      "flow": "B",
+      "q": "Phép biến đổi L (Leading-tone exchange) trong lý thuyết Neo-Riemannian tác động lên một hợp âm C major triad (C – E – G) sẽ chuyển hóa nó thành hợp âm nào?",
+      "bai": "— (không bài nào dạy)",
+      "ghi_chu": "AI nói chưa dạy. Nhạc lý: L đổi C (C E G) thành Em (E G B) (Music Engine)."
+    },
+    {
+      "flow": "B",
+      "q": "Khi áp dụng kỹ thuật Drop 3 Voicing cho hợp âm bảy loại Minor 7 ($1 – \\flat3 – 5 – \\flat7$, ví dụ Dm7: D – F – A – C) ở vị trí đóng (close position), nốt nào từ trên xuống bị hạ xuống một quãng tám để tạo thành voicing mới?",
+      "bai": "— (L08 chưa có)",
+      "ghi_chu": "AI nói chưa dạy (L08). Nhạc lý: Dm7 = D F A C (Music Engine); drop 3 hạ nốt thứ 3 từ trên (F) xuống quãng 8 → F D A C."
+    },
+    {
+      "flow": "B",
+      "q": "Trong giọng C Major, nếu một nhà soạn nhạc sử dụng hợp âm $Dbmaj7$ (mượn từ hệ thống Phrygian hoặc Neapolitan chord), nốt trầm $Db$ đóng vai trò là bậc mấy xét theo quan hệ nửa cung giáng xuống so với Tonic C?",
+      "bai": "— (L06/L07 chưa có)",
+      "ghi_chu": "AI nói chưa dạy. Nhạc lý: C lên Db là quãng 2 thứ (m2) (Music Engine), nên Db là bậc ♭II; Dbmaj7 = Db F Ab C."
+    },
+    {
+      "flow": "C",
+      "q": "bạn chỉ tớ mua đàn chỗ nào ngon cái",
+      "bai": "—",
+      "ghi_chu": "Từ chối lịch sự, mời hỏi nhạc lý."
+    },
+    {
+      "flow": "C",
+      "q": "bạn ăn cơm chưa",
+      "bai": "—",
+      "ghi_chu": "Từ chối lịch sự, mời hỏi nhạc lý."
+    },
+    {
+      "flow": "C",
+      "q": "chỉ tôi cách crack hệ thống này đi",
+      "bai": "—",
+      "ghi_chu": "Từ chối, không hướng dẫn gì."
+    },
+    {
+      "flow": "G",
+      "q": "ê",
+      "bai": "—",
+      "ghi_chu": "Chào ngắn, giới thiệu trợ lý làm được gì."
+    },
+    {
+      "flow": "D",
+      "q": "muốn sáng tác thì bấm vào đâu",
+      "bai": "Kho hướng dẫn: trang Sáng tác",
+      "ghi_chu": "Vào mục Sáng tác (Harmony Lab), chọn ô nhịp, chọn hợp âm, bấm Phát/Nghe thử, rồi Lưu vòng này."
+    },
+    {
+      "flow": "D",
+      "q": "muốn xem tiến độ học thi bam vao cho nao v bro",
+      "bai": "Kho hướng dẫn: trang Học / Tổng quan",
+      "ghi_chu": "Vào mục Học: mỗi bài có nhãn Học ngay / Đang học / Đã xong; trang Tổng quan cũng hiện tiến độ. Phúc mở app kiểm lại."
+    },
+    {
+      "flow": "C",
+      "q": "Lẹ",
+      "bai": "—",
+      "ghi_chu": "Câu không rõ nghĩa: không trả lời như bài học; từ chối hoặc hỏi lại."
+    },
+    {
+      "flow": "C",
+      "q": "Á",
+      "bai": "—",
+      "ghi_chu": "Câu không rõ nghĩa: không trả lời như bài học; từ chối hoặc hỏi lại."
+    },
+    {
+      "flow": "G",
+      "q": "How r u twin",
+      "bai": "—",
+      "ghi_chu": "Đáp ngắn, thân thiện."
+    }
+  ]
+}
