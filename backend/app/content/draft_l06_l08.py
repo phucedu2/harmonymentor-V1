@@ -1,7 +1,6 @@
-"""Nội dung NHÁP lý thuyết L06, L07, L08 (GĐ3 góp ý thầy G2), Claude soạn 08/11/2026, CHỜ Đạt/Astra duyệt.
+"""Lý thuyết L06, L07, L08 (GĐ3 góp ý thầy G2), Claude soạn 08/11/2026, Đạt duyệt 09/11/2026 (Phúc báo).
 
-Mỗi khối có status "draft": người học không thấy (chỉ hiện khi bật SHOW_DRAFT_CONTENT) và AI Tutor không trích.
-Duyệt xong thì bỏ status ở từng khối (hoặc gọi `publish`), giống L05. Mọi nốt/quãng ghi ở đây được test đối chiếu
+Đã bỏ status "draft": người học thấy. AI Tutor chưa trích (xem TUTOR_KB_PENDING). Mọi nốt/quãng ghi ở đây được test đối chiếu
 Music Engine (tests/test_ai_gd3_l06_l08.py). Engine chưa hỗ trợ hợp âm mở rộng (9, 13) và mixolydian, nên phần đó
 kiểm bằng quãng và bằng việc xoay âm giai major, ghi rõ trong báo cáo.
 Định vị nguồn từng khối do Claude đề xuất, chưa đối chiếu trang.
@@ -202,6 +201,7 @@ L08_DRAFT_BLOCKS: list[Block] = [
         ]}),
 ]
 
-for _blocks in (L06_DRAFT_BLOCKS, L07_DRAFT_BLOCKS, L08_DRAFT_BLOCKS):
-    for _bid, _type, _payload in _blocks:
-        _payload["status"] = DRAFT
+# Đạt duyệt 09/11/2026 (Phúc báo trong thread): bỏ status draft, người học thấy.
+# Chưa nạp vào kho AI Tutor: thử nạp làm định tuyến đổi (luật "bài sau" L06–L08 tắt, câu hóa học "hoa tri cua sat"
+# bị kéo vào A, câu Cmaj7/C7 trích L08 thay L02). Nạp khi đã gán lại nhãn, chọn lại ngưỡng và đo lại (như L05).
+TUTOR_KB_PENDING = frozenset({"L06", "L07", "L08"})
