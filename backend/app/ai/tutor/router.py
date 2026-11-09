@@ -48,8 +48,10 @@ _CHORD_WORDS = {"maj": ("hợp âm trưởng", "triad trưởng", "major"), "min
 _LATER_CONCEPTS = {
     # So trên chữ thường (later_lesson hạ chữ), nên mẫu số La Mã viết thường: "V7/V" → "v7/v".
     "L05": r"secondary dominant|át phụ|\bv7?/[iv]+\b",
-    "L06": r"modal interchange|mượn (?:hợp âm|từ|nốt)|borrowed chord|giọng song song|\bb(?:vii|vi|iii)\b",
-    "L07": r"\btensions?\b|#(?:9|11)\b|(?<![a-z])b(?:9|13)\b|maj9|chord[- ]scale|điệu thức|\bmodes?\b|lydian|mixolydian|phrygian|locrian|aeolian|ionian",
+    "L06": r"modal interchange|mượn (?:hợp âm|từ|nốt)|hợp âm mượn|borrowed chord|giọng song song|\bb(?:vii|vi|iii)\b",
+    # Hợp âm 9/11/13 bằng chữ hoặc ký hiệu gõ thường ("fmaj9", "hop am 9 khac hop am 7"): L07 dạy tension.
+    "L07": r"\btensions?\b|#(?:9|11)\b|(?<![a-z])b(?:9|13)\b|maj9|chord[- ]scale|điệu thức|\bmodes?\b|lydian|mixolydian|phrygian|locrian|aeolian|ionian"
+           r"|\b[a-g][#b]?(?:maj|m|add)?(?:9|11|13)\b|hợp âm (?:9|11|13)\b",
     "L08": r"voicing|thế bấm",
 }
 # Khái niệm KHÔNG bài nào trong lộ trình hiện tại dạy (chưa có bài để chỉ "bạn sẽ học sau ở bài …"): câu hỏi nhắc tới
@@ -66,7 +68,14 @@ _UNTAUGHT = {
                            marker=r"\brelative\b|\bgiong thu tuong ung\b"),
     "sixth_chord": dict(pattern=r"\bhop am 6\b|\bhop am sau\b|\b[a-g][#b]?6\b(?!\d)", marker=r"\bhop am 6\b|\b[a-g][#b]?6\b"),
     "dim7_chord": dict(pattern=r"\bhop am bay (?:giam|gim)\b|\bdim7\b|\b[a-g][#b]?dim7\b", marker=r"\bbay giam\b|\bdim7\b"),
-    "circle_of_fifths": dict(pattern=r"\bvong quang (?:5|nam)\b|\bcircle of fifths\b", marker=r"\bvong quang\b|\bcircle of fifths\b"),
+    "circle_of_fifths": dict(pattern=r"\bvong (?:tron )?quang (?:5|nam)\b|\bcircle of fifths\b", marker=r"\bvong (?:tron )?quang\b|\bcircle of fifths\b"),
+    # Thêm 09/11 từ tập dev router_dev/gd2 (không từ tập test): kho L01–L05 không có các mẫu dưới.
+    "time_signature": dict(pattern=r"\bnhip \d+ ?/ ?\d+\b|\bso chi nhip\b|\btime signatures?\b", marker=r"\bnhip \d+ ?/ ?\d+\b|\bso chi nhip\b"),
+    "note_value": dict(pattern=r"\bnot moc\b|\bmoc (?:don|kep)\b|\bnot (?:den|trang|tron)\b|\bdau cham doi\b",
+                       marker=r"\bnot moc\b|\bmoc (?:don|kep)\b|\bnot (?:den|trang|tron)\b"),
+    "clef": dict(pattern=r"\bkhoa (?:fa|sol|son|do)\b|\bclefs?\b", marker=r"\bkhoa (?:fa|sol|son)\b|\bclef\b"),
+    "bass_note": dict(pattern=r"\bnot bass\b", marker=r"\bnot bass\b"),
+    "sus_chord": dict(pattern=r"\bhop am sus\d?\b|\bsus[24]?\b|\bsuspended\b|\bhop am treo\b", marker=r"\bsus[24]?\b|\bsuspended\b"),
 }
 _SYM_IN_KB = re.compile(r"(?<![A-Za-z0-9#])([A-G](?:#|b)?(?:maj7|M7|m7b5|ø7|dim7|°7|dim|°|aug|\+|m7|m|7|sus2|sus4|6|9)?)"
                         r"(?![A-Za-z0-9#])")
@@ -315,7 +324,15 @@ def route(sig: Signals, th: dict[str, float]) -> Decision:
             return d("B", "engine", "outside_kb_engine")
         return d("B", "unknown", "outside_kb_unknown")
     if sig.unknown_terms:
+        # Từ lạ trong câu tầng 1 không chắc là nhạc lý (dưới đa số): "cho minh link tai nhac lau free" có "link",
+        # "free" nhưng không hỏi nhạc lý. Ngưỡng 0,5 là "đa số", không dò; câu B thật trên tập dev đều ≥ 0,62.
+        if not eng.facts and (label.label != "nhac_ly" or probs.get("nhac_ly", 0) < 0.5):
+            return d("C", "refuse", "unknown_terms_not_music")
         return d("B", "engine" if eng.facts else "unknown", "unknown_terms")
+    # Tầng 1 nghiêng ngoài phạm vi mà nhạc lý không chiếm đa số, không có ký hiệu nào: không trả lời như bài học dù
+    # điểm truy xuất cao ("Gợi ý phim hay cuối tuần" 0,49 nhạc lý / 0,36 ngoài phạm vi, BM25 9,9).
+    if not eng.facts and probs.get("nhac_ly", 0) < 0.5 and probs.get("ngoai_pham_vi", 0) >= th["music_min"]:
+        return d("C", "refuse", "weak_music_oos")
     if lesson.best_score >= accept:
         return d("A", "lesson", "lesson_hit", hits=keep or lesson.hits[:1])
     # Dữ kiện Engine thuộc loại kho đã dạy và có đoạn bài ở vùng xám: trả lời từ bài kèm dữ kiện Engine.
