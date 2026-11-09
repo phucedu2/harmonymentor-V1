@@ -187,7 +187,7 @@ def composition_analyze(body: AnalyzeIn, _user: User = Depends(get_current_user)
 
 # --- dự án -----------------------------------------------------------------------------------------
 
-MIX_CHANNELS = ("chords", "bass", "guitar", "drums", "hook")
+MIX_CHANNELS = ("chords", "bass", "guitar", "drums", "hook", "strings")
 
 
 class ChannelMix(BaseModel):

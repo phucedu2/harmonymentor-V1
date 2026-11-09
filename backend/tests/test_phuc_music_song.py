@@ -481,3 +481,15 @@ def test_du_an_luu_va_mo_form():
     # Người khác không thấy (404)
     other = auth(make_user())
     assert client.get(f"/api/v1/projects/{p['id']}", headers=other).status_code == 404
+
+
+def test_du_an_luu_kenh_day_cello():
+    """GĐ4: kênh trộn "strings" (cello) được lưu; kênh lạ vẫn bị từ chối."""
+    h = auth(make_user())
+    body = {"name": "Có dây", "key": "C", "tempo_bpm": 100, "bars": 4, "style": "pop", "chords": POP4,
+            "seed": 4, "energy": 2, "mix": {"strings": {"volume": 0.5, "muted": False}}}
+    res = client.post("/api/v1/projects", headers=h, json=body)
+    assert res.status_code == 201, res.text
+    assert res.json()["mix"]["strings"] == {"volume": 0.5, "muted": False}
+    bad = client.post("/api/v1/projects", headers=h, json={**body, "mix": {"violin": {"volume": 0.5, "muted": False}}})
+    assert bad.status_code == 422 and bad.json()["error"]["code"] == "UNKNOWN_CHANNEL"

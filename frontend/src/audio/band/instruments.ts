@@ -15,7 +15,7 @@ export interface BandInstrument {
 }
 
 // Thời gian nhả phím/dây (giây): piano nhả damper chậm, clavi và tiếng tắt dây rất nhanh.
-const RELEASE: Record<string, number> = { piano: 0.35, epiano: 0.3, clav: 0.06, bass: 0.1, upright: 0.14, guitar: 0.16, guitar_mute: 0.04 };
+const RELEASE: Record<string, number> = { piano: 0.35, epiano: 0.3, clav: 0.06, bass: 0.1, upright: 0.14, guitar: 0.16, guitar_mute: 0.04, cello: 0.6 };
 // Vị trí trái/phải trong dàn trống, nhìn từ khán giả (hat lệch phải ~20%, như yêu cầu "pan kiểu phòng thu").
 const DRUM_PAN: Record<string, number> = {
   kick: 0, snare: 0, rim: 0, xstick: 0, br_snare: 0, hh_c: 0.22, hh_o: 0.22, hh_p: 0.22, br_hh: 0.22,

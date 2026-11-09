@@ -5,15 +5,15 @@
 // Một reverb chung, mỗi kênh gửi vào một lượng khác nhau (trống nhiều hơn bass) → cả ban nhạc "đứng trong một phòng".
 import * as Tone from "tone";
 
-import type { AutomationPoint, BandChannel, BandMix, StyleFx } from "./types";
+import type { AutomationPoint, BandChannel, BandMix, GuitarTone, StyleFx } from "./types";
 
 type Strip = { input: Tone.Gain; fader: Tone.Volume; send: Tone.Gain; delaySend: Tone.Gain; nodes: Tone.ToneAudioNode[] };
 
 // Lượng gửi reverb theo kênh (nhân với mức reverb của phong cách): bass gần như khô để tiếng trầm không đục.
-const SEND: Record<BandChannel, number> = { chords: 1, bass: 0.12, guitar: 0.9, drums: 0.75, hook: 1.15 };
+const SEND: Record<BandChannel, number> = { chords: 1, bass: 0.12, guitar: 0.9, drums: 0.75, hook: 1.15, strings: 1.1 };
 // Âm lượng nền mỗi kênh (dB) để cân ban nhạc trước khi người dùng kéo fader.
 // Hook (chế độ Bài hát): câu ngắn tầm cao, đặt thấp hơn phím ~3 dB để là "lời đáp" chứ không lấn ban nhạc.
-const BASE_DB: Record<BandChannel, number> = { chords: -7, bass: -5, guitar: 0, drums: 4, hook: -10 };
+const BASE_DB: Record<BandChannel, number> = { chords: -7, bass: -5, guitar: 0, drums: 4, hook: -10, strings: -9 };
 // Bù riêng theo phong cách (dB), từ số đo LUFS từng kênh thu solo ngày 02/11/2026 (scripts/backing-track): mật độ
 // nốt mỗi phong cách khác nhau (ballad thưa, bossa dày) nên cùng một fader nghe to nhỏ khác nhau. Đích: phím ≈ trống,
 // bass thấp hơn ~2 dB, guitar đệm thấp hơn ~2 dB (rock: guitar dẫn, phím lùi lại). Jazz/ballad để trống nhẹ hơn.
@@ -31,7 +31,22 @@ const STYLE_TRIM: Record<string, Partial<Record<BandChannel, number>>> = {
 // Bù âm lượng tổng: đo bản thu pop -23,5 LUFS khi chưa bù; sau khi cân kênh, +6 dB đưa về -16..-18 LUFS (mức nghe thoải mái trên web);
 // limiter -2 dB phía sau chặn đỉnh (chừa chỗ cho đỉnh xuyên mẫu) nên không vỡ tiếng.
 const MAKEUP_DB = 6;
-const PAN: Record<BandChannel, number> = { chords: 0.05, bass: 0, guitar: -0.3, drums: 0, hook: 0.25 };
+const PAN: Record<BandChannel, number> = { chords: 0.05, bass: 0, guitar: -0.3, drums: 0, hook: 0.25, strings: -0.2 };
+
+/**
+ * Âm sắc guitar = thông số của chuỗi: lọc cao trước méo → méo → lọc cao sau méo → loa thùng (lọc thấp).
+ * "heavy" giữ đúng giá trị overdrive cũ của rock/indie (nên "auto" không đổi tiếng bản cũ); "clean" trung tính.
+ */
+export const GUITAR_TONE_PRESETS: Record<Exclude<GuitarTone, "auto">, { pre: number; drive: number; wet: number; hp: number; cab: number }> = {
+  clean: { pre: 10, drive: 0, wet: 0, hp: 10, cab: 20000 },
+  light: { pre: 130, drive: 0.25, wet: 1, hp: 80, cab: 7000 },
+  heavy: { pre: 160, drive: 0.55, wet: 1, hp: 90, cab: 5500 },
+};
+
+/** "auto" → theo phong cách (có méo thì heavy, không thì clean). */
+export function resolveGuitarTone(tone: GuitarTone, styleDrive: boolean): Exclude<GuitarTone, "auto"> {
+  return tone === "auto" ? (styleDrive ? "heavy" : "clean") : tone;
+}
 
 const ROOM: Record<StyleFx["room"], { decay: number; preDelay: number }> = {
   room: { decay: 1.1, preDelay: 0.008 }, plate: { decay: 1.9, preDelay: 0.015 }, hall: { decay: 3.0, preDelay: 0.025 },
@@ -57,6 +72,8 @@ export class BandMixer {
   private extra: Tone.ToneAudioNode[] = [];
   private vinyl: Tone.Player | null = null;
   readonly ready: Promise<void>;
+  private gtr: { pre: Tone.Filter; drive: Tone.Distortion; hp: Tone.Filter; cab: Tone.Filter } | null = null;
+  private tone: Exclude<GuitarTone, "auto"> = "clean";
 
   constructor(readonly fx: StyleFx, destination: Tone.InputNode = Tone.getDestination(), readonly style = "") {
     // Limiter của Web Audio (DynamicsCompressor) có attack nên tiếng kick vẫn lọt đỉnh 0 dBFS (đo được 30-120 mẫu chạm
@@ -102,16 +119,18 @@ export class BandMixer {
         : ch === "bass" ? { threshold: -20, ratio: 4, attack: 0.01, release: 0.2 } : { threshold: -18, ratio: 2.5, attack: 0.015, release: 0.25 }).connect(panner);
       // EQ: bass giữ đáy; phím/guitar cắt bớt dải trầm để nhường bass (tránh "đục").
       const eq = new Tone.EQ3(ch === "bass" ? { low: 2, mid: -1, high: -2 } : ch === "drums" ? { low: 1, mid: -1, high: 1 }
-        : { low: -4, mid: 0, high: 0, lowFrequency: 220 }).connect(comp);
+        : ch === "strings" ? { low: -1, mid: 0, high: -1, lowFrequency: 220 } : { low: -4, mid: 0, high: 0, lowFrequency: 220 }).connect(comp);
       const nodes: Tone.ToneAudioNode[] = [fader, panner, comp, eq];
       let head: Tone.InputNode = eq;
-      if (ch === "guitar" && fx.drive) {
-        // Overdrive mô phỏng ampli + loa thùng 4x12: méo → cắt < 90 Hz và > 5,5 kHz → nén.
-        const cab = new Tone.Filter({ type: "lowpass", frequency: 5500, Q: 0.7 }).connect(eq);
-        const hp = new Tone.Filter({ type: "highpass", frequency: 90 }).connect(cab);
-        const drive = new Tone.Distortion({ distortion: 0.55, oversample: "2x" }).connect(hp);
-        const pre = new Tone.Filter({ type: "highpass", frequency: 160 }).connect(drive);
+      if (ch === "guitar") {
+        // Chuỗi méo luôn có để đổi âm sắc khi đang nghe: ampli + loa thùng 4x12 (méo → cắt < 90 Hz và > 5,5 kHz).
+        // Âm sắc "sạch" đặt méo wet=0 và bộ lọc ở mức trung tính, nghe như không có chuỗi này.
+        const cab = new Tone.Filter({ type: "lowpass", frequency: 20000, Q: 0.7 }).connect(eq);
+        const hp = new Tone.Filter({ type: "highpass", frequency: 10 }).connect(cab);
+        const drive = new Tone.Distortion({ distortion: 0, wet: 0, oversample: "2x" }).connect(hp);
+        const pre = new Tone.Filter({ type: "highpass", frequency: 10 }).connect(drive);
         nodes.push(cab, hp, drive, pre);
+        this.gtr = { pre, drive, hp, cab };
         head = pre;
       }
       if (ch === "guitar" && fx.chorus) {
@@ -128,9 +147,28 @@ export class BandMixer {
       nodes.push(send, delaySend, input);
       return { input, fader, send, delaySend, nodes };
     };
-    this.strips = { chords: make("chords"), bass: make("bass"), guitar: make("guitar"), drums: make("drums"), hook: make("hook") };
+    this.strips = { chords: make("chords"), bass: make("bass"), guitar: make("guitar"), drums: make("drums"), hook: make("hook"), strings: make("strings") };
     if (fx.lofi) this.vinyl = this.makeVinyl();
+    this.setGuitarTone("auto");
   }
+
+  /** Đổi âm sắc guitar (sạch / rè nhẹ / rè mạnh); gọi được khi đang phát. Trả âm sắc thực dùng. */
+  setGuitarTone(tone: GuitarTone): Exclude<GuitarTone, "auto"> {
+    const resolved = resolveGuitarTone(tone, this.fx.drive);
+    this.tone = resolved;
+    const g = this.gtr;
+    if (g) {
+      const p = GUITAR_TONE_PRESETS[resolved];
+      g.pre.frequency.value = p.pre;
+      g.drive.distortion = p.drive;
+      g.drive.wet.value = p.wet;
+      g.hp.frequency.value = p.hp;
+      g.cab.frequency.value = p.cab;
+    }
+    return resolved;
+  }
+
+  get guitarTone(): Exclude<GuitarTone, "auto"> { return this.tone; }
 
   /** Tiếng đĩa than: tiếng xì rất nhỏ + tiếng lách tách ngẫu nhiên (bộ đệm 4 giây lặp lại, sinh bằng hạt giống cố định). */
   private makeVinyl(): Tone.Player {
