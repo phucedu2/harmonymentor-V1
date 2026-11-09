@@ -36,11 +36,15 @@ _SYM_LOWER = re.compile(r"(?<![A-Za-z0-9#])(?P<root>[a-g])(?P<acc>#|b)?(?P<suf>m
 # Chữ thường được, nhưng tên nốt phải viết hoa: "hợp âm gì" không được hiểu thành hợp âm G.
 # Chất lượng bằng chữ, cả tiếng Anh và không dấu. Thiếu "giảm/tăng" thì "hợp âm B diminished" bị hiểu thành B trưởng
 # (phiếu dev của Phúc, 09/11).
-_KIND_WORDS = r"trưởng|truong|thứ|thu|major|minor|giảm|giam|diminished|dim|tăng|tang|augmented|aug"
+# "tăng/tang dần, tốc, cường" là nghĩa khác, không phải hợp âm tăng (Thắng đồng ý nhận "tang" không dấu, 09/11).
+_KIND_WORDS = (r"trưởng|truong|thứ|thu|major|minor|giảm|giam|diminished|dim|"
+               r"(?:tăng|tang)(?!\s+(?:dần|dan|tốc|toc|cường|cuong))|augmented|aug")
 _KIND_SUFFIX = {"thứ": "m", "thu": "m", "minor": "m", "giảm": "dim", "giam": "dim", "diminished": "dim", "dim": "dim",
                 "tăng": "aug", "tang": "aug", "augmented": "aug", "aug": "aug"}
 _CHORD_WORD = re.compile(
-    rf"(?i:hợp âm|hop am|chord)\s+(?P<root>{NOTE})(?![A-Za-z0-9#])(?:\s+(?P<kind>(?i:{_KIND_WORDS}))(?![a-zà-ỹ0-9]))?")
+    rf"(?i:hợp âm|hop am|chord)\s+(?P<root>{NOTE})(?![A-Za-z0-9#])(?:\s+(?P<kind>(?i:{_KIND_WORDS}))(?![a-zà-ỹ0-9]))?"
+    # Tên chất lượng khác đứng sau (half-diminished, sus, dominant…): không đoán là hợp âm trưởng.
+    rf"(?!\s+(?i:(?:half|nửa|nua|dominant|bảy|bay|7)\b|sus|maj|add|m7|ø|°))")
 # Chất lượng đứng trước nốt gốc: "hợp âm tăng của C", "hop am giam tren B".
 _CHORD_KIND_FIRST = re.compile(
     rf"(?i:hợp âm|hop am|chord)\s+(?P<kind>(?i:{_KIND_WORDS}))\s+(?i:của|cua|of|trên|tren|từ|tu)\s+(?P<root>{NOTE})(?![A-Za-z0-9#])")

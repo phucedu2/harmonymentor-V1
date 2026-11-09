@@ -5,7 +5,7 @@
     python ../scripts/ai/gop_y/phieu_md_sang_json.py <phieu.md> --nguoi Dat   --vai-tro test --out <thư mục riêng của Thắng>/phieu_Dat_test.json
 
 Đọc bảng nằm dưới tiêu đề "## ... <tên>" (tên không dấu: Phuc, Dat, Thang). Dòng bảng: | mã | flow | câu hỏi | bài | ghi chú hoặc trả lời chuẩn | ... |
-(mẫu PHIEU_NHOM_TU_VIET.md và PHIEU_TU_VIET_CAU_HOI.md).
+(mẫu PHIEU_TU_VIET_CAU_HOI.md).
 Dừng với lỗi nếu còn ô câu hỏi trống, flow lạ, hoặc câu trùng: phiếu thiếu thì không đo, tránh số đẹp giả.
 """
 

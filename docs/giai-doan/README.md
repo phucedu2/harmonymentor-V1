@@ -36,6 +36,7 @@ Các giai đoạn 0.2 → 2.3 là lộ trình của bản code gốc (zip v0.1.0
 | [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Góp ý thầy GĐ5: trả lời Luyện tập bằng piano ảo (Engine chấm), liên kết học thêm bên ngoài cho L01–L05 (nháp chờ Đạt duyệt) (09/11) | [08_THUC_HANH_GD5.md](ai-gop-y/08_THUC_HANH_GD5.md) |
 | [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Góp ý thầy GĐ6: khung đánh giá tổng kết, số đã đo kèm mức tin, kế hoạch thử với người học thật và phiếu đồng ý mẫu (09/11) | [09_DANH_GIA_CUOI_GD6.md](ai-gop-y/09_DANH_GIA_CUOI_GD6.md) |
 | [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Định tuyến an toàn: luật khái niệm chưa dạy (thế đảo, quãng kép, vòng quãng 5) + khớp không dấu; B/C trả lời như bài 12% → 0% trên phiếu 50 câu (không độc lập), test_tam chưa đổi (09/11) | [10_AN_TOAN_DINH_TUYEN.md](ai-gop-y/10_AN_TOAN_DINH_TUYEN.md) |
+| [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Phiếu dev 30 câu của Phúc: sửa "B diminished" ra B trưởng (engine_query, chờ Thắng), e5 gốc 90% đúng luồng, R@1 truy xuất 4/12 (không độc lập) (09/11) | [13_PHIEU_PHUC_DEV.md](ai-gop-y/13_PHIEU_PHUC_DEV.md) |
 
 ## Quy ước cho giai đoạn sau
 
