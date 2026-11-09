@@ -148,11 +148,14 @@ def published_lesson_specs() -> Iterable[dict[str, Any]]:
 
 
 def lesson_chunks() -> list[Chunk]:
+    from ...content.draft_l06_l08 import TUTOR_KB_PENDING
     from ...content.draft_specs import blocks_with_drafts
     from ...content.source_registry import SOURCE_REGISTRY
 
     out: list[Chunk] = []
     for spec in published_lesson_specs():
+        if spec["id"] in TUTOR_KB_PENDING:
+            continue  # bài đã duyệt cho người học nhưng chưa đo lại định tuyến khi nạp vào kho
         for block_id, block_type, payload in blocks_with_drafts(spec):
             if block_type not in TEXT_BLOCKS or (payload or {}).get("status") == "draft":
                 continue

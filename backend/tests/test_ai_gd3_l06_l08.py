@@ -12,7 +12,7 @@ import pytest
 from app.ai.tutor.chunker import lesson_chunks
 from app.ai.tutor.guardrail import run_tool
 from app.content.curriculum_specs import LESSON_SPECS
-from app.content.draft_l06_l08 import DRAFT, L06_DRAFT_BLOCKS, L07_DRAFT_BLOCKS, L08_DRAFT_BLOCKS
+from app.content.draft_l06_l08 import TUTOR_KB_PENDING, DRAFT, L06_DRAFT_BLOCKS, L07_DRAFT_BLOCKS, L08_DRAFT_BLOCKS
 from app.content.draft_specs import blocks_with_drafts
 from app.content.versioning import block_visible
 
@@ -46,11 +46,13 @@ def text(lesson):
 
 
 @pytest.mark.parametrize("lesson, blocks", LESSONS.items())
-def test_blocks_are_draft_hidden_and_not_in_tutor_kb(lesson, blocks):
+def test_blocks_reviewed_visible_but_not_yet_in_tutor_kb(lesson, blocks):
+    """Đạt duyệt 09/11: người học thấy; kho AI Tutor chờ đo lại định tuyến (TUTOR_KB_PENDING)."""
     assert spec(lesson)["blocks"] == []
     ids = [b[0] for b in blocks_with_drafts(spec(lesson))]
     assert len(ids) == len(set(ids)) and all(i.startswith(f"{lesson}-") for i in ids)
-    assert all(p.get("status") == DRAFT and not block_visible(p) for _, _, p in blocks)
+    assert all(p.get("status") != DRAFT and block_visible(p) for _, _, p in blocks)
+    assert lesson in TUTOR_KB_PENDING
     assert not [c for c in lesson_chunks() if c.lesson_id == lesson]
 
 

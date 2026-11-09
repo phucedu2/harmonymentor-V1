@@ -21,6 +21,6 @@ Ngày 09/11/2026 · nhánh `ai/gd5-thuc-hanh` (từ `phuc-music`). Phúc duyệt
 
 ## Cần người duyệt
 
-- **Đạt**: 16 liên kết có khớp nội dung từng bài không (đặc biệt L03 và L04). Duyệt mục nào thì xóa `status` mục đó.
+- ~~**Đạt**: 16 liên kết có khớp nội dung từng bài không~~ Đạt duyệt 09/11 (Phúc báo); thực tế có 15 liên kết, đã bỏ `status` cả 15 (xem `14_PHAT_HANH_L06_L08.md`).
 - Tài liệu đều bằng tiếng Anh; chưa tìm được sách mở tiếng Việt đủ uy tín.
 - Chưa làm: guitar ảo, nhận nốt qua micro (ngoài phạm vi Phúc chọn).

@@ -4,8 +4,8 @@ Vì sao có file này: thầy góp ý nên chỉ cho người học nơi học t
 miễn phí, mở, của trường đại học (sách giáo khoa mở), không giới thiệu khóa có phí. App chỉ hiện liên kết mở tab
 mới, không nhúng nội dung, không chép bài.
 
-Claude chọn danh sách và đã kiểm từng địa chỉ còn mở ngày 09/11/2026; mọi mục để `status: "draft"` (ẩn với người
-học, như khối nháp) cho tới khi Đạt duyệt nội dung có khớp bài hay không. Duyệt xong thì xóa `status` của mục đó.
+Claude chọn danh sách và đã kiểm từng địa chỉ còn mở ngày 09/11/2026. Đạt duyệt cả 15 mục ngày 09/11/2026 (Phúc báo
+trong thread), nên đã bỏ `status: "draft"`: người học thấy. Mục mới thêm sau thì để lại `status: "draft"` chờ duyệt.
 """
 
 from __future__ import annotations
@@ -22,7 +22,7 @@ MT21C_URL = "https://musictheory.pugetsound.edu/mt21c/"
 
 def _r(title: str, source: str, url: str, why_vi: str) -> dict[str, Any]:
     return {"title": title, "source": source, "url": url, "language": "en", "free": True,
-            "why_vi": why_vi, "status": "draft"}
+            "why_vi": why_vi}
 
 
 EXTERNAL_RESOURCES: dict[str, list[dict[str, Any]]] = {
