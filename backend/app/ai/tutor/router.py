@@ -48,9 +48,18 @@ _CHORD_WORDS = {"maj": ("hợp âm trưởng", "triad trưởng", "major"), "min
 _LATER_CONCEPTS = {
     # So trên chữ thường (later_lesson hạ chữ), nên mẫu số La Mã viết thường: "V7/V" → "v7/v".
     "L05": r"secondary dominant|át phụ|\bv7?/[iv]+\b",
-    "L06": r"modal interchange|mượn hợp âm|borrowed chord|giọng song song|\bb(?:vii|vi|iii)\b",
-    "L07": r"\btensions?\b|chord[- ]scale|điệu thức|\bmodes?\b|lydian|mixolydian|phrygian|locrian|aeolian|ionian",
+    "L06": r"modal interchange|mượn (?:hợp âm|từ|nốt)|borrowed chord|giọng song song|\bb(?:vii|vi|iii)\b",
+    "L07": r"\btensions?\b|#(?:9|11)\b|(?<![a-z])b(?:9|13)\b|maj9|chord[- ]scale|điệu thức|\bmodes?\b|lydian|mixolydian|phrygian|locrian|aeolian|ionian",
     "L08": r"voicing|thế bấm",
+}
+# Khái niệm KHÔNG bài nào trong lộ trình hiện tại dạy (chưa có bài để chỉ "bạn sẽ học sau ở bài …"): câu hỏi nhắc tới
+# thì là luồng B ("chưa dạy"), dù truy xuất vớt được đoạn bài chỉ "giống chữ". Luật tự tắt nếu kho bài có đoạn nhắc
+# tới khái niệm (`marker`, so không dấu), nên khi bài mới vào kho không phải sửa tay. Thêm 09/11/2026 sau khi đo
+# phiếu: "quãng 9 là gì", "đảo hợp âm C lần 1", "vòng quãng 5" bị trả lời như bài đã dạy (lỗi nặng nhất).
+_UNTAUGHT = {
+    "inversion": dict(pattern=r"\bdao hop am\b|\bthe dao\b|\bhop am dao\b|\binversions?\b|\bslash chord", marker=r"\bthe dao\b|\bdao hop am\b"),
+    "compound_interval": dict(pattern=r"\bquang (?:kep|9|1[0-5])\b|\bcompound interval|\b(?:9|10|11|13)th\b", marker=r"\bquang kep\b|\bquang 9\b|\bcompound\b"),
+    "circle_of_fifths": dict(pattern=r"\bvong quang (?:5|nam)\b|\bcircle of fifths\b", marker=r"\bvong quang\b|\bcircle of fifths\b"),
 }
 _SYM_IN_KB = re.compile(r"(?<![A-Za-z0-9#])([A-G](?:#|b)?(?:maj7|M7|m7b5|ø7|dim7|°7|dim|°|aug|\+|m7|m|7|sus2|sus4|6|9)?)"
                         r"(?![A-Za-z0-9#])")
@@ -187,13 +196,30 @@ def _parses(symbol: str) -> bool:
         return False
 
 
+def _fold(text: str) -> str:
+    """Chữ thường, bỏ dấu tiếng Việt (đ → d): người học hay gõ không dấu ("muon hop am" thay "mượn hợp âm")."""
+    t = unicodedata.normalize("NFD", text.lower()).replace("đ", "d")
+    return "".join(ch for ch in t if unicodedata.category(ch) != "Mn")
+
+
 def later_lesson(question: str) -> str | None:
     """Bài CHƯA có trong kho mà dạy khái niệm câu hỏi nhắc tới; None nếu không có."""
     in_kb = {c.lesson_id for c in knowledge_base()}
-    low = question.lower()
+    low, folded = question.lower(), _fold(question)
     for lesson_id, pattern in _LATER_CONCEPTS.items():
-        if lesson_id not in in_kb and re.search(pattern, low):
+        # Khớp cả bản có dấu (mẫu viết có dấu) lẫn bản bỏ dấu (câu gõ không dấu); mẫu bỏ dấu cũng bỏ dấu cho mẫu.
+        if lesson_id not in in_kb and (re.search(pattern, low) or re.search(_fold(pattern), folded)):
             return lesson_id
+    return None
+
+
+def untaught_concept(question: str) -> str | None:
+    """Khái niệm chưa bài nào dạy (và kho bài không nhắc tới) mà câu hỏi nhắc tới; None nếu không có."""
+    folded = _fold(question)
+    kb_text = " ".join(_fold(c.text) for c in knowledge_base())
+    for name, rule in _UNTAUGHT.items():
+        if re.search(rule["pattern"], folded) and not re.search(rule["marker"], kb_text):
+            return name
     return None
 
 
@@ -225,6 +251,7 @@ class Signals:
     later_lesson: str | None
     outside_kb: bool
     unknown_terms: list[str]
+    untaught: str | None = None
 
 
 def gather(question: str, embedder: Embedder | None, *, top_k: int = 4) -> Signals:
@@ -232,7 +259,7 @@ def gather(question: str, embedder: Embedder | None, *, top_k: int = 4) -> Signa
     return Signals(question, classify_route(question), eng,
                    retrieve(question, embedder, top_k=top_k, min_score=-1.0, bm25_min_score=-1.0),
                    retrieve(question, embedder, top_k=2, min_score=-1.0, bm25_min_score=-1.0, chunks=list(help_base())),
-                   later_lesson(question), outside_kb(eng), unknown_terms(question))
+                   later_lesson(question), outside_kb(eng), unknown_terms(question), untaught_concept(question))
 
 
 def route(sig: Signals, th: dict[str, float]) -> Decision:
@@ -274,6 +301,8 @@ def route(sig: Signals, th: dict[str, float]) -> Decision:
     if sig.later_lesson:
         kind = "engine" if eng.facts and not eng.unknown else "unknown"
         return d("B", kind, "later_lesson", later_lesson=sig.later_lesson)
+    if sig.untaught:
+        return d("B", "engine" if eng.facts and not eng.unknown else "unknown", "untaught_concept")
     if sig.outside_kb:
         if eng.facts:
             return d("B", "engine", "outside_kb_engine")
