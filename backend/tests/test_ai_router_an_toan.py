@@ -24,6 +24,11 @@ def test_cau_kho_chua_day_khong_vao_luong_A(question, flow, reason):
     assert (d.flow, d.reason) == (flow, reason)
 
 
+def test_go_sai_truong_khong_bi_coi_la_am_giai_la():
+    assert router._scale_typo("âm giai trởưng") and router._scale_typo("âm giai tưởng")
+    assert not router._scale_typo("âm giai blues") and not router._scale_typo("âm giai lydian")
+
+
 def test_muon_khong_nham_voi_muon_hoc():
     # "muốn" bỏ dấu cũng là "muon": không được đẩy câu A sang L06.
     assert router.later_lesson("minh muon hoc hop am ba") is None

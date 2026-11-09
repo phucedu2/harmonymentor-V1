@@ -242,9 +242,19 @@ def untaught_concept(question: str) -> str | None:
     return None
 
 
+def _scale_typo(unknown: str) -> bool:
+    """"âm giai trởưng", "âm giai tưởng": gõ sai chữ "trưởng/thứ", không phải loại âm giai lạ (tập dev gd2)."""
+    import difflib
+
+    if not unknown.startswith("âm giai "):
+        return False
+    kind = " ".join(_words(unknown[len("âm giai "):]))
+    return bool(difflib.get_close_matches(kind, ["truong", "thu"], n=1, cutoff=0.6))
+
+
 def outside_kb(eng: EngineAnswer) -> bool:
     """Câu hỏi về thứ kho chưa dạy: loại hợp âm/âm giai không đoạn nào nhắc, hoặc ký hiệu Engine không hiểu."""
-    if eng.unknown:
+    if any(not _scale_typo(u) for u in eng.unknown):
         return True
     chords, scales = kb_coverage()
     for f in eng.facts:
