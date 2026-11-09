@@ -14,7 +14,7 @@ from ..contracts.practice import (
 from ..core.errors import AppError
 from ..db.models import User
 from ..db.session import get_db
-from ..services.practice_service import PracticeQuestionInvalid, practice_history, record_practice
+from ..services.practice_service import PracticeInputInvalid, PracticeQuestionInvalid, practice_history, record_practice
 
 router = APIRouter(prefix="/api/v1/practice", tags=["practice"])
 
@@ -22,9 +22,11 @@ router = APIRouter(prefix="/api/v1/practice", tags=["practice"])
 @router.post("/attempts", response_model=PracticeAttemptOut)
 def submit_practice(body: PracticeAttemptIn, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     try:
-        row, result = record_practice(db, user, body.kind, body.level, body.question, body.answer)
+        row, result = record_practice(db, user, body.kind, body.level, body.question, body.answer, body.input)
     except PracticeQuestionInvalid as exc:
         raise AppError(422, "PRACTICE_QUESTION_INVALID", f"Đề luyện tập thiếu trường: {exc}.") from exc
+    except PracticeInputInvalid as exc:
+        raise AppError(422, "PRACTICE_INPUT_INVALID", f"Dạng bài {exc} chỉ trả lời bằng chữ, không bấm piano.") from exc
     return PracticeAttemptOut(
         id=row.id, kind=row.kind, correct=row.correct, expected=result["expected"], message_vi=result["message_vi"],
         primary_error=result.get("primary_error"), errors=result.get("errors", []),

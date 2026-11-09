@@ -16,6 +16,9 @@ class PracticeAttemptIn(BaseModel):
     level: PracticeLevel | None = None
     question: dict[str, Any] = Field(..., description="chord: {symbol}; interval: {lower, upper}; scale: {tonic, scale_type}; roman: {key, chord}")
     answer: str | list[str]
+    # GĐ5: "piano" = người học bấm phím trên piano ảo. Một phím đen có hai tên (C#/Db) nên phím không thể hiện
+    # cách viết; máy chủ chấm theo lớp cao độ (Engine pitch_class_only) và nhắc cách viết chuẩn. Chỉ cho chord/scale.
+    input: Literal["text", "piano"] = "text"
 
 
 class PracticeAttemptOut(BaseModel):

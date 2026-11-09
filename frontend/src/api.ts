@@ -48,7 +48,10 @@ export type LessonDetail = LessonSummary & {
   exercises: LessonExercise[];
   review_items: ReviewItem[];
   sources: SourceRef[];
+  /** GĐ5: liên kết học thêm ngoài app (sách mở miễn phí); có thể thiếu khi backend cũ. */
+  external_resources?: ExternalResource[];
 };
+export type ExternalResource = { title: string; source: string; url: string; language: string; free: boolean; why_vi: string; draft?: boolean };
 
 export type ChordInspection = {
   symbol: string;
@@ -285,8 +288,9 @@ export const api = {
   gradeRoman: (key: string, chord: string, answer: string) =>
     enginePost<GradeResult>("/grade/roman-numeral", { key, chord, answer }),
 
-  practiceAttempt: (kind: PracticeKind, level: PracticeLevel, question: Record<string, string>, answer: string | string[]) =>
-    apiPost<PracticeAttemptResult>("/practice/attempts", { kind, level, question, answer }),
+  practiceAttempt: (kind: PracticeKind, level: PracticeLevel, question: Record<string, string>, answer: string | string[],
+    input: "text" | "piano" = "text") =>
+    apiPost<PracticeAttemptResult>("/practice/attempts", { kind, level, question, answer, input }),
   practiceHistory: (limit = 20) => apiCall<PracticeHistory>(`/practice/history?limit=${limit}`),
 
   composeOptions: () => apiCall<ComposeOptions>("/composition/options"),

@@ -33,6 +33,7 @@ Các giai đoạn 0.2 → 2.3 là lộ trình của bản code gốc (zip v0.1.0
 | [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Góp ý thầy GĐ2c: train lại tầng 1 và e5 với kho L01–L05 + 14 nhóm câu mới; e5 gốc 72% → 86% đúng luồng trên 50 câu tham khảo; chưa đạt mục tiêu (08/11) | [05_TRAIN_LAI_KHO_L05.md](ai-gop-y/05_TRAIN_LAI_KHO_L05.md) |
 | [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Góp ý thầy GĐ3: nháp lý thuyết L06 (hợp âm mượn), L07 (tension, chord-scale), L08 (shell voicing); đối chiếu Music Engine bằng 22 test, ẩn tới khi Đạt duyệt (08/11) | [06_L06_L08_NHAP.md](ai-gop-y/06_L06_L08_NHAP.md) |
 | [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Góp ý thầy GĐ4: kênh Dây (cello CC0) và 3 âm sắc guitar cho backing track Harmony Lab (08/11) | [07_NHAC_CU_GD4.md](ai-gop-y/07_NHAC_CU_GD4.md) |
+| [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Góp ý thầy GĐ5: trả lời Luyện tập bằng piano ảo (Engine chấm), liên kết học thêm bên ngoài cho L01–L05 (nháp chờ Đạt duyệt) (09/11) | [08_THUC_HANH_GD5.md](ai-gop-y/08_THUC_HANH_GD5.md) |
 | [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Góp ý thầy GĐ6: khung đánh giá tổng kết, số đã đo kèm mức tin, kế hoạch thử với người học thật và phiếu đồng ý mẫu (09/11) | [09_DANH_GIA_CUOI_GD6.md](ai-gop-y/09_DANH_GIA_CUOI_GD6.md) |
 
 ## Quy ước cho giai đoạn sau
