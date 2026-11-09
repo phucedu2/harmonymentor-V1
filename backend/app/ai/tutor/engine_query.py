@@ -35,7 +35,15 @@ _SYM_LOWER = re.compile(r"(?<![A-Za-z0-9#])(?P<root>[a-g])(?P<acc>#|b)?(?P<suf>m
                         r"(?![A-Za-z0-9#])")
 # Chữ thường được, nhưng tên nốt phải viết hoa: "hợp âm gì" không được hiểu thành hợp âm G.
 _CHORD_WORD = re.compile(
-    rf"(?i:hợp âm|hop am|chord)\s+(?P<root>{NOTE})(?![A-Za-z0-9#])(?:\s+(?P<kind>(?i:trưởng|truong|thứ|thu|major|minor)))?")
+    rf"(?i:hợp âm|hop am|chord)\s+(?P<root>{NOTE})(?![A-Za-z0-9#])"
+    rf"(?:\s+(?P<kind>(?i:trưởng|truong|thứ|thu|major|minor|giảm|giam|diminished|dim|tăng|augmented|aug)\b))?"
+    # Tên chất lượng khác đứng sau (half-diminished, sus, dominant…): không đoán là hợp âm trưởng.
+    rf"(?!\s+(?i:(?:half|nửa|nua|dominant|bảy|bay|7)\b|sus|maj|add|m7|ø|°))")
+# Chất lượng viết bằng chữ → hậu tố Engine. Thiếu "diminished" từng làm "hợp âm B diminished" ra B trưởng (phiếu Phúc 09/11).
+# Không nhận "tang" không dấu: dễ trùng chữ khác (cần Thắng quyết, xem 12_TIEN_DO).
+_KIND_SUFFIX = {"trưởng": "", "truong": "", "major": "", "thứ": "m", "thu": "m", "minor": "m",
+                "giảm": "dim", "giam": "dim", "diminished": "dim", "dim": "dim",
+                "tăng": "aug", "augmented": "aug", "aug": "aug"}
 _INTERVAL_WORDS = re.compile(r"quãng|quang|interval", re.IGNORECASE)
 _INTERVAL = re.compile(
     rf"(?:từ|tu|from)?\s*(?<![A-Za-z0-9#])(?P<lo>{NOTE})(?![A-Za-z0-9#])\s*(?:–|—|-|→|lên|len|đến|den|tới|toi|to)\s*"
@@ -151,7 +159,7 @@ def engine_answer(question: str, limit: int = 4) -> EngineAnswer:
             _add(out, seen, "get_chord_tones", {"symbol": m["root"].upper() + (m["acc"] or "") + m["suf"]})
     for m in _CHORD_WORD.finditer(text):
         kind = (m["kind"] or "").lower()
-        sym = norm_accidentals(m["root"]) + ("m" if kind in {"thứ", "thu", "minor"} else "")
+        sym = norm_accidentals(m["root"]) + _KIND_SUFFIX.get(kind, "")
         if sym not in roman_chords and not any(f["args"].get("symbol", "").startswith(sym) and
                                                f["args"].get("symbol") != sym for f in out.facts):
             _add(out, seen, "get_chord_tones", {"symbol": sym})

@@ -32,6 +32,7 @@ Các giai đoạn 0.2 → 2.3 là lộ trình của bản code gốc (zip v0.1.0
 | [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Góp ý thầy G2, GĐ3: nháp lý thuyết L05 Secondary Dominants (11 khối, đối chiếu Music Engine bằng test, ẩn tới khi Astra/Đạt duyệt) (07/11) | [04_L05_NHAP.md](ai-gop-y/04_L05_NHAP.md) |
 | [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Góp ý thầy GĐ2c: train lại tầng 1 và e5 với kho L01–L05 + 14 nhóm câu mới; e5 gốc 72% → 86% đúng luồng trên 50 câu tham khảo; chưa đạt mục tiêu (08/11) | [05_TRAIN_LAI_KHO_L05.md](ai-gop-y/05_TRAIN_LAI_KHO_L05.md) |
 | [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Định tuyến an toàn: luật khái niệm chưa dạy (thế đảo, quãng kép, vòng quãng 5) + khớp không dấu; B/C trả lời như bài 12% → 0% trên phiếu 50 câu (không độc lập), test_tam chưa đổi (09/11) | [10_AN_TOAN_DINH_TUYEN.md](ai-gop-y/10_AN_TOAN_DINH_TUYEN.md) |
+| [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Phiếu dev 30 câu của Phúc: sửa "B diminished" ra B trưởng (engine_query, chờ Thắng), e5 gốc 90% đúng luồng, R@1 truy xuất 4/12 (không độc lập) (09/11) | [13_PHIEU_PHUC_DEV.md](ai-gop-y/13_PHIEU_PHUC_DEV.md) |
 
 ## Quy ước cho giai đoạn sau
 
