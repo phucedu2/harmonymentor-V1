@@ -34,13 +34,12 @@ python ../scripts/ai/gop_y/danh_gia_dinh_tuyen.py --set ../scripts/ai/data/gd2/d
 | Phiếu dev 30 (Phúc) | 1/15 (6,7%) → **0/15** | 2/15 (13,3%) → **0/15** | 11,1% / 11,1% (không đổi) |
 | Phiếu test 20 (Đạt + Thắng) | 2/10 → 1/10 | 1/10 → **0/10** | 1/6 / 1/6 (không đổi) |
 | Bộ GĐ1 (74 câu) | 3,5% → 3,5% | 3,5% → 3,5% | 2,7% / 5,4% (không đổi) |
-| router_dev | 15,9% → 4,5% | 13,6% → 4,5% | 11,1% / 2,8% (không đổi) |
+| router_dev | 15,9% → **0%** | 13,6% → **0%** | 10,8% / 2,7% |
 | gd2/dev | 7,1% → **1,8%** | 14,3% → **1,8%** | 13,8→14,7% / 7,8→8,6% |
 
 Còn lại:
-- Bộ GĐ1: 1 câu "Bài hát buồn thường dùng hợp âm gì?" (nhãn B, đoán A). Không sửa vì bộ này giữ làm bộ đo độc lập;
-  nhãn cũng đáng bàn (hợp âm thứ L01 đã dạy).
-- router_dev: 2 câu nhãn B cũ ("chuyển giọng", "quãng năm song song") nay kho L05 đã dạy, nên A là đúng; nhãn cần sửa.
+- Bộ GĐ1: 1 câu "Bài hát buồn thường dùng hợp âm gì?" (nhãn B đúng, đoán A). Không sửa vì bộ này giữ làm bộ đo độc lập.
+- router_dev: "chuyển giọng" sửa nhãn thành A (L05 dạy); "quãng năm song song" giữ B, thêm luật (kho chỉ nói voice leading).
 - Tập test: không xem câu sai để sửa luật (tập khóa).
 - Cái giá: 1 câu A trên gd2/dev ("tap ii V I nen bat dau tempo nhanh hay cham") bị từ chối do `weak_music_oos`.
 

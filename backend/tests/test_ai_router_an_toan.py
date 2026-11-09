@@ -17,6 +17,7 @@ from app.ai.tutor import router
     ("Nhịp 6/8 đếm thế nào?", "B", "untaught_concept"),             # tập dev router_dev
     ("fmaj9 là hợp âm gì, gồm nốt nào", "B", "later_lesson"),        # hợp âm 9 → L07
     ("Gợi ý phim hay cuối tuần", "C", "weak_music_oos"),
+    ("Hòa âm bốn bè cấm quãng năm song song vì sao?", "B", "untaught_concept"),
 ])
 def test_cau_kho_chua_day_khong_vao_luong_A(question, flow, reason):
     d = router.decide(question, None)

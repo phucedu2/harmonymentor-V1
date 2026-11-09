@@ -75,6 +75,9 @@ _UNTAUGHT = {
                        marker=r"\bnot moc\b|\bmoc (?:don|kep)\b|\bnot (?:den|trang|tron)\b"),
     "clef": dict(pattern=r"\bkhoa (?:fa|sol|son|do)\b|\bclefs?\b", marker=r"\bkhoa (?:fa|sol|son)\b|\bclef\b"),
     "bass_note": dict(pattern=r"\bnot bass\b", marker=r"\bnot bass\b"),
+    # L05 nói "voice leading" nhưng không dạy luật cấm quãng 5/8 song song.
+    "parallel_fifths": dict(pattern=r"\bquang (?:nam|5|tam|8) song song\b|\bparallel (?:fifths|octaves)\b|\bhoa am bon be\b",
+                            marker=r"\bquang (?:nam|5|tam|8) song song\b|\bparallel (?:fifths|octaves)\b"),
     "sus_chord": dict(pattern=r"\bhop am sus\d?\b|\bsus[24]?\b|\bsuspended\b|\bhop am treo\b", marker=r"\bsus[24]?\b|\bsuspended\b"),
 }
 _SYM_IN_KB = re.compile(r"(?<![A-Za-z0-9#])([A-G](?:#|b)?(?:maj7|M7|m7b5|ø7|dim7|°7|dim|°|aug|\+|m7|m|7|sus2|sus4|6|9)?)"
