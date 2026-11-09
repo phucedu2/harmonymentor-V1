@@ -48,9 +48,37 @@ _CHORD_WORDS = {"maj": ("hợp âm trưởng", "triad trưởng", "major"), "min
 _LATER_CONCEPTS = {
     # So trên chữ thường (later_lesson hạ chữ), nên mẫu số La Mã viết thường: "V7/V" → "v7/v".
     "L05": r"secondary dominant|át phụ|\bv7?/[iv]+\b",
-    "L06": r"modal interchange|mượn hợp âm|borrowed chord|giọng song song|\bb(?:vii|vi|iii)\b",
-    "L07": r"\btensions?\b|chord[- ]scale|điệu thức|\bmodes?\b|lydian|mixolydian|phrygian|locrian|aeolian|ionian",
+    "L06": r"modal interchange|mượn (?:hợp âm|từ|nốt)|hợp âm mượn|borrowed chord|giọng song song|\bb(?:vii|vi|iii)\b",
+    # Hợp âm 9/11/13 bằng chữ hoặc ký hiệu gõ thường ("fmaj9", "hop am 9 khac hop am 7"): L07 dạy tension.
+    "L07": r"\btensions?\b|#(?:9|11)\b|(?<![a-z])b(?:9|13)\b|maj9|chord[- ]scale|điệu thức|\bmodes?\b|lydian|mixolydian|phrygian|locrian|aeolian|ionian"
+           r"|\b[a-g][#b]?(?:maj|m|add)?(?:9|11|13)\b|hợp âm (?:9|11|13)\b",
     "L08": r"voicing|thế bấm",
+}
+# Khái niệm KHÔNG bài nào trong lộ trình hiện tại dạy (chưa có bài để chỉ "bạn sẽ học sau ở bài …"): câu hỏi nhắc tới
+# thì là luồng B ("chưa dạy"), dù truy xuất vớt được đoạn bài chỉ "giống chữ". Luật tự tắt nếu kho bài có đoạn nhắc
+# tới khái niệm (`marker`, so không dấu), nên khi bài mới vào kho không phải sửa tay. Thêm 09/11/2026 sau khi đo
+# phiếu: "quãng 9 là gì", "đảo hợp âm C lần 1", "vòng quãng 5" bị trả lời như bài đã dạy (lỗi nặng nhất).
+_UNTAUGHT = {
+    "inversion": dict(pattern=r"\bdao hop am\b|\bthe dao\b|\bhop am dao\b|\binversions?\b|\bslash chord", marker=r"\bthe dao\b|\bdao hop am\b"),
+    "compound_interval": dict(pattern=r"\bquang (?:kep|9|1[0-5])\b|\bcompound interval|\b(?:9|10|11|13)th\b", marker=r"\bquang kep\b|\bquang 9\b|\bcompound\b"),
+    # Thêm 09/11 sau khi kiểm kho: L01–L05 không có "gam thứ tự nhiên/hòa âm/giai điệu", "relative minor", hợp âm 6, bảy giảm.
+    "minor_scales": dict(pattern=r"\bgam thu (?:tu nhien|hoa am|giai dieu)\b|\b(?:am giai|gam) thu (?:tu nhien|hoa am|giai dieu)\b|\b(?:natural|harmonic|melodic) minor\b|\bthu (?:hoa am|giai dieu)\b",
+                         marker=r"\bgam thu\b|\b(?:natural|harmonic|melodic) minor\b|\bthu hoa am\b"),
+    "relative_minor": dict(pattern=r"\brelative (?:minor|major)\b|\bgiong thu (?:tuong ung|song hanh|ke can)\b|\bla thu\b.*\bdo truong\b|\bdo truong\b.*\bla thu\b",
+                           marker=r"\brelative\b|\bgiong thu tuong ung\b"),
+    "sixth_chord": dict(pattern=r"\bhop am 6\b|\bhop am sau\b|\b[a-g][#b]?6\b(?!\d)", marker=r"\bhop am 6\b|\b[a-g][#b]?6\b"),
+    "dim7_chord": dict(pattern=r"\bhop am bay (?:giam|gim)\b|\bdim7\b|\b[a-g][#b]?dim7\b", marker=r"\bbay giam\b|\bdim7\b"),
+    "circle_of_fifths": dict(pattern=r"\bvong (?:tron )?quang (?:5|nam)\b|\bcircle of fifths\b", marker=r"\bvong (?:tron )?quang\b|\bcircle of fifths\b"),
+    # Thêm 09/11 từ tập dev router_dev/gd2 (không từ tập test): kho L01–L05 không có các mẫu dưới.
+    "time_signature": dict(pattern=r"\bnhip \d+ ?/ ?\d+\b|\bso chi nhip\b|\btime signatures?\b", marker=r"\bnhip \d+ ?/ ?\d+\b|\bso chi nhip\b"),
+    "note_value": dict(pattern=r"\bnot moc\b|\bmoc (?:don|kep)\b|\bnot (?:den|trang|tron)\b|\bcham doi\b",
+                       marker=r"\bnot moc\b|\bmoc (?:don|kep)\b|\bnot (?:den|trang|tron)\b"),
+    "clef": dict(pattern=r"\bkhoa (?:fa|sol|son|do)\b|\bclefs?\b", marker=r"\bkhoa (?:fa|sol|son)\b|\bclef\b"),
+    "bass_note": dict(pattern=r"\bnot bass\b", marker=r"\bnot bass\b"),
+    # L05 nói "voice leading" nhưng không dạy luật cấm quãng 5/8 song song.
+    "parallel_fifths": dict(pattern=r"\bquang (?:nam|5|tam|8) song song\b|\bparallel (?:fifths|octaves)\b|\bhoa am bon be\b",
+                            marker=r"\bquang (?:nam|5|tam|8) song song\b|\bparallel (?:fifths|octaves)\b"),
+    "sus_chord": dict(pattern=r"\bhop am sus\d?\b|\bsus[24]?\b|\bsuspended\b|\bhop am treo\b", marker=r"\bsus[24]?\b|\bsuspended\b"),
 }
 _SYM_IN_KB = re.compile(r"(?<![A-Za-z0-9#])([A-G](?:#|b)?(?:maj7|M7|m7b5|ø7|dim7|°7|dim|°|aug|\+|m7|m|7|sus2|sus4|6|9)?)"
                         r"(?![A-Za-z0-9#])")
@@ -141,6 +169,24 @@ def known_words() -> frozenset[str]:
     return frozenset(words)
 
 
+@lru_cache(maxsize=1)
+def _kb_words() -> frozenset[str]:
+    return frozenset(w for c in knowledge_base() for w in _words(f"{c.title} {c.text}"))
+
+
+def _all_terms_in_kb(question: str) -> bool:
+    """Mọi chữ của câu đều "đã biết" (kho bài, kho hướng dẫn, câu thường ngày; cho phép lỗi gõ) và có chữ của kho bài."""
+    import difflib
+
+    words = _words(question)
+    in_kb = [w for w in words if w in _kb_words()
+             or (len(w) >= 4 and difflib.get_close_matches(w, _kb_words(), n=1, cutoff=0.8))]
+    # Thuật ngữ = chữ của kho không phải âm tiết tiếng Việt ("triad", "tonic", "perfetc") hoặc con số ("quang 8").
+    # Âm tiết tiếng Việt bỏ dấu dễ trùng ("hoa tri" ~ "hòa", "trí") nên không tính là thuật ngữ.
+    terms = [w for w in in_kb if w.isdigit() or _foreign(w, w)]
+    return bool(terms) and all(w.isdigit() or w in known_words() or w in in_kb for w in words)
+
+
 _INTERVAL_TOKEN = re.compile(r"[pmad]\d{1,2}")   # m3, P5, d5, A4: ký hiệu quãng L01 đã dạy
 
 
@@ -187,19 +233,46 @@ def _parses(symbol: str) -> bool:
         return False
 
 
+def _fold(text: str) -> str:
+    """Chữ thường, bỏ dấu tiếng Việt (đ → d): người học hay gõ không dấu ("muon hop am" thay "mượn hợp âm")."""
+    t = unicodedata.normalize("NFD", text.lower()).replace("đ", "d")
+    return "".join(ch for ch in t if unicodedata.category(ch) != "Mn")
+
+
 def later_lesson(question: str) -> str | None:
     """Bài CHƯA có trong kho mà dạy khái niệm câu hỏi nhắc tới; None nếu không có."""
     in_kb = {c.lesson_id for c in knowledge_base()}
-    low = question.lower()
+    low, folded = question.lower(), _fold(question)
     for lesson_id, pattern in _LATER_CONCEPTS.items():
-        if lesson_id not in in_kb and re.search(pattern, low):
+        # Khớp cả bản có dấu (mẫu viết có dấu) lẫn bản bỏ dấu (câu gõ không dấu); mẫu bỏ dấu cũng bỏ dấu cho mẫu.
+        if lesson_id not in in_kb and (re.search(pattern, low) or re.search(_fold(pattern), folded)):
             return lesson_id
     return None
 
 
+def untaught_concept(question: str) -> str | None:
+    """Khái niệm chưa bài nào dạy (và kho bài không nhắc tới) mà câu hỏi nhắc tới; None nếu không có."""
+    folded = _fold(question)
+    kb_text = " ".join(_fold(c.text) for c in knowledge_base())
+    for name, rule in _UNTAUGHT.items():
+        if re.search(rule["pattern"], folded) and not re.search(rule["marker"], kb_text):
+            return name
+    return None
+
+
+def _scale_typo(unknown: str) -> bool:
+    """"âm giai trởưng", "âm giai tưởng": gõ sai chữ "trưởng/thứ", không phải loại âm giai lạ (tập dev gd2)."""
+    import difflib
+
+    if not unknown.startswith("âm giai "):
+        return False
+    kind = " ".join(_words(unknown[len("âm giai "):]))
+    return bool(difflib.get_close_matches(kind, ["truong", "thu"], n=1, cutoff=0.6))
+
+
 def outside_kb(eng: EngineAnswer) -> bool:
     """Câu hỏi về thứ kho chưa dạy: loại hợp âm/âm giai không đoạn nào nhắc, hoặc ký hiệu Engine không hiểu."""
-    if eng.unknown:
+    if any(not _scale_typo(u) for u in eng.unknown):
         return True
     chords, scales = kb_coverage()
     for f in eng.facts:
@@ -225,6 +298,7 @@ class Signals:
     later_lesson: str | None
     outside_kb: bool
     unknown_terms: list[str]
+    untaught: str | None = None
 
 
 def gather(question: str, embedder: Embedder | None, *, top_k: int = 4) -> Signals:
@@ -232,7 +306,7 @@ def gather(question: str, embedder: Embedder | None, *, top_k: int = 4) -> Signa
     return Signals(question, classify_route(question), eng,
                    retrieve(question, embedder, top_k=top_k, min_score=-1.0, bm25_min_score=-1.0),
                    retrieve(question, embedder, top_k=2, min_score=-1.0, bm25_min_score=-1.0, chunks=list(help_base())),
-                   later_lesson(question), outside_kb(eng), unknown_terms(question))
+                   later_lesson(question), outside_kb(eng), unknown_terms(question), untaught_concept(question))
 
 
 def route(sig: Signals, th: dict[str, float]) -> Decision:
@@ -274,12 +348,22 @@ def route(sig: Signals, th: dict[str, float]) -> Decision:
     if sig.later_lesson:
         kind = "engine" if eng.facts and not eng.unknown else "unknown"
         return d("B", kind, "later_lesson", later_lesson=sig.later_lesson)
+    if sig.untaught:
+        return d("B", "engine" if eng.facts and not eng.unknown else "unknown", "untaught_concept")
     if sig.outside_kb:
         if eng.facts:
             return d("B", "engine", "outside_kb_engine")
         return d("B", "unknown", "outside_kb_unknown")
     if sig.unknown_terms:
+        # Từ lạ trong câu tầng 1 không chắc là nhạc lý (dưới đa số): "cho minh link tai nhac lau free" có "link",
+        # "free" nhưng không hỏi nhạc lý. Ngưỡng 0,5 là "đa số", không dò; câu B thật trên tập dev đều ≥ 0,62.
+        if not eng.facts and (label.label != "nhac_ly" or probs.get("nhac_ly", 0) < 0.5):
+            return d("C", "refuse", "unknown_terms_not_music")
         return d("B", "engine" if eng.facts else "unknown", "unknown_terms")
+    # Tầng 1 nghiêng ngoài phạm vi mà nhạc lý không chiếm đa số, không có ký hiệu nào: không trả lời như bài học dù
+    # điểm truy xuất cao ("Gợi ý phim hay cuối tuần" 0,49 nhạc lý / 0,36 ngoài phạm vi, BM25 9,9).
+    if not eng.facts and probs.get("nhac_ly", 0) < 0.5 and probs.get("ngoai_pham_vi", 0) >= th["music_min"]:
+        return d("C", "refuse", "weak_music_oos")
     if lesson.best_score >= accept:
         return d("A", "lesson", "lesson_hit", hits=keep or lesson.hits[:1])
     # Dữ kiện Engine thuộc loại kho đã dạy và có đoạn bài ở vùng xám: trả lời từ bài kèm dữ kiện Engine.
@@ -288,6 +372,13 @@ def route(sig: Signals, th: dict[str, float]) -> Decision:
     if eng.facts:
         return d("B", "engine", "below_threshold_engine")
     if lesson.best_score >= gray:
+        # Câu định nghĩa ngắn ("triad la gi", "tonic va dominant la gi") có ít chữ nên điểm truy xuất thấp, rơi vào
+        # vùng xám. Mọi chữ đều là chữ kho bài hoặc chữ hỏi thường ngày (cho phép lỗi gõ "perfetc") và có ít nhất một
+        # chữ của kho bài: kho có dạy, trả lời từ bài. Chỉ với câu ngắn (≤ 8 chữ) mà tầng 1 chắc là nhạc lý (≥ 0,5),
+        # vì văn bài có nhiều chữ thường ("giảm", "hóa") nên câu ngoài lề cũng "toàn chữ của kho". Đặt SAU mọi luật
+        # "chưa dạy" ở trên nên không mở cửa cho câu B.
+        if probs.get("nhac_ly", 0) >= 0.5 and len(_words(question)) <= 8 and _all_terms_in_kb(question):
+            return d("A", "lesson", "gray_zone_kb_terms", hits=keep or lesson.hits[:1])
         return d("B", "unknown", "gray_zone_conservative")
     return d("B", "unknown", "no_lesson_hit")
 

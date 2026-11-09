@@ -1,5 +1,7 @@
 # Phiếu câu hỏi cho AI Tutor (GĐ2 góp ý thầy)
 
+> **09/11/2026:** 3 file `phieu_*.json` cũ do Claude soạn thay nhóm, đã chuyển vào `claude-tham-khao/` (chỉ tham khảo). Phiếu chính thức nay do nhóm tự viết theo `PHIEU_NHOM_TU_VIET.md`; lệnh chuyển sang JSON ghi lại đúng các tên file dưới đây.
+
 | File | Ai điền | Số câu | Dùng để |
 |---|---|---|---|
 | `phieu_Dat_test.json` | Đạt | 10 | Tập test khóa: đo chính thức, Claude không xem |

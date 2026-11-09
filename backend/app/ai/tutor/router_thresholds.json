@@ -1,15 +1,15 @@
 {
-  "note": "Do scripts/ai/gop_y/hieu_chinh_nguong.py chọn trên tập dev, không sửa tay (ADR-017).",
-  "dev_set": "scripts/ai/data/router_dev.json + scripts/ai/data/gd2/dev.json",
-  "dev_size": 311,
-  "date": "2026-11-08",
+  "note": "Do scripts/ai/gop_y/hieu_chinh_nguong.py chọn trên tập dev, không sửa tay (ADR-017). 09/11: chạy lại cho bm25 và e5 gốc sau luật an toàn; hàng gd2b/gd2c giữ từ 08/11 (mô hình không có trên máy).",
+  "dev_set": "scripts/ai/data/router_dev.json + scripts/ai/data/gd2/dev.json + docs/giai-doan/ai-gop-y/phieu-cau-hoi/claude-tham-khao/phieu_Phuc_dev.json",
+  "dev_size": 341,
+  "date": "2026-11-09",
   "thresholds": {
     "bm25": {
       "greet_conf": 0.5,
       "help_conf": 0.45,
       "oos_conf": 0.5,
       "music_min": 0.3,
-      "lesson_gray": 3.5,
+      "lesson_gray": 2.6,
       "lesson_accept": 5.8,
       "help_accept": 0.0,
       "help_margin": 1.0
@@ -20,7 +20,7 @@
       "oos_conf": 0.5,
       "music_min": 0.3,
       "lesson_gray": 0.798,
-      "lesson_accept": 0.817,
+      "lesson_accept": 0.816,
       "help_accept": 0.687,
       "help_margin": 1.0
     },
@@ -47,29 +47,29 @@
   },
   "dev_metrics": {
     "bm25": {
-      "accuracy": 0.8424,
-      "bc_answered_wrong": 0.11,
-      "a_refused_wrong": 0.1316,
-      "a_engine_instead_of_lesson": 0.0197,
+      "accuracy": 0.9003,
+      "bc_answered_wrong": 0.0088,
+      "a_refused_wrong": 0.1173,
+      "a_engine_instead_of_lesson": 0.0,
       "confusion": {
         "A": {
-          "A": 129,
-          "B": 20,
-          "C": 3,
+          "A": 143,
+          "B": 15,
+          "C": 4,
           "D": 0,
           "G": 0
         },
         "B": {
-          "A": 9,
-          "B": 52,
+          "A": 1,
+          "B": 68,
           "C": 0,
           "D": 0,
           "G": 0
         },
         "C": {
-          "A": 2,
-          "B": 7,
-          "C": 30,
+          "A": 0,
+          "B": 6,
+          "C": 39,
           "D": 0,
           "G": 0
         },
@@ -77,69 +77,69 @@
           "A": 1,
           "B": 2,
           "C": 0,
-          "D": 33,
+          "D": 36,
           "G": 0
         },
         "G": {
           "A": 0,
-          "B": 1,
-          "C": 4,
+          "B": 0,
+          "C": 5,
           "D": 0,
-          "G": 18
+          "G": 21
         }
       },
       "per_flow": {
         "A": {
-          "precision": 0.915,
-          "recall": 0.849,
-          "n": 152
+          "precision": 0.986,
+          "recall": 0.883,
+          "n": 162
         },
         "B": {
-          "precision": 0.634,
-          "recall": 0.852,
-          "n": 61
+          "precision": 0.747,
+          "recall": 0.986,
+          "n": 69
         },
         "C": {
-          "precision": 0.811,
-          "recall": 0.769,
-          "n": 39
+          "precision": 0.812,
+          "recall": 0.867,
+          "n": 45
         },
         "D": {
           "precision": 1.0,
-          "recall": 0.917,
-          "n": 36
+          "recall": 0.923,
+          "n": 39
         },
         "G": {
           "precision": 1.0,
-          "recall": 0.783,
-          "n": 23
+          "recall": 0.808,
+          "n": 26
         }
       }
     },
     "embedding:multilingual-e5-small": {
-      "accuracy": 0.8682,
-      "bc_answered_wrong": 0.14,
-      "a_refused_wrong": 0.0658,
+      "accuracy": 0.9296,
+      "bc_answered_wrong": 0.0088,
+      "a_refused_wrong": 0.0556,
       "a_engine_instead_of_lesson": 0.0,
       "confusion": {
         "A": {
-          "A": 142,
-          "B": 7,
-          "C": 3,
+          "A": 153,
+          "B": 5,
+          "C": 4,
           "D": 0,
           "G": 0
         },
         "B": {
-          "A": 14,
-          "B": 47,
+          "A": 1,
+          "B": 68,
           "C": 0,
           "D": 0,
           "G": 0
         },
         "C": {
           "A": 0,
-          "B": 9,
-          "C": 30,
+          "B": 6,
+          "C": 39,
           "D": 0,
           "G": 0
         },
@@ -147,42 +147,42 @@
           "A": 2,
           "B": 1,
           "C": 0,
-          "D": 33,
+          "D": 36,
           "G": 0
         },
         "G": {
           "A": 0,
-          "B": 1,
-          "C": 4,
+          "B": 0,
+          "C": 5,
           "D": 0,
-          "G": 18
+          "G": 21
         }
       },
       "per_flow": {
         "A": {
-          "precision": 0.899,
-          "recall": 0.934,
-          "n": 152
+          "precision": 0.981,
+          "recall": 0.944,
+          "n": 162
         },
         "B": {
-          "precision": 0.723,
-          "recall": 0.77,
-          "n": 61
+          "precision": 0.85,
+          "recall": 0.986,
+          "n": 69
         },
         "C": {
-          "precision": 0.811,
-          "recall": 0.769,
-          "n": 39
+          "precision": 0.812,
+          "recall": 0.867,
+          "n": 45
         },
         "D": {
           "precision": 1.0,
-          "recall": 0.917,
-          "n": 36
+          "recall": 0.923,
+          "n": 39
         },
         "G": {
           "precision": 1.0,
-          "recall": 0.783,
-          "n": 23
+          "recall": 0.808,
+          "n": 26
         }
       }
     },
