@@ -44,8 +44,5 @@ Giảng viên cho phép dùng AI để viết code với điều kiện ghi rõ.
 | 08/11 | Góp ý thầy GĐ2c | Claude Code + multilingual-e5-small (fine-tune CPU) | Thêm 14 nhóm câu hỏi người học (Claude soạn, nháp, không chép câu phiếu), sinh lại dữ liệu 742/206/200, train lại tầng 1 và e5 (GĐ2c), chọn lại ngưỡng. 50 câu "phiếu Đạt/Thắng/Phúc" dùng để đo là do Claude soạn thay, chỉ tham khảo. Không sửa Music Engine, nội dung bài; không đăng Release mới | Số đo trong 05_TRAIN_LAI_KHO_L05.md; chưa đạt mục tiêu 2%/5% | (Phúc, Thắng, Đạt điền) |
 | 08/11 | Góp ý thầy GĐ3 (L06–L08) | Claude Code | Soạn nháp 27 khối (21 lý thuyết + 6 checkpoint)  hợp âm mượn, L07 tension và chord-scale, L08 shell voicing (status draft, ẩn với người học, không vào kho AI Tutor), 22 test đối chiếu Music Engine. Không sửa Engine, câu hỏi đã có, bài đã phát hành | 22 test; pytest 1026; chờ Đạt/Astra duyệt nội dung | (Phúc, Thắng, Đạt điền) |
 Nguyên tắc nhóm: không gộp code AI viết khi chưa có người trong nhóm đọc diff và giải thích lại được.
-<<<<<<< HEAD
-| 09/11 | Góp ý thầy GĐ5 (thực hành + học thêm) | Claude Code + Firecrawl (đọc mục lục Open Music Theory) | Trả lời Luyện tập bằng piano ảo (Engine chấm lớp cao độ, nhắc cách viết chuẩn); 16 liên kết sách mở miễn phí cho L01–L05, để nháp chờ Đạt duyệt. Không sửa Engine | Chưa ký |
-=======
 | 08/11 | Góp ý thầy GĐ4 (nhạc cụ backing track) | Claude Code | Thêm kênh Dây (cello CC0) và 3 âm sắc guitar (Web Audio) cho Harmony Lab; script dựng mẫu đo cao độ YIN. Không tự nghe thử; không dùng Emilyguitar vì là guitar điện | Chưa ký |
->>>>>>> origin/phuc-music
+| 09/11 | Góp ý thầy GĐ5 (thực hành + học thêm) | Claude Code + Firecrawl (đọc mục lục Open Music Theory) | Trả lời Luyện tập bằng piano ảo (Engine chấm lớp cao độ, nhắc cách viết chuẩn); 16 liên kết sách mở miễn phí cho L01–L05, để nháp chờ Đạt duyệt. Không sửa Engine | Chưa ký |
