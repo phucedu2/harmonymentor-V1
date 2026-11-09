@@ -12,7 +12,7 @@ import {
 import { audioEngine } from "../../audio/AudioEngine";
 import { bandPlayer } from "../../audio/band/player";
 import {
-  DEFAULT_MIX, type Arrangement, type BandChannel, type BandMix, type FormSection, type ProgressionSlot, type SongForm,
+  DEFAULT_MIX, GUITAR_TONE_LABELS, type Arrangement, type BandChannel, type BandMix, type FormSection, type GuitarTone, type ProgressionSlot, type SongForm,
   type SongLength,
 } from "../../audio/band/types";
 import { midiToScientific } from "../../audio/musicUtils";
@@ -25,7 +25,7 @@ import { Button } from "../../components/ui/Button";
 import { Badge, Card, CardTitle, ChipButton, Kicker, PageHeading, ToggleGroup } from "../../components/ui/Page";
 import { PageLoader } from "../../components/ui/PageLoader";
 
-const CHANNEL_LABELS: Record<BandChannel, string> = { chords: "Hợp âm", bass: "Bass", guitar: "Guitar", drums: "Trống", hook: "Hook" };
+const CHANNEL_LABELS: Record<BandChannel, string> = { chords: "Hợp âm", bass: "Bass", guitar: "Guitar", drums: "Trống", hook: "Hook", strings: "Dây (cello)" };
 const ENERGY_LABELS: Record<number, string> = { 1: "Mộc", 2: "Vừa", 3: "Đầy" };
 // Chế độ Bài hát: thanh năng lượng cũ thành "Năng lượng tổng", dời cả đường cong −1/0/+1 mức (ADR-013 đề xuất).
 const TOTAL_ENERGY_LABELS: Record<number, string> = { 1: "Nhẹ hơn 1 mức", 2: "Theo khuôn", 3: "Mạnh hơn 1 mức" };
@@ -58,6 +58,7 @@ export default function CompositionLabPage() {
   const [colors, setColors] = useState<(string | null)[]>([]);
   const [fallback, setFallback] = useState(false);
   const [vinyl, setVinyl] = useState(true);
+  const [guitarTone, setGuitarTone] = useState<GuitarTone>("auto");
   const [projects, setProjects] = useState<ComposeProjectSummary[]>([]);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState<{ tone: "success" | "danger" | "info"; text: string } | null>(null);
@@ -165,7 +166,7 @@ export default function CompositionLabPage() {
         const sec = arrangement.sections?.[idx];
         setLoading(0);
         await bandPlayer.play({
-          arrangement, bpm: draft.tempo, seed: draft.seed, loop: false, mix: draft.mix, vinyl,
+          arrangement, bpm: draft.tempo, seed: draft.seed, loop: false, mix: draft.mix, guitarTone, vinyl,
           startBeat: sec?.start_beat ?? 0, loopRange: loopSection && sec ? { start: sec.start_beat, end: sec.end_beat } : null,
           onProgress: ({ loaded, total }) => setLoading(total ? Math.round((100 * loaded) / total) : 100),
           onBar: setCurrentBar, onEnd: () => { setPlaying(false); setCurrentBar(null); },
@@ -176,7 +177,7 @@ export default function CompositionLabPage() {
         setColors(arrangement.colors.map((c) => c.played));
         setLoading(0);
         await bandPlayer.play({
-          arrangement, bpm: draft.tempo, seed: draft.seed, loop, mix: draft.mix, vinyl,
+          arrangement, bpm: draft.tempo, seed: draft.seed, loop, mix: draft.mix, guitarTone, vinyl,
           onProgress: ({ loaded, total }) => setLoading(total ? Math.round((100 * loaded) / total) : 100),
           onBar: setCurrentBar, onEnd: () => { setPlaying(false); setCurrentBar(null); },
         });
@@ -186,18 +187,20 @@ export default function CompositionLabPage() {
     } catch (e) {
       setNotice({ tone: "danger", text: `Chưa phát được: ${errorText(e)}` });
     } finally { setLoading(null); }
-  }, [draft, style, loop, vinyl, loopSection, section]);
+  }, [draft, style, loop, vinyl, loopSection, section, guitarTone]);
 
   const stopPlayback = () => { bandPlayer.stop(); setPlaying(false); setCurrentBar(null); };
 
   // Đang phát mà đổi hợp âm, phong cách, bản phối (seed), năng lượng, form hoặc chế độ lặp thì phát lại với bản mới.
-  const restartKey = draft ? `${draft.key}|${draft.chords.join(",")}|${draft.style}|${draft.bars}|${draft.seed}|${draft.energy}|${loop}|${draft.mode}|${songKey}|${loopSection ? section : -1}` : "";
+  const restartKey = draft ? `${draft.key}|${draft.chords.join(",")}|${draft.style}|${draft.bars}|${draft.seed}|${draft.energy}|${loop}|${draft.mode}|${songKey}|${loopSection ? section : -1}|${draft.mix.strings?.muted ?? true}` : "";
   const playingRef = useRef(playing);
   playingRef.current = playing;
   useEffect(() => { if (playingRef.current) void startPlayback(loopSection ? section : undefined); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [restartKey]);
   useEffect(() => { if (draft) bandPlayer.setBpm(draft.tempo); }, [draft?.tempo]);
   useEffect(() => { if (draft) bandPlayer.setMix(draft.mix); }, [draft?.mix]);
   useEffect(() => { bandPlayer.setVinyl(vinyl && playingRef.current); }, [vinyl]);
+  // Đổi âm sắc guitar khi đang nghe: chỉ đổi tham số méo/lọc, không phát lại.
+  useEffect(() => { bandPlayer.setGuitarTone(guitarTone); }, [guitarTone]);
 
   const setChannel = (channel: BandChannel, patch: Partial<BandMix[BandChannel]>) => {
     if (!draft) return;
@@ -354,6 +357,12 @@ export default function CompositionLabPage() {
                 className="min-h-11 w-full min-w-16 accent-primary" onChange={(e) => setChannel(c, { volume: Number(e.target.value) })} />
             </div>;
           })}
+          <div className="flex flex-wrap items-center gap-2 sm:col-span-2 lg:col-span-3 xl:col-span-6" role="group" aria-label="Âm sắc guitar">
+            <span className="text-sm text-muted">Âm sắc guitar:</span>
+            {(Object.keys(GUITAR_TONE_LABELS) as GuitarTone[]).map((t) => (
+              <ChipButton key={t} pressed={guitarTone === t} onClick={() => setGuitarTone(t)}>{GUITAR_TONE_LABELS[t]}</ChipButton>
+            ))}
+          </div>
           <div className="flex flex-wrap items-center gap-2">
             {!isSongMode && <ChipButton pressed={loop} onClick={() => setLoop((v) => !v)}><span aria-hidden="true">↻ </span>Lặp lại</ChipButton>}
             {style.id === "lofi" && <ChipButton pressed={vinyl} onClick={() => setVinyl((v) => !v)}>Tiếng đĩa than</ChipButton>}

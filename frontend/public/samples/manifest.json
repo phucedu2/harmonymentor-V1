@@ -7064,6 +7064,873 @@
     ]
    },
    "skipped": []
+  },
+  "cello": {
+   "label": "Cello (bowed sustain)",
+   "layers": 3,
+   "lite_layers": [
+    1
+   ],
+   "source": {
+    "name": "Karoryfer x Bigcat Cello (arco sustain)",
+    "author": "Karoryfer Lecolds / Bigcat",
+    "license": "CC0 1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "repo": "https://github.com/sfzinstruments/karoryfer-bigcat.cello.git",
+    "commit": "6fd75fbfc1dbb3109bf26220ba1adea46188a18b"
+   },
+   "pieces": {
+    "notes": [
+     {
+      "file": "cello/36_v0_r7.ogg",
+      "midi": 36,
+      "cents": 0.034,
+      "layer": 0,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/C1_p_g.wav"
+      ]
+     },
+     {
+      "file": "cello/36_v1_r4.ogg",
+      "midi": 36,
+      "cents": 0.048,
+      "layer": 1,
+      "rr": 4,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/C1_mf_d.wav"
+      ]
+     },
+     {
+      "file": "cello/36_v1_r7.ogg",
+      "midi": 36,
+      "cents": -0.029,
+      "layer": 1,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/C1_mf_g.wav"
+      ]
+     },
+     {
+      "file": "cello/36_v2_r4.ogg",
+      "midi": 36,
+      "cents": -0.024,
+      "layer": 2,
+      "rr": 4,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/C1_f_d.wav"
+      ]
+     },
+     {
+      "file": "cello/36_v2_r7.ogg",
+      "midi": 36,
+      "cents": 0.039,
+      "layer": 2,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/C1_f_g.wav"
+      ]
+     },
+     {
+      "file": "cello/39_v0_r7.ogg",
+      "midi": 39,
+      "cents": 0.045,
+      "layer": 0,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/Eb1_p_g.wav"
+      ]
+     },
+     {
+      "file": "cello/39_v1_r4.ogg",
+      "midi": 39,
+      "cents": -0.015,
+      "layer": 1,
+      "rr": 4,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/Eb1_mf_d.wav"
+      ]
+     },
+     {
+      "file": "cello/39_v1_r7.ogg",
+      "midi": 39,
+      "cents": 0.018,
+      "layer": 1,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/Eb1_mf_g.wav"
+      ]
+     },
+     {
+      "file": "cello/39_v2_r4.ogg",
+      "midi": 39,
+      "cents": -0.019,
+      "layer": 2,
+      "rr": 4,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/Eb1_f_d.wav"
+      ]
+     },
+     {
+      "file": "cello/39_v2_r7.ogg",
+      "midi": 39,
+      "cents": 0.016,
+      "layer": 2,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/Eb1_f_g.wav"
+      ]
+     },
+     {
+      "file": "cello/42_v0_r4.ogg",
+      "midi": 42,
+      "cents": -0.023,
+      "layer": 0,
+      "rr": 4,
+      "seconds": 3.187,
+      "from": [
+       "Samples/sus/Gb1_p_d.wav"
+      ]
+     },
+     {
+      "file": "cello/42_v0_r7.ogg",
+      "midi": 42,
+      "cents": 0.061,
+      "layer": 0,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/Gb1_p_g.wav"
+      ]
+     },
+     {
+      "file": "cello/42_v1_r4.ogg",
+      "midi": 42,
+      "cents": -0.04,
+      "layer": 1,
+      "rr": 4,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/Gb1_mf_d.wav"
+      ]
+     },
+     {
+      "file": "cello/42_v1_r7.ogg",
+      "midi": 42,
+      "cents": -0.004,
+      "layer": 1,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/Gb1_mf_g.wav"
+      ]
+     },
+     {
+      "file": "cello/42_v2_r4.ogg",
+      "midi": 42,
+      "cents": -0.104,
+      "layer": 2,
+      "rr": 4,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/Gb1_f_d.wav"
+      ]
+     },
+     {
+      "file": "cello/42_v2_r7.ogg",
+      "midi": 42,
+      "cents": -0.102,
+      "layer": 2,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/Gb1_f_g.wav"
+      ]
+     },
+     {
+      "file": "cello/45_v0_r4.ogg",
+      "midi": 45,
+      "cents": -0.111,
+      "layer": 0,
+      "rr": 4,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/A1_p_d.wav"
+      ]
+     },
+     {
+      "file": "cello/45_v0_r7.ogg",
+      "midi": 45,
+      "cents": -0.017,
+      "layer": 0,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/A1_p_g.wav"
+      ]
+     },
+     {
+      "file": "cello/45_v1_r4.ogg",
+      "midi": 45,
+      "cents": 0.002,
+      "layer": 1,
+      "rr": 4,
+      "seconds": 4.238,
+      "from": [
+       "Samples/sus/A1_mf_d.wav"
+      ]
+     },
+     {
+      "file": "cello/45_v1_r7.ogg",
+      "midi": 45,
+      "cents": -0.04,
+      "layer": 1,
+      "rr": 7,
+      "seconds": 4.307,
+      "from": [
+       "Samples/sus/A1_mf_g.wav"
+      ]
+     },
+     {
+      "file": "cello/45_v2_r4.ogg",
+      "midi": 45,
+      "cents": -0.072,
+      "layer": 2,
+      "rr": 4,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/A1_f_d.wav"
+      ]
+     },
+     {
+      "file": "cello/45_v2_r7.ogg",
+      "midi": 45,
+      "cents": 0.004,
+      "layer": 2,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/A1_f_g.wav"
+      ]
+     },
+     {
+      "file": "cello/48_v0_r4.ogg",
+      "midi": 48,
+      "cents": 0.012,
+      "layer": 0,
+      "rr": 4,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/C2_p_d.wav"
+      ]
+     },
+     {
+      "file": "cello/48_v0_r7.ogg",
+      "midi": 48,
+      "cents": 0.007,
+      "layer": 0,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/C2_p_g.wav"
+      ]
+     },
+     {
+      "file": "cello/48_v1_r4.ogg",
+      "midi": 48,
+      "cents": -0.026,
+      "layer": 1,
+      "rr": 4,
+      "seconds": 4.224,
+      "from": [
+       "Samples/sus/C2_mf_d.wav"
+      ]
+     },
+     {
+      "file": "cello/48_v1_r7.ogg",
+      "midi": 48,
+      "cents": 0.023,
+      "layer": 1,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/C2_mf_g.wav"
+      ]
+     },
+     {
+      "file": "cello/48_v2_r4.ogg",
+      "midi": 48,
+      "cents": -0.017,
+      "layer": 2,
+      "rr": 4,
+      "seconds": 4.327,
+      "from": [
+       "Samples/sus/C2_f_d.wav"
+      ]
+     },
+     {
+      "file": "cello/48_v2_r7.ogg",
+      "midi": 48,
+      "cents": 0.075,
+      "layer": 2,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/C2_f_g.wav"
+      ]
+     },
+     {
+      "file": "cello/51_v0_r4.ogg",
+      "midi": 51,
+      "cents": 0.01,
+      "layer": 0,
+      "rr": 4,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/Eb2_p_d.wav"
+      ]
+     },
+     {
+      "file": "cello/51_v0_r7.ogg",
+      "midi": 51,
+      "cents": 0.026,
+      "layer": 0,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/Eb2_p_g.wav"
+      ]
+     },
+     {
+      "file": "cello/51_v1_r4.ogg",
+      "midi": 51,
+      "cents": 0.017,
+      "layer": 1,
+      "rr": 4,
+      "seconds": 3.982,
+      "from": [
+       "Samples/sus/Eb2_mf_d.wav"
+      ]
+     },
+     {
+      "file": "cello/51_v1_r7.ogg",
+      "midi": 51,
+      "cents": -0.011,
+      "layer": 1,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/Eb2_mf_g.wav"
+      ]
+     },
+     {
+      "file": "cello/51_v2_r4.ogg",
+      "midi": 51,
+      "cents": 0.022,
+      "layer": 2,
+      "rr": 4,
+      "seconds": 4.119,
+      "from": [
+       "Samples/sus/Eb2_f_d.wav"
+      ]
+     },
+     {
+      "file": "cello/51_v2_r7.ogg",
+      "midi": 51,
+      "cents": 0.011,
+      "layer": 2,
+      "rr": 7,
+      "seconds": 4.477,
+      "from": [
+       "Samples/sus/Eb2_f_g.wav"
+      ]
+     },
+     {
+      "file": "cello/54_v0_r4.ogg",
+      "midi": 54,
+      "cents": 0.012,
+      "layer": 0,
+      "rr": 4,
+      "seconds": 4.403,
+      "from": [
+       "Samples/sus/Gb2_p_d.wav"
+      ]
+     },
+     {
+      "file": "cello/54_v0_r7.ogg",
+      "midi": 54,
+      "cents": 0.081,
+      "layer": 0,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/Gb2_p_g.wav"
+      ]
+     },
+     {
+      "file": "cello/54_v1_r4.ogg",
+      "midi": 54,
+      "cents": 0.034,
+      "layer": 1,
+      "rr": 4,
+      "seconds": 4.202,
+      "from": [
+       "Samples/sus/Gb2_mf_d.wav"
+      ]
+     },
+     {
+      "file": "cello/54_v1_r7.ogg",
+      "midi": 54,
+      "cents": 0.011,
+      "layer": 1,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/Gb2_mf_g.wav"
+      ]
+     },
+     {
+      "file": "cello/54_v2_r4.ogg",
+      "midi": 54,
+      "cents": 0.021,
+      "layer": 2,
+      "rr": 4,
+      "seconds": 4.483,
+      "from": [
+       "Samples/sus/Gb2_f_d.wav"
+      ]
+     },
+     {
+      "file": "cello/54_v2_r7.ogg",
+      "midi": 54,
+      "cents": 0.013,
+      "layer": 2,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/Gb2_f_g.wav"
+      ]
+     },
+     {
+      "file": "cello/57_v0_r4.ogg",
+      "midi": 57,
+      "cents": 0.001,
+      "layer": 0,
+      "rr": 4,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/A2_p_d.wav"
+      ]
+     },
+     {
+      "file": "cello/57_v0_r7.ogg",
+      "midi": 57,
+      "cents": 0.016,
+      "layer": 0,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/A2_p_g.wav"
+      ]
+     },
+     {
+      "file": "cello/57_v1_r4.ogg",
+      "midi": 57,
+      "cents": 0.015,
+      "layer": 1,
+      "rr": 4,
+      "seconds": 4.384,
+      "from": [
+       "Samples/sus/A2_mf_d.wav"
+      ]
+     },
+     {
+      "file": "cello/57_v1_r7.ogg",
+      "midi": 57,
+      "cents": 0.021,
+      "layer": 1,
+      "rr": 7,
+      "seconds": 4.153,
+      "from": [
+       "Samples/sus/A2_mf_g.wav"
+      ]
+     },
+     {
+      "file": "cello/57_v2_r4.ogg",
+      "midi": 57,
+      "cents": -0.005,
+      "layer": 2,
+      "rr": 4,
+      "seconds": 4.247,
+      "from": [
+       "Samples/sus/A2_f_d.wav"
+      ]
+     },
+     {
+      "file": "cello/57_v2_r7.ogg",
+      "midi": 57,
+      "cents": 0.015,
+      "layer": 2,
+      "rr": 7,
+      "seconds": 4.046,
+      "from": [
+       "Samples/sus/A2_f_g.wav"
+      ]
+     },
+     {
+      "file": "cello/60_v0_r4.ogg",
+      "midi": 60,
+      "cents": 0.021,
+      "layer": 0,
+      "rr": 4,
+      "seconds": 3.566,
+      "from": [
+       "Samples/sus/C3_p_d.wav"
+      ]
+     },
+     {
+      "file": "cello/60_v0_r7.ogg",
+      "midi": 60,
+      "cents": 0.046,
+      "layer": 0,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/C3_p_g.wav"
+      ]
+     },
+     {
+      "file": "cello/60_v1_r4.ogg",
+      "midi": 60,
+      "cents": -0.035,
+      "layer": 1,
+      "rr": 4,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/C3_mf_d.wav"
+      ]
+     },
+     {
+      "file": "cello/60_v1_r7.ogg",
+      "midi": 60,
+      "cents": -0.009,
+      "layer": 1,
+      "rr": 7,
+      "seconds": 4.426,
+      "from": [
+       "Samples/sus/C3_mf_g.wav"
+      ]
+     },
+     {
+      "file": "cello/60_v2_r4.ogg",
+      "midi": 60,
+      "cents": -0.013,
+      "layer": 2,
+      "rr": 4,
+      "seconds": 4.153,
+      "from": [
+       "Samples/sus/C3_f_d.wav"
+      ]
+     },
+     {
+      "file": "cello/60_v2_r7.ogg",
+      "midi": 60,
+      "cents": -0.013,
+      "layer": 2,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/C3_f_g.wav"
+      ]
+     },
+     {
+      "file": "cello/63_v0_r4.ogg",
+      "midi": 63,
+      "cents": 0.056,
+      "layer": 0,
+      "rr": 4,
+      "seconds": 4.426,
+      "from": [
+       "Samples/sus/Eb3_p_d.wav"
+      ]
+     },
+     {
+      "file": "cello/63_v0_r7.ogg",
+      "midi": 63,
+      "cents": 0.02,
+      "layer": 0,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/Eb3_p_g.wav"
+      ]
+     },
+     {
+      "file": "cello/63_v1_r4.ogg",
+      "midi": 63,
+      "cents": 0.015,
+      "layer": 1,
+      "rr": 4,
+      "seconds": 4.362,
+      "from": [
+       "Samples/sus/Eb3_mf_d.wav"
+      ]
+     },
+     {
+      "file": "cello/63_v1_r7.ogg",
+      "midi": 63,
+      "cents": 0.057,
+      "layer": 1,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/Eb3_mf_g.wav"
+      ]
+     },
+     {
+      "file": "cello/63_v2_r4.ogg",
+      "midi": 63,
+      "cents": 0.031,
+      "layer": 2,
+      "rr": 4,
+      "seconds": 4.165,
+      "from": [
+       "Samples/sus/Eb3_f_d.wav"
+      ]
+     },
+     {
+      "file": "cello/63_v2_r7.ogg",
+      "midi": 63,
+      "cents": -0.033,
+      "layer": 2,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/Eb3_f_g.wav"
+      ]
+     },
+     {
+      "file": "cello/66_v0_r4.ogg",
+      "midi": 66,
+      "cents": 0.045,
+      "layer": 0,
+      "rr": 4,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/Gb3_p_d.wav"
+      ]
+     },
+     {
+      "file": "cello/66_v0_r7.ogg",
+      "midi": 66,
+      "cents": 0.03,
+      "layer": 0,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/Gb3_p_g.wav"
+      ]
+     },
+     {
+      "file": "cello/66_v1_r4.ogg",
+      "midi": 66,
+      "cents": -0.011,
+      "layer": 1,
+      "rr": 4,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/Gb3_mf_d.wav"
+      ]
+     },
+     {
+      "file": "cello/66_v1_r7.ogg",
+      "midi": 66,
+      "cents": 0.01,
+      "layer": 1,
+      "rr": 7,
+      "seconds": 4.29,
+      "from": [
+       "Samples/sus/Gb3_mf_g.wav"
+      ]
+     },
+     {
+      "file": "cello/66_v2_r4.ogg",
+      "midi": 66,
+      "cents": -0.021,
+      "layer": 2,
+      "rr": 4,
+      "seconds": 3.724,
+      "from": [
+       "Samples/sus/Gb3_f_d.wav"
+      ]
+     },
+     {
+      "file": "cello/66_v2_r7.ogg",
+      "midi": 66,
+      "cents": 0.047,
+      "layer": 2,
+      "rr": 7,
+      "seconds": 4.018,
+      "from": [
+       "Samples/sus/Gb3_f_g.wav"
+      ]
+     },
+     {
+      "file": "cello/69_v0_r4.ogg",
+      "midi": 69,
+      "cents": -0.022,
+      "layer": 0,
+      "rr": 4,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/A3_p_d.wav"
+      ]
+     },
+     {
+      "file": "cello/69_v0_r7.ogg",
+      "midi": 69,
+      "cents": 0.05,
+      "layer": 0,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/A3_p_g.wav"
+      ]
+     },
+     {
+      "file": "cello/69_v1_r4.ogg",
+      "midi": 69,
+      "cents": 0.021,
+      "layer": 1,
+      "rr": 4,
+      "seconds": 3.818,
+      "from": [
+       "Samples/sus/A3_mf_d.wav"
+      ]
+     },
+     {
+      "file": "cello/69_v1_r7.ogg",
+      "midi": 69,
+      "cents": 0.065,
+      "layer": 1,
+      "rr": 7,
+      "seconds": 3.956,
+      "from": [
+       "Samples/sus/A3_mf_g.wav"
+      ]
+     },
+     {
+      "file": "cello/69_v2_r4.ogg",
+      "midi": 69,
+      "cents": -0.04,
+      "layer": 2,
+      "rr": 4,
+      "seconds": 3.981,
+      "from": [
+       "Samples/sus/A3_f_d.wav"
+      ]
+     },
+     {
+      "file": "cello/69_v2_r7.ogg",
+      "midi": 69,
+      "cents": 0.051,
+      "layer": 2,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/A3_f_g.wav"
+      ]
+     },
+     {
+      "file": "cello/72_v0_r4.ogg",
+      "midi": 72,
+      "cents": -0.026,
+      "layer": 0,
+      "rr": 4,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/C4_p_d.wav"
+      ]
+     },
+     {
+      "file": "cello/72_v0_r7.ogg",
+      "midi": 72,
+      "cents": 0.064,
+      "layer": 0,
+      "rr": 7,
+      "seconds": 4.5,
+      "from": [
+       "Samples/sus/C4_p_g.wav"
+      ]
+     },
+     {
+      "file": "cello/72_v1_r4.ogg",
+      "midi": 72,
+      "cents": 0.012,
+      "layer": 1,
+      "rr": 4,
+      "seconds": 4.327,
+      "from": [
+       "Samples/sus/C4_mf_d.wav"
+      ]
+     },
+     {
+      "file": "cello/72_v1_r7.ogg",
+      "midi": 72,
+      "cents": 0.048,
+      "layer": 1,
+      "rr": 7,
+      "seconds": 4.423,
+      "from": [
+       "Samples/sus/C4_mf_g.wav"
+      ]
+     },
+     {
+      "file": "cello/72_v2_r4.ogg",
+      "midi": 72,
+      "cents": -0.059,
+      "layer": 2,
+      "rr": 4,
+      "seconds": 3.48,
+      "from": [
+       "Samples/sus/C4_f_d.wav"
+      ]
+     },
+     {
+      "file": "cello/72_v2_r7.ogg",
+      "midi": 72,
+      "cents": 0.029,
+      "layer": 2,
+      "rr": 7,
+      "seconds": 4.401,
+      "from": [
+       "Samples/sus/C4_f_g.wav"
+      ]
+     }
+    ]
+   },
+   "skipped": [
+    {
+     "note": "C1",
+     "layer": 0,
+     "rr": 4
+    },
+    {
+     "note": "Eb1",
+     "layer": 0,
+     "rr": 4
+    }
+   ]
   }
  }
 }

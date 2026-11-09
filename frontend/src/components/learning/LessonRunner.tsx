@@ -3,6 +3,7 @@ import {
   api,
   type ApiError,
   type AttemptResult,
+  type ExternalResource,
   type LessonDetail,
   type LessonExercise,
   type LessonLearningProgress,
@@ -266,6 +267,7 @@ export default function LessonRunner({
           <summary className="min-h-11 cursor-pointer content-center font-semibold">Tài liệu tham khảo của bài ({lesson.sources.length})</summary>
           <ul className="mt-2 grid gap-3">{lesson.sources.map((source) => <li key={`${source.source_id}-${source.locator}`}><b>{source.title}</b><br/><span className={ui.hint}>{source.locator}</span>{source.note && <><br/><small className={ui.hint}>{source.note}</small></>}</li>)}</ul>
         </details>
+        {(lesson.external_resources?.length ?? 0) > 0 && <ExternalResources items={lesson.external_resources!} />}
       </>,
     },
   ];
@@ -624,4 +626,18 @@ function Flashcard({ front, back, mode }: { front: string; back: string; mode: s
   return <button type="button" aria-expanded={revealed} className="grid w-full gap-1 rounded-xl border border-line bg-bg p-4 text-left text-ink hover:border-primary" onClick={() => setRevealed((value) => !value)}>
     <small className="text-xs font-semibold tracking-wide text-muted uppercase">{REVIEW_MODE_LABELS[mode] ?? mode}</small><b>{front}</b><span className={revealed ? "text-ink" : "text-muted"}>{revealed ? back : "Tự nhớ đáp án trước, rồi bấm để lật thẻ"}</span>
   </button>;
+}
+
+/** GĐ5: học thêm ngoài HarmonyMentor. Chỉ là liên kết mở tab mới (không nhúng, không chép nội dung). */
+function ExternalResources({ items }: { items: ExternalResource[] }) {
+  return <section className="mt-4 rounded-xl border border-line bg-surface px-4 py-3" aria-labelledby="hoc-them">
+    <h3 id="hoc-them" className="font-semibold">Học thêm bên ngoài ({items.length})</h3>
+    <p className={ui.hint}>Sách mở miễn phí của các trường đại học, bằng tiếng Anh. Mở ở tab mới.</p>
+    <ul className="mt-2 grid gap-3">{items.map((item) => <li key={item.url}>
+      <a href={item.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary underline-offset-2 hover:underline">
+        {item.title}<span className="sr-only"> (mở tab mới)</span></a>
+      {item.draft && <> <Badge tone="muted">Nháp, chờ duyệt</Badge></>}
+      <br/><span className={ui.hint}>{item.why_vi}</span><br/><small className={ui.hint}>{item.source}</small>
+    </li>)}</ul>
+  </section>;
 }
