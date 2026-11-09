@@ -9,6 +9,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from .draft_l06_l08 import L06_DRAFT_BLOCKS, L07_DRAFT_BLOCKS, L08_DRAFT_BLOCKS
+
 from .curriculum_specs import (
     FANK_CHROMATIC,
     FANK_DIATONIC,
@@ -300,7 +302,11 @@ L05_DRAFT_BLOCKS: list[tuple[str, str, dict[str, Any]]] = [
 ]
 
 # Bài chưa có khối lý thuyết trong curriculum_specs: dùng khối soạn ở GĐ3 (L05 đã duyệt, không còn status draft).
-DRAFT_LESSON_BLOCKS: dict[str, list[tuple[str, str, dict[str, Any]]]] = {"L05": L05_DRAFT_BLOCKS}
+DRAFT_LESSON_BLOCKS: dict[str, list[tuple[str, str, dict[str, Any]]]] = {
+    "L05": L05_DRAFT_BLOCKS,
+    # L06–L08: nháp lý thuyết 08/11/2026, mỗi khối status draft nên ẩn với người học và AI Tutor tới khi Đạt duyệt.
+    "L06": L06_DRAFT_BLOCKS, "L07": L07_DRAFT_BLOCKS, "L08": L08_DRAFT_BLOCKS,
+}
 
 
 def blocks_with_drafts(spec: dict[str, Any]) -> list[tuple[str, str, dict[str, Any]]]:
