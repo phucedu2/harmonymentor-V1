@@ -46,3 +46,4 @@ Giảng viên cho phép dùng AI để viết code với điều kiện ghi rõ.
 Nguyên tắc nhóm: không gộp code AI viết khi chưa có người trong nhóm đọc diff và giải thích lại được.
 | 08/11 | Góp ý thầy GĐ4 (nhạc cụ backing track) | Claude Code | Thêm kênh Dây (cello CC0) và 3 âm sắc guitar (Web Audio) cho Harmony Lab; script dựng mẫu đo cao độ YIN. Không tự nghe thử; không dùng Emilyguitar vì là guitar điện | Chưa ký |
 | 09/11 | Góp ý thầy GĐ5 (thực hành + học thêm) | Claude Code + Firecrawl (đọc mục lục Open Music Theory) | Trả lời Luyện tập bằng piano ảo (Engine chấm lớp cao độ, nhắc cách viết chuẩn); 16 liên kết sách mở miễn phí cho L01–L05, để nháp chờ Đạt duyệt. Không sửa Engine | Chưa ký |
+| 09/11 | Góp ý thầy GĐ6 (đánh giá tổng kết) | Claude Code | Soạn khung đánh giá, bảng số đã đo kèm mức tin, kế hoạch thử với người học thật và phiếu đồng ý mẫu. Không chạy thử với người thật, không có số mới | Chưa ký |
