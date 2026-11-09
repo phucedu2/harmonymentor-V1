@@ -12,7 +12,7 @@ import { BandMixer } from "./mixer";
 import { instrumentsFor, loadInstruments, loadManifest, preferLite, type LoadProgress } from "./samples";
 import { SongFx } from "./songFx";
 import { BLOCK_BEATS, automationAt, beatToSeconds, splitBlocks, tempoAt } from "./songSchedule";
-import { BAND_CHANNELS, type Arrangement, type BandChannel, type BandMix, type PlayHit } from "./types";
+import { BAND_CHANNELS, type Arrangement, type BandChannel, type BandMix, type GuitarTone, type PlayHit } from "./types";
 
 export type PlayOptions = {
   arrangement: Arrangement;
@@ -20,6 +20,8 @@ export type PlayOptions = {
   seed: number;
   loop: boolean;
   mix: BandMix;
+  /** Âm sắc guitar; bỏ trống = theo phong cách. */
+  guitarTone?: GuitarTone;
   vinyl?: boolean;
   /** Chế độ Bài hát: phát từ phách này (bấm một đoạn trên dòng thời gian để nhảy tới). */
   startBeat?: number;
@@ -32,22 +34,24 @@ export type PlayOptions = {
 
 const CHANNEL_OF: Record<string, BandChannel> = {
   piano: "chords", epiano: "chords", clav: "chords", bass: "bass", upright: "bass",
-  guitar: "guitar", guitar_mute: "guitar", drums: "drums", perc: "drums",
+  guitar: "guitar", guitar_mute: "guitar", drums: "drums", perc: "drums", cello: "strings",
 };
 
 const isSong = (arr: Arrangement) => arr.mode === "song";
 
 /** Nhạc cụ cần tải: thêm nhạc cụ của hook (vd bossa phím điện nhưng hook là piano). */
-function neededKeys(arr: Arrangement): string[] {
+function neededKeys(arr: Arrangement, strings = false): string[] {
   const keys = instrumentsFor({ keys: arr.tracks.keys.instrument, bass: arr.tracks.bass.instrument }, true);
+  if (strings) keys.push("cello");
   const hook = arr.tracks.hook;
   if (hook && hook.events.length && !keys.includes(hook.instrument)) keys.push(hook.instrument);
   return keys;
 }
 
 /** Dựng nhạc cụ cho một bản phối, nối vào bàn trộn. Dùng chung cho phát trực tiếp và thu offline (Tone.Offline). */
-export async function buildBand(arr: Arrangement, lite: boolean, useSamples: boolean, mixer: BandMixer) {
+export async function buildBand(arr: Arrangement, lite: boolean, useSamples: boolean, mixer: BandMixer, withStrings = false) {
   const keys = instrumentsFor({ keys: arr.tracks.keys.instrument, bass: arr.tracks.bass.instrument }, true);
+  if (withStrings) keys.push("cello");
   const manifest = useSamples ? await loadManifest() : null;
   const band = new Map<string, BandInstrument>();
   for (const key of keys) {
@@ -127,25 +131,25 @@ class BandPlayer {
   lastError: string | null = null;
 
   /** Tải trước mẫu của phong cách (gọi khi người dùng chọn phong cách) để bấm Phát nghe ngay. */
-  async preload(arr: Arrangement, onProgress?: (p: LoadProgress) => void): Promise<void> {
-    await loadInstruments(neededKeys(arr), preferLite(), onProgress);
+  async preload(arr: Arrangement, onProgress?: (p: LoadProgress) => void, strings = false): Promise<void> {
+    await loadInstruments(neededKeys(arr, strings), preferLite(), onProgress);
   }
 
-  private async ensureBand(arr: Arrangement, onProgress?: (p: LoadProgress) => void) {
+  private async ensureBand(arr: Arrangement, onProgress?: (p: LoadProgress) => void, strings = false) {
     const fxKey = JSON.stringify(arr.fx);
-    const key = `${arr.style}|${fxKey}|${arr.tracks.keys.instrument}|${arr.tracks.bass.instrument}|${arr.tracks.hook?.instrument ?? "-"}|${arr.tracks.hook?.events.length ? 1 : 0}`;
+    const key = `${arr.style}|${fxKey}|${arr.tracks.keys.instrument}|${arr.tracks.bass.instrument}|${arr.tracks.hook?.instrument ?? "-"}|${arr.tracks.hook?.events.length ? 1 : 0}|${strings ? "s" : "-"}`;
     if (this.band && this.bandKey === key) return;
     this.disposeBand();
     this.mixer = new BandMixer(arr.fx, Tone.getDestination(), arr.style);
     let useSamples = true;
     try {
-      await this.preload(arr, onProgress);
+      await this.preload(arr, onProgress, strings);
     } catch (e) {
       useSamples = false;
       this.lastError = e instanceof Error ? e.message : String(e);
     }
     this.mode = useSamples ? "sample" : "synth";
-    this.band = await buildBand(arr, preferLite(), useSamples, this.mixer);
+    this.band = await buildBand(arr, preferLite(), useSamples, this.mixer, strings);
     const manifest = useSamples ? await loadManifest().catch(() => null) : null;
     this.fx = new SongFx(this.mixer.input("drums"), manifest?.instruments.drums);
     await this.mixer.ready;
@@ -155,6 +159,11 @@ class BandPlayer {
   setMix(mix: BandMix): void {
     this.mix = mix;
     this.mixer?.applyMix(mix);
+  }
+
+  /** Đổi âm sắc guitar ngay khi đang nghe (chỉ đổi tham số bộ lọc/méo, không dựng lại ban nhạc). */
+  setGuitarTone(tone: GuitarTone): void {
+    this.mixer?.setGuitarTone(tone);
   }
 
   setVinyl(on: boolean): void {
@@ -169,15 +178,18 @@ class BandPlayer {
   async play(o: PlayOptions): Promise<void> {
     await Tone.start();
     this.stop();
-    await this.ensureBand(o.arrangement, o.onProgress);
+    // Kênh Dây (cello) chỉ tải mẫu và phát khi người học bật; tắt thì bản phối nghe y hệt trước đây.
+    const strings = !(o.mix.strings?.muted ?? true);
+    await this.ensureBand(o.arrangement, o.onProgress, strings);
     this.setMix(o.mix);
+    this.mixer?.setGuitarTone(o.guitarTone ?? "auto");
     const arr = o.arrangement;
     const transport = Tone.getTransport();
     this.userBpm = o.bpm;
     transport.bpm.cancelScheduledValues(0);
     transport.bpm.value = o.bpm;
     transport.swing = 0; // swing đã tính trong humanize theo từng phong cách
-    const hits = humanize(arr, { seed: o.seed, bpm: o.bpm });
+    const hits = humanize(arr, { seed: o.seed, bpm: o.bpm, strings });
     this.mixer?.resetAutomation();
     if (isSong(arr)) this.playSong(o, hits);
     else this.playLoop(o, hits);

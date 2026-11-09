@@ -14,6 +14,7 @@ Mọi mẫu trong thư mục này lấy từ thư viện có giấy phép CC0 ho
 | guitar_mute | Black And Green Guitars (Gretsch Anniversary) | Karoryfer Lecolds / Brian Wood | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | https://github.com/sfzinstruments/karoryfer.black-and-green-guitars.git (`b3b3249d37`) | 28 |
 | drums | Big Rusty Drums | Karoryfer Lecolds | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | https://github.com/sfzinstruments/karoryfer.big-rusty-drums.git (`f07ce00df3`) | 133 |
 | perc | Versilian Community Sample Library (VCSL) | Versilian Studios / Sam Gossner | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | https://github.com/sgossner/VCSL.git (`c1ea7bcc3c`) | 20 |
+| cello | Karoryfer x Bigcat Cello (arco sustain) | Karoryfer Lecolds / Bigcat | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | https://github.com/sfzinstruments/karoryfer-bigcat.cello.git (`6fd75fbfc1`) | 76 |
 
 Salamander Grand Piano V3 © Alexander Holm, giấy phép CC BY 3.0: phải giữ dòng ghi công này khi phân phối.
 Các thư viện CC0 không bắt buộc ghi công; vẫn ghi để minh bạch nguồn gốc.
