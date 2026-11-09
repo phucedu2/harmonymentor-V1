@@ -128,31 +128,46 @@ function Exercise(props: {
   question: Record<string, string>; listAnswer?: boolean; onNext: () => void; showPiano?: boolean;
 }) {
   const [answer, setAnswer] = useState("");
+  // GĐ5: hợp âm và âm giai trả lời được bằng cách bấm piano; máy chủ chấm theo phím (lớp cao độ) rồi nhắc cách viết.
+  const [mode, setMode] = useState<"text" | "piano">("text");
+  const [keys, setKeys] = useState<string[]>([]);
+  const piano = props.showPiano && mode === "piano";
   const g = useGrader();
-  const next = () => { setAnswer(""); g.reset(); props.onNext(); };
+  const next = () => { setAnswer(""); setKeys([]); g.reset(); props.onNext(); };
   const expected = g.result ? ([] as string[]).concat(g.result.expected) : [];
+  const given = piano ? keys : splitNotes(answer);
   const submit = async () => {
-    const res = await api.practiceAttempt(props.kind, props.ctx.level, props.question, props.listAnswer ? splitNotes(answer) : answer.trim());
+    const res = piano
+      ? await api.practiceAttempt(props.kind, props.ctx.level, props.question, keys, "piano")
+      : await api.practiceAttempt(props.kind, props.ctx.level, props.question, props.listAnswer ? splitNotes(answer) : answer.trim());
     props.ctx.onRecorded();
     return res;
   };
+  const ready = piano ? keys.length > 0 : Boolean(answer.trim());
   return (
     <Card className="max-w-3xl">
-      <p className="text-xl leading-snug text-ink">{props.prompt}</p><p className="mt-2 text-sm text-muted">{props.hint}</p>
-      <form className="mt-4 flex flex-wrap gap-2" onSubmit={(e) => { e.preventDefault(); if (answer.trim()) g.run(submit); }}>
-        <input className="min-h-11 min-w-0 flex-[1_1_14rem] rounded-lg border border-line bg-surface px-3 font-mono text-base text-ink placeholder:text-muted" value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder={props.placeholder} aria-label="Đáp án" />
-        <Button type="submit" disabled={g.busy || !answer.trim()}>Kiểm tra</Button>
+      <p className="text-xl leading-snug text-ink">{props.prompt}</p>
+      <p className="mt-2 text-sm text-muted">{piano ? (props.kind === "scale"
+        ? "Bấm lần lượt 7 phím đi lên theo thứ tự bậc. Máy chấm theo phím, rồi nhắc bạn cách viết tên nốt chuẩn."
+        : "Bấm các phím của hợp âm (thứ tự nào cũng được). Máy chấm theo phím, rồi nhắc bạn cách viết tên nốt chuẩn.") : props.hint}</p>
+      {props.showPiano && <ToggleGroup className="mt-3" label="Cách trả lời" value={mode}
+        onChange={(v) => { setMode(v); g.reset(); }} options={[{ value: "text", label: "Gõ tên nốt" }, { value: "piano", label: "Bấm piano" }]} />}
+      {piano && <VirtualPiano selectionMode selectedNotes={keys} onSelectionChange={setKeys} showLabels={false} startMidi={48} endMidi={72}
+        highlightedPitchClasses={g.result ? expected : []} incorrectPitchClasses={g.result && !g.result.correct ? given : []} />}
+      <form className="mt-4 flex flex-wrap gap-2" onSubmit={(e) => { e.preventDefault(); if (ready) g.run(submit); }}>
+        {!piano && <input className="min-h-11 min-w-0 flex-[1_1_14rem] rounded-lg border border-line bg-surface px-3 font-mono text-base text-ink placeholder:text-muted" value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder={props.placeholder} aria-label="Đáp án" />}
+        <Button type="submit" disabled={g.busy || !ready}>Kiểm tra</Button>
         <Button type="button" variant="secondary" onClick={next}>Câu khác</Button>
       </form>
       {g.error && <div className="mt-3"><Alert tone="danger">{g.error}</Alert></div>}
       {g.result && (
         <ResultBox correct={g.result.correct}>
-          {!g.result.correct && <p>{g.result.message_vi}</p>}
+          {(!g.result.correct || piano) && <p>{g.result.message_vi}</p>}
           {!g.result.correct && <p>Đáp án đúng: <b className="font-mono">{expected.join(" ")}</b></p>}
           {g.result.convention_verified === false && <p className="text-xs text-muted">Lưu ý: cách viết ký hiệu này chưa được đối chiếu với tài liệu nguồn.</p>}
         </ResultBox>
       )}
-      {props.showPiano && g.result && <VirtualPiano highlightedPitchClasses={expected} incorrectPitchClasses={g.result.correct ? [] : splitNotes(answer)} showLabels={false} startMidi={48} endMidi={72} />}
+      {props.showPiano && !piano && g.result && <VirtualPiano highlightedPitchClasses={expected} incorrectPitchClasses={g.result.correct ? [] : splitNotes(answer)} showLabels={false} startMidi={48} endMidi={72} />}
     </Card>
   );
 }
@@ -213,9 +228,11 @@ const KIND_LABEL: Record<PracticeKind, string> = { chord: "Hợp âm", interval:
 // Tóm tắt đề để đọc lại trong lịch sử; chỉ ghép chữ, không tính nhạc lý.
 function describeQuestion(item: PracticeHistoryItem): string {
   const q = item.question;
-  if (item.kind === "chord") return `Dựng ${q.symbol}`;
+  // Lượt bấm piano chấm theo phím (dễ hơn chấm chính tả), ghi rõ để người học không lẫn.
+  const via = q.input === "piano" ? " (bấm piano)" : "";
+  if (item.kind === "chord") return `Dựng ${q.symbol}${via}`;
   if (item.kind === "interval") return `${q.lower} → ${q.upper}`;
-  if (item.kind === "scale") return `${q.tonic} ${q.scale_type === "major" ? "trưởng" : "thứ tự nhiên"}`;
+  if (item.kind === "scale") return `${q.tonic} ${q.scale_type === "major" ? "trưởng" : "thứ tự nhiên"}${via}`;
   return `${q.chord} trong ${q.key} trưởng`;
 }
 
