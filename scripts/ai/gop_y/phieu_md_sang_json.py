@@ -4,7 +4,8 @@
     python ../scripts/ai/gop_y/phieu_md_sang_json.py <phieu.md> --nguoi Phuc  --vai-tro dev  --out ../docs/giai-doan/ai-gop-y/phieu-cau-hoi/phieu_Phuc_dev.json
     python ../scripts/ai/gop_y/phieu_md_sang_json.py <phieu.md> --nguoi Dat   --vai-tro test --out <thư mục riêng của Thắng>/phieu_Dat_test.json
 
-Đọc bảng (mẫu PHIEU_TU_VIET_CAU_HOI.md) nằm dưới tiêu đề "## ... <tên>" (tên không dấu: Phuc, Dat, Thang). Dòng bảng: | # | flow | câu hỏi | bài | ghi chú |.
+Đọc bảng nằm dưới tiêu đề "## ... <tên>" (tên không dấu: Phuc, Dat, Thang). Dòng bảng: | mã | flow | câu hỏi | bài | ghi chú hoặc trả lời chuẩn | ... |
+(mẫu PHIEU_TU_VIET_CAU_HOI.md).
 Dừng với lỗi nếu còn ô câu hỏi trống, flow lạ, hoặc câu trùng: phiếu thiếu thì không đo, tránh số đẹp giả.
 """
 
@@ -36,11 +37,10 @@ def read_table(text: str, nguoi: str) -> list[dict]:
         if not inside or not line.strip().startswith("|"):
             continue
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
-        # STT dạng "7" hoặc "P07"/"Đ07"/"T07" (mẫu PHIEU_TU_VIET_CAU_HOI.md); bỏ dòng tiêu đề và dòng ---
-        m = re.fullmatch(r"[A-Za-zĐđ]?(\d+)", cells[0]) if len(cells) >= 3 else None
-        if not m:
+        # Mã câu: "1", "P01", "Đ01"; bỏ dòng tiêu đề và dòng ---.
+        if len(cells) < 3 or not re.fullmatch(r"[A-ZĐ]?\d+", cells[0]):
             continue
-        rows.append({"so": int(m[1]), "flow": cells[1].upper(), "q": cells[2],
+        rows.append({"so": cells[0], "flow": cells[1].upper(), "q": cells[2],
                      "bai": cells[3] if len(cells) > 3 else "", "ghi_chu": cells[4] if len(cells) > 4 else ""})
     return rows
 

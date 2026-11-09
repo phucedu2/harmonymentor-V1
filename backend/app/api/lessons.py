@@ -15,6 +15,7 @@ from ..contracts.learning import (
     StartLessonOut,
 )
 from ..auth.deps import get_current_user
+from ..content.external_resources import resources_for
 from ..content.versioning import block_visible, current_version, lesson_visible
 from ..db.models import Lesson, LessonSource, SourceWork, User
 from ..db.session import get_db
@@ -85,6 +86,7 @@ def get_lesson(lesson_id: str, db: Session = Depends(get_db)):
                       for r in sorted(lesson.review_items, key=lambda x: x.id)],
         sources=[SourceRefOut(source_id=work.id, title=work.title, author=work.author, locator=link.locator,
                               note=link.note, url=work.url) for link, work in sources],
+        external_resources=resources_for(lesson_id),
     )
 
 

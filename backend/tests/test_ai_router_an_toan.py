@@ -24,6 +24,28 @@ def test_cau_kho_chua_day_khong_vao_luong_A(question, flow, reason):
     assert (d.flow, d.reason) == (flow, reason)
 
 
+def test_engine_hieu_chat_luong_bang_chu():
+    # Phiếu dev Phúc P06: trước đây "B diminished" bị hiểu thành B trưởng (B D# F#).
+    from app.ai.tutor.engine_query import engine_answer
+
+    def tones(q):
+        return [(f["args"]["symbol"], f["result"]) for f in engine_answer(q).facts if f["tool"] == "get_chord_tones"]
+
+    assert tones("hợp âm B diminished bấm như thế nào") == [("Bdim", "B D F")]
+    assert tones("hop am tang cua C la gi") == [("Caug", "C E G#")]
+    assert tones("hợp âm A thứ gồm nốt gì") == [("Am", "A C E")]
+
+
+@pytest.mark.parametrize("question", ["triad la gi", "perfetc la gi trong bai 1", "tonic va dominant la gi"])
+def test_cau_dinh_nghia_ngan_kho_co_day_la_A(question):
+    assert router.decide(question, None).flow == "A"
+
+
+@pytest.mark.parametrize("question", ["hoa tri cua sat la may", "giong mi thu co may dau thang"])
+def test_cau_toan_chu_thuong_khong_bi_keo_vao_A(question):
+    assert router.decide(question, None).flow != "A"
+
+
 def test_go_sai_truong_khong_bi_coi_la_am_giai_la():
     assert router._scale_typo("âm giai trởưng") and router._scale_typo("âm giai tưởng")
     assert not router._scale_typo("âm giai blues") and not router._scale_typo("âm giai lydian")

@@ -34,16 +34,20 @@ _SYM = re.compile(rf"(?<![A-Za-z0-9#])(?P<sym>[A-G](?:#|b|♯|♭)?{_SUFFIX})(?!
 _SYM_LOWER = re.compile(r"(?<![A-Za-z0-9#])(?P<root>[a-g])(?P<acc>#|b)?(?P<suf>maj7|m7b5|dim7|m7|dim|aug|sus2|sus4)"
                         r"(?![A-Za-z0-9#])")
 # Chữ thường được, nhưng tên nốt phải viết hoa: "hợp âm gì" không được hiểu thành hợp âm G.
+# Chất lượng bằng chữ, cả tiếng Anh và không dấu. Thiếu "giảm/tăng" thì "hợp âm B diminished" bị hiểu thành B trưởng
+# (phiếu dev của Phúc, 09/11).
+# "tăng/tang dần, tốc, cường" là nghĩa khác, không phải hợp âm tăng (Thắng đồng ý nhận "tang" không dấu, 09/11).
+_KIND_WORDS = (r"trưởng|truong|thứ|thu|major|minor|giảm|giam|diminished|dim|"
+               r"(?:tăng|tang)(?!\s+(?:dần|dan|tốc|toc|cường|cuong))|augmented|aug")
+_KIND_SUFFIX = {"thứ": "m", "thu": "m", "minor": "m", "giảm": "dim", "giam": "dim", "diminished": "dim", "dim": "dim",
+                "tăng": "aug", "tang": "aug", "augmented": "aug", "aug": "aug"}
 _CHORD_WORD = re.compile(
-    rf"(?i:hợp âm|hop am|chord)\s+(?P<root>{NOTE})(?![A-Za-z0-9#])"
-    rf"(?:\s+(?P<kind>(?i:trưởng|truong|thứ|thu|major|minor|giảm|giam|diminished|dim|(?:tăng|tang)(?!\s+(?:dần|dan|tốc|toc|cường|cuong))|augmented|aug)\b))?"
+    rf"(?i:hợp âm|hop am|chord)\s+(?P<root>{NOTE})(?![A-Za-z0-9#])(?:\s+(?P<kind>(?i:{_KIND_WORDS}))(?![a-zà-ỹ0-9]))?"
     # Tên chất lượng khác đứng sau (half-diminished, sus, dominant…): không đoán là hợp âm trưởng.
     rf"(?!\s+(?i:(?:half|nửa|nua|dominant|bảy|bay|7)\b|sus|maj|add|m7|ø|°))")
-# Chất lượng viết bằng chữ → hậu tố Engine. Thiếu "diminished" từng làm "hợp âm B diminished" ra B trưởng (phiếu Phúc 09/11).
-# "tang" không dấu: Thắng đồng ý 09/11 (Phúc báo); trừ "tang dần/tốc/cường" vì đó là nghĩa khác, không phải hợp âm tăng.
-_KIND_SUFFIX = {"trưởng": "", "truong": "", "major": "", "thứ": "m", "thu": "m", "minor": "m",
-                "giảm": "dim", "giam": "dim", "diminished": "dim", "dim": "dim",
-                "tăng": "aug", "tang": "aug", "augmented": "aug", "aug": "aug"}
+# Chất lượng đứng trước nốt gốc: "hợp âm tăng của C", "hop am giam tren B".
+_CHORD_KIND_FIRST = re.compile(
+    rf"(?i:hợp âm|hop am|chord)\s+(?P<kind>(?i:{_KIND_WORDS}))\s+(?i:của|cua|of|trên|tren|từ|tu)\s+(?P<root>{NOTE})(?![A-Za-z0-9#])")
 _INTERVAL_WORDS = re.compile(r"quãng|quang|interval", re.IGNORECASE)
 _INTERVAL = re.compile(
     rf"(?:từ|tu|from)?\s*(?<![A-Za-z0-9#])(?P<lo>{NOTE})(?![A-Za-z0-9#])\s*(?:–|—|-|→|lên|len|đến|den|tới|toi|to)\s*"
@@ -157,7 +161,7 @@ def engine_answer(question: str, limit: int = 4) -> EngineAnswer:
     if not any(f["tool"] == "get_chord_tones" for f in out.facts):
         for m in _SYM_LOWER.finditer(text):
             _add(out, seen, "get_chord_tones", {"symbol": m["root"].upper() + (m["acc"] or "") + m["suf"]})
-    for m in _CHORD_WORD.finditer(text):
+    for m in [*_CHORD_WORD.finditer(text), *_CHORD_KIND_FIRST.finditer(text)]:
         kind = (m["kind"] or "").lower()
         sym = norm_accidentals(m["root"]) + _KIND_SUFFIX.get(kind, "")
         if sym not in roman_chords and not any(f["args"].get("symbol", "").startswith(sym) and

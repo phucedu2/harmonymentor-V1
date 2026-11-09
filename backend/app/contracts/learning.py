@@ -54,11 +54,23 @@ class LessonSummaryOut(BaseModel):
     review_item_count: int
 
 
+class ExternalResourceOut(BaseModel):
+    title: str
+    source: str
+    url: str
+    language: str
+    free: bool
+    why_vi: str
+    draft: bool = False
+
+
 class LessonDetailOut(LessonSummaryOut):
     blocks: list[LessonBlockOut]
     exercises: list[ExerciseOut]
     review_items: list[ReviewItemOut]
     sources: list[SourceRefOut]
+    # GĐ5: liên kết học thêm ngoài app (sách mở miễn phí), chỉ mục đã duyệt; mục nháp khi bật SHOW_DRAFT_CONTENT.
+    external_resources: list[ExternalResourceOut] = Field(default_factory=list)
 
 
 class AttemptIn(BaseModel):

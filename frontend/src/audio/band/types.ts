@@ -1,8 +1,12 @@
 // Kiểu dữ liệu bản phối do backend trả về (POST /composition/arrangement, ADR-012 đề xuất).
 // Cao độ (midi) do Music Engine dựng ở backend; frontend chỉ lệch phách người (humanize), phát và trộn.
 
-export type BandChannel = "chords" | "bass" | "guitar" | "drums" | "hook";
-export const BAND_CHANNELS: BandChannel[] = ["chords", "bass", "guitar", "drums", "hook"];
+export type BandChannel = "chords" | "bass" | "guitar" | "drums" | "hook" | "strings";
+export const BAND_CHANNELS: BandChannel[] = ["chords", "bass", "guitar", "drums", "hook", "strings"];
+
+/** Âm sắc guitar: "auto" theo phong cách (rock/indie có méo → heavy, còn lại clean); ba mức còn lại do người học chọn. */
+export type GuitarTone = "auto" | "clean" | "light" | "heavy";
+export const GUITAR_TONE_LABELS: Record<GuitarTone, string> = { auto: "Theo phong cách", clean: "Sạch", light: "Rè nhẹ", heavy: "Rè mạnh" };
 
 export type NoteArt = "block" | "roll" | "lh" | "sustain" | "dead" | "pick" | "down" | "up" | "mute" | "palm" | "stab";
 export type NoteEvent = { beat: number; dur: number; midi: number[]; vel: number; art: NoteArt };
@@ -77,7 +81,7 @@ export type Arrangement = {
 /** Một nhát đã humanize, sẵn sàng phát: `beat` đã có swing, `offset` (giây) là lệch người, `dur` tính bằng phách. */
 export type PlayHit = {
   channel: BandChannel;
-  instrument: string; // khóa trong manifest mẫu: piano, epiano, clav, bass, upright, guitar, guitar_mute, drums, perc
+  instrument: string; // khóa trong manifest mẫu: piano, epiano, clav, bass, upright, guitar, guitar_mute, drums, perc, cello
   beat: number;
   offset: number;
   dur: number;
@@ -93,4 +97,6 @@ export const DEFAULT_MIX: BandMix = {
   chords: { volume: 0.8, muted: false }, bass: { volume: 0.8, muted: false },
   guitar: { volume: 0.8, muted: false }, drums: { volume: 0.8, muted: false },
   hook: { volume: 0.8, muted: false },
+  // Kênh Dây (cello): mặc định tắt để bản phối cũ nghe y hệt; bật thì mới tải mẫu cello.
+  strings: { volume: 0.8, muted: true },
 };

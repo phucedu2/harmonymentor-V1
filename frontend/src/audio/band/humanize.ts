@@ -64,7 +64,45 @@ function accent(beat: number): number {
 
 const KEY_INST: Record<string, string> = { piano: "piano", epiano: "epiano", clav: "clav" };
 
-export type HumanizeOptions = { seed: number; bpm: number; lite?: boolean };
+export type HumanizeOptions = { seed: number; bpm: number; lite?: boolean; strings?: boolean };
+
+const CELLO_LOW = 43; // G2: cello thật không xuống thấp hơn C2 (36); chừa chỗ cho bass
+const CELLO_HIGH = 64; // E4: tầng đệm, không lấn phím
+
+/** Đưa nốt về tầm cello bằng cách dời cả quãng tám (giữ nguyên tên nốt, không đổi hợp âm). */
+export function foldIntoCello(midi: number): number {
+  let m = midi;
+  while (m < CELLO_LOW) m += 12;
+  while (m > CELLO_HIGH) m -= 12;
+  return m;
+}
+
+/**
+ * Đệm dây cho kênh "Dây": cello giữ hai nốt thấp nhất (khác tên nốt) của mỗi hợp âm phím, kéo cung suốt ô.
+ * Cao độ lấy từ chính nốt Music Engine đã dựng cho phím (chỉ dời quãng tám), không tự tính hợp âm ở frontend.
+ * Không dùng số ngẫu nhiên nên bật/tắt kênh Dây không làm đổi lệch phách của các kênh khác.
+ */
+export function stringsPad(arr: Arrangement): PlayHit[] {
+  const out: PlayHit[] = [];
+  for (const e of arr.tracks.keys.events) {
+    if (e.art === "dead" || e.art === "stab") continue;
+    const sorted = [...e.midi].sort((a, b) => a - b);
+    const seen = new Set<number>();
+    const picks: number[] = [];
+    for (const m of sorted) {
+      if (!seen.has(m % 12)) { seen.add(m % 12); picks.push(m); }
+      if (picks.length === 2) break;
+    }
+    picks.forEach((m, i) => {
+      out.push({
+        channel: "strings", instrument: "cello", beat: e.beat, offset: 0.012 * i,
+        dur: Math.max(0.5, e.dur * 0.98), midi: foldIntoCello(m), piece: null,
+        vel: Math.min(0.62, 0.42 + e.vel * 0.2), art: "sustain",
+      });
+    });
+  }
+  return out;
+}
 
 /**
  * Biến bản phối (phách, nốt, lực 1–127) thành danh sách nhát phát có lệch người.
@@ -146,6 +184,7 @@ export function humanize(arr: Arrangement, opts: HumanizeOptions): PlayHit[] {
       dur: e.dur * (0.9 + rand() * 0.08), midi: e.midi[0], piece: null, vel: velocity(e.vel, e.beat, 0.06), art: e.art,
     });
   }
+  if (opts.strings) hits.push(...stringsPad(arr));
   return hits.sort((a, b) => a.beat - b.beat || a.offset - b.offset);
 }
 

@@ -43,6 +43,9 @@ SOURCES = {
     "rusty": dict(url="https://github.com/sfzinstruments/karoryfer.big-rusty-drums.git",
                   name="Big Rusty Drums", author="Karoryfer Lecolds",
                   license="CC0 1.0", license_url="https://creativecommons.org/publicdomain/zero/1.0/"),
+    "cello": dict(url="https://github.com/sfzinstruments/karoryfer-bigcat.cello.git",
+                  name="Karoryfer x Bigcat Cello (arco sustain)", author="Karoryfer Lecolds / Bigcat",
+                  license="CC0 1.0", license_url="https://creativecommons.org/publicdomain/zero/1.0/"),
     "vcsl": dict(url="https://github.com/sgossner/VCSL.git",
                  name="Versilian Community Sample Library (VCSL)", author="Versilian Studios / Sam Gossner",
                  license="CC0 1.0", license_url="https://creativecommons.org/publicdomain/zero/1.0/"),
@@ -319,6 +322,14 @@ def build_config(repos: dict[str, Repo]) -> list[Instrument]:
             low=40, high=79, step=3, layers=[""], rrs=[1, 2], octave_shift=-1)
     insts.append(mute)
 
+    # Cello kéo cung (tên tệp thấp hơn tiếng thật 1 quãng tám, đã đo bằng YIN) (tầng đệm dây, kênh "Dây"): lớp sus của Bigcat, dây D (rr 4) và dây G (rr 7), nốt cách quãng 3 thứ.
+    # Chỉ lấy 3 trong 4 lớp lực (p, mf, f) và mono để bộ mẫu nhỏ; đuôi dài vì đệm dây giữ nốt cả ô.
+    cello = Instrument("cello", "cello", "Cello (bowed sustain)", 3, seconds=4.5, fade=1.0, mono=True, lite_layers=[1],
+                       octave_shift=1)
+    pitched(cello, repos["cello"], r"^Samples/sus/(?P<note>[A-G]b?\d)_(?P<layer>p|mf|f)_(?P<rr>[dg])\.wav$",
+            low=36, high=72, step=3, layers=["p", "mf", "f"], rrs=[4, 7], octave_shift=1)
+    insts.append(cello)
+
     # Trống acoustic: Big Rusty Drums, trộn mic gần + overhead thành một mẫu stereo cho mỗi nhát.
     kit = Instrument("drums", "rusty", "Acoustic kit (Big Rusty Drums)", 4, seconds={"default": 1.6}, fade=0.4,
                      lite_layers=[1, 3])
@@ -376,7 +387,13 @@ def main() -> None:
     cache = Path(args.cache)
     cache.mkdir(parents=True, exist_ok=True)
 
-    repos = {k: Repo(k, cache) for k in SOURCES}
+    class LazyRepos(dict):
+        """Chỉ clone kho nào thật sự được dùng (dựng riêng một nhạc cụ không phải tải cả 7 kho)."""
+        def __missing__(self, key):
+            self[key] = Repo(key, cache)
+            return self[key]
+
+    repos = LazyRepos()
     insts = build_config(repos)
     if args.only:
         insts = [i for i in insts if i.key in args.only]
