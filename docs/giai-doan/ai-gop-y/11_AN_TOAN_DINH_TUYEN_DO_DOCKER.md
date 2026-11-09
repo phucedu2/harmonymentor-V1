@@ -1,6 +1,7 @@
-# Định tuyến an toàn (09/11/2026)
+# Định tuyến an toàn, phần 2: đo trên phiếu dev 30 / test 20 trong Docker (09/11/2026)
 
-Mục tiêu: câu B/C (ngoài bài, ngoài phạm vi) bị trả lời như bài học ≤ 2%. Chỉ sửa `backend/app/ai/tutor/router.py`
+Nối tiếp `10_AN_TOAN_DINH_TUYEN.md` (commit 9c6ecee, 956c467: `_UNTAUGHT`, khớp không dấu). Phần này thêm luật cho các
+câu còn sai trên phiếu dev 30 và tập dev, rồi đo lại cả nhánh trong Docker. Chỉ sửa `backend/app/ai/tutor/router.py`
 (+ test `backend/tests/test_ai_router_an_toan.py`). Không đổi ngưỡng, `router_thresholds.json` giữ nguyên.
 
 **Câu hỏi do Claude soạn thay nhóm (phiếu) hoặc do Claude viết (tập dev), nên số dưới đây chỉ là tham khảo, chưa chứng
@@ -8,10 +9,10 @@ minh chất lượng với người học thật.**
 
 ## Sửa gì
 
-| Luật | Ví dụ câu trước đây sai |
+| Luật (phần 2) | Ví dụ câu trước đây sai |
 |---|---|
-| `later_lesson` so cả câu bỏ dấu; L06 nhận "muon hop am / muon tu giong"; L07 nhận hợp âm 9/11/13 | "Fm trong C truong muon tu dau ra vay" A→B |
-| `untaught_concept`: đảo hợp âm, quãng kép, nhịp, trường độ, khóa nhạc, vòng quãng 5, bass khác root, sus → B "không biết"; tự tắt khi kho có đoạn khớp | "dao hop am C lan 1 la sao", "quang 9 la gi" A→B |
+| L06 thêm "hợp âm mượn"; L07 thêm hợp âm 9/11/13 gõ thường ("fmaj9", "hop am 9") | "hop am 9 khac hop am 7 ra sao" A→B |
+| `_UNTAUGHT` thêm nhịp, trường độ, khóa nhạc, nốt bass, hợp âm sus; vòng quãng 5 nhận "vòng tròn quãng năm" | "Nhịp 6/8 đếm thế nào?", "hợp âm sus là gì" A→B |
 | `unknown_terms` mà tầng 1 không chắc nhạc lý (< 0,5) → C | "cho minh link tai nhac lau free" B→C |
 | `weak_music_oos`: nghiêng ngoài phạm vi, nhạc lý < 0,5, không ký hiệu → C | "Gợi ý phim hay cuối tuần" A→C |
 
