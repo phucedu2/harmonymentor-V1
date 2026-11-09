@@ -34,3 +34,17 @@ def test_later_lesson_khop_ca_khong_dau():
     assert router.later_lesson("muon hop am la gi") == "L06"
     assert router.later_lesson("mượn hợp âm là gì") == "L06"
     assert router.later_lesson("Cmaj9 co tension nao") == "L07"
+
+
+@pytest.mark.parametrize("q", [
+    "hợp âm bảy giảm là gì", "hợp âm bảy gim là gì", "hợp âm 6 là gì", "C6 gồm nốt nào",
+    "giọng La thứ có liên quan gì với Đô trưởng", "gam thu tu nhien dung sao", "âm giai thứ hòa âm khác giai điệu chỗ nào",
+])
+def test_khai_niem_chua_co_trong_kho_l01_l05(q):
+    """Kiểm kho 09/11: L01–L05 không dạy gam thứ tự nhiên/hòa âm/giai điệu, relative minor, hợp âm 6, bảy giảm."""
+    assert router.untaught_concept(q) is not None
+
+
+@pytest.mark.parametrize("q", ["Am là bậc mấy trong Đô trưởng", "Bdim gồm nốt nào", "giọng thứ là gì", "Am7 gồm nốt nào"])
+def test_cau_a_gan_giong_khong_bi_chan_nham(q):
+    assert router.untaught_concept(q) is None

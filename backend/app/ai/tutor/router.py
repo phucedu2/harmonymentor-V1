@@ -59,6 +59,13 @@ _LATER_CONCEPTS = {
 _UNTAUGHT = {
     "inversion": dict(pattern=r"\bdao hop am\b|\bthe dao\b|\bhop am dao\b|\binversions?\b|\bslash chord", marker=r"\bthe dao\b|\bdao hop am\b"),
     "compound_interval": dict(pattern=r"\bquang (?:kep|9|1[0-5])\b|\bcompound interval|\b(?:9|10|11|13)th\b", marker=r"\bquang kep\b|\bquang 9\b|\bcompound\b"),
+    # Thêm 09/11 sau khi kiểm kho: L01–L05 không có "gam thứ tự nhiên/hòa âm/giai điệu", "relative minor", hợp âm 6, bảy giảm.
+    "minor_scales": dict(pattern=r"\bgam thu (?:tu nhien|hoa am|giai dieu)\b|\b(?:am giai|gam) thu (?:tu nhien|hoa am|giai dieu)\b|\b(?:natural|harmonic|melodic) minor\b|\bthu (?:hoa am|giai dieu)\b",
+                         marker=r"\bgam thu\b|\b(?:natural|harmonic|melodic) minor\b|\bthu hoa am\b"),
+    "relative_minor": dict(pattern=r"\brelative (?:minor|major)\b|\bgiong thu (?:tuong ung|song hanh|ke can)\b|\bla thu\b.*\bdo truong\b|\bdo truong\b.*\bla thu\b",
+                           marker=r"\brelative\b|\bgiong thu tuong ung\b"),
+    "sixth_chord": dict(pattern=r"\bhop am 6\b|\bhop am sau\b|\b[a-g][#b]?6\b(?!\d)", marker=r"\bhop am 6\b|\b[a-g][#b]?6\b"),
+    "dim7_chord": dict(pattern=r"\bhop am bay (?:giam|gim)\b|\bdim7\b|\b[a-g][#b]?dim7\b", marker=r"\bbay giam\b|\bdim7\b"),
     "circle_of_fifths": dict(pattern=r"\bvong quang (?:5|nam)\b|\bcircle of fifths\b", marker=r"\bvong quang\b|\bcircle of fifths\b"),
 }
 _SYM_IN_KB = re.compile(r"(?<![A-Za-z0-9#])([A-G](?:#|b)?(?:maj7|M7|m7b5|ø7|dim7|°7|dim|°|aug|\+|m7|m|7|sus2|sus4|6|9)?)"
