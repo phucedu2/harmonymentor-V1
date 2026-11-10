@@ -107,7 +107,8 @@ def test_retriever_embedding_path_top_k_and_threshold():
 def test_retriever_falls_back_to_bm25():
     r = rt.retrieve("Cmaj7 khác C7 thế nào", None)
     assert r.method == "bm25" and r.fallback_reason == "ai_disabled" and r.hits
-    assert r.hits[0].chunk.lesson_id == "L02"
+    # BM25 sau khi L06, L08 vào kho: L08 (shell voicing, nhắc C7 nhiều lần) có thể đứng trên; L02 vẫn nằm trong top 4.
+    assert "L02" in [h.chunk.lesson_id for h in r.hits]
 
     class Down:
         model, dim = "gemini-embedding-001", 768

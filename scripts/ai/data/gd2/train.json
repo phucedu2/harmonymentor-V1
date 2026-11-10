@@ -4228,87 +4228,84 @@
   },
   {
    "q": "borrowed chord trong nhạc pop là gì",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L06",
-   "expect": "Bạn sẽ học sau ở L06",
    "group": "B-L06#0",
    "style": "goc",
    "base": "borrowed chord trong nhạc pop là gì",
-   "engine": null
+   "relabel": "B→A: L06 đã vào kho"
   },
   {
    "q": "borrowed chrod trong nhạc pop là gì",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L06",
-   "expect": "Bạn sẽ học sau ở L06",
    "group": "B-L06#0",
    "style": "loi_go",
-   "base": "borrowed chord trong nhạc pop là gì"
+   "base": "borrowed chord trong nhạc pop là gì",
+   "relabel": "B→A: L06 đã vào kho"
   },
   {
    "q": "borrowed chord trong nhac pop la gi",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L06",
-   "expect": "Bạn sẽ học sau ở L06",
    "group": "B-L06#0",
    "style": "khong_dau",
-   "base": "borrowed chord trong nhạc pop là gì"
+   "base": "borrowed chord trong nhạc pop là gì",
+   "relabel": "B→A: L06 đã vào kho"
   },
   {
    "q": "iv thứ trong giọng trưởng là mượn hợp âm phải không",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L06",
-   "expect": "Bạn sẽ học sau ở L06",
    "group": "B-L06#0",
    "style": "goc",
    "base": "iv thứ trong giọng trưởng là mượn hợp âm phải không",
-   "engine": null
+   "relabel": "B→A: L06 đã vào kho"
   },
   {
    "q": "iv thu trong giong truong la muon hop am phai khong",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L06",
-   "expect": "Bạn sẽ học sau ở L06",
    "group": "B-L06#0",
    "style": "khong_dau",
-   "base": "iv thứ trong giọng trưởng là mượn hợp âm phải không"
+   "base": "iv thứ trong giọng trưởng là mượn hợp âm phải không",
+   "relabel": "B→A: L06 đã vào kho"
   },
   {
    "q": "hỏi ngu tí: iv thứ trong giọng trưởng là mượn hợp âm phải không vậy ạ",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L06",
-   "expect": "Bạn sẽ học sau ở L06",
    "group": "B-L06#0",
    "style": "loi_goi",
-   "base": "iv thứ trong giọng trưởng là mượn hợp âm phải không"
+   "base": "iv thứ trong giọng trưởng là mượn hợp âm phải không",
+   "relabel": "B→A: L06 đã vào kho"
   },
   {
    "q": "bVII trong pop là gì",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L06",
-   "expect": "Bạn sẽ học sau ở L06",
    "group": "B-L06#1",
    "style": "goc",
    "base": "bVII trong pop là gì",
-   "engine": null
+   "relabel": "B→A: L06 đã vào kho"
   },
   {
    "q": "bVII trong pop là j",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L06",
-   "expect": "Bạn sẽ học sau ở L06",
    "group": "B-L06#1",
    "style": "go_tat",
-   "base": "bVII trong pop là gì"
+   "base": "bVII trong pop là gì",
+   "relabel": "B→A: L06 đã vào kho"
   },
   {
    "q": "bvii trong pop là gì",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L06",
-   "expect": "Bạn sẽ học sau ở L06",
    "group": "B-L06#1",
    "style": "chu_thuong",
-   "base": "bVII trong pop là gì"
+   "base": "bVII trong pop là gì",
+   "relabel": "B→A: L06 đã vào kho"
   },
   {
    "q": "lydian nghe có màu gì",
@@ -4640,88 +4637,84 @@
   },
   {
    "q": "shell voicing là gì",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L08",
-   "expect": "Bạn sẽ học sau ở L08",
    "group": "B-L08#0",
    "style": "goc",
    "base": "shell voicing là gì",
-   "engine": null
+   "relabel": "B→A: L08 đã vào kho"
   },
   {
    "q": "shlel voicing là gì",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L08",
-   "expect": "Bạn sẽ học sau ở L08",
    "group": "B-L08#0",
    "style": "loi_go",
-   "base": "shell voicing là gì"
+   "base": "shell voicing là gì",
+   "relabel": "B→A: L08 đã vào kho"
   },
   {
    "q": "drop 2 voicing chơi thế nào",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L08",
-   "expect": "Bạn sẽ học sau ở L08",
    "group": "B-L08#0",
    "style": "goc",
    "base": "drop 2 voicing chơi thế nào",
-   "engine": null
+   "relabel": "B→A: L08 đã vào kho"
   },
   {
    "q": "drop 2 voicing chơi sao",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L08",
-   "expect": "Bạn sẽ học sau ở L08",
    "group": "B-L08#0",
    "style": "go_tat",
-   "base": "drop 2 voicing chơi thế nào"
+   "base": "drop 2 voicing chơi thế nào",
+   "relabel": "B→A: L08 đã vào kho"
   },
   {
    "q": "bạn ơi drop 2 voicing chơi thế nào???",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L08",
-   "expect": "Bạn sẽ học sau ở L08",
    "group": "B-L08#0",
    "style": "loi_goi",
-   "base": "drop 2 voicing chơi thế nào"
+   "base": "drop 2 voicing chơi thế nào",
+   "relabel": "B→A: L08 đã vào kho"
   },
   {
    "q": "voicing piano jazz là gì",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L08",
-   "expect": "Bạn sẽ học sau ở L08",
    "group": "B-L08#0",
    "style": "goc",
    "base": "voicing piano jazz là gì",
-   "engine": null
+   "relabel": "B→A: L08 đã vào kho"
   },
   {
    "q": "voicing piano jazz la gi",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L08",
-   "expect": "Bạn sẽ học sau ở L08",
    "group": "B-L08#0",
    "style": "khong_dau_go_tat",
-   "base": "voicing piano jazz là gì"
+   "base": "voicing piano jazz là gì",
+   "relabel": "B→A: L08 đã vào kho"
   },
   {
    "q": "thế bấm hợp âm jazz trên piano",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L08",
-   "expect": "Bạn sẽ học sau ở L08",
    "group": "B-L08#0",
    "style": "goc",
    "base": "thế bấm hợp âm jazz trên piano",
-   "engine": null
+   "relabel": "B→A: L08 đã vào kho"
   },
   {
    "q": "the bam hop am jazz tren piano",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L08",
-   "expect": "Bạn sẽ học sau ở L08",
    "group": "B-L08#0",
    "style": "khong_dau",
-   "base": "thế bấm hợp âm jazz trên piano"
+   "base": "thế bấm hợp âm jazz trên piano",
+   "relabel": "B→A: L08 đã vào kho"
   },
   {
    "q": "át phụ là gì",

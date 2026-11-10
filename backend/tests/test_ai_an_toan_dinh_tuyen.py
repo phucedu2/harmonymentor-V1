@@ -31,9 +31,11 @@ def test_luat_tu_tat_khi_kho_bai_nhac_toi_khai_niem(monkeypatch):
 
 
 def test_later_lesson_khop_ca_khong_dau():
-    assert router.later_lesson("muon hop am la gi") == "L06"
-    assert router.later_lesson("mượn hợp âm là gì") == "L06"
+    # L06 đã vào kho (10/11/2026): luật "bài sau" của L06 tự tắt; chỉ còn L07.
+    assert router.later_lesson("muon hop am la gi") is None
+    assert router.later_lesson("mượn hợp âm là gì") is None
     assert router.later_lesson("Cmaj9 co tension nao") == "L07"
+    assert router.later_lesson("chord scale cua G7 la gi") == "L07"
 
 
 @pytest.mark.parametrize("q", [

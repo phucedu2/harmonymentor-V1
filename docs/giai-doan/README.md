@@ -38,6 +38,7 @@ Các giai đoạn 0.2 → 2.3 là lộ trình của bản code gốc (zip v0.1.0
 | [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Định tuyến an toàn: luật khái niệm chưa dạy (thế đảo, quãng kép, vòng quãng 5) + khớp không dấu; B/C trả lời như bài 12% → 0% trên phiếu 50 câu (không độc lập), test_tam chưa đổi (09/11) | [10_AN_TOAN_DINH_TUYEN.md](ai-gop-y/10_AN_TOAN_DINH_TUYEN.md) |
 | [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Phiếu dev 30 câu của Phúc: sửa "B diminished" ra B trưởng (engine_query, chờ Thắng), e5 gốc 90% đúng luồng, R@1 truy xuất 4/12 (không độc lập) (09/11) | [13_PHIEU_PHUC_DEV.md](ai-gop-y/13_PHIEU_PHUC_DEV.md) |
 | [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Phát hành L06–L08 cho người học và 15 liên kết sách mở sau khi Đạt duyệt; chưa nạp kho AI Tutor (09/11) | [14_PHAT_HANH_L06_L08.md](ai-gop-y/14_PHAT_HANH_L06_L08.md) |
+| [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Mở bài L05, L06, L08 cho người học (L07 chờ Engine); L06, L08 vào kho AI Tutor, chọn lại ngưỡng; đính chính báo cáo 14 (10/11) | [15_MO_KHOA_L05_L06_L08.md](ai-gop-y/15_MO_KHOA_L05_L06_L08.md) |
 
 ## Quy ước cho giai đoạn sau
 

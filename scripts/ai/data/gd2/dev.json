@@ -1079,21 +1079,21 @@
   },
   {
    "q": "rootless voicing là gì",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L08",
-   "expect": "Bạn sẽ học sau ở L08",
    "group": "B-L08#1",
    "style": "chu_thuong",
-   "base": "rootless voicing là gì"
+   "base": "rootless voicing là gì",
+   "relabel": "B→A: L08 đã vào kho"
   },
   {
    "q": "rootless voicing la gi",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L08",
-   "expect": "Bạn sẽ học sau ở L08",
    "group": "B-L08#1",
    "style": "khong_dau",
-   "base": "rootless voicing là gì"
+   "base": "rootless voicing là gì",
+   "relabel": "B→A: L08 đã vào kho"
   },
   {
    "q": "fugue là thể loại gì",

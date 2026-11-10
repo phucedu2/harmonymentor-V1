@@ -104,12 +104,14 @@ def test_kb_coverage_is_derived_from_kb():
 
 
 def test_later_lesson_rule_turns_off_when_lesson_enters_kb(monkeypatch):
-    assert router.later_lesson("Modal interchange là gì?") == "L06"
-    assert router.later_lesson("Shell voicing là gì?") == "L08"
-    assert router.later_lesson("Đóng vai trò voice leading thế nào?") is None   # "voice leading" là L04
-    fake = [*knowledge_base(), type(knowledge_base()[0])(**{**knowledge_base()[0].__dict__, "lesson_id": "L06"})]
-    monkeypatch.setattr(router, "knowledge_base", lambda: fake)
+    # L06, L08 đã vào kho (10/11/2026): luật của hai bài này đã tắt; L07 còn chờ Thắng quyết Engine.
     assert router.later_lesson("Modal interchange là gì?") is None
+    assert router.later_lesson("Shell voicing là gì?") is None
+    assert router.later_lesson("Chord-scale là gì?") == "L07"
+    assert router.later_lesson("Đóng vai trò voice leading thế nào?") is None   # "voice leading" là L04
+    fake = [*knowledge_base(), type(knowledge_base()[0])(**{**knowledge_base()[0].__dict__, "lesson_id": "L07"})]
+    monkeypatch.setattr(router, "knowledge_base", lambda: fake)
+    assert router.later_lesson("Chord-scale là gì?") is None
 
 
 def test_unknown_terms():
@@ -271,9 +273,9 @@ def test_api_flow_b_engine_no_llm(fake):
 
 
 def test_api_flow_b_later_lesson(fake):
-    body = ask("Modal interchange là gì?")
+    body = ask("Chord-scale là gì?")
     assert body["flow"] == "B" and body["source_label"] == "Bạn sẽ học sau"
-    assert body["suggested_lesson"]["lesson_id"] == "L06" and "L06" in body["reply"] and fake.calls == []
+    assert body["suggested_lesson"]["lesson_id"] == "L07" and "L07" in body["reply"] and fake.calls == []
 
 
 def test_api_flow_b_dont_know(fake):

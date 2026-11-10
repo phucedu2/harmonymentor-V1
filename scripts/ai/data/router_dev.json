@@ -176,8 +176,9 @@
       "q": "Hợp âm C6 là gì?"
     },
     {
-      "flow": "B",
-      "q": "Mượn hợp âm từ giọng song song là gì?"
+      "flow": "A",
+      "q": "Mượn hợp âm từ giọng song song là gì?",
+      "relabel": "B→A: L06, L08 đã vào kho 10/11/2026"
     },
     {
       "flow": "A",
@@ -189,8 +190,9 @@
       "q": "Điệu thức Lydian nghe thế nào?"
     },
     {
-      "flow": "B",
-      "q": "Thế bấm shell voicing là gì?"
+      "flow": "A",
+      "q": "Thế bấm shell voicing là gì?",
+      "relabel": "B→A: L06, L08 đã vào kho 10/11/2026"
     },
     {
       "flow": "B",

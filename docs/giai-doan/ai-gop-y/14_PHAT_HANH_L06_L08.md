@@ -1,5 +1,7 @@
 # Phát hành L06–L08 và liên kết sách mở (09/11/2026)
 
+> **Đính chính 10/11/2026:** mục dưới nói "người học thấy" là SAI. Bài vẫn hiện "Sắp có" vì seed chỉ nạp câu hỏi cho L01–L04. Đã sửa ở [15_MO_KHOA_L05_L06_L08.md](15_MO_KHOA_L05_L06_L08.md).
+
 **Quyết định:** Phúc báo Thắng và Đạt đã duyệt, chọn "Gộp #36–#42 theo đề xuất". Đã gộp #36–#42 vào `phuc-music` (main không đổi).
 
 ## Đã làm
