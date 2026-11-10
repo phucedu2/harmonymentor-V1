@@ -89,12 +89,13 @@ export default function LearnPage() {
     <ol className="grid gap-3" aria-label="Danh sách bài học">
       {lessons.map((lesson) => {
         const progress = progressMap.get(lesson.id);
-        const runnable = lesson.exercise_count > 0;
+        // Bài chỉ có lý thuyết (câu hỏi đang chờ duyệt) vẫn mở để đọc; chỉ bài chưa có nội dung mới là "Sắp có".
+        const runnable = lesson.block_count > 0;
         // Gợi ý thứ tự: bài chưa xong đầu tiên là "Học ngay"; bài sau nó vẫn mở nhưng nhắc học bài trước.
         const isNext = lesson.id === nextLessonId;
         const done = progress?.status === "completed";
         const started = progress?.status === "started";
-        const label = done ? "Đã xong" : !runnable ? "Sắp có" : started ? "Đang học" : isNext ? "Học ngay" : `Nên học sau Bài ${lesson.order - 1}`;
+        const label = done ? "Đã xong" : !runnable ? "Sắp có" : started ? "Đang học" : lesson.exercise_count === 0 ? "Lý thuyết" : isNext ? "Học ngay" : `Nên học sau Bài ${lesson.order - 1}`;
         const tone = done ? "success" : runnable && (isNext || started) ? "primary" : "muted";
         const pct = done ? 100 : Math.round((progress?.correct_exercises ?? 0) / Math.max(1, lesson.exercise_count) * 100);
         return <li key={lesson.id}>

@@ -17,7 +17,7 @@ from sqlalchemy import create_engine, func, select
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.content import versioning
-from app.content.curriculum_specs import LESSON_SPECS, q
+from app.content.curriculum_specs import LESSON_SPECS, PENDING_REVIEW_LESSON_IDS, q
 from app.content.draft_specs import DRAFT_LESSON_SPECS
 from app.content.seed_data import seed_initial_data
 from app.content.versioning import ImmutableVersionError, SeedConflictError, content_hash, current_version
@@ -89,6 +89,10 @@ def new_user(factory) -> str:
     return user_id
 
 
+def published_ids(rows: dict[str, tuple]) -> set[str]:
+    return {k for k, row in rows.items() if row[1] == "published"}
+
+
 def version_rows(factory) -> dict[str, tuple]:
     with factory() as db:
         return {v.id: (v.content_hash, v.status, v.snapshot_origin, v.created_at, v.prompt, json.dumps(v.answer_key))
@@ -128,15 +132,17 @@ def test_seed_three_times_changes_nothing(factory):
     seed(factory)
     seed(factory)
     assert version_rows(factory) == first
-    assert set(first) == CURRENT_VERSION_IDS
-    assert {row[1] for row in first.values()} == {"published"}
+    assert published_ids(first) == CURRENT_VERSION_IDS
+    # Ngoài 24 bản đã phát hành chỉ có câu nháp của bài chờ Đạt duyệt (L05–L08, 10/11/2026).
+    assert {k[:3] for k, row in first.items() if row[1] != "published"} <= PENDING_REVIEW_LESSON_IDS
+    assert {row[1] for row in first.values()} <= {"published", "draft"}
     assert {row[2] for row in first.values()} == {"seed"}
 
 
 def test_current_version_ids_are_exactly_the_published_24(factory):
     seed(factory)
     with factory() as db:
-        current = {current_version(e).id for e in db.scalars(select(Exercise)).all()}
+        current = {v.id for e in db.scalars(select(Exercise)).all() if (v := current_version(e)) is not None}
     assert current == CURRENT_VERSION_IDS
     assert "L01-Q01-v4" in current and "L01-Q03-v5" in current
 
@@ -145,7 +151,7 @@ def test_seeded_snapshots_equal_git_history_snapshots(factory):
     # Nội dung seed tạo ra phải trùng ảnh chụp git mà migration dùng; lệch là migration sẽ khôi phục sai.
     seed(factory)
     with factory() as db:
-        for version in db.scalars(select(ExerciseVersion)).all():
+        for version in db.scalars(select(ExerciseVersion).where(ExerciseVersion.status == "published")).all():
             known = KNOWN_SNAPSHOTS[version.id]
             for name in ("kind", "prompt", "options", "grading_strategy", "answer_key", "grader_config", "explanation", "provenance"):
                 assert getattr(version, name) == known[name], (version.id, name)
@@ -241,7 +247,7 @@ def test_conflicts_never_auto_create_versions(factory):
     item_of(changed, "L02-Q01")["answer_key"] = {"expected": ["G"]}
     with pytest.raises(SeedConflictError):
         seed(factory, changed)
-    assert set(version_rows(factory)) == CURRENT_VERSION_IDS
+    assert published_ids(version_rows(factory)) == CURRENT_VERSION_IDS
 
 
 # --- Draft / published ------------------------------------------------------------------------------

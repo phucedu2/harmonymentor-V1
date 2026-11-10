@@ -175,7 +175,12 @@ def test_seed_after_upgrade_is_idempotent(legacy_engine):
     # Seed chỉ được THÊM câu mới của nguồn (6 câu demo 10/11, đã phát hành), không đổi dòng nào đã có từ migration.
     assert [row for row in after if row[0] in {r[0] for r in before}] == before
     added = sorted((row[0].rsplit("-v", 1)[0], row[3]) for row in after if row[0] not in {r[0] for r in before})
-    assert added == [(x, "published") for x in ("L01-Q07", "L01-Q08", "L02-Q07", "L02-Q08", "L02-Q09", "L02-Q10")]
+    published = [x for x in added if x[1] == "published"]
+    assert published == [(x, "published") for x in ("L01-Q07", "L01-Q08", "L02-Q07", "L02-Q08", "L02-Q09", "L02-Q10")]
+    # Câu L05–L08 chờ Đạt duyệt (10/11/2026) được thêm ở dạng nháp, 6 câu mỗi bài.
+    drafts = [x for x in added if x[1] != "published"]
+    assert {x[1] for x in drafts} == {"draft"} and sorted({x[0][:3] for x in drafts}) == ["L05", "L06", "L07", "L08"]
+    assert len(drafts) == 24
     with factory() as db:
         # Câu L01-Q01 vẫn hiện bằng v4 dù có một bản cũ v1 không khôi phục được.
         assert current_version(db.get(Exercise, "L01-Q01")).id == "L01-Q01-v4"

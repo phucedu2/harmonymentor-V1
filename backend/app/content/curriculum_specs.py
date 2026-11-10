@@ -488,3 +488,7 @@ def all_review_items() -> list[dict[str, Any]]:
 
 
 MIGRATED_LESSON_IDS = {"L01", "L02", "L03", "L04"}
+# Bài đã duyệt lý thuyết (L05: caff321, L06–L08: PR #43) nhưng câu hỏi và thẻ ôn chưa được Đạt duyệt (quyết định của
+# Phúc 10/11/2026): seed nạp lý thuyết cho người học, câu hỏi ở dạng nháp (chỉ hiện khi SHOW_DRAFT_CONTENT), chưa nạp
+# thẻ ôn vì bảng review_items không có trạng thái nháp. Đạt duyệt xong: chuyển id sang MIGRATED_LESSON_IDS.
+PENDING_REVIEW_LESSON_IDS = {"L05", "L06", "L07", "L08"}

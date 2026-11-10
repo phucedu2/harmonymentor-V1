@@ -249,7 +249,7 @@ export default function LessonRunner({
       render: () => <>
         <article className={`${ui.block} border-primary/40`}>
           <div><span className={ui.kicker}>Hoàn thành</span><h3>Hoàn thành bài</h3></div>
-          <p>{alreadyCompleted ? "Bạn đã hoàn thành bài này. Lịch ôn nằm ở trang Tiến độ." : allCorrect ? "Bạn đã trả lời đúng tất cả các câu. Bấm nút bên dưới để hoàn thành và lên lịch ôn." : `Bạn cần trả lời đúng cả ${total} câu (mỗi câu đúng ít nhất một lần). Hiện đã đúng ${correctCount}/${total}.`}</p>
+          <p>{alreadyCompleted ? "Bạn đã hoàn thành bài này. Lịch ôn nằm ở trang Tiến độ." : total === 0 ? "Bài này hiện chỉ có phần lý thuyết. Câu hỏi đang chờ nhóm duyệt nên chưa thể hoàn thành bài." : allCorrect ? "Bạn đã trả lời đúng tất cả các câu. Bấm nút bên dưới để hoàn thành và lên lịch ôn." : `Bạn cần trả lời đúng cả ${total} câu (mỗi câu đúng ít nhất một lần). Hiện đã đúng ${correctCount}/${total}.`}</p>
           {!alreadyCompleted && !allCorrect && <ul>{lesson.exercises.filter((exercise) => !correct.has(exercise.id)).map((exercise) => {
             const target = steps.findIndex((step) => step.exerciseId === exercise.id);
             return <li key={exercise.id}><button type="button" className={ui.textButton} onClick={() => goTo(target >= 0 ? target : steps.length - 2)}>{exercise.prompt}</button></li>;

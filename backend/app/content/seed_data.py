@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 
 from ..ai.skill_mapping import MAPPING_ROWS, SKILL_MAPPING, validate_mapping
 
-from .curriculum_specs import LESSON_SPECS, MIGRATED_LESSON_IDS
+from .curriculum_specs import LESSON_SPECS, MIGRATED_LESSON_IDS, PENDING_REVIEW_LESSON_IDS
 from .draft_specs import DRAFT_LESSON_SPECS, blocks_with_drafts
 from .skill_graph import PREREQUISITES, SKILLS
 from .source_registry import SOURCE_REGISTRY
@@ -76,13 +76,16 @@ def _sync_sources(db: Session, lesson_id: str, sources: list[dict]) -> None:
         ))
 
 
-def _upsert_blocks(db: Session, spec: dict) -> None:
+def _upsert_blocks(db: Session, spec: dict, hide_checkpoints: bool = False) -> None:
     # Blocks are presentation/content units and are not referenced by attempts. Rebuild the
     # lesson block sequence atomically so inserting Phase 1 checkpoints cannot collide with
     # the unique (lesson_id, position) constraint on an existing Phase 0.4B database.
     db.execute(delete(LessonBlock).where(LessonBlock.lesson_id == spec["id"]))
     db.flush()
     for position, (block_id, block_type, payload) in enumerate(blocks_with_drafts(spec), start=1):
+        if hide_checkpoints and block_type == "checkpoint":
+            # Câu của checkpoint còn nháp: ẩn cả khối, để người học không gặp ô hỏi trỏ tới câu không tồn tại.
+            payload = {**payload, "status": STATUS_DRAFT}
         db.add(LessonBlock(
             id=block_id, lesson_id=spec["id"], position=position,
             block_type=block_type, payload=payload,
@@ -288,6 +291,11 @@ def _seed(db: Session, lesson_specs: list[dict]) -> None:
     for spec in lesson_specs:
         if spec.get("status") == STATUS_DRAFT:
             _upsert_blocks(db, spec)  # bài nháp chỉ có dàn ý, chưa có câu hỏi/thẻ ôn
+            continue
+        if spec["id"] in PENDING_REVIEW_LESSON_IDS:
+            _upsert_blocks(db, spec, hide_checkpoints=True)
+            drafts = {**spec, "exercises": [{**item, "status": STATUS_DRAFT} for item in spec["exercises"]]}
+            _upsert_exercises(db, drafts, now, conflicts)
             continue
         if spec["id"] not in MIGRATED_LESSON_IDS:
             continue

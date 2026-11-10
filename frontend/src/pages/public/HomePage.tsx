@@ -107,7 +107,7 @@ function Curriculum() {
               <li key={lesson.id} className="flex items-start gap-3 text-sm">
                 <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-md bg-[var(--w-ivory)] font-mono text-xs font-semibold text-[var(--w-deep)]">{lesson.order}</span>
                 <span className="flex-1 text-ink">{lesson.title}</span>
-                {lesson.exercise_count === 0 && <span className="shrink-0 rounded-full bg-bg px-2 py-0.5 text-xs text-muted">Sắp có</span>}
+                {lesson.block_count === 0 && <span className="shrink-0 rounded-full bg-bg px-2 py-0.5 text-xs text-muted">Sắp có</span>}
               </li>
             ))}
           </ol>
