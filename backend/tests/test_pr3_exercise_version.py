@@ -63,11 +63,18 @@ def drafts_visible(monkeypatch):
     monkeypatch.setattr(versioning, "visible_statuses", lambda: {"draft", "published"})
 
 
+# Bài mở thêm ngày 10/11/2026 (L05, L06, L08): câu mới phát hành v1, có test riêng ở test_phase04b_curriculum.
+OPENED_1011_LESSONS = {"L05", "L06", "L08"}
+
+
 def specs() -> list[dict]:
-    # Bộ câu PR-3 là 24 câu đã phát hành lúc PR-3 (ảnh chụp git); 6 câu demo 10/11 có test riêng.
+    # Bộ câu PR-3 là 24 câu đã phát hành lúc PR-3 (ảnh chụp git); câu demo 10/11 và bài mở 10/11 có test riêng.
     changed = copy.deepcopy(LESSON_SPECS)
     for lesson in changed:
-        lesson["exercises"] = [x for x in lesson["exercises"] if x["id"] not in DEMO_1011_IDS]
+        lesson["exercises"] = [x for x in lesson["exercises"]
+                               if x["id"] not in DEMO_1011_IDS and lesson["id"] not in OPENED_1011_LESSONS]
+        if lesson["id"] in OPENED_1011_LESSONS:
+            lesson["review_items"] = []
     return changed
 
 
@@ -578,7 +585,7 @@ def _seed_l02_without_visible_exercises(factory, case: str) -> None:
 def test_complete_rejected_when_lesson_has_no_visible_exercises(factory, case):
     if case == "no_exercises":
         seed(factory)
-        lesson_id = "L05"  # bài chưa chuyển sang hệ câu hỏi runtime nên không có câu nào
+        lesson_id = "L07"  # bài chưa chuyển sang hệ câu hỏi runtime nên không có câu nào
     else:
         _seed_l02_without_visible_exercises(factory, case)
         lesson_id = "L02"

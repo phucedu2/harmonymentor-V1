@@ -12,7 +12,7 @@ from app.ai.tutor import router
 @pytest.mark.parametrize("question, flow, reason", [
     ("dao hop am C lan 1 la sao", "B", "untaught_concept"),          # đảo hợp âm: không bài nào dạy
     ("quang 9 la gi", "B", "untaught_concept"),                       # quãng kép: kho chỉ tới quãng 8
-    ("Fm trong C truong muon tu dau ra vay", "B", "later_lesson"),   # mượn hợp âm, gõ không dấu → L06
+    ("Fm trong C truong muon tu dau ra vay", "A", "engine_in_kb"),   # mượn hợp âm: L06 đã vào kho (10/11) nên là A
     ("cho minh link tai nhac lau free", "C", "unknown_terms_not_music"),
     ("Nhịp 6/8 đếm thế nào?", "B", "untaught_concept"),             # tập dev router_dev
     ("fmaj9 là hợp âm gì, gồm nốt nào", "B", "later_lesson"),        # hợp âm 9 → L07
@@ -54,7 +54,8 @@ def test_go_sai_truong_khong_bi_coi_la_am_giai_la():
 def test_muon_khong_nham_voi_muon_hoc():
     # "muốn" bỏ dấu cũng là "muon": không được đẩy câu A sang L06.
     assert router.later_lesson("minh muon hoc hop am ba") is None
-    assert router.later_lesson("Fm muon tu giong thu") == "L06"
+    assert router.later_lesson("Fm muon tu giong thu") is None          # L06 đã vào kho (10/11/2026)
+    assert router.later_lesson("hop am 9 muon giai quyet ve dau") == "L07"   # "muon" không phá luật L07
 
 
 def test_luat_moi_tu_tat_khi_kho_co_doan(monkeypatch):

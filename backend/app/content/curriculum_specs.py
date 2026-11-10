@@ -459,7 +459,8 @@ LESSON_SPECS: list[dict[str, Any]] = [
             q("L08-Q03", "build", "Nêu shell root–3rd–7th cho G7 bằng ba tên nốt.", "voicing.shell", "rubric", {"accepted": ["g b f", "g,b,f", "g-b-f"]}, {"mode": "equals_any", "normalize_dashes": True}, explanation="Trong rubric này: G–B–F; đây không phải full chord inventory.", provenance=[KH_CH11]),
             q("L08-Q04", "mcq", "Smooth/lazy voice leading ưu tiên điều gì?", "voicing.voice_leading", "exact", {"expected": "Move each voice as little as possible"}, options=["Move each voice as little as possible", "Always jump by fifth", "Always keep root on top", "Always double the third"], provenance=[OMT_VOICINGS]),
             q("L08-Q05", "context", "Trong G7 → Cmaj7, basic guide-tone connection nào phù hợp với lesson?", "voicing.voice_leading", "exact", {"expected": "B stays; F moves to E"}, options=["B stays; F moves to E", "B moves to F; F stays", "Both move up an octave", "B moves to C; F moves to G"], provenance=[KH_CH11, OMT_VOICINGS]),
-            q("L08-Q06", "applied", "Vì sao bài 'dựng đầy đủ G7' và bài 'tạo shell voicing G7' không dùng cùng rubric?", "voicing.shell", "rubric", {"accepted": ["voicing", "lược", "luoc", "omit", "full chord", "inventory"]}, {"mode": "contains_any", "strip_accents": True}, explanation="Voicing có thể cố ý omit/double theo style; chord-inventory exercise kiểm tra đủ chord tones.", provenance=[OMT_VOICINGS, KH_CH11]),
+            q("L08-Q06", "applied", "Vì sao bài 'dựng đầy đủ G7' và bài 'tạo shell voicing G7' không dùng cùng rubric?", "voicing.shell", "rubric", {"accepted": ["voicing", "lược", "luoc", "omit", "full chord", "inventory"]}, {"mode": "contains_any", "strip_accents": True}, explanation="Voicing có thể cố ý omit/double theo style; chord-inventory exercise kiểm tra đủ chord tones.", provenance=[OMT_VOICINGS, KH_CH11],
+              status="draft"),  # tự luận chấm từ khóa: bài 1–4 đã đổi thành nút chọn; để draft chờ Đạt viết lại thành câu chọn (10/11)
         ],
         "review_items": [
             f("L08-F01", "Basic shell frame", "Root–3rd–7th", "voicing.shell", "recall", "exact", {"expected": "Root-3rd-7th"}, {"normalize_dashes": True}, [KH_CH11]),
@@ -487,4 +488,5 @@ def all_review_items() -> list[dict[str, Any]]:
     return [item for lesson in LESSON_SPECS for item in lesson["review_items"]]
 
 
-MIGRATED_LESSON_IDS = {"L01", "L02", "L03", "L04"}
+# L07 chưa mở: dùng hợp âm 9/13 và mixolydian mà Engine chưa hỗ trợ, chờ Thắng quyết (10/11/2026).
+MIGRATED_LESSON_IDS = {"L01", "L02", "L03", "L04", "L05", "L06", "L08"}

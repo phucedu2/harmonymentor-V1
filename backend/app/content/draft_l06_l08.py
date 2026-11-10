@@ -1,6 +1,6 @@
 """Lý thuyết L06, L07, L08 (GĐ3 góp ý thầy G2), Claude soạn 08/11/2026, Đạt duyệt 09/11/2026 (Phúc báo).
 
-Đã bỏ status "draft": người học thấy. AI Tutor chưa trích (xem TUTOR_KB_PENDING). Mọi nốt/quãng ghi ở đây được test đối chiếu
+Đã bỏ status "draft": người học thấy. AI Tutor trích L06, L08; L07 chờ (xem TUTOR_KB_PENDING). Mọi nốt/quãng ghi ở đây được test đối chiếu
 Music Engine (tests/test_ai_gd3_l06_l08.py). Engine chưa hỗ trợ hợp âm mở rộng (9, 13) và mixolydian, nên phần đó
 kiểm bằng quãng và bằng việc xoay âm giai major, ghi rõ trong báo cáo.
 Định vị nguồn từng khối do Claude đề xuất, chưa đối chiếu trang.
@@ -202,6 +202,6 @@ L08_DRAFT_BLOCKS: list[Block] = [
 ]
 
 # Đạt duyệt 09/11/2026 (Phúc báo trong thread): bỏ status draft, người học thấy.
-# Chưa nạp vào kho AI Tutor: thử nạp làm định tuyến đổi (luật "bài sau" L06–L08 tắt, câu hóa học "hoa tri cua sat"
-# bị kéo vào A, câu Cmaj7/C7 trích L08 thay L02). Nạp khi đã gán lại nhãn, chọn lại ngưỡng và đo lại (như L05).
-TUTOR_KB_PENDING = frozenset({"L06", "L07", "L08"})
+# 10/11/2026: L06 và L08 đã nạp vào kho AI Tutor (nhãn sinh lại, ngưỡng chọn lại, đã đo). L07 giữ ngoài kho vì bài
+# chưa mở cho người học (hợp âm 9/13 và mixolydian chờ Thắng quyết Engine): AI không trích bài mà người học chưa mở được.
+TUTOR_KB_PENDING = frozenset({"L07"})
