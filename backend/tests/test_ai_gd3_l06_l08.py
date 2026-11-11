@@ -47,14 +47,14 @@ def text(lesson):
 
 @pytest.mark.parametrize("lesson, blocks", LESSONS.items())
 def test_blocks_reviewed_and_visible_kb_follows_pending_list(lesson, blocks):
-    """Đạt duyệt 09/11: người học thấy. L06, L08 vào kho AI Tutor 10/11 (đã đo lại định tuyến); L07 chờ Thắng quyết Engine."""
+    """Đạt duyệt 09/11: người học thấy. L06, L08 vào kho AI Tutor 10/11; L07 vào 11/11 sau ADR-019 (đã đo lại định tuyến)."""
     assert spec(lesson)["blocks"] == []
     ids = [b[0] for b in blocks_with_drafts(spec(lesson))]
     assert len(ids) == len(set(ids)) and all(i.startswith(f"{lesson}-") for i in ids)
     assert all(p.get("status") != DRAFT and block_visible(p) for _, _, p in blocks)
     in_kb = bool([c for c in lesson_chunks() if c.lesson_id == lesson])
     assert in_kb == (lesson not in TUTOR_KB_PENDING)
-    assert TUTOR_KB_PENDING == {"L07"}
+    assert TUTOR_KB_PENDING == frozenset()
 
 
 @pytest.mark.parametrize("lesson, blocks", LESSONS.items())

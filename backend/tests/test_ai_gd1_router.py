@@ -55,7 +55,8 @@ def test_engine_finds_sus_interval_scale_roman():
 
 
 def test_engine_unknown_symbols_are_reported_not_guessed():
-    assert engine_answer("Hop am C9 gom not gi").unknown == ["C9"]
+    assert engine_answer("Hop am C9 gom not gi").unknown == []   # C9 đã có trong Engine (ADR-019)
+    assert engine_answer("Hop am C11 gom not gi").unknown == ["C11"]
     assert "Cadd9" in engine_answer("Cadd9 gồm nốt gì?").unknown
 
 
@@ -104,14 +105,15 @@ def test_kb_coverage_is_derived_from_kb():
 
 
 def test_later_lesson_rule_turns_off_when_lesson_enters_kb(monkeypatch):
-    # L06, L08 đã vào kho (10/11/2026): luật của hai bài này đã tắt; L07 còn chờ Thắng quyết Engine.
+    # L05–L08 đều đã vào kho (L07 ngày 11/11/2026): mọi luật "bài sau" đã tắt.
     assert router.later_lesson("Modal interchange là gì?") is None
     assert router.later_lesson("Shell voicing là gì?") is None
-    assert router.later_lesson("Chord-scale là gì?") == "L07"
-    assert router.later_lesson("Đóng vai trò voice leading thế nào?") is None   # "voice leading" là L04
-    fake = [*knowledge_base(), type(knowledge_base()[0])(**{**knowledge_base()[0].__dict__, "lesson_id": "L07"})]
-    monkeypatch.setattr(router, "knowledge_base", lambda: fake)
     assert router.later_lesson("Chord-scale là gì?") is None
+    assert router.later_lesson("Đóng vai trò voice leading thế nào?") is None   # "voice leading" là L04
+    # Bỏ L07 khỏi kho thì luật L07 bật lại.
+    without = [c for c in knowledge_base() if c.lesson_id != "L07"]
+    monkeypatch.setattr(router, "knowledge_base", lambda: without)
+    assert router.later_lesson("Chord-scale là gì?") == "L07"
 
 
 def test_unknown_terms():
@@ -128,7 +130,7 @@ def test_unknown_terms():
     ("Cmaj7 với C7 khác gì nhau?", "A", "lesson"),   # BM25 sau khi L05 vào kho: "C7 khác Cmaj7 thế nào?" sang Engine
     ("Csus4 gồm những nốt nào?", "B", "engine"),
     ("Âm giai A thứ hòa âm gồm những nốt nào?", "B", "engine"),
-    ("Hop am C9 gom not gi", "B", "unknown"),
+    ("Hop am C11 gom not gi", "B", "unknown"),
     ("Modal interchange là gì?", "B", "unknown"),
     ("Kết cấu fugue là gì?", "B", "unknown"),
 ])
@@ -272,7 +274,10 @@ def test_api_flow_b_engine_no_llm(fake):
     assert body["engine_claims"][0]["status"] == "verified"
 
 
-def test_api_flow_b_later_lesson(fake):
+def test_api_flow_b_later_lesson(fake, monkeypatch):
+    # Không còn bài nào chưa vào kho: giả lập kho chưa có L07 để kiểm luồng "bạn sẽ học sau".
+    without = [c for c in router.knowledge_base() if c.lesson_id != "L07"]
+    monkeypatch.setattr(router, "knowledge_base", lambda: without)
     body = ask("Chord-scale là gì?")
     assert body["flow"] == "B" and body["source_label"] == "Bạn sẽ học sau"
     assert body["suggested_lesson"]["lesson_id"] == "L07" and "L07" in body["reply"] and fake.calls == []

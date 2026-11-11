@@ -4041,41 +4041,39 @@
   },
   {
    "q": "điệu thức phrygian là gì",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L07",
-   "expect": "Bạn sẽ học sau ở L07",
    "group": "B-L07#1",
    "style": "goc",
    "base": "điệu thức phrygian là gì",
-   "engine": null
+   "relabel": "B→A: L07 đã vào kho"
   },
   {
    "q": "điệu thức phryian là gì",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L07",
-   "expect": "Bạn sẽ học sau ở L07",
    "group": "B-L07#1",
    "style": "loi_go",
-   "base": "điệu thức phrygian là gì"
+   "base": "điệu thức phrygian là gì",
+   "relabel": "B→A: L07 đã vào kho"
   },
   {
    "q": "có bao nhiêu mode",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L07",
-   "expect": "Bạn sẽ học sau ở L07",
    "group": "B-L07#1",
    "style": "goc",
    "base": "có bao nhiêu mode",
-   "engine": null
+   "relabel": "B→A: L07 đã vào kho"
   },
   {
    "q": "co bao nhieu mode",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L07",
-   "expect": "Bạn sẽ học sau ở L07",
    "group": "B-L07#1",
    "style": "khong_dau",
-   "base": "có bao nhiêu mode"
+   "base": "có bao nhiêu mode",
+   "relabel": "B→A: L07 đã vào kho"
   },
   {
    "q": "tonicization nghĩa là gì, có phải chuyển giọng thật không",
@@ -4309,78 +4307,75 @@
   },
   {
    "q": "lydian nghe có màu gì",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L07",
-   "expect": "Bạn sẽ học sau ở L07",
    "group": "B-L07#0",
    "style": "goc",
    "base": "lydian nghe có màu gì",
-   "engine": null
+   "relabel": "B→A: L07 đã vào kho"
   },
   {
    "q": "lydian nghe có màu j",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L07",
-   "expect": "Bạn sẽ học sau ở L07",
    "group": "B-L07#0",
    "style": "go_tat",
-   "base": "lydian nghe có màu gì"
+   "base": "lydian nghe có màu gì",
+   "relabel": "B→A: L07 đã vào kho"
   },
   {
    "q": "mixolydian dùng với hợp âm nào",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L07",
-   "expect": "Bạn sẽ học sau ở L07",
    "group": "B-L07#0",
    "style": "goc",
    "base": "mixolydian dùng với hợp âm nào",
-   "engine": null
+   "relabel": "B→A: L07 đã vào kho"
   },
   {
    "q": "mixolydian dùg với hợp âm nào",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L07",
-   "expect": "Bạn sẽ học sau ở L07",
    "group": "B-L07#0",
    "style": "loi_go",
-   "base": "mixolydian dùng với hợp âm nào"
+   "base": "mixolydian dùng với hợp âm nào",
+   "relabel": "B→A: L07 đã vào kho"
   },
   {
    "q": "mixolydian dung voi hop am nao",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L07",
-   "expect": "Bạn sẽ học sau ở L07",
    "group": "B-L07#0",
    "style": "khong_dau",
-   "base": "mixolydian dùng với hợp âm nào"
+   "base": "mixolydian dùng với hợp âm nào",
+   "relabel": "B→A: L07 đã vào kho"
   },
   {
    "q": "chord scale là gì",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L07",
-   "expect": "Bạn sẽ học sau ở L07",
    "group": "B-L07#0",
    "style": "goc",
    "base": "chord scale là gì",
-   "engine": null
+   "relabel": "B→A: L07 đã vào kho"
   },
   {
    "q": "cohrd scale là gì",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L07",
-   "expect": "Bạn sẽ học sau ở L07",
    "group": "B-L07#0",
    "style": "loi_go",
-   "base": "chord scale là gì"
+   "base": "chord scale là gì",
+   "relabel": "B→A: L07 đã vào kho"
   },
   {
    "q": "chord scale la gi",
-   "flow": "B",
+   "flow": "A",
    "lesson": "L07",
-   "expect": "Bạn sẽ học sau ở L07",
    "group": "B-L07#0",
    "style": "khong_dau",
-   "base": "chord scale là gì"
+   "base": "chord scale là gì",
+   "relabel": "B→A: L07 đã vào kho"
   },
   {
    "q": "kết nửa là gì",

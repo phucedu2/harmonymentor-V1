@@ -30,11 +30,11 @@ def test_curriculum_bank_is_exactly_8_54_64_and_ids_are_unique():
     everything = all_exercises()
     exercises = [x for x in everything if x.get("status", "published") != "draft"]
     reviews = all_review_items()
-    # 48 câu gốc + 6 câu demo 10/11 (Thắng + Đạt duyệt, phát hành 04/11/2026), trừ L08-Q06 để draft (10/11).
-    assert len(exercises) == 53
+    # 48 câu gốc + 6 câu demo 10/11 (Thắng + Đạt duyệt, phát hành 04/11/2026), L05–L08 (L07 đã tính từ trước) mở 10–11/11, trừ L07-Q06 và L08-Q06 để draft.
+    assert len(exercises) == 52
     assert len(reviews) == 64
     assert len({x["id"] for x in everything}) == len(everything)
-    assert [x["id"] for x in everything if x.get("status") == "draft"] == ["L08-Q06"]
+    assert [x["id"] for x in everything if x.get("status") == "draft"] == ["L07-Q06", "L08-Q06"]
     assert len({x["id"] for x in reviews}) == 64
 
 
@@ -82,21 +82,17 @@ def test_skill_prerequisites_are_persisted():
             assert len(persisted) >= len(PREREQUISITES)
 
 
-def test_lessons_1_to_6_and_8_are_migrated_and_7_is_specs_only():
+def test_all_eight_lessons_are_migrated():
     with TestClient(app) as client:
         lessons = {x["id"]: x for x in client.get("/api/v1/lessons").json()}
-        assert set(MIGRATED_LESSON_IDS) == {"L01", "L02", "L03", "L04", "L05", "L06", "L08"}
-        expected_block_counts = {"L01": 14, "L02": 10, "L03": 9, "L04": 11, "L05": 11, "L06": 10, "L08": 8}
-        expected_exercises = {"L01": 8, "L02": 10, "L08": 5}  # L08-Q06 draft chờ Đạt; còn lại 6 câu
+        assert set(MIGRATED_LESSON_IDS) == {"L01", "L02", "L03", "L04", "L05", "L06", "L07", "L08"}
+        expected_block_counts = {"L01": 14, "L02": 10, "L03": 9, "L04": 11, "L05": 11, "L06": 10, "L07": 9, "L08": 8}
+        expected_exercises = {"L01": 8, "L02": 10, "L07": 5, "L08": 5}  # L07-Q06, L08-Q06 draft chờ Đạt; còn lại 6 câu
         for lesson_id in expected_block_counts:
             assert lessons[lesson_id]["exercise_count"] == expected_exercises.get(lesson_id, 6), lesson_id
             assert lessons[lesson_id]["review_item_count"] == 8
             assert lessons[lesson_id]["block_count"] == expected_block_counts[lesson_id]
             assert lessons[lesson_id]["status"] == "reviewed"
-        # L07 chưa mở: dùng hợp âm 9/13 và mixolydian mà Engine chưa hỗ trợ (chờ Thắng).
-        assert lessons["L07"]["exercise_count"] == 0
-        assert lessons["L07"]["review_item_count"] == 0
-        assert lessons["L07"]["status"] == "source_audited"
 
 
 def test_lesson2_scale_and_roman_music_engine_graders_work_end_to_end():

@@ -1,16 +1,16 @@
 {
-  "note": "Do scripts/ai/gop_y/hieu_chinh_nguong.py chọn trên tập dev, không sửa tay (ADR-017). 09/11: chạy lại cho bm25 và e5 gốc sau luật an toàn; hàng gd2b/gd2c giữ từ 08/11 (mô hình không có trên máy). 10/11: sau khi L06, L08 vào kho, chỉ chọn lại bm25 và e5 gốc (mặc định); hàng gd2b/gd2c giữ từ 08/11, chưa chọn lại.",
+  "note": "Do scripts/ai/gop_y/hieu_chinh_nguong.py chọn trên tập dev, không sửa tay (ADR-017). 11/11: sau khi L07 vào kho, chỉ chọn lại bm25 và e5 gốc (mặc định); hàng gd2b/gd2c giữ từ 08/11, chưa chọn lại.",
   "dev_set": "scripts/ai/data/router_dev.json + scripts/ai/data/gd2/dev.json + docs/giai-doan/ai-gop-y/phieu-cau-hoi/phieu_Phuc_dev.json",
   "dev_size": 341,
-  "date": "2026-11-10",
+  "date": "2026-11-11",
   "thresholds": {
     "bm25": {
       "greet_conf": 0.5,
       "help_conf": 0.45,
       "oos_conf": 0.5,
       "music_min": 0.3,
-      "lesson_gray": 2.3,
-      "lesson_accept": 6.2,
+      "lesson_gray": 2.5,
+      "lesson_accept": 6.8,
       "help_accept": 0.0,
       "help_margin": 1.0
     },
@@ -20,7 +20,7 @@
       "oos_conf": 0.5,
       "music_min": 0.3,
       "lesson_gray": 0.792,
-      "lesson_accept": 0.818,
+      "lesson_accept": 0.825,
       "help_accept": 0.687,
       "help_margin": 1.0
     },
@@ -47,21 +47,21 @@
   },
   "dev_metrics": {
     "bm25": {
-      "accuracy": 0.915,
-      "bc_answered_wrong": 0.0092,
-      "a_refused_wrong": 0.0651,
-      "a_engine_instead_of_lesson": 0.0,
+      "accuracy": 0.8944,
+      "bc_answered_wrong": 0.02,
+      "a_refused_wrong": 0.0674,
+      "a_engine_instead_of_lesson": 0.0281,
       "confusion": {
         "A": {
-          "A": 158,
-          "B": 7,
+          "A": 161,
+          "B": 13,
           "C": 4,
           "D": 0,
           "G": 0
         },
         "B": {
-          "A": 1,
-          "B": 64,
+          "A": 2,
+          "B": 54,
           "C": 0,
           "D": 0,
           "G": 0
@@ -90,14 +90,14 @@
       },
       "per_flow": {
         "A": {
-          "precision": 0.988,
-          "recall": 0.935,
-          "n": 169
+          "precision": 0.982,
+          "recall": 0.904,
+          "n": 178
         },
         "B": {
-          "precision": 0.79,
-          "recall": 0.985,
-          "n": 65
+          "precision": 0.701,
+          "recall": 0.964,
+          "n": 56
         },
         "C": {
           "precision": 0.783,
@@ -117,28 +117,28 @@
       }
     },
     "embedding:multilingual-e5-small": {
-      "accuracy": 0.9238,
-      "bc_answered_wrong": 0.0183,
-      "a_refused_wrong": 0.0473,
-      "a_engine_instead_of_lesson": 0.0,
+      "accuracy": 0.8944,
+      "bc_answered_wrong": 0.03,
+      "a_refused_wrong": 0.0618,
+      "a_engine_instead_of_lesson": 0.0281,
       "confusion": {
         "A": {
-          "A": 161,
-          "B": 4,
+          "A": 162,
+          "B": 12,
           "C": 4,
           "D": 0,
           "G": 0
         },
         "B": {
-          "A": 1,
-          "B": 64,
+          "A": 3,
+          "B": 53,
           "C": 0,
           "D": 0,
           "G": 0
         },
         "C": {
-          "A": 1,
-          "B": 7,
+          "A": 0,
+          "B": 8,
           "C": 36,
           "D": 0,
           "G": 0
@@ -160,14 +160,14 @@
       },
       "per_flow": {
         "A": {
-          "precision": 0.976,
-          "recall": 0.953,
-          "n": 169
+          "precision": 0.97,
+          "recall": 0.91,
+          "n": 178
         },
         "B": {
-          "precision": 0.842,
-          "recall": 0.985,
-          "n": 65
+          "precision": 0.716,
+          "recall": 0.946,
+          "n": 56
         },
         "C": {
           "precision": 0.783,

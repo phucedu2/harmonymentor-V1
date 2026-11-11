@@ -15,7 +15,7 @@ from app.ai.tutor import router
     ("Fm trong C truong muon tu dau ra vay", "A", "engine_in_kb"),   # mượn hợp âm: L06 đã vào kho (10/11) nên là A
     ("cho minh link tai nhac lau free", "C", "unknown_terms_not_music"),
     ("Nhịp 6/8 đếm thế nào?", "B", "untaught_concept"),             # tập dev router_dev
-    ("fmaj9 là hợp âm gì, gồm nốt nào", "B", "later_lesson"),        # hợp âm 9 → L07
+    ("fmaj11 là hợp âm gì, gồm nốt nào", "B", "unknown_terms"),      # hợp âm 11: Engine chưa có (ADR-019 chỉ 9 và 13)
     ("Gợi ý phim hay cuối tuần", "C", "weak_music_oos"),
     ("Hòa âm bốn bè cấm quãng năm song song vì sao?", "B", "untaught_concept"),
 ])
@@ -55,7 +55,7 @@ def test_muon_khong_nham_voi_muon_hoc():
     # "muốn" bỏ dấu cũng là "muon": không được đẩy câu A sang L06.
     assert router.later_lesson("minh muon hoc hop am ba") is None
     assert router.later_lesson("Fm muon tu giong thu") is None          # L06 đã vào kho (10/11/2026)
-    assert router.later_lesson("hop am 9 muon giai quyet ve dau") == "L07"   # "muon" không phá luật L07
+    assert router.later_lesson("hop am 9 muon giai quyet ve dau") is None   # L07 đã vào kho (11/11/2026)
 
 
 def test_luat_moi_tu_tat_khi_kho_co_doan(monkeypatch):
