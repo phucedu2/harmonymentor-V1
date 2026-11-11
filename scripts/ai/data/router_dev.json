@@ -156,8 +156,9 @@
       "q": "Âm giai A thứ hòa âm gồm những nốt nào?"
     },
     {
-      "flow": "B",
-      "q": "Âm giai D dorian là gì?"
+      "flow": "A",
+      "q": "Âm giai D dorian là gì?",
+      "relabel": "B→A: L07 đã vào kho 11/11/2026 (L07-B04, L07-B05 dạy D Dorian)"
     },
     {
       "flow": "B",

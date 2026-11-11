@@ -172,14 +172,15 @@ def test_seed_after_upgrade_is_idempotent(legacy_engine):
         with factory() as db:
             seed_initial_data(db)
     after = snapshot_table(legacy_engine, "SELECT id, content_hash, snapshot_origin, status FROM exercise_versions ORDER BY id")
-    # Seed chỉ được THÊM câu mới của nguồn (6 câu demo 10/11 và 17 câu L05, L06, L08 mở ngày 10/11, đã phát hành),
+    # Seed chỉ được THÊM câu mới của nguồn (6 câu demo 10/11 và câu L05, L06, L07, L08 mở ngày 10–11/11, đã phát hành),
     # không đổi dòng nào đã có từ migration.
     assert [row for row in after if row[0] in {r[0] for r in before}] == before
     added = sorted((row[0].rsplit("-v", 1)[0], row[3]) for row in after if row[0] not in {r[0] for r in before})
     new_ids = ["L01-Q07", "L01-Q08", "L02-Q07", "L02-Q08", "L02-Q09", "L02-Q10"]
     new_ids += [f"L05-Q0{i}" for i in range(1, 7)] + [f"L06-Q0{i}" for i in range(1, 7)]
-    new_ids += [f"L08-Q0{i}" for i in range(1, 7)]  # L08-Q06 để draft chờ Đạt viết lại thành câu chọn
-    assert added == sorted((x, "draft" if x == "L08-Q06" else "published") for x in new_ids)
+    new_ids += [f"L07-Q0{i}" for i in range(1, 7)] + [f"L08-Q0{i}" for i in range(1, 7)]
+    # L07-Q06 và L08-Q06 để draft chờ Đạt viết lại thành câu chọn
+    assert added == sorted((x, "draft" if x in {"L07-Q06", "L08-Q06"} else "published") for x in new_ids)
     with factory() as db:
         # Câu L01-Q01 vẫn hiện bằng v4 dù có một bản cũ v1 không khôi phục được.
         assert current_version(db.get(Exercise, "L01-Q01")).id == "L01-Q01-v4"

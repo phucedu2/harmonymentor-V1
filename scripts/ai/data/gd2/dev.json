@@ -912,27 +912,30 @@
   },
   {
    "q": "c9 là hợp âm gì, gồm nốt nào",
-   "flow": "B",
-   "expect": "không biết (Engine chưa hỗ trợ) + gợi ý bài gần nhất",
+   "flow": "A",
    "group": "B-chord-mo-rong",
    "style": "chu_thuong",
-   "base": "C9 là hợp âm gì, gồm nốt nào"
+   "base": "C9 là hợp âm gì, gồm nốt nào",
+   "lesson": "L07",
+   "relabel": "B→A: Engine hỗ trợ từ ADR-019, L07 đã vào kho"
   },
   {
    "q": "C9 la hop am gi, gom not nao",
-   "flow": "B",
-   "expect": "không biết (Engine chưa hỗ trợ) + gợi ý bài gần nhất",
+   "flow": "A",
    "group": "B-chord-mo-rong",
    "style": "khong_dau_go_tat",
-   "base": "C9 là hợp âm gì, gồm nốt nào"
+   "base": "C9 là hợp âm gì, gồm nốt nào",
+   "lesson": "L07",
+   "relabel": "B→A: Engine hỗ trợ từ ADR-019, L07 đã vào kho"
   },
   {
    "q": "cadd9 là hợp âm gì, gồm nốt nào",
-   "flow": "B",
-   "expect": "không biết (Engine chưa hỗ trợ) + gợi ý bài gần nhất",
+   "flow": "A",
    "group": "B-chord-mo-rong",
    "style": "chu_thuong",
-   "base": "Cadd9 là hợp âm gì, gồm nốt nào"
+   "base": "Cadd9 là hợp âm gì, gồm nốt nào",
+   "lesson": "L07",
+   "relabel": "B→A: Engine hỗ trợ từ ADR-019, L07 đã vào kho"
   },
   {
    "q": "Cadd9 la hop am j, gom not nao",
@@ -944,19 +947,21 @@
   },
   {
    "q": "G13 là hợp âm gì, gồm nốt nào",
-   "flow": "B",
-   "expect": "không biết (Engine chưa hỗ trợ) + gợi ý bài gần nhất",
+   "flow": "A",
    "group": "B-chord-mo-rong",
    "style": "loi_go",
-   "base": "G13 là hợp âm gì, gồm nốt nào"
+   "base": "G13 là hợp âm gì, gồm nốt nào",
+   "lesson": "L07",
+   "relabel": "B→A: Engine hỗ trợ từ ADR-019, L07 đã vào kho"
   },
   {
    "q": "G13 là hợp âm j, gồm nốt nào",
-   "flow": "B",
-   "expect": "không biết (Engine chưa hỗ trợ) + gợi ý bài gần nhất",
+   "flow": "A",
    "group": "B-chord-mo-rong",
    "style": "go_tat",
-   "base": "G13 là hợp âm gì, gồm nốt nào"
+   "base": "G13 là hợp âm gì, gồm nốt nào",
+   "lesson": "L07",
+   "relabel": "B→A: Engine hỗ trợ từ ADR-019, L07 đã vào kho"
   },
   {
    "q": "ad ơi Am6 là hợp âm gì, gồm nốt nào nhỉ",
@@ -1015,31 +1020,30 @@
   },
   {
    "q": "Dm9 là hợp âm gì, gồm nốt nào",
-   "flow": "B",
-   "expect": "không biết (Engine chưa hỗ trợ) + gợi ý bài gần nhất",
+   "flow": "A",
    "group": "B-chord-mo-rong",
    "style": "goc",
    "base": "Dm9 là hợp âm gì, gồm nốt nào",
-   "engine": null,
-   "engine_unknown": [
-    "Dm9"
-   ]
+   "lesson": "L07",
+   "relabel": "B→A: Engine hỗ trợ từ ADR-019, L07 đã vào kho"
   },
   {
    "q": "fmaj9 là hợp âm gì, gồm nốt nào",
-   "flow": "B",
-   "expect": "không biết (Engine chưa hỗ trợ) + gợi ý bài gần nhất",
+   "flow": "A",
    "group": "B-chord-mo-rong",
    "style": "chu_thuong",
-   "base": "Fmaj9 là hợp âm gì, gồm nốt nào"
+   "base": "Fmaj9 là hợp âm gì, gồm nốt nào",
+   "lesson": "L07",
+   "relabel": "B→A: Engine hỗ trợ từ ADR-019, L07 đã vào kho"
   },
   {
    "q": "Fmaj9 là hợp âm j, gồm nốt nào",
-   "flow": "B",
-   "expect": "không biết (Engine chưa hỗ trợ) + gợi ý bài gần nhất",
+   "flow": "A",
    "group": "B-chord-mo-rong",
    "style": "go_tat",
-   "base": "Fmaj9 là hợp âm gì, gồm nốt nào"
+   "base": "Fmaj9 là hợp âm gì, gồm nốt nào",
+   "lesson": "L07",
+   "relabel": "B→A: Engine hỗ trợ từ ADR-019, L07 đã vào kho"
   },
   {
    "q": "hop am dao la gi",

@@ -210,6 +210,7 @@ def check_labels(rows: list[dict]) -> list[str]:
 def relabel(data: dict[str, list[dict]]) -> None:
     """Câu B "bài sau" của bài nay đã vào kho thì đúng luồng là A. Đổi nhãn SAU khi chia tập để không câu nào đổi
     tập. Lý do đổi là nội dung kho thay đổi (L05 phát hành 07/11/2026), không phải kết quả đo."""
+    from app.ai.tutor.engine_query import engine_answer
     from app.ai.tutor.retriever import knowledge_base
 
     kb_lessons = {c.lesson_id for c in knowledge_base()}
@@ -217,6 +218,11 @@ def relabel(data: dict[str, list[dict]]) -> None:
         for r in rows:
             if r["flow"] == "B" and r.get("lesson") in kb_lessons:
                 r["flow"], r["relabel"] = "A", f"B→A: {r['lesson']} đã vào kho"
+                r.pop("expect", None)
+            # ADR-019 (11/11/2026): Engine hỗ trợ hợp âm 9/13, L07 dạy tension 9/13 và đã vào kho. Nhóm này ghi
+            # "Engine chưa hỗ trợ" từ trước; chỉ đổi các câu mà Engine nay đọc được (không đổi nhóm để giữ cách chia tập).
+            if r.get("group") == "B-chord-mo-rong" and "L07" in kb_lessons and not engine_answer(r["q"]).unknown:
+                r["flow"], r["lesson"], r["relabel"] = "A", "L07", "B→A: Engine hỗ trợ từ ADR-019, L07 đã vào kho"
                 r.pop("expect", None)
 
 

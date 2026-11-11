@@ -88,7 +88,7 @@ def test_route_gd2_switch(monkeypatch):
     ("v/ii nghĩa là gì", None),
     ("bvi trong C trưởng là hợp âm gì", None),   # L06 đã vào kho (10/11/2026)
     ("bVII trong pop là gì", None),
-    ("tension 9 11 13 là gì", "L07"),
+    ("tension 9 11 13 là gì", None),   # L07 đã vào kho (11/11/2026)
     ("vi7 trong C trưởng là bậc mấy", None),
     ("hợp âm Bb trưởng gồm nốt nào", None),
 ])

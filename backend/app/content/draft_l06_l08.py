@@ -202,6 +202,6 @@ L08_DRAFT_BLOCKS: list[Block] = [
 ]
 
 # Đạt duyệt 09/11/2026 (Phúc báo trong thread): bỏ status draft, người học thấy.
-# 10/11/2026: L06 và L08 đã nạp vào kho AI Tutor (nhãn sinh lại, ngưỡng chọn lại, đã đo). L07 giữ ngoài kho vì bài
-# chưa mở cho người học (hợp âm 9/13 và mixolydian chờ Thắng quyết Engine): AI không trích bài mà người học chưa mở được.
-TUTOR_KB_PENDING = frozenset({"L07"})
+# 10/11/2026: L06 và L08 đã nạp vào kho AI Tutor (nhãn sinh lại, ngưỡng chọn lại, đã đo).
+# 11/11/2026: Thắng chốt mở rộng Engine (ADR-019) nên L07 mở cho người học và nạp vào kho; không còn bài nào chờ.
+TUTOR_KB_PENDING: frozenset[str] = frozenset()

@@ -30,10 +30,15 @@ def test_luat_tu_tat_khi_kho_bai_nhac_toi_khai_niem(monkeypatch):
     assert router.untaught_concept("đảo hợp âm C lần 1") is None
 
 
-def test_later_lesson_khop_ca_khong_dau():
-    # L06 đã vào kho (10/11/2026): luật "bài sau" của L06 tự tắt; chỉ còn L07.
+def test_later_lesson_khop_ca_khong_dau(monkeypatch):
+    # Cả L05–L08 đã vào kho (11/11/2026): mọi luật "bài sau" tự tắt.
     assert router.later_lesson("muon hop am la gi") is None
     assert router.later_lesson("mượn hợp âm là gì") is None
+    assert router.later_lesson("Cmaj9 co tension nao") is None
+    assert router.later_lesson("chord scale cua G7 la gi") is None
+    # Giả lập kho chưa có L07: luật L07 khớp cả không dấu.
+    kb = [c for c in router.knowledge_base() if c.lesson_id != "L07"]
+    monkeypatch.setattr(router, "knowledge_base", lambda: kb)
     assert router.later_lesson("Cmaj9 co tension nao") == "L07"
     assert router.later_lesson("chord scale cua G7 la gi") == "L07"
 

@@ -429,7 +429,8 @@ LESSON_SPECS: list[dict[str, Any]] = [
             q("L07-Q03", "mcq", "Trong basic ii–V–I chord-scale model ở C, Dm7 thường liên hệ với mode nào?", "chord_scale.basic", "exact", {"expected": "D Dorian"}, options=["D Ionian", "D Dorian", "D Mixolydian", "D Locrian"], provenance=[OMT_CHORD_SCALE, TER_CH78]),
             q("L07-Q04", "mcq", "Trong cùng model, G7 thường liên hệ với mode nào?", "chord_scale.basic", "exact", {"expected": "G Mixolydian"}, options=["G Dorian", "G Ionian", "G Mixolydian", "G Aeolian"], provenance=[OMT_CHORD_SCALE, TER_CH78]),
             q("L07-Q05", "mcq", "Trong cùng model, Cmaj7 thường liên hệ với mode nào?", "chord_scale.basic", "exact", {"expected": "C Ionian"}, options=["C Ionian", "C Dorian", "C Mixolydian", "C Locrian"], provenance=[OMT_CHORD_SCALE, TER_CH78]),
-            q("L07-Q06", "context", "Vì sao không nên coi chord-scale table là một đáp án duy nhất cho mọi chord symbol?", "chord_scale.context", "rubric", {"accepted": ["ngữ cảnh", "ngu canh", "function", "chức năng", "chuc nang", "voice leading", "melody"]}, {"mode": "contains_any", "strip_accents": True}, explanation="OMT nêu rõ các giới hạn của chord-scale approach; context, function, voice leading và idiom vẫn quan trọng.", provenance=[OMT_CHORD_SCALE]),
+            q("L07-Q06", "context", "Vì sao không nên coi chord-scale table là một đáp án duy nhất cho mọi chord symbol?", "chord_scale.context", "rubric", {"accepted": ["ngữ cảnh", "ngu canh", "function", "chức năng", "chuc nang", "voice leading", "melody"]}, {"mode": "contains_any", "strip_accents": True}, explanation="OMT nêu rõ các giới hạn của chord-scale approach; context, function, voice leading và idiom vẫn quan trọng.", provenance=[OMT_CHORD_SCALE],
+              status="draft"),  # tự luận chấm từ khóa: để draft chờ Đạt viết lại thành câu chọn (11/11), như L08-Q06
         ],
         "review_items": [
             f("L07-F01", "Tension/extension numbers", "9, 11, 13", "tension.naming", "recall", "exact", {"expected": "9, 11, 13"}, provenance=[OMT_CHORD_SYMBOLS]),
@@ -488,5 +489,5 @@ def all_review_items() -> list[dict[str, Any]]:
     return [item for lesson in LESSON_SPECS for item in lesson["review_items"]]
 
 
-# L07 chưa mở: dùng hợp âm 9/13 và mixolydian mà Engine chưa hỗ trợ, chờ Thắng quyết (10/11/2026).
-MIGRATED_LESSON_IDS = {"L01", "L02", "L03", "L04", "L05", "L06", "L08"}
+# L07 mở 11/11/2026 sau khi Thắng chốt mở rộng Engine (hợp âm 9/13, mixolydian; ADR-019).
+MIGRATED_LESSON_IDS = {"L01", "L02", "L03", "L04", "L05", "L06", "L07", "L08"}
