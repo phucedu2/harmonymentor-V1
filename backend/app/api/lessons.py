@@ -19,6 +19,7 @@ from ..content.external_resources import resources_for
 from ..content.versioning import block_visible, current_version, lesson_visible
 from ..db.models import Lesson, LessonSource, SourceWork, User
 from ..db.session import get_db
+from ..content.overrides import effective_blocks, lesson_hidden
 from ..core.errors import AppError
 from ..services.learning_service import (
     LessonHasNoExercises,
@@ -32,14 +33,15 @@ from ..services.learning_service import (
 router = APIRouter(prefix="/api/v1/lessons", tags=["lessons"])
 
 
-def _visible_blocks(lesson: Lesson) -> list:
-    return [b for b in sorted(lesson.blocks, key=lambda x: x.position) if block_visible(b.payload)]
+def _visible_blocks(lesson: Lesson, db: Session) -> list:
+    """(khối, payload hiệu lực): payload gốc, hoặc bản sửa đã xuất bản của Quản trị viên (ADR-023)."""
+    return [(b, payload) for b, payload in effective_blocks(db, lesson) if block_visible(payload)]
 
 
-def _summary(lesson: Lesson, order: int) -> LessonSummaryOut:
+def _summary(lesson: Lesson, order: int, db: Session) -> LessonSummaryOut:
     return LessonSummaryOut(
         id=lesson.id, order=order, track=lesson.track, title=lesson.title,
-        status=lesson.status, objectives=lesson.objectives or [], block_count=len(_visible_blocks(lesson)),
+        status=lesson.status, objectives=lesson.objectives or [], block_count=len(_visible_blocks(lesson, db)),
         exercise_count=len([x for x in lesson.exercises if current_version(x) is not None]),
         review_item_count=len(lesson.review_items),
     )
@@ -49,13 +51,13 @@ def _summary(lesson: Lesson, order: int) -> LessonSummaryOut:
 def list_lessons(db: Session = Depends(get_db)):
     lessons = visible_lessons(db)
     orders = display_order(lessons)
-    return [_summary(lesson, orders[lesson.id]) for lesson in lessons]
+    return [_summary(lesson, orders[lesson.id], db) for lesson in lessons]
 
 
 @router.get("/{lesson_id}", response_model=LessonDetailOut)
 def get_lesson(lesson_id: str, db: Session = Depends(get_db)):
     lesson = db.get(Lesson, lesson_id)
-    if lesson is None or not lesson_visible(lesson):
+    if lesson is None or not lesson_visible(lesson) or lesson_hidden(db, lesson_id):
         raise HTTPException(status_code=404, detail={"code": "LESSON_NOT_FOUND"})
 
     sources = db.execute(
@@ -76,11 +78,11 @@ def get_lesson(lesson_id: str, db: Session = Depends(get_db)):
             grading_strategy=version.grading_strategy, skill_id=exercise.skill_id,
         ))
 
-    base = _summary(lesson, display_order(visible_lessons(db))[lesson.id]).model_dump()
+    base = _summary(lesson, display_order(visible_lessons(db))[lesson.id], db).model_dump()
     return LessonDetailOut(
         **base,
-        blocks=[LessonBlockOut(id=b.id, position=b.position, block_type=b.block_type, payload=b.payload)
-                for b in _visible_blocks(lesson)],
+        blocks=[LessonBlockOut(id=b.id, position=b.position, block_type=b.block_type, payload=payload)
+                for b, payload in _visible_blocks(lesson, db)],
         exercises=exercises,
         review_items=[ReviewItemOut(id=r.id, mode=r.mode, front=r.front, back=r.back, skill_id=r.skill_id)
                       for r in sorted(lesson.review_items, key=lambda x: x.id)],
