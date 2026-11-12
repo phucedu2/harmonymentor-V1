@@ -389,3 +389,11 @@ def test_api_flow_a_uncited_answer_retried_as_general(fake):
     body = ask("Cmaj7 khác C7 chỗ nào?")
     assert len(fake.calls) == 2 and "LESSON_CHUNKS" in fake.calls[0][1] and "general_music" in fake.calls[1][1]
     assert body["source_label"] == "Chưa có trong bài học, đây là kiến thức chung" and "C E G B" in body["reply"]
+
+def test_api_flow_a_unknown_tagged_out_of_scope_still_retried(fake):
+    # Thử thật 12/11: Gemini ở chế độ bài học trả "không biết" kèm intent out_of_scope cho "piano có bao nhiêu phím".
+    fake.script = [general_reply("Mình không biết câu này vì các bài học hiện có chưa dạy.", intent="out_of_scope"),
+                   general_reply("Đàn piano tiêu chuẩn có 88 phím.")]
+    body = ask("Cmaj7 khác C7 chỗ nào?")
+    assert len(fake.calls) == 2 and "general_music" in fake.calls[1][1]
+    assert body["source_label"] == "Chưa có trong bài học, đây là kiến thức chung" and "88 phím" in body["reply"]

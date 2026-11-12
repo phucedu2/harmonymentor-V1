@@ -411,7 +411,10 @@ def answer_question(db: Session, user: User, question: str, turns: Sequence[tupl
     # Câu LLM không trích được đoạn nào (trích dẫn bịa đã bị bỏ, hoặc LLM tự nói "không biết") thì không gắn nhãn
     # "Từ bài học": người học thấy rõ câu này chưa có nguồn trong bài (góp ý thầy G1).
     d.flow, d.source_label = "A", (fb.LABEL_LESSON if d.citations else fb.LABEL_UNCITED)
-    if not d.citations and d.intent != "out_of_scope" and _says_unknown(d.reply):
+    # Không xét intent: prompt luồng A dặn câu "ngoài khóa học" đánh out_of_scope, nên Gemini gắn out_of_scope cho chính
+    # câu "không biết" ("piano có bao nhiêu phím", thử thật 12/11). Câu ngoài âm nhạc đã bị bộ định tuyến chặn, và
+    # prompt kiến thức chung là chốt thứ hai.
+    if not d.citations and _says_unknown(d.reply):
         # Kho có đoạn "giống chữ" nhưng AI không trích được đoạn nào (thường là "bài chưa dạy", ví dụ "piano có bao
         # nhiêu phím"): hỏi lại theo kiến thức chung như luồng B (ADR-020). AI lỗi hoặc hết hạn mức thì giữ câu cũ.
         try:
