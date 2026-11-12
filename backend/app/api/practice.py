@@ -14,6 +14,7 @@ from ..contracts.practice import (
 from ..core.errors import AppError
 from ..db.models import User
 from ..db.session import get_db
+from ..services.quiz_service import build_quiz
 from ..services.practice_service import PracticeInputInvalid, PracticeQuestionInvalid, practice_history, record_practice
 
 router = APIRouter(prefix="/api/v1/practice", tags=["practice"])
@@ -43,3 +44,13 @@ def get_practice_history(limit: int = Query(default=20, ge=1, le=100), user: Use
                                    correct=i.correct, primary_error=i.primary_error, created_at=i.created_at) for i in items],
         stats=[PracticeKindStat(**item) for item in stats],
     )
+
+
+@router.get("/quiz")
+def get_quiz(skill_id: str = Query(min_length=1, max_length=64), n: int = Query(default=10, ge=1, le=10),
+             user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    """Quiz tối đa 10 câu cho một kỹ năng (FR-14 rút gọn). Không trả đáp án; làm xong nộp từng câu qua /attempts."""
+    try:
+        return build_quiz(db, user.id, skill_id, n)
+    except LookupError as exc:
+        raise AppError(404, "SKILL_NOT_FOUND", "Không có kỹ năng này.") from exc
