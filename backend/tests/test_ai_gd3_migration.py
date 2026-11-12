@@ -15,11 +15,11 @@ GD3 = "e3c4d5e6f7a8"
 CHAT = {"chat_sessions", "chat_messages", "chat_feedback"}
 
 
-def test_head_is_gd3_and_model_matches(tmp_path):
+def test_head_matches_model(tmp_path):
     engine = sa.create_engine(f"sqlite:///{tmp_path / 'gd3.db'}", future=True)
     try:
         alembic_to(engine, "head")
-        assert version(engine) == GD3
+        assert version(engine) == "f4d5e6f7a8b9"  # head hiện tại: migration Quản trị
         with engine.connect() as conn:
             diff = compare_metadata(MigrationContext.configure(conn), Base.metadata)
         assert diff == [], diff

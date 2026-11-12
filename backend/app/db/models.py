@@ -490,6 +490,47 @@ class DrumEvent(Base):
     project: Mapped[CompositionProject] = relationship(back_populates="drum_events")
 
 
+class ContentRevision(Base):
+    """Bản sửa nội dung bài học do Quản trị viên tạo (ADR-023). Nội dung gốc vẫn ở curriculum_specs.py và được seed
+    mỗi lần khởi động; bản sửa nằm riêng nên seed không ghi đè và có thể khôi phục về bản cũ bất kỳ.
+
+    kind = "block": payload thay payload của khối `target`; kind = "visibility": payload {"hidden": bool} cho cả bài.
+    Bản hiệu lực của một khối là bản `published` mới nhất; bản `draft` chỉ Quản trị viên xem trước.
+    """
+
+    __tablename__ = "content_revisions"
+    __table_args__ = (
+        CheckConstraint("kind IN ('block', 'visibility')", name="ck_content_revisions_kind"),
+        CheckConstraint("status IN ('draft', 'published')", name="ck_content_revisions_status"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    lesson_id: Mapped[str] = mapped_column(ForeignKey("lessons.id", ondelete="CASCADE"), index=True)
+    kind: Mapped[str] = mapped_column(String(16))
+    target: Mapped[str] = mapped_column(String(64))
+    payload: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    status: Mapped[str] = mapped_column(String(16), default="draft")
+    note: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_by: Mapped[Optional[str]] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    published_by: Mapped[Optional[str]] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    published_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class AdminAuditLog(Base):
+    """Nhật ký thao tác của Quản trị viên (ai làm gì lên đối tượng nào). Không ghi nội dung tài liệu hay mật khẩu."""
+
+    __tablename__ = "admin_audit_log"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    actor_id: Mapped[Optional[str]] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
+    action: Mapped[str] = mapped_column(String(48), index=True)
+    target_type: Mapped[str] = mapped_column(String(32))
+    target_id: Mapped[str] = mapped_column(String(96))
+    detail: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
 from sqlalchemy import event, inspect as sa_inspect, select  # noqa: E402
 
 _LOCKED_VERSION_COLUMNS = (

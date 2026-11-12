@@ -272,7 +272,49 @@ export type ChatReply = {
 };
 export type ChatContext = { page?: string; lesson_id?: string; block_id?: string };
 
+// --- Quản trị (ADR-023) ---
+export type AdminEngineReport = { checked: number; verified: number; unsupported: number; contradicted: EngineClaim[] };
+export type AdminLessonRow = { id: string; order: number; track: string; title: string; status: string; hidden: boolean;
+  block_count: number; exercise_count: number; edited_blocks: number; draft_blocks: number };
+export type AdminBlock = { id: string; position: number; block_type: string; payload: Record<string, unknown>;
+  base_payload: Record<string, unknown>; edited: boolean; draft_revision_id: string | null; engine: AdminEngineReport };
+export type AdminLessonDetail = { lesson: AdminLessonRow; objectives: string[]; blocks: AdminBlock[];
+  exercises: { id: string; version: number; skill_id: string; kind: string; prompt: string; status: string }[] };
+export type AdminRevision = { id: string; status: string; note: string | null; created_by: string | null; created_at: string;
+  published_at: string | null; payload: Record<string, unknown> };
+export type AdminUser = { id: string; email: string; display_name: string | null; role: string; is_active: boolean; created_at: string;
+  lessons_completed: number; attempts: number; last_activity: string | null };
+export type AdminStats = {
+  days: number;
+  totals: { learners: number; new_learners: number; active_last_7_days: number; attempts: number; correct_rate: number | null;
+    lessons_completed: number; reviews: number; cards_due_now: number };
+  timeline: { date: string; attempts: number; correct: number; reviews: number }[];
+  funnel: { lesson_id: string; title: string; status: string; started: number; completed: number; completion_rate: number | null }[];
+  skills: { skill_id: string; name: string; first_try_total: number; first_try_correct_rate: number }[];
+  hardest_exercises: { exercise_id: string; first_try_total: number; first_try_correct_rate: number }[];
+  mastery: { label: string; count: number }[];
+};
+export type AdminAudit = { id: number; actor_id: string | null; action: string; target_type: string; target_id: string; created_at: string };
+
 export const api = {
+  adminLessons: () => apiCall<AdminLessonRow[]>("/admin/lessons"),
+  adminLesson: (id: string) => apiCall<AdminLessonDetail>(`/admin/lessons/${encodeURIComponent(id)}`),
+  adminSaveDraft: (lessonId: string, blockId: string, payload: Record<string, unknown>, note?: string) =>
+    apiCall<{ revision_id: string; engine: AdminEngineReport }>(`/admin/lessons/${encodeURIComponent(lessonId)}/blocks/${encodeURIComponent(blockId)}`,
+      { method: "PUT", body: JSON.stringify({ payload, note: note || null }) }),
+  adminPublish: (revisionId: string, acknowledge: boolean) =>
+    apiPost<{ revision_id: string; engine: AdminEngineReport }>(`/admin/revisions/${encodeURIComponent(revisionId)}/publish`, { acknowledge_engine_flags: acknowledge }),
+  adminHistory: (lessonId: string, blockId: string) =>
+    apiCall<AdminRevision[]>(`/admin/lessons/${encodeURIComponent(lessonId)}/blocks/${encodeURIComponent(blockId)}/history`),
+  adminRestore: (lessonId: string, blockId: string, revisionId: string | null) =>
+    apiPost<{ revision_id: string }>(`/admin/lessons/${encodeURIComponent(lessonId)}/blocks/${encodeURIComponent(blockId)}/restore`, { revision_id: revisionId }),
+  adminVisibility: (lessonId: string, hidden: boolean) =>
+    apiPost<{ id: string; hidden: boolean }>(`/admin/lessons/${encodeURIComponent(lessonId)}/visibility`, { hidden }),
+  adminUsers: (q = "") => apiCall<{ total: number; items: AdminUser[] }>(`/admin/users?q=${encodeURIComponent(q)}`),
+  adminSetActive: (id: string, isActive: boolean) =>
+    apiCall<{ id: string; is_active: boolean }>(`/admin/users/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify({ is_active: isActive }) }),
+  adminStats: (days = 30) => apiCall<AdminStats>(`/admin/stats?days=${days}`),
+  adminAudit: () => apiCall<AdminAudit[]>("/admin/audit?limit=30"),
   // Legacy Practice routes retained during migration.
   transpose: (note: string, interval: string) =>
     engineCall<{ note: string }>(`/transpose?note=${encodeURIComponent(note)}&interval=${encodeURIComponent(interval)}`),
