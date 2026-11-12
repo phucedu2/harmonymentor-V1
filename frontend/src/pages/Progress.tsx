@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
-import { api, type ApiError, type LearningOverview, type ReviewState } from "../api";
+import { api, type ApiError, type LearningOverview, type MasteryLevel, type ReviewState, type SkillMastery } from "../api";
 import { REVIEW_MODE_LABELS } from "../components/learning/LessonRunner";
 import { Alert } from "../components/ui/Alert";
 import { Button } from "../components/ui/Button";
 import { Card, CardTitle, Kicker, Metric, PageHeading, ProgressBar, ResultBox } from "../components/ui/Page";
+
+const LEVEL_LABELS: Record<MasteryLevel, string> = {
+  not_assessed: "Chưa đánh giá", learning: "Đang học", weak: "Còn yếu", ready: "Đủ để học tiếp", mastered: "Thành thạo",
+};
 
 const STATUS_LABELS: Record<string, string> = { not_started: "Chưa bắt đầu", started: "Đang học", completed: "Đã hoàn thành" };
 
@@ -12,6 +16,8 @@ export default function ProgressPage() {
   const [due, setDue] = useState<ReviewState[]>([]);
   const [scheduled, setScheduled] = useState<ReviewState[]>([]);
   const [error, setError] = useState<string | null>(null);
+  // RS-12: điểm thành thạo đã có API nhưng chưa có chỗ nào cho người học xem.
+  const [skills, setSkills] = useState<SkillMastery[]>([]);
   // Thẻ vừa ôn rời khỏi danh sách đến hạn, nên kết quả hiện ở đây thay vì trên thẻ.
   const [notice, setNotice] = useState<{ good: boolean; text: string } | null>(null);
 
@@ -33,6 +39,7 @@ export default function ProgressPage() {
   };
 
   useEffect(() => { void load(); }, []);
+  useEffect(() => { api.myMastery().then((r) => setSkills(r.skills)).catch(() => undefined); }, []);
 
   return <section>
     <PageHeading eyebrow="Tiến độ" title="Tiến độ học và lịch ôn">Số liệu lấy từ chính các lần bạn làm bài và ôn thẻ.</PageHeading>
@@ -48,7 +55,7 @@ export default function ProgressPage() {
       <Card>
         <CardTitle>Thẻ cần ôn hôm nay</CardTitle>
         {due.length === 0
-          ? <p className="mt-2 text-muted">Chưa có thẻ cần ôn. Sau khi hoàn thành một bài, lượt ôn đầu tiên là ngày hôm sau.</p>
+          ? <p className="mt-2 text-muted">Chưa có thẻ cần ôn. Hoàn thành một bài để tạo thẻ ôn; thẻ mới đến hạn ngay, các lần ôn sau cách nhau 1, 2, 4, 8, 16 ngày.</p>
           : <div className="mt-3 grid gap-3">{due.map((item) => <ReviewCard key={item.review_item_id} item={item} onDone={async (result) => { setNotice(result); await load(); }} />)}</div>}
         {notice && <ResultBox correct={notice.good} title={notice.good ? "Nhớ đúng" : "Chưa đúng"}>{notice.text}</ResultBox>}
       </Card>
@@ -62,6 +69,14 @@ export default function ProgressPage() {
         </ul>}
       </Card>
     </div>
+
+    {skills.some((x) => x.assessed) && <Card className="mb-4">
+      <Kicker>Kỹ năng</Kicker><CardTitle className="mt-1">Kỹ năng của bạn</CardTitle>
+      <ul className="mt-4 grid gap-3 sm:grid-cols-2">{skills.filter((x) => x.assessed).map((x) => <li key={x.skill_id} className="grid gap-1">
+        <div className="flex justify-between gap-2 text-sm"><b className="text-ink">{x.name}</b><span className="text-muted">{LEVEL_LABELS[x.level]}</span></div>
+        <ProgressBar value={Math.round((x.score ?? 0) * 100)} label={`Mức thành thạo: ${x.name}`} />
+      </li>)}</ul>
+    </Card>}
 
     <Card>
       <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
