@@ -192,13 +192,13 @@ def _check(ans: TutorAnswer, allowed: dict[str, Hit]) -> tuple[GuardResult, list
 
 
 def _llm_round(provider: LLMProvider, build, allowed: dict[str, Hit], titles: dict[str, str],
-               extra_check=None) -> tuple[TutorAnswer | None, GuardResult | None, list[LLMResult], str | None]:
+               extra_check=None, system: str | None = None) -> tuple[TutorAnswer | None, GuardResult | None, list[LLMResult], str | None]:
     """Gọi LLM, kiểm, soạn lại tối đa 1 lần. Trả (câu đạt hoặc None, kết quả kiểm, các lần gọi, lý do hỏng)."""
     results: list[LLMResult] = []
     correction = None
     reason = None
     for round_no in (1, 2):
-        res = provider.generate(pr.SYSTEM, build(correction), LLM_SCHEMA)
+        res = provider.generate(system or pr.SYSTEM, build(correction), LLM_SCHEMA)
         results.append(res)
         ans = parse_answer(res.text)
         if ans is None:
@@ -229,10 +229,7 @@ def _finish(ans: TutorAnswer, guard: GuardResult, allowed: dict[str, Hit], title
             continue
         seen.add(c.block_id)
         cites.append(_citation(allowed[c.block_id], titles))  # tiêu đề lấy từ kho, không lấy chữ AI viết
-    last = results[-1]
-    merged = LLMResult(last.text, last.model, sum(r.tokens_in or 0 for r in results) or None,
-                       sum(r.tokens_out or 0 for r in results) or None, sum(r.latency_ms for r in results),
-                       len(results))
+    merged = _merge_results(results)
     return Draft(ans.reply, ans.intent, cites, [c.as_dict() for c in guard.claims], "ok", "llm", ans.hint_level,
                  list(ans.suggested_actions), merged, len(results))
 
@@ -276,6 +273,65 @@ def _dont_know(dec, titles: dict[str, str]) -> Draft:
                  suggested_lesson=dec.nearest_lesson)
 
 
+def _b_without_ai(dec, titles: dict[str, str], reason: str) -> Draft:
+    """Luồng B khi không gọi được AI (ADR-020, trả lời 4A): có dữ kiện Engine thì trả dữ kiện, không thì nói thật
+    là chưa trả lời được lúc này kèm bài gần nhất. Không nói "không biết" vì thật ra là AI đang lỗi."""
+    if dec.kind == "engine":
+        d = _engine_only_answer(dec, titles)
+        d.fallback_reason = reason
+        return d
+    text = (fb.B_OFF if reason == "ai_disabled" else fb.B_BUSY) + _pointer(dec, titles)
+    actions = [f"Mở bài {dec.nearest_lesson}"] if dec.nearest_lesson else []
+    return Draft(text, "concept", [], [], "fallback", "ai_off", 0, actions, flow="B", source_label=fb.LABEL_UNKNOWN,
+                 suggested_lesson=dec.nearest_lesson, fallback_reason=reason)
+
+
+def _general_answer(db: Session, user: User, question: str, turns: Sequence[tuple[str, str]], dec,
+                    titles: dict[str, str], facts: Sequence[dict[str, Any]], provider: LLMProvider | None,
+                    now: datetime) -> Draft:
+    """Luồng B (ADR-020): câu âm nhạc mà kho bài chưa dạy. Gemini trả lời bằng kiến thức chung, kèm nhãn rõ "chưa có
+    trong bài học"; mọi nốt/hợp âm/âm giai/quãng trong câu được Music Engine quét lại. Sai thì soạn lại 1 lần,
+    vẫn sai thì bỏ câu AI và trả dữ kiện Engine (hoặc "chưa trả lời được")."""
+    if provider is None:
+        return _b_without_ai(dec, titles, "ai_disabled")
+    if _llm_rows_today(db, now, None) >= settings.ai_global_daily_budget:
+        return _b_without_ai(dec, titles, "global_budget")
+    used = _llm_rows_today(db, now, user.id)
+    if used >= settings.ai_daily_quota:
+        raise QuotaExceeded(used, settings.ai_daily_quota)
+
+    def build(correction: str | None) -> str:
+        return pr.general_prompt(question, turns, facts, correction)
+
+    try:
+        ans, guard, results, reason = _llm_round(provider, build, {}, titles, system=pr.SYSTEM_GENERAL)
+    except LLMUnavailable as exc:
+        d = _b_without_ai(dec, titles, exc.reason)
+        d.llm_calls = 1
+        return d
+    if ans is None:
+        d = _b_without_ai(dec, titles, reason or "invalid")
+        d.llm_calls, d.llm = len(results), results[-1] if results else None
+        return d
+    merged = _merge_results(results)
+    if ans.intent == "out_of_scope":
+        # Gemini là chốt thứ hai: câu không phải âm nhạc thì dùng câu từ chối viết sẵn, không tin chữ AI viết.
+        return Draft(fb.OUT_OF_SCOPE, "out_of_scope", [], [], "ok", "out_of_scope", 0, [], merged, len(results),
+                     flow="C", source_label=fb.LABEL_REFUSE)
+    text = ans.reply.rstrip() + _pointer(dec, titles)
+    actions = list(ans.suggested_actions) or ([f"Mở bài {dec.nearest_lesson}"] if dec.nearest_lesson else [])
+    return Draft(text, ans.intent, [], [c.as_dict() for c in guard.claims], "ok", "general_llm", ans.hint_level,
+                 actions, merged, len(results), flow="B", source_label=fb.LABEL_GENERAL,
+                 suggested_lesson=dec.nearest_lesson)
+
+
+def _merge_results(results: Sequence[LLMResult]) -> LLMResult:
+    last = results[-1]
+    return LLMResult(last.text, last.model, sum(r.tokens_in or 0 for r in results) or None,
+                     sum(r.tokens_out or 0 for r in results) or None, sum(r.latency_ms for r in results),
+                     len(results))
+
+
 def _help_answer(dec) -> Draft:
     if not dec.help_hits:
         return Draft(fb.HELP_UNKNOWN, "help", [], [], "ok", "help_unknown", 0, [], flow="D",
@@ -312,7 +368,7 @@ def answer_question(db: Session, user: User, question: str, turns: Sequence[tupl
     if dec.flow == "D":
         return _help_answer(dec), meta
     if dec.flow == "B":
-        return (_engine_only_answer(dec, titles) if dec.kind == "engine" else _dont_know(dec, titles)), meta
+        return _general_answer(db, user, question, turns, dec, titles, facts, provider, now), meta
 
     # Luồng A: có đoạn bài đủ điểm.
     hits = dec.hits
