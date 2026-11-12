@@ -600,7 +600,7 @@ function BarEditor({ index, chord, voicing, keyName, keyChords, chords, levels, 
       </div>
       <Button className="justify-self-start" loading={loading} onClick={() => void ask()}>Gợi ý hợp âm thay cho ô {index + 1}</Button>
       {error && <Alert tone="danger">{error}</Alert>}
-      {candidates && candidates.length === 0 && <p className="text-muted">Chưa có gợi ý cho hợp âm này ở mức độ lạ đã chọn.</p>}
+      {candidates && candidates.length === 0 && <p className="text-muted">Chưa có gợi ý cho ô này ở mức độ lạ đã chọn (mức {maxLevel}). Hãy thử một mức thấp hơn, hoặc đổi hợp âm ở ô bên cạnh rồi hỏi lại. Các thuật ngữ như bậc, chức năng át, át phụ được giải thích trong các bài học về chức năng hòa âm và hợp âm mượn.</p>}
       {candidates && candidates.length > 0 && <p className="text-xs text-muted">Gợi ý sinh theo luật nhạc lý, xếp từ quen tai tới lạ tai. Chưa dùng AI.</p>}
       {groups.map(([level, items]) => <div key={level} className="grid gap-2">
         <h3 className="text-sm font-semibold text-ink">Độ lạ {level}: {items[0].level_label}</h3>

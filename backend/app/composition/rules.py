@@ -360,10 +360,14 @@ def _classify(tonic: Note, chord: ChordSymbol, rn: RomanNumeral | None, prev: Ch
                                         f"bass đi xuống nửa cung về {nxt.root.name}.")
     for label, (rule, root, fam) in special.items():
         if family == fam and chord.root.pitch_class == root.pitch_class:
+            # RS-13: A# và Bb cùng cao độ nhưng trong giọng này tên đúng là Bb; nhắc người học thay vì lặng lẽ nhận.
+            respell = (f" Trong giọng {tonic.name} nên viết là {root.name} thay vì {chord.root.name}."
+                       if chord.root.name != root.name else "")
             if rule == "borrowed":
-                return rule, label, f"Mượn từ giọng {tonic.name} thứ (cùng nốt chủ), nghe tối hơn hợp âm trong giọng."
-            return rule, label, f"Màu {_MODAL_NAME[label]}: một nốt của âm giai được nâng hoặc hạ nửa cung."
-    if prev is not None and family is not None and _family(prev) == family:
+                return rule, label, f"Mượn từ giọng {tonic.name} thứ (cùng nốt chủ), nghe tối hơn hợp âm trong giọng." + respell
+            return rule, label, f"Màu {_MODAL_NAME[label]}: một nốt của âm giai được nâng hoặc hạ nửa cung." + respell
+    # RS-13: "cùng loại hợp âm" phải đúng nghĩa; A7 (hợp âm bảy át) sau C (hợp âm trưởng) không phải chromatic mediant.
+    if prev is not None and family is not None and _family(prev) == family and prev.type.id == chord.type.id:
         distance = (chord.root.pitch_class - prev.root.pitch_class) % 12
         if distance in (3, 4, 8, 9):
             return "chromatic_mediant", "mediant", (f"Chromatic mediant so với {prev.symbol}: cùng loại hợp âm, nốt gốc "
