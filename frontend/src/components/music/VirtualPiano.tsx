@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { audioEngine } from "../../audio/AudioEngine";
-import { midiToScientific, pitchClassOf } from "../../audio/musicUtils";
+import { midiToScientific, pianoKeyLabel, pitchClassOf } from "../../audio/musicUtils";
 
 type Props = {
   startMidi?: number;
@@ -70,22 +70,29 @@ export default function VirtualPiano({
     return ((index + 1) / whiteKeys.length) * 100;
   };
 
-  return <div className="virtual-piano-shell">
-    <div className="virtual-piano" role="group" aria-label="Bàn phím piano ảo">
-      <div className="white-keys">
+  // Phím đúng/sai luôn có thêm dấu ✓/✗ và aria-label, không chỉ đổi màu (WCAG 1.4.1).
+  const stateLabel = (active: boolean, target: boolean, wrong: boolean) =>
+    [active && "đang chọn", target && "nốt cần tìm", wrong && "nốt sai"].filter(Boolean).join(", ");
+
+  return <div className="mt-4">
+    <div className="relative h-36 max-w-[900px] select-none sm:h-48" role="group" aria-label="Bàn phím piano ảo. Bấm phím để nghe nốt.">
+      <div className="flex h-full">
         {whiteKeys.map((key) => {
           const active = selected.includes(key.note);
           const target = highlighted.has(key.pitchClass);
           const wrong = incorrect.has(key.pitchClass);
+          const state = stateLabel(active, target, wrong);
           return <button
             type="button"
             key={key.note}
-            className={`piano-key white-key ${active ? "selected" : ""} ${target ? "highlighted" : ""} ${wrong ? "incorrect" : ""}`}
+            className={`relative h-full flex-1 rounded-b-md border border-r-0 border-ink/40 text-ink transition-colors last:border-r active:translate-y-0.5 ${wrong ? "bg-danger-soft shadow-[inset_0_-6px_0_var(--color-danger)]" : active ? "bg-primary-soft shadow-[inset_0_-6px_0_var(--color-primary)]" : target ? "bg-primary-soft/70" : "bg-surface hover:bg-bg"}`}
             onClick={() => void press(key)}
             aria-pressed={selectionMode ? active : undefined}
+            aria-label={`Phím ${key.note}${state ? `, ${state}` : ""}`}
             title={key.note}
           >
-            {showLabels && <span>{showOctaveNumbers ? key.note : key.pitchClass}</span>}
+            {target && <span aria-hidden="true" className="absolute inset-x-1 top-1 h-1.5 rounded-full" style={{ background: noteColor(key.pitchClass) }} />}
+            {(showLabels || wrong || target) && <span aria-hidden="true" className="absolute bottom-2 left-1/2 -translate-x-1/2 font-mono text-[10px]">{wrong ? "✗" : target && !showLabels ? "●" : showOctaveNumbers ? key.note : key.pitchClass}</span>}
           </button>;
         })}
       </div>
@@ -93,23 +100,31 @@ export default function VirtualPiano({
         const active = selected.includes(key.note);
         const target = highlighted.has(key.pitchClass);
         const wrong = incorrect.has(key.pitchClass);
+        const state = stateLabel(active, target, wrong);
         return <button
           type="button"
           key={key.note}
-          className={`piano-key black-key ${active ? "selected" : ""} ${target ? "highlighted" : ""} ${wrong ? "incorrect" : ""}`}
-          style={{ left: `calc(${positionBlack(key.midi)}% - 15px)` }}
+          className={`absolute top-0 z-10 h-[62%] w-6 rounded-b-md border border-black text-shell-text sm:w-[30px] ${wrong ? "bg-danger shadow-[inset_0_-5px_0_var(--color-danger-soft)]" : active ? "bg-primary shadow-[inset_0_-5px_0_var(--color-signature)]" : target ? "bg-primary-strong" : "bg-shell hover:bg-shell-raised"}`}
+          style={{ left: `calc(${positionBlack(key.midi)}% - 13px)` }}
           onClick={() => void press(key)}
           aria-pressed={selectionMode ? active : undefined}
+          aria-label={`Phím ${pianoKeyLabel(key.note)}${state ? `, ${state}` : ""}`}
           title={`${key.note} (${ENHARMONIC_LABELS[key.pitchClass] ?? key.pitchClass})`}
         >
-          {showLabels && <span>{ENHARMONIC_LABELS[key.pitchClass] ?? key.pitchClass}</span>}
+          {(showLabels || wrong) && <span aria-hidden="true" className="absolute bottom-2 left-1/2 -translate-x-1/2 -rotate-90 font-mono text-[8px] whitespace-nowrap">{wrong ? "✗" : ENHARMONIC_LABELS[key.pitchClass] ?? key.pitchClass}</span>}
         </button>;
       })}
     </div>
-    <div className="piano-caption">
-      <span>Click/tap để nghe nốt.</span>
-      {selectionMode && <><span>Đã chọn: {selected.length ? selected.join(" · ") : "chưa có"}</span><button type="button" className="text-button" onClick={() => setSelected([])}>Xóa chọn</button></>}
-      <small>Phím đen có thể có hai tên, ví dụ C#/Db. Đây là hai cách gọi cho cùng một phím; bài học sẽ giải thích khi nào cần dùng tên nào. Khi bài tập yêu cầu viết tên nốt, hãy trả lời bằng chữ thay vì chỉ dựa vào vị trí phím đàn.</small>
+    <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted">
+      <span>Bấm phím (hoặc Tab rồi Enter) để nghe nốt.</span>
+      {selectionMode && <><span aria-live="polite">Đã chọn: {selected.length ? selected.map(pianoKeyLabel).join(" · ") : "chưa có"}</span><button type="button" className="inline-flex min-h-11 items-center font-semibold text-primary hover:underline" onClick={() => setSelected([])}>Xóa chọn</button></>}
+      <small className="basis-full">Phím đen có thể có hai tên, ví dụ C#/Db. Đây là hai cách gọi cho cùng một phím; bài học sẽ giải thích khi nào cần dùng tên nào. Khi bài tập yêu cầu viết tên nốt, hãy trả lời bằng chữ thay vì chỉ dựa vào vị trí phím đàn.</small>
     </div>
   </div>;
 }
+
+// Màu nốt theo vòng quãng năm (token --color-note-* trong index.css); chỉ trang trí.
+const NOTE_TOKEN: Record<string, string> = {
+  C: "c", "C#": "db", D: "d", "D#": "eb", E: "e", F: "f", "F#": "fs", G: "g", "G#": "ab", A: "a", "A#": "bb", B: "b",
+};
+const noteColor = (pitchClass: string) => `var(--color-note-${NOTE_TOKEN[pitchClass] ?? "c"})`;

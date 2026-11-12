@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { api, type ApiError, type LearningOverview, type ReviewState } from "../api";
 import { REVIEW_MODE_LABELS } from "../components/learning/LessonRunner";
+import { Alert } from "../components/ui/Alert";
+import { Button } from "../components/ui/Button";
+import { Card, CardTitle, Kicker, Metric, PageHeading, ProgressBar, ResultBox } from "../components/ui/Page";
 
 const STATUS_LABELS: Record<string, string> = { not_started: "Chưa bắt đầu", started: "Đang học", completed: "Đã hoàn thành" };
 
@@ -32,28 +35,48 @@ export default function ProgressPage() {
   useEffect(() => { void load(); }, []);
 
   return <section>
-    <div className="page-heading"><div><span className="eyebrow">TIẾN ĐỘ</span><h2>Tiến độ học & lịch ôn</h2></div><p>Số liệu lấy từ chính các lần bạn làm bài và ôn thẻ.</p></div>
-    {error && <div className="result bad">{error}</div>}
+    <PageHeading eyebrow="Tiến độ" title="Tiến độ học và lịch ôn">Số liệu lấy từ chính các lần bạn làm bài và ôn thẻ.</PageHeading>
+    {error && <div className="mb-4"><Alert tone="danger">{error}</Alert></div>}
 
-    <div className="metric-grid">
-      <article className="card metric"><b>{overview?.completed_lessons ?? 0}</b><span>bài đã hoàn thành</span></article>
-      <article className="card metric"><b>{due.length}</b><span>thẻ đến hạn</span></article>
-      <article className="card metric"><b>{scheduled.length}</b><span>thẻ sắp tới</span></article>
+    <div className="mb-4 grid grid-cols-3 gap-3">
+      <Metric value={overview?.completed_lessons ?? 0} label="bài đã hoàn thành" />
+      <Metric value={due.length} label="thẻ đến hạn" />
+      <Metric value={scheduled.length} label="thẻ sắp tới" />
     </div>
 
-    <article className="card block">
-      <div className="section-heading"><div><span className="section-kicker">Bài học</span><h3>Bạn đã làm được gì</h3></div><span className="muted">Tính theo số câu đã trả lời đúng ít nhất một lần</span></div>
-      <div className="progress-lesson-list">{overview?.lessons.filter((lesson) => lesson.exercise_count > 0).map((lesson) => <div className="progress-lesson" key={lesson.lesson_id}>
-        <div className="progress-lesson-title"><span>{lesson.order}</span><div><b>{lesson.title}</b><small>{lesson.track} · {STATUS_LABELS[lesson.status] ?? lesson.status}</small></div></div>
-        <div className="progress-track"><span style={{ width: `${lesson.status === "completed" ? 100 : Math.round(lesson.correct_exercises / Math.max(1, lesson.exercise_count) * 100)}%` }} /></div>
-        <div className="progress-stats"><span>Đúng {lesson.correct_exercises}/{lesson.exercise_count} câu</span><span>{lesson.attempt_count} lần trả lời</span></div>
-      </div>)}</div>
-    </article>
-
-    <div className="two-col block">
-      <article className="card"><h3>Thẻ cần ôn hôm nay</h3>{due.length === 0 ? <p className="muted">Chưa có thẻ cần ôn. Sau khi hoàn thành một bài, lượt ôn đầu tiên là ngày hôm sau.</p> : <div className="review-list">{due.map((item) => <ReviewCard key={item.review_item_id} item={item} onDone={async (result) => { setNotice(result); await load(); }} />)}</div>}{notice && <div className={`result ${notice.good ? "good" : "bad"}`} role="status">{notice.text}</div>}</article>
-      <article className="card"><h3>Đã lên lịch</h3>{scheduled.length === 0 ? <p className="muted">Chưa có thẻ tương lai.</p> : <ul className="scheduled-list">{scheduled.slice(0, 12).map((item) => <li key={item.review_item_id}><b>{item.front}</b><small>Hộp {item.leitner_box}/5 · ôn lại ngày {new Date(item.due_at).toLocaleDateString("vi-VN")}</small></li>)}</ul>}</article>
+    <div className="mb-4 grid gap-4 md:grid-cols-2">
+      <Card>
+        <CardTitle>Thẻ cần ôn hôm nay</CardTitle>
+        {due.length === 0
+          ? <p className="mt-2 text-muted">Chưa có thẻ cần ôn. Sau khi hoàn thành một bài, lượt ôn đầu tiên là ngày hôm sau.</p>
+          : <div className="mt-3 grid gap-3">{due.map((item) => <ReviewCard key={item.review_item_id} item={item} onDone={async (result) => { setNotice(result); await load(); }} />)}</div>}
+        {notice && <ResultBox correct={notice.good} title={notice.good ? "Nhớ đúng" : "Chưa đúng"}>{notice.text}</ResultBox>}
+      </Card>
+      <Card>
+        <CardTitle>Đã lên lịch</CardTitle>
+        {scheduled.length === 0 ? <p className="mt-2 text-muted">Chưa có thẻ tương lai.</p> : <ul className="mt-3 divide-y divide-line">
+          {scheduled.slice(0, 12).map((item) => <li key={item.review_item_id} className="py-2">
+            <b className="block text-ink">{item.front}</b>
+            <small className="text-muted">Hộp {item.leitner_box}/5 · ôn lại ngày {new Date(item.due_at).toLocaleDateString("vi-VN")}</small>
+          </li>)}
+        </ul>}
+      </Card>
     </div>
+
+    <Card>
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+        <div><Kicker>Bài học</Kicker><CardTitle className="mt-1">Bạn đã làm được gì</CardTitle></div>
+        <span className="text-sm text-muted">Tính theo số câu đã trả lời đúng ít nhất một lần</span>
+      </div>
+      <ul className="mt-4 grid gap-4">{overview?.lessons.filter((lesson) => lesson.exercise_count > 0).map((lesson) => <li key={lesson.lesson_id} className="grid gap-2">
+        <div className="flex items-center gap-3">
+          <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-primary-soft font-mono text-sm font-semibold text-primary-strong" aria-hidden="true">{lesson.order}</span>
+          <div className="min-w-0"><b className="block text-ink">{lesson.title}</b><small className="text-muted">{lesson.track} · {STATUS_LABELS[lesson.status] ?? lesson.status}</small></div>
+        </div>
+        <ProgressBar value={lesson.status === "completed" ? 100 : lesson.correct_exercises / Math.max(1, lesson.exercise_count) * 100} label={`Tiến độ bài ${lesson.order}`} />
+        <div className="flex justify-between text-sm text-muted"><span>Đúng {lesson.correct_exercises}/{lesson.exercise_count} câu</span><span>{lesson.attempt_count} lần trả lời</span></div>
+      </li>)}</ul>
+    </Card>
   </section>;
 }
 
@@ -76,16 +99,23 @@ function ReviewCard({ item, onDone }: { item: ReviewState; onDone: (result: { go
       setFeedback(err.message ?? err.code);
     } finally { setBusy(false); }
   };
-  const label = <small>{REVIEW_MODE_LABELS[item.mode] ?? item.mode} · hộp {item.leitner_box}/5</small>;
+  const label = <small className="text-xs font-semibold tracking-wide text-muted uppercase">{REVIEW_MODE_LABELS[item.mode] ?? item.mode} · hộp {item.leitner_box}/5</small>;
+  const box = "grid gap-2 rounded-xl border border-line bg-bg p-4";
   // Thẻ ý mở: máy không chấm được câu tự luận, nên người học lật thẻ và tự đánh giá (kiểu Anki).
-  if (item.self_check) return <div className="review-card">{label}<b>{item.front}</b>
+  if (item.self_check) return <div className={box}>{label}<b className="text-ink">{item.front}</b>
     {revealed
-      ? <><p className="review-back">{item.back}</p><div className="review-actions">
-          <button disabled={busy} onClick={() => void send("", "good")}>Mình đã nhớ đúng</button>
-          <button className="ghost" disabled={busy} onClick={() => void send("", "again")}>Mình chưa nhớ</button>
+      ? <><p className="rounded-lg bg-surface p-3 text-ink">{item.back}</p><div className="flex flex-wrap gap-2">
+          <Button disabled={busy} onClick={() => void send("", "good")}>Mình đã nhớ đúng</Button>
+          <Button variant="secondary" disabled={busy} onClick={() => void send("", "again")}>Mình chưa nhớ</Button>
         </div></>
-      : <button className="ghost" onClick={() => setRevealed(true)}>Tự nhớ trong đầu, rồi lật thẻ</button>}
-    {feedback && <span>{feedback}</span>}
+      : <Button variant="secondary" className="justify-self-start" onClick={() => setRevealed(true)}>Tự nhớ trong đầu, rồi lật thẻ</Button>}
+    {feedback && <Alert tone="danger">{feedback}</Alert>}
   </div>;
-  return <div className="review-card">{label}<b>{item.front}</b><input value={answer} onChange={(event) => setAnswer(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && answer.trim()) void send(answer, "auto"); }} placeholder="Nhập đáp án từ trí nhớ" /><button disabled={busy || !answer.trim()} onClick={() => void send(answer, "auto")}>Kiểm tra</button>{feedback && <span>{feedback}</span>}</div>;
+  return <div className={box}>{label}<b className="text-ink">{item.front}</b>
+    <div className="flex flex-wrap gap-2">
+      <input aria-label={`Đáp án cho thẻ: ${item.front}`} className="min-h-11 min-w-0 flex-1 rounded-lg border border-line bg-surface px-3 text-base text-ink" value={answer} onChange={(event) => setAnswer(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && answer.trim()) void send(answer, "auto"); }} placeholder="Nhập đáp án từ trí nhớ" />
+      <Button disabled={busy || !answer.trim()} onClick={() => void send(answer, "auto")}>Kiểm tra</Button>
+    </div>
+    {feedback && <Alert tone="danger">{feedback}</Alert>}
+  </div>;
 }

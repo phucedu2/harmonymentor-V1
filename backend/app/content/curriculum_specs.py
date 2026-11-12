@@ -77,6 +77,13 @@ def f(
     }
 
 
+# MT21C mở được và đối chiếu ngày 04/11/2026 (GFDL 1.2+). Câu demo 10/11 dẫn nguồn này; OMT trả 403 cho
+# máy kiểm nên chỉ ghi là nguồn đối chiếu thứ hai, chưa mở lại trong đợt này.
+MT21C_ENHARMONIC = src("MT21C", "Ch.1 §1.5 Enharmonic Notes", "Cùng phím piano nhưng khác tên chữ là hai nốt viết khác nhau.")
+MT21C_INTERVALS = src("MT21C", "Ch.5 §5.1 Introduction to Intervals", "Số quãng đếm theo chữ cái; quãng 3 là M hoặc m, m nhỏ hơn M một nửa cung.")
+MT21C_7TH = src("MT21C", "Ch.8 §8.1 Introduction to Seventh Chords", "Năm loại hợp âm bảy, gồm major seventh và major-minor (dominant) seventh.")
+MT21C_ROMAN_7TH = src("MT21C", "Ch.8 §8.3 Roman Numerals of Diatonic Seventh Chords", "Hoa = triad trưởng, thường = triad thứ, \"7\" = quãng 7 thứ; sách viết V⁷, vi⁷, IM⁷.")
+
 OMT_INTERVALS = src("OMT_V2", "Fundamentals → Intervals", "Interval size/quality and enharmonic interval spelling.")
 OMT_TRIADS = src("OMT_V2", "Fundamentals → Triads", "Triad structure, qualities, spelling, and listening.")
 OMT_7TH = src("OMT_V2", "Fundamentals → Seventh Chords", "Seventh-chord structure and diatonic qualities.")
@@ -110,7 +117,7 @@ KH_CH11 = src("KHAIHOAN_JAZZ", "Ch.11, printed pp. 279–307", "Three-note voici
 
 LESSON_SPECS: list[dict[str, Any]] = [
     {
-        "id": "L01", "order": 1, "track": "Foundation", "title": "Từ bàn phím đến hợp âm ba nốt",
+        "id": "L01", "order": 1, "track": "M1. Nền tảng", "title": "Từ bàn phím đến hợp âm ba nốt",
         "status": "reviewed",
         "objectives": [
             "Nhận biết tên nốt và tự đếm được nửa cung trên bàn phím piano.",
@@ -177,6 +184,9 @@ LESSON_SPECS: list[dict[str, Any]] = [
             q("L01-Q04", "build", "Dựng hợp âm D minor bằng tên nốt. Nhập ba nốt, có thể ngăn cách bằng dấu -, khoảng trắng hoặc dấu phẩy.", "chord.triad_build", "music_engine", {"expected": ["D", "F", "A"]}, {"kind": "build_chord", "symbol": "Dm"}, explanation="D minor = D–F–A: m3 + P5 tính từ D.", provenance=[OMT_TRIADS, TER_CH1]),
             q("L01-Q05", "context", "F# và Gb có thể là cùng một phím trên piano. Điều đó có nghĩa chúng luôn được viết cùng một tên trong mọi ngữ cảnh không? Chọn Có hoặc Không.", "pitch.spelling", "exact", {"expected": "Không"}, {}, ["Có", "Không"], explanation="Không. Hai tên có thể cùng cao độ nhưng spelling đúng còn phụ thuộc số quãng, khung chữ cái và ngữ cảnh.", provenance=[OMT_INTERVALS, FANK_FUND], version=5),
             q("L01-Q06", "build", "Dựng hợp âm B diminished. Nhập ba nốt, có thể ngăn cách bằng dấu -, khoảng trắng hoặc dấu phẩy.", "chord.triad_build", "music_engine", {"expected": ["B", "D", "F"]}, {"kind": "build_chord", "symbol": "Bdim"}, explanation="B diminished = B–D–F: m3 + d5 tính từ B.", provenance=[OMT_TRIADS, TER_CH1]),
+            # Câu demo 10/11 (Thắng chốt danh sách 04/11; Thắng + Đạt duyệt và phát hành 04/11): câu độc lập cho pitch.spelling.
+            q("L01-Q07", "mcq", "Viết nốt cách D một quãng 3 trưởng (M3) đi lên. Chọn tên nốt đúng.", "pitch.spelling", "exact", {"expected": "F#"}, {"case_sensitive": True}, ["F#", "Gb", "F", "G"], explanation="Quãng 3 từ D phải dùng chữ F (D–E–F). D–F chỉ có 3 nửa cung (m3), nên nâng thành F# để đủ 4 nửa cung. Gb cùng phím với F# nhưng là chữ G, tức quãng 4.", provenance=[MT21C_INTERVALS, MT21C_ENHARMONIC, OMT_INTERVALS]),
+            q("L01-Q08", "mcq", "Viết nốt cách A một quãng 3 thứ (m3) đi lên. Chọn tên nốt đúng.", "pitch.spelling", "exact", {"expected": "C"}, {"case_sensitive": True}, ["C#", "B#", "C", "B"], explanation="Quãng 3 từ A dùng chữ C (A–B–C). A–C có 3 nửa cung nên đã là m3. B# cùng phím với C nhưng là chữ B, tức quãng 2; C# tạo M3.", provenance=[MT21C_INTERVALS, MT21C_ENHARMONIC, OMT_INTERVALS]),
         ],
         "review_items": [
             f("L01-F01", "Quãng F–A?", "M3 · 4 nửa cung", "interval.naming", "recall", "exact", {"expected": "M3"}, {"case_sensitive": True}, [OMT_INTERVALS]),
@@ -190,7 +200,7 @@ LESSON_SPECS: list[dict[str, Any]] = [
         ],
     },
     {
-        "id": "L02", "order": 2, "track": "Foundation", "title": "Âm giai trưởng và hợp âm bảy điệu tính",
+        "id": "L02", "order": 2, "track": "M1. Nền tảng", "title": "Âm giai trưởng và hợp âm bảy điệu tính",
         "status": "reviewed",
         "objectives": [
             "Dựng âm giai trưởng đúng thứ tự bậc và spelling.",
@@ -218,7 +228,7 @@ LESSON_SPECS: list[dict[str, Any]] = [
             ("L02-B06", "piano", {"title": "5. Nghe bốn màu seventh chord", "prompt": "Bấm các nốt của Cmaj7, Dm7, G7 và Bm7b5. Chưa cần phân biệt hoàn toàn bằng tai; mục tiêu là nối chord symbol với tập nốt.", "highlight": ["C", "D", "E", "F", "G", "A", "B"], "selection_mode": True}),
             ("L02-BCP2", "checkpoint", {"title": "Gọi tên bậc bằng số La Mã", "exercise_id": "L02-Q03", "note": "Trong C major, hãy tìm bậc của Dm7 trước rồi mới chọn ký hiệu."}),
             ("L02-B07", "audio", {"title": "6. Nghe Cmaj7 và G7", "prompt": "Nghe từng chord rồi chú ý: Cmaj7 ổn định hơn trong C major, còn G7 có xu hướng muốn đi về C.", "chords": ["Cmaj7", "G7"], "key": "C"}),
-            ("L02-B08", "summary", {"title": "Ghi nhớ", "items": ["Major scale dùng 7 bậc và giữ đúng thứ tự chữ cái.", "Seventh chord mở rộng triad thành 1–3–5–7.", "Trong major key: Imaj7, ii7, iii7, IVmaj7, V7, vi7, viiø7.", "Trong C major: Dm7 = ii7, G7 = V7, Bm7♭5 = viiø7."]}),
+            ("L02-B08", "summary", {"title": "Ghi nhớ", "items": ["Major scale dùng 7 bậc và giữ đúng thứ tự chữ cái.", "Seventh chord mở rộng triad thành 1–3–5–7.", "Trong major key: Imaj7, ii7, iii7, IVmaj7, V7, vi7, viiø7.", "Trong C major: Dm7 = ii7, G7 = V7, Bm7♭5 = viiø7.", "Đổi giọng thì đổi hợp âm: trong G major, bậc V là D nên V7 = D7 (D–F#–A–C)."]}),
         ],
         "exercises": [
             q("L02-Q01", "build", "Dựng âm giai G major theo thứ tự đi lên, không lặp lại chủ âm ở cuối.", "scale.major", "music_engine", {"expected": ["G", "A", "B", "C", "D", "E", "F#"]}, {"kind": "build_scale", "tonic": "G", "scale_type": "major"}, explanation="G major dùng F# và mỗi chữ cái xuất hiện một lần.", provenance=[FANK_FUND]),
@@ -227,6 +237,11 @@ LESSON_SPECS: list[dict[str, Any]] = [
             q("L02-Q04", "mcq", "Trong C major, hợp âm bảy trên bậc V là gì?", "chord.seventh_quality", "exact", {"expected": "G7"}, options=["Gmaj7", "G7", "Gm7", "Gdim7"], explanation="Bậc V của major key tạo dominant seventh.", provenance=[OMT_7TH, FANK_DIATONIC]),
             q("L02-Q05", "mcq", "Trong C major, hợp âm bảy trên bậc vii là gì?", "chord.seventh_quality", "exact", {"expected": "Bm7b5"}, options=["Bmaj7", "Bm7", "Bm7b5", "Bdim7"], explanation="Bậc vii trong major key tạo half-diminished seventh chord.", provenance=[OMT_7TH]),
             q("L02-Q06", "build", "Dựng G7 đầy đủ bằng tên nốt.", "chord.seventh_build", "music_engine", {"expected": ["G", "B", "D", "F"]}, {"kind": "build_chord", "symbol": "G7"}, explanation="G7 = G–B–D–F.", provenance=[OMT_7TH, TER_CH45]),
+            # Câu demo 10/11 (đã phát hành 04/11): mỗi kỹ năng seventh_quality/seventh_build/roman.major_seventh có đủ 3 câu độc lập.
+            q("L02-Q07", "mcq", "Trong giọng G trưởng (G major), hợp âm bảy dựng trên bậc V là hợp âm nào?", "chord.seventh_quality", "exact", {"expected": "D7"}, {"case_sensitive": True}, ["Dmaj7", "D7", "Dm7", "Ddim7"], explanation="Bậc V của G trưởng là D. Chồng quãng 3 bằng nốt của G trưởng được D–F#–A–C: triad trưởng + quãng 7 thứ, ký hiệu D7.", provenance=[MT21C_7TH, MT21C_ROMAN_7TH, OMT_7TH]),
+            q("L02-Q08", "build", "Dựng hợp âm Fmaj7 bằng tên nốt (đủ 4 nốt).", "chord.seventh_build", "music_engine", {"expected": ["F", "A", "C", "E"]}, {"kind": "build_chord", "symbol": "Fmaj7"}, explanation="Fmaj7 = F–A–C–E: triad F trưởng thêm quãng 7 trưởng F–E.", provenance=[MT21C_7TH, OMT_7TH]),
+            q("L02-Q09", "active_recall", "Trong giọng G trưởng, hợp âm D7 mang số La Mã nào? Viết như bài học, ví dụ ii7.", "roman.major_seventh", "music_engine", {"expected": "V7"}, {"kind": "roman_numeral", "key": "G", "chord": "D7"}, explanation="D là bậc 5 của G trưởng. Triad trưởng nên viết chữ hoa V, thêm 7 cho quãng 7 thứ: V7.", provenance=[MT21C_ROMAN_7TH, OMT_ROMAN]),
+            q("L02-Q10", "active_recall", "Trong giọng C trưởng, hợp âm Am7 mang số La Mã nào? Viết như bài học, ví dụ ii7.", "roman.major_seventh", "music_engine", {"expected": "vi7"}, {"kind": "roman_numeral", "key": "C", "chord": "Am7"}, explanation="A là bậc 6 của C trưởng. Triad thứ nên viết chữ thường vi, thêm 7 cho quãng 7 thứ: vi7.", provenance=[MT21C_ROMAN_7TH, OMT_ROMAN]),
         ],
         "review_items": [
             f("L02-F01", "Viết âm giai G major (G trưởng), đi lên, không lặp chủ âm", "G–A–B–C–D–E–F#", "scale.major", "build", "music_engine", {"expected": ["G", "A", "B", "C", "D", "E", "F#"]}, {"kind": "build_scale", "tonic": "G", "scale_type": "major"}, [FANK_FUND]),
@@ -240,7 +255,7 @@ LESSON_SPECS: list[dict[str, Any]] = [
         ],
     },
     {
-        "id": "L03", "order": 3, "track": "Harmony Core", "title": "Chức năng hòa âm: Tonic – Predominant/Subdominant – Dominant",
+        "id": "L03", "order": 5, "track": "M2. Hòa âm chức năng", "title": "Chức năng hòa âm: Tonic – Predominant/Subdominant – Dominant",
         "status": "reviewed",
         "objectives": [
             "Phân biệt tonic, predominant/subdominant và dominant trong một major-key phrase đơn giản.",
@@ -285,7 +300,7 @@ LESSON_SPECS: list[dict[str, Any]] = [
         ],
     },
     {
-        "id": "L04", "order": 4, "track": "Harmony Core", "title": "ii–V–I và guide-tone voice leading trên piano",
+        "id": "L04", "order": 9, "track": "M4. Jazz", "title": "ii–V–I và guide-tone voice leading trên piano",
         "status": "reviewed",
         "objectives": [
             "Nhận diện và transpose ii–V–I major sang một số giọng.",
@@ -338,7 +353,7 @@ LESSON_SPECS: list[dict[str, Any]] = [
         ],
     },
     {
-        "id": "L05", "order": 5, "track": "Functional / Contemporary", "title": "Secondary Dominants",
+        "id": "L05", "order": 6, "track": "M2. Hòa âm chức năng", "title": "Secondary Dominants",
         "status": "source_audited",
         "objectives": [
             "Nhận diện V7/x theo chord đích tạm thời.",
@@ -368,7 +383,7 @@ LESSON_SPECS: list[dict[str, Any]] = [
         ],
     },
     {
-        "id": "L06", "order": 6, "track": "Functional / Contemporary", "title": "Modal Interchange trong Pop/Contemporary",
+        "id": "L06", "order": 8, "track": "M3. Pop", "title": "Modal Interchange trong Pop/Contemporary",
         "status": "source_audited",
         "objectives": [
             "Nhận biết quan hệ parallel major/minor.",
@@ -398,7 +413,7 @@ LESSON_SPECS: list[dict[str, Any]] = [
         ],
     },
     {
-        "id": "L07", "order": 7, "track": "Jazz", "title": "Jazz Tensions, Modes và Chord-Scale Context",
+        "id": "L07", "order": 10, "track": "M4. Jazz", "title": "Jazz Tensions, Modes và Chord-Scale Context",
         "status": "source_audited",
         "objectives": [
             "Phân biệt chord tones với 9/11/13 trong extended-chord vocabulary.",
@@ -414,7 +429,8 @@ LESSON_SPECS: list[dict[str, Any]] = [
             q("L07-Q03", "mcq", "Trong basic ii–V–I chord-scale model ở C, Dm7 thường liên hệ với mode nào?", "chord_scale.basic", "exact", {"expected": "D Dorian"}, options=["D Ionian", "D Dorian", "D Mixolydian", "D Locrian"], provenance=[OMT_CHORD_SCALE, TER_CH78]),
             q("L07-Q04", "mcq", "Trong cùng model, G7 thường liên hệ với mode nào?", "chord_scale.basic", "exact", {"expected": "G Mixolydian"}, options=["G Dorian", "G Ionian", "G Mixolydian", "G Aeolian"], provenance=[OMT_CHORD_SCALE, TER_CH78]),
             q("L07-Q05", "mcq", "Trong cùng model, Cmaj7 thường liên hệ với mode nào?", "chord_scale.basic", "exact", {"expected": "C Ionian"}, options=["C Ionian", "C Dorian", "C Mixolydian", "C Locrian"], provenance=[OMT_CHORD_SCALE, TER_CH78]),
-            q("L07-Q06", "context", "Vì sao không nên coi chord-scale table là một đáp án duy nhất cho mọi chord symbol?", "chord_scale.context", "rubric", {"accepted": ["ngữ cảnh", "ngu canh", "function", "chức năng", "chuc nang", "voice leading", "melody"]}, {"mode": "contains_any", "strip_accents": True}, explanation="OMT nêu rõ các giới hạn của chord-scale approach; context, function, voice leading và idiom vẫn quan trọng.", provenance=[OMT_CHORD_SCALE]),
+            q("L07-Q06", "context", "Vì sao không nên coi chord-scale table là một đáp án duy nhất cho mọi chord symbol?", "chord_scale.context", "rubric", {"accepted": ["ngữ cảnh", "ngu canh", "function", "chức năng", "chuc nang", "voice leading", "melody"]}, {"mode": "contains_any", "strip_accents": True}, explanation="OMT nêu rõ các giới hạn của chord-scale approach; context, function, voice leading và idiom vẫn quan trọng.", provenance=[OMT_CHORD_SCALE],
+              status="draft"),  # tự luận chấm từ khóa: để draft chờ Đạt viết lại thành câu chọn (11/11), như L08-Q06
         ],
         "review_items": [
             f("L07-F01", "Tension/extension numbers", "9, 11, 13", "tension.naming", "recall", "exact", {"expected": "9, 11, 13"}, provenance=[OMT_CHORD_SYMBOLS]),
@@ -428,7 +444,7 @@ LESSON_SPECS: list[dict[str, Any]] = [
         ],
     },
     {
-        "id": "L08", "order": 8, "track": "Jazz", "title": "Jazz Piano Voicing: shell voicing và guide-tone connection",
+        "id": "L08", "order": 11, "track": "M4. Jazz", "title": "Jazz Piano Voicing: shell voicing và guide-tone connection",
         "status": "source_audited",
         "objectives": [
             "Phân biệt full chord inventory với một voicing hợp lệ.",
@@ -444,7 +460,8 @@ LESSON_SPECS: list[dict[str, Any]] = [
             q("L08-Q03", "build", "Nêu shell root–3rd–7th cho G7 bằng ba tên nốt.", "voicing.shell", "rubric", {"accepted": ["g b f", "g,b,f", "g-b-f"]}, {"mode": "equals_any", "normalize_dashes": True}, explanation="Trong rubric này: G–B–F; đây không phải full chord inventory.", provenance=[KH_CH11]),
             q("L08-Q04", "mcq", "Smooth/lazy voice leading ưu tiên điều gì?", "voicing.voice_leading", "exact", {"expected": "Move each voice as little as possible"}, options=["Move each voice as little as possible", "Always jump by fifth", "Always keep root on top", "Always double the third"], provenance=[OMT_VOICINGS]),
             q("L08-Q05", "context", "Trong G7 → Cmaj7, basic guide-tone connection nào phù hợp với lesson?", "voicing.voice_leading", "exact", {"expected": "B stays; F moves to E"}, options=["B stays; F moves to E", "B moves to F; F stays", "Both move up an octave", "B moves to C; F moves to G"], provenance=[KH_CH11, OMT_VOICINGS]),
-            q("L08-Q06", "applied", "Vì sao bài 'dựng đầy đủ G7' và bài 'tạo shell voicing G7' không dùng cùng rubric?", "voicing.shell", "rubric", {"accepted": ["voicing", "lược", "luoc", "omit", "full chord", "inventory"]}, {"mode": "contains_any", "strip_accents": True}, explanation="Voicing có thể cố ý omit/double theo style; chord-inventory exercise kiểm tra đủ chord tones.", provenance=[OMT_VOICINGS, KH_CH11]),
+            q("L08-Q06", "applied", "Vì sao bài 'dựng đầy đủ G7' và bài 'tạo shell voicing G7' không dùng cùng rubric?", "voicing.shell", "rubric", {"accepted": ["voicing", "lược", "luoc", "omit", "full chord", "inventory"]}, {"mode": "contains_any", "strip_accents": True}, explanation="Voicing có thể cố ý omit/double theo style; chord-inventory exercise kiểm tra đủ chord tones.", provenance=[OMT_VOICINGS, KH_CH11],
+              status="draft"),  # tự luận chấm từ khóa: bài 1–4 đã đổi thành nút chọn; để draft chờ Đạt viết lại thành câu chọn (10/11)
         ],
         "review_items": [
             f("L08-F01", "Basic shell frame", "Root–3rd–7th", "voicing.shell", "recall", "exact", {"expected": "Root-3rd-7th"}, {"normalize_dashes": True}, [KH_CH11]),
@@ -472,4 +489,5 @@ def all_review_items() -> list[dict[str, Any]]:
     return [item for lesson in LESSON_SPECS for item in lesson["review_items"]]
 
 
-MIGRATED_LESSON_IDS = {"L01", "L02", "L03", "L04"}
+# L07 mở 11/11/2026 sau khi Thắng chốt mở rộng Engine (hợp âm 9/13, mixolydian; ADR-019).
+MIGRATED_LESSON_IDS = {"L01", "L02", "L03", "L04", "L05", "L06", "L07", "L08"}

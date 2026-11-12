@@ -14,3 +14,12 @@ redis>=5.0
 pytest>=8
 httpx>=0.27
 music21>=9
+
+# pipeline AI (GĐ2): KNN và cosine bằng numpy, SDK Gemini (chỉ gọi khi AI_ENABLED=1)
+numpy>=1.26
+google-genai>=1.0
+# GĐ3: phân loại ý định câu hỏi (TF-IDF ký tự + LogisticRegression), chạy cục bộ, không cần mạng
+scikit-learn>=1.4
+# AI Tutor GĐ1 góp ý thầy (ADR-017): nhúng e5-small cục bộ bằng ONNX, không cần torch
+onnxruntime>=1.18
+tokenizers>=0.19

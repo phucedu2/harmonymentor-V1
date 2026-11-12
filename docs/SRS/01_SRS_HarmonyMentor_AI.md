@@ -134,7 +134,7 @@ Module nội dung và module quản trị cũng nằm trong backend. Thiết k�
 
 | **Giai đoạn**                    | **Nội dung**                                                                                                                                                                                                                                                                        |
 |----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Giai đoạn 1 (đến 10/11/2026)     | Tài khoản và hồ sơ. Lộ trình 12 bài học. Piano tương tác, khuông nhạc, âm thanh. Guitar và trống nền ở mức nên có. Bài tập chấm tự động và chẩn đoán lỗi. Ôn tập Leitner. Mức thành thạo. Gợi ý lộ trình lai. AI Tutor có trích dẫn, sinh quiz. Quản trị nội dung. Đóng gói Docker. |
+| Giai đoạn 1 (đến 10/11/2026)     | Tài khoản và hồ sơ. Lộ trình 8 bài học. Piano tương tác, khuông nhạc, âm thanh. Guitar và trống nền ở mức nên có. Bài tập chấm tự động và chẩn đoán lỗi. Ôn tập Leitner. Mức thành thạo. Gợi ý lộ trình lai. AI Tutor có trích dẫn, sinh quiz. Quản trị nội dung. Đóng gói Docker. |
 | Giai đoạn 2 (11/11 – 04/12/2026) | Harmony Lab bản rút gọn: tạo dự án, dựng vòng hợp âm 4–8 ô nhịp, chọn trống nền, phát lại, lặp và đổi tốc độ để chơi theo. Chatbot kèm cặp chủ động: nhắc ôn, gợi ý bài, chúc mừng tiến bộ.                                                                                         |
 | Hướng phát triển                 | Giai điệu trong Harmony Lab, Composition Engine (biến đổi và gợi ý hợp âm theo luật), chế độ trợ lý hòa âm, xuất MIDI và âm thanh, chia sẻ bản sáng tác. Đã có thiết kế sơ bộ, chưa cam kết trong đồ án.                                                                            |
 | Ngoài phạm vi                    | Chấm điểm qua micro, luyện tai, phần mềm thu âm đầy đủ, AI sáng tác trọn bài, ứng dụng di động, thanh toán, triển khai công khai, tinh chỉnh (fine-tune) mô hình ngôn ngữ.                                                                                                          |
@@ -166,21 +166,20 @@ Module nội dung và module quản trị cũng nằm trong backend. Thiết k�
 
 ## 4.1 Nội dung học
 
-Chương trình có 1 khóa học, 5 module và 12 bài học. Người học đi từ phần nền tảng, rẽ vào một trong ba nhánh (hòa âm chức năng, Pop, Jazz), rồi gặp lại nhau ở bài thực hành tích hợp.
+Chương trình có 1 khóa học, 4 module và 8 bài học. Người học đi từ phần nền tảng, rồi rẽ vào một trong ba nhánh (hòa âm chức năng, Pop, Jazz).
 
-***Bảng 7. Chương trình 12 bài học***
+***Bảng 7. Chương trình 8 bài học***
 
-| **Module**             | **Bài học**                                                                                                                              |
-|------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
-| M1. Nền tảng           | L01 Từ bàn phím đến hợp âm ba nốt • L02 Âm giai trưởng và hợp âm bảy • L09 Âm giai thứ và giọng thứ • L10 Nhịp, phách và tiết tấu cơ bản |
-| M2. Hòa âm chức năng   | L03 Chức năng hòa âm T – PD – D • L05 Hợp âm át phụ (secondary dominant)                                                                 |
-| M3. Pop                | L11 Vòng hợp âm Pop và phối hợp âm cho giai điệu • L06 Hợp âm mượn (modal interchange)                                                   |
-| M4. Jazz               | L04 ii–V–I và guide tone • L07 Tension, mode và chord-scale • L08 Shell voicing trên piano                                               |
-| M5. Thực hành tích hợp | L12 Phân tích và phối lại một ca khúc                                                                                                    |
+| **Module**           | **Bài học**                                                                                  |
+|----------------------|----------------------------------------------------------------------------------------------|
+| M1. Nền tảng         | L01 Từ bàn phím đến hợp âm ba nốt • L02 Âm giai trưởng và hợp âm bảy                         |
+| M2. Hòa âm chức năng | L03 Chức năng hòa âm T – PD – D • L05 Hợp âm át phụ (secondary dominant)                     |
+| M3. Pop              | L06 Hợp âm mượn (modal interchange)                                                          |
+| M4. Jazz             | L04 ii–V–I và guide tone • L07 Tension, mode và chord-scale • L08 Shell voicing trên piano   |
 
-Mã bài (L01–L12) được giữ từ phiên bản trước để không phải đổi dữ liệu đã có. Thứ tự học là thứ tự trong bảng, không phải thứ tự mã bài.
+Mã bài (L01–L08) được giữ từ phiên bản trước để không phải đổi dữ liệu đã có. Thứ tự học là thứ tự trong bảng, không phải thứ tự mã bài.
 
-Mỗi bài có mục tiêu đo được, bài tập và flashcard. Nội dung tham chiếu bốn nguồn: Open Music Theory v2, Fankhauser (Working in Harmony), Terefenko (Jazz Theory Workbook) và Trần Khải Hoàn (Hòa âm Jazz). Nhóm cam kết ít nhất 12 bài, 72 câu bài tập, 8 mẫu bài tập sinh tự động và 60 flashcard.
+Mỗi bài có mục tiêu đo được, bài tập và flashcard. Nội dung tham chiếu bốn nguồn: Open Music Theory v2, Fankhauser (Working in Harmony), Terefenko (Jazz Theory Workbook) và Trần Khải Hoàn (Hòa âm Jazz). Nhóm cam kết ít nhất 8 bài, 72 câu bài tập, 8 mẫu bài tập sinh tự động và 60 flashcard.
 
 ## 4.2 Music Engine và chấm bài
 
@@ -263,7 +262,7 @@ Bảng dưới liệt kê 19 chức năng chính. Cột cuối cho biết mỗi 
 |--------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------|
 | **FR-01** Truy cập và xác thực                                     | Khách xem trang công khai, đăng ký, đăng nhập. Hệ thống cấp JWT và phân quyền theo vai trò.                                        | FR-VIS-01–07; FR-AUTH-01–05, 09                             |
 | **FR-02** Hồ sơ, mục tiêu và kiểm tra đầu vào                      | Người học cập nhật hồ sơ, viết mục tiêu bằng lời của mình và làm bài kiểm tra đầu vào 12 câu.                                      | FR-AUTH-06–08, 10; FR-REC-01; FR-LRN-12                     |
-| **FR-03** Lộ trình và bài học                                      | Xem 12 bài theo 5 module, học từng bước, ghi nhận hoàn thành khi mọi câu đã đúng.                                                  | FR-LRN-01–06, 08–10, 13, 14                                 |
+| **FR-03** Lộ trình và bài học                                      | Xem 8 bài theo 4 module, học từng bước, ghi nhận hoàn thành khi mọi câu đã đúng.                                                  | FR-LRN-01–06, 08–10, 13, 14                                 |
 | **FR-04** Bảng điều khiển và tiến độ                               | Hiển thị mục tiêu, bài gợi ý, kỹ năng yếu, thẻ ôn đến hạn và tiến độ.                                                              | FR-LRN-11; FR-MAS-05                                        |
 | **FR-05** Học nhạc tương tác và âm thanh                           | Piano, khuông nhạc, Chord Inspector, âm thanh, máy đếm nhịp. Guitar và trống nền ở mức nên có.                                     | FR-MUS-01–18; FR-AUD-01–06                                  |
 | **FR-06** Làm bài tập và chấm điểm                                 | Nộp đáp án bằng chữ, nút chọn hoặc phím đàn. Chấm theo luật, giải thích sau 2 lần sai, cho làm lại.                                | FR-EX-01–15                                                 |
@@ -397,7 +396,7 @@ Lời giải thích đầy đủ (explanation) hiện ra khi người học tr�
 |----------------|---------------------------------------------------------------------------------------------------------------|
 | Thắng          | Trưởng nhóm kỹ thuật. Backend, Music Engine, hệ gợi ý, tích hợp AI, cơ sở dữ liệu, hợp nhất mã nguồn.         |
 | Phúc           | Giao diện học tập, piano ảo, khuông nhạc, âm thanh Tone.js, khung chat, Harmony Lab bản rút gọn.              |
-| Đạt            | Biên soạn 12 bài học và nguồn tham chiếu, bộ câu hỏi kiểm thử nhạc lý, kiểm thử chất lượng, biên tập báo cáo. |
+| Đạt            | Biên soạn 8 bài học và nguồn tham chiếu, bộ câu hỏi kiểm thử nhạc lý, kiểm thử chất lượng, biên tập báo cáo. |
 
 ## 8.2 Tiêu chí đánh giá đồ án (Rubric 10/10)
 

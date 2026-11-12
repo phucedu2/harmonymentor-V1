@@ -1,0 +1,71 @@
+{
+  "name": "multilingual-e5-small-hm-gd2b",
+  "base": "intfloat/multilingual-e5-small@614241f622f53c4eeff9890bdc4f31cfecc418b3",
+  "seed": 20261107,
+  "args": {
+    "epochs": 3,
+    "lr": 2e-05,
+    "batch_pos": 24,
+    "batch_neg": 16,
+    "margin": 0.03,
+    "hinge_weight": 1.0,
+    "passage_max_len": 256
+  },
+  "train_sha256": "bf8887b4108b4d9ec9ea850625dbb636ddd043a5d608165cd5960e0373fd7ff5",
+  "dev_sha256": "658b00841d96a977e9460916e37f102c450e4fde31036d899448b5df25497e26",
+  "history": [
+    {
+      "epoch": 0,
+      "auc": 0.7895,
+      "balanced_error": 0.2198,
+      "r_at_1": 0.9,
+      "a_mean": 0.8567,
+      "bc_mean": 0.8257
+    },
+    {
+      "auc": 0.8559,
+      "balanced_error": 0.1662,
+      "r_at_1": 0.9333,
+      "a_mean": 0.6162,
+      "bc_mean": 0.4909,
+      "epoch": 1,
+      "t": 0.684,
+      "seconds": 206
+    },
+    {
+      "auc": 0.8848,
+      "balanced_error": 0.1442,
+      "r_at_1": 0.9333,
+      "a_mean": 0.5025,
+      "bc_mean": 0.3509,
+      "epoch": 2,
+      "t": 0.4746,
+      "seconds": 263
+    },
+    {
+      "auc": 0.8633,
+      "balanced_error": 0.1868,
+      "r_at_1": 0.9,
+      "a_mean": 0.4171,
+      "bc_mean": 0.2512,
+      "epoch": 3,
+      "t": 0.3627,
+      "seconds": 293
+    }
+  ],
+  "chosen": {
+    "auc": 0.8848,
+    "balanced_error": 0.1442,
+    "r_at_1": 0.9333,
+    "a_mean": 0.5025,
+    "bc_mean": 0.3509,
+    "epoch": 2,
+    "t": 0.4746,
+    "seconds": 263
+  },
+  "note": "Sinh bởi scripts/ai/gop_y/finetune_e5.py. Chỉ train trên gd2/train.json, chọn epoch trên dev.json. Lần chạy 07/11 lỗi ở bước xuất ONNX; bản chọn (epoch 2, lưu ở .tmp) được xuất lại bằng finish().",
+  "files": {
+    "model.onnx": "17afeaa6964650bdd1d40f2af49051118bd136d7a60a97249eff1bf76050e363",
+    "tokenizer.json": "0b44a9d7b51c3c62626640cda0e2c2f70fdacdc25bbbd68038369d14ebdf4c39"
+  }
+}
