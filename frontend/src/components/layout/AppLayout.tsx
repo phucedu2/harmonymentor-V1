@@ -12,6 +12,7 @@ const NAV = [
   { to: "/app", label: "Tổng quan", end: true },
   { to: "/app/hoc", label: "Học" },
   { to: "/app/luyen-tap", label: "Luyện tập" },
+  { to: "/app/quiz", label: "Quiz kỹ năng" },
   { to: "/app/tien-do", label: "Tiến độ" },
   { to: "/app/composition", label: "Sáng tác" },
   { to: "/app/ho-so", label: "Hồ sơ" },
