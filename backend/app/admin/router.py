@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from fastapi import APIRouter, Depends, Query
+from dataclasses import replace as dc_replace
+
+from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
 from pydantic import BaseModel, Field
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
@@ -11,7 +13,10 @@ from ..auth.deps import require_admin
 from ..core.errors import AppError
 from ..db.models import AdminAuditLog, Attempt, LessonProgress, User
 from ..db.session import get_db
-from . import content_service, stats_service
+from ..ai.tutor.llm import LLMProvider, get_provider
+from ..core.config import settings
+from ..db.models import SourceDocument
+from . import ai_service, content_service, stats_service
 from .content_service import AdminContentError
 
 # Mọi route /api/v1/admin/* gắn require_admin ở cấp router để không route nào quên kiểm tra quyền.
@@ -154,3 +159,101 @@ def audit_log(limit: int = Query(50, ge=1, le=200), db: Session = Depends(get_db
     rows = db.scalars(select(AdminAuditLog).order_by(AdminAuditLog.id.desc()).limit(limit)).all()
     return [{"id": r.id, "actor_id": r.actor_id, "action": r.action, "target_type": r.target_type, "target_id": r.target_id,
              "detail": r.detail, "created_at": r.created_at} for r in rows]
+
+
+# --- AI tóm tắt tài liệu thành bản nháp (ADR-025) ------------------------------------------------------
+# Bản nháp bài dài hơn câu trả lời của Tutor nên cho Gemini chờ lâu hơn (60 giây).
+
+_draft_provider_cache: dict[tuple, LLMProvider | None] = {}
+
+
+def draft_provider_dep() -> LLMProvider | None:
+    """Tách thành dependency để test thay bằng FakeProvider, không gọi mạng."""
+    key = (settings.ai_enabled, bool(settings.gemini_api_key), settings.gemini_model)
+    if key not in _draft_provider_cache:
+        _draft_provider_cache[key] = get_provider(dc_replace(settings, ai_timeout_seconds=max(settings.ai_timeout_seconds, 60.0)))
+    return _draft_provider_cache[key]
+
+
+class DraftIn(BaseModel):
+    page_from: int = Field(ge=1)
+    page_to: int = Field(ge=1)
+    topic: str | None = Field(default=None, max_length=200)
+
+
+class DraftEditIn(BaseModel):
+    title: str = Field(max_length=200)
+    objectives: list[str] = Field(default_factory=list, max_length=6)
+    blocks: list[dict[str, Any]] = Field(default_factory=list, max_length=8)
+    questions: list[dict[str, Any]] = Field(default_factory=list, max_length=10)
+
+
+@router.get("/ai/status")
+def ai_status(provider: LLMProvider | None = Depends(draft_provider_dep)):
+    return {"enabled": provider is not None}
+
+
+@router.post("/ai/documents")
+def upload_document(file: UploadFile = File(...), source_title: str = Form(...), source_note: str | None = Form(default=None),
+                    consent: bool = Form(default=False), admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    data = file.file.read(ai_service.MAX_BYTES + 1)
+    try:
+        doc = ai_service.add_document(db, admin, file.filename or "tai-lieu", data, source_title, source_note, consent)
+    except AdminContentError as exc:
+        raise _wrap(exc) from exc
+    return ai_service.document_info(doc)
+
+
+@router.get("/ai/documents")
+def list_documents(db: Session = Depends(get_db)):
+    rows = db.scalars(select(SourceDocument).where(SourceDocument.deleted_at.is_(None)).order_by(SourceDocument.created_at.desc()).limit(50)).all()
+    return [ai_service.document_info(d) for d in rows]
+
+
+@router.post("/ai/documents/{doc_id}/draft")
+def make_draft(doc_id: str, body: DraftIn, admin: User = Depends(require_admin), db: Session = Depends(get_db),
+               provider: LLMProvider | None = Depends(draft_provider_dep)):
+    try:
+        draft = ai_service.generate_draft(db, admin, provider, doc_id, body.page_from, body.page_to, body.topic)
+    except AdminContentError as exc:
+        raise _wrap(exc) from exc
+    return ai_service.draft_view(db, draft)
+
+
+@router.get("/ai/drafts")
+def list_drafts(db: Session = Depends(get_db)):
+    return ai_service.list_drafts(db)
+
+
+@router.get("/ai/drafts/{draft_id}")
+def get_draft(draft_id: str, db: Session = Depends(get_db)):
+    try:
+        return ai_service.draft_view(db, ai_service._draft(db, draft_id))
+    except AdminContentError as exc:
+        raise _wrap(exc) from exc
+
+
+@router.put("/ai/drafts/{draft_id}")
+def edit_draft(draft_id: str, body: DraftEditIn, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    try:
+        return ai_service.draft_view(db, ai_service.update_draft(db, admin, draft_id, body.model_dump()))
+    except AdminContentError as exc:
+        raise _wrap(exc) from exc
+
+
+@router.post("/ai/drafts/{draft_id}/publish")
+def publish_ai_draft(draft_id: str, body: PublishIn, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    try:
+        lesson = ai_service.publish_draft(db, admin, draft_id, body.acknowledge_engine_flags)
+    except AdminContentError as exc:
+        raise _wrap(exc) from exc
+    return {"lesson_id": lesson.id, "title": lesson.title}
+
+
+@router.post("/ai/drafts/{draft_id}/reject")
+def reject_ai_draft(draft_id: str, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    try:
+        ai_service.reject_draft(db, admin, draft_id)
+    except AdminContentError as exc:
+        raise _wrap(exc) from exc
+    return {"id": draft_id, "status": "rejected"}

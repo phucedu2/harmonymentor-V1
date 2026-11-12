@@ -19,7 +19,7 @@ def test_head_matches_model(tmp_path):
     engine = sa.create_engine(f"sqlite:///{tmp_path / 'gd3.db'}", future=True)
     try:
         alembic_to(engine, "head")
-        assert version(engine) == "f4d5e6f7a8b9"  # head hiện tại: migration Quản trị
+        assert version(engine) == "a5e6f7a8b9c0"  # head hiện tại: migration AI tóm tắt tài liệu
         with engine.connect() as conn:
             diff = compare_metadata(MigrationContext.configure(conn), Base.metadata)
         assert diff == [], diff

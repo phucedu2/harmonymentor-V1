@@ -23,3 +23,8 @@ scikit-learn>=1.4
 # AI Tutor GĐ1 góp ý thầy (ADR-017): nhúng e5-small cục bộ bằng ONNX, không cần torch
 onnxruntime>=1.18
 tokenizers>=0.19
+
+# Quản trị: AI tóm tắt tài liệu (ADR-025). pypdf đọc PDF, python-docx đọc DOCX, python-multipart nhận file tải lên.
+pypdf>=4.0
+python-docx>=1.1
+python-multipart>=0.0.9

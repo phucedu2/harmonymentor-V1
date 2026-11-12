@@ -78,7 +78,8 @@ async function parseError(res: Response): Promise<ApiRequestError> {
 
 async function rawFetch(path: string, init: RequestInit, withToken: boolean): Promise<Response> {
   const headers = new Headers(init.headers);
-  if (init.body !== undefined && !headers.has("Content-Type")) headers.set("Content-Type", "application/json");
+  // FormData tự đặt Content-Type kèm boundary; ép JSON ở đây sẽ làm hỏng tải tệp lên.
+  if (init.body !== undefined && !(init.body instanceof FormData) && !headers.has("Content-Type")) headers.set("Content-Type", "application/json");
   if (withToken && accessToken) headers.set("Authorization", `Bearer ${accessToken}`);
   try {
     return await fetch(API_BASE + path, { ...init, headers, credentials: "same-origin" });
