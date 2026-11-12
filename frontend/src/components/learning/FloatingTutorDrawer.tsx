@@ -197,7 +197,7 @@ export default function FloatingTutorDrawer() {
       </form>
     </section>}
     <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-label={open ? "Đóng AI Tutor" : "Mở AI Tutor"}
-      className="fixed right-5 bottom-5 z-40 flex size-14 items-center justify-center rounded-full bg-primary text-sm font-bold text-white shadow-xl hover:bg-primary-strong">
+      className="fixed right-4 bottom-24 z-40 flex size-14 md:right-5 md:bottom-5 items-center justify-center rounded-full bg-primary text-sm font-bold text-white shadow-xl hover:bg-primary-strong">
       {open ? "×" : "AI"}
     </button>
   </>;

@@ -18,8 +18,8 @@ const DEMO_CHORDS = ["C", "Am", "G7", "Ebm7b5"];
 const FEATURES = [
   { title: "Luyện tập có chẩn đoán", body: "Làm sai không chỉ nhận chữ “Sai”: hệ thống chỉ ra nốt nào lệch và vì sao, ví dụ dùng quãng 7 trưởng thay cho quãng 7 thứ.", ready: true },
   { title: "Ôn tập đúng lúc", body: "Thẻ ghi nhớ tự hẹn ngày ôn lại: nhớ tốt thì giãn ra, quên thì ôn sớm hơn.", ready: true },
-  { title: "AI Tutor có trích dẫn", body: "Hỏi bằng tiếng Việt; câu trả lời dẫn về đúng bài học, nốt nhạc được bộ chấm nhạc lý kiểm tra.", ready: false },
-  { title: "Composition Lab", body: "Ghép vòng hợp âm, giai điệu và nhịp trống rồi nghe ngay thành quả của mình.", ready: false },
+  { title: "AI Tutor có trích dẫn", body: "Hỏi bằng tiếng Việt; câu trả lời dẫn về đúng bài học, nốt nhạc được bộ chấm nhạc lý kiểm tra.", ready: true },
+  { title: "Composition Lab", body: "Ghép vòng hợp âm, giai điệu và nhịp trống rồi nghe ngay thành quả của mình.", ready: true },
 ];
 
 function ChordDemo() {
