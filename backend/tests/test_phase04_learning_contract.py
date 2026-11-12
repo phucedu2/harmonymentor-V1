@@ -29,7 +29,7 @@ def test_lesson_index_and_lesson1_content_are_served_from_backend():
         l01 = next(x for x in lessons if x["id"] == "L01")
         assert l01["exercise_count"] == 8
         assert l01["review_item_count"] == 8
-        assert l01["block_count"] == 14
+        assert l01["block_count"] == 15
 
         detail = client.get("/api/v1/lessons/L01")
         assert detail.status_code == 200

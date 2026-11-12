@@ -129,6 +129,9 @@ LESSON_SPECS: list[dict[str, Any]] = [
         "sources": [OMT_INTERVALS, OMT_TRIADS, FANK_FUND, TER_CH1],
         "blocks": [
             ("L01-B01", "callout", {"title": "Bài này bắt đầu từ con số 0", "prompt": "Bạn chưa cần biết đọc khuông nhạc hay âm giai. Hãy đi theo thứ tự: nhìn bàn phím → đếm bước nửa cung → đếm tên chữ cái của quãng → dựng hợp âm ba nốt → đổi nốt gốc để kiểm tra xem mình đã hiểu nguyên lý hay chưa."}),
+            # RS-06: người mới chỉ biết Đô–Rê–Mi cần thấy ngay chữ cái quốc tế là cùng bảy nốt đó. Dùng khối piano
+            # (không vào kho AI Tutor) để không làm lệch file vector Gemini, vốn chỉ dựng được trên máy có khóa.
+            ("L01-B01A", "piano", {"title": "Đô – Rê – Mi chính là C – D – E", "prompt": "Bảy phím trắng liên tiếp bạn thường hát là Đô – Rê – Mi – Fa – Sol – La – Si. Nhạc quốc tế viết đúng bảy nốt đó bằng chữ cái: Đô = C · Rê = D · Mi = E · Fa = F · Sol = G · La = A · Si = B. Hát “Đô Rê Mi” cũng là C D E. Dấu thăng (#) nâng nốt nửa cung, dấu giáng (b) hạ nốt nửa cung: Đô thăng viết là C#, Rê giáng viết là Db. “Hợp âm C” là hợp âm bắt đầu từ nốt Đô; “Dm” là hợp âm Rê thứ. Ở các câu gõ tên nốt, bạn gõ C D E hay Đô Rê Mi đều được chấm.", "highlight": ["C", "D", "E", "F", "G", "A", "B"], "selection_mode": False, "show_octave_numbers": False}),
             ("L01-B02", "theory", {"title": "1. Tên nốt và bàn phím piano", "paragraphs": [
                 "Bảy tên nốt cơ bản là C, D, E, F, G, A, B. Sau B, chuỗi lại bắt đầu từ C ở vùng cao hơn.",
                 "Trên piano, các phím trắng mang các tên C–D–E–F–G–A–B. Phím đen nằm xen giữa phần lớn các cặp phím trắng.",

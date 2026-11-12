@@ -69,7 +69,7 @@ def test_nguoi_hoc_khong_thay_noi_dung_nhap():
         assert next(x for x in lessons if x["id"] == "L03")["track"] == "M2. Hòa âm chức năng"
         assert client.get("/api/v1/lessons/L09").status_code == 404
         l01 = client.get("/api/v1/lessons/L01").json()
-        assert l01["block_count"] == 14 and len(l01["blocks"]) == 14
+        assert l01["block_count"] == 15 and len(l01["blocks"]) == 15
         assert all(b["block_type"] != "compose_link" for b in l01["blocks"])
         assert all(not b["id"].endswith("-BTHE") for b in l01["blocks"])
         assert l01["review_item_count"] == 8

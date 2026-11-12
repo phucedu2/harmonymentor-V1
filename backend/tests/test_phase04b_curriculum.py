@@ -86,7 +86,7 @@ def test_all_eight_lessons_are_migrated():
     with TestClient(app) as client:
         lessons = {x["id"]: x for x in client.get("/api/v1/lessons").json()}
         assert set(MIGRATED_LESSON_IDS) == {"L01", "L02", "L03", "L04", "L05", "L06", "L07", "L08"}
-        expected_block_counts = {"L01": 14, "L02": 10, "L03": 9, "L04": 11, "L05": 11, "L06": 10, "L07": 9, "L08": 8}
+        expected_block_counts = {"L01": 15, "L02": 10, "L03": 9, "L04": 11, "L05": 11, "L06": 10, "L07": 9, "L08": 8}
         expected_exercises = {"L01": 8, "L02": 10, "L07": 5, "L08": 5}  # L07-Q06, L08-Q06 draft chờ Đạt; còn lại 6 câu
         for lesson_id in expected_block_counts:
             assert lessons[lesson_id]["exercise_count"] == expected_exercises.get(lesson_id, 6), lesson_id
