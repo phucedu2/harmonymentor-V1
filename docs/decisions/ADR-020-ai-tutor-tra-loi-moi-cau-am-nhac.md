@@ -17,6 +17,7 @@ ADR-017 (góp ý thầy G1) đặt luồng B "ngoài bài học": Music Engine t
 7. **Hạn mức**: câu luồng B giờ tính vào hạn mức mỗi người mỗi ngày (`AI_DAILY_QUOTA`) và ngân sách chung như luồng A; quá hạn mức người dùng thì 429, quá ngân sách chung thì dùng câu viết sẵn.
 
 8. **Luồng A, AI tự nói không biết**: nếu kho có đoạn "giống chữ" nhưng AI trả lời không trích được đoạn nào và tự nói "không biết / chưa dạy" (ví dụ "piano có bao nhiêu phím"), dịch vụ hỏi lại theo kiến thức chung như luồng B (thêm một lượt gọi). Lỗi hoặc hết hạn mức thì giữ câu cũ.
+9. **Làm nóng khi khởi động** (khi `AI_ENABLED=1`): nạp nền mô hình nhúng e5 và bộ phân loại, vì thử thật 12/11 cho thấy câu hỏi đầu tiên sau khi khởi động lại Docker quá 90 giây.
 
 ## Không đổi
 

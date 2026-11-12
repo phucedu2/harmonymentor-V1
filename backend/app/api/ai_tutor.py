@@ -34,6 +34,24 @@ def embedder_dep() -> Embedder | None:
     return get_local_embedder()
 
 
+def warm_up() -> None:
+    """Nạp trước mô hình nhúng và bộ phân loại để câu hỏi đầu tiên sau khi khởi động không quá giờ (mô hình e5 nạp
+    mất hơn 1 phút trên máy yếu). Chạy nền, lỗi thì bỏ qua: câu hỏi đầu vẫn tự nạp như cũ."""
+    try:
+        from ..ai.tutor.route_classifier import model
+        emb = embedder_dep()
+        if emb is not None:
+            emb.embed(["khởi động"], "RETRIEVAL_QUERY")
+        model()
+    except Exception:  # noqa: BLE001 - chỉ là bước làm nóng
+        pass
+
+
+if settings.ai_enabled:  # AI tắt thì không có gì để làm nóng (và test mặc định không chạy luồng nền)
+    import threading
+    threading.Thread(target=warm_up, name="tutor-warm-up", daemon=True).start()
+
+
 def provider_dep() -> LLMProvider | None:
     """Tách thành dependency để test thay bằng FakeProvider, không gọi mạng."""
     key = (settings.ai_enabled, bool(settings.gemini_api_key), settings.gemini_model, settings.gemini_fallback_model)
