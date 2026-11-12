@@ -249,6 +249,7 @@ export type Recommendations = {
   next: RecLesson[]; review: RecLesson[];
 };
 export type Goal = { goal_text: string | null; embedded: boolean; embedding_model: string | null };
+export type Quiz = { skill_id: string; requested: number; available: number; questions: (PlacementQuestion & { lesson_id: string })[] };
 export type PlacementSubmitResult = { status: "completed"; results: { skill_id: string; correct: boolean; score: number }[] };
 
 // Pipeline AI GĐ3: AI Tutor (04 mục 3.3, Bảng 13). Nhãn "đã kiểm" do máy chủ quyết, giao diện chỉ hiển thị.
@@ -394,6 +395,7 @@ export const api = {
   dueReviews: (includeFuture = false) =>
     apiCall<ReviewState[]>(`/review/due?include_future=${includeFuture}`),
   myMastery: () => apiCall<{ skill_group_map_version: string; skills: SkillMastery[] }>("/me/mastery"),
+  quiz: (skillId: string, n = 10) => apiCall<Quiz>(`/practice/quiz?skill_id=${encodeURIComponent(skillId)}&n=${n}`),
   placement: () => apiCall<Placement>("/placement"),
   submitPlacement: (answers: { exercise_version_id: string; answer: unknown }[], confirmRetake = false) =>
     apiPost<PlacementSubmitResult>("/placement/submit", { answers, confirm_retake: confirmRetake }),
