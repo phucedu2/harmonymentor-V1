@@ -163,3 +163,14 @@ def test_moi_muc_sang_tac_co_nhan_muc_tieu_a_b():
     # Cả hai mục tiêu đều có bài phục vụ, và bài thực hành cuối (L12) gom cả A lẫn B.
     assert {g for goals in LESSON_GOALS.values() for g in goals} == {"A", "B"}
     assert LESSON_GOALS["L12"] == ["A", "B"]
+
+
+def test_rs14_so_bai_hien_thi_thong_nhat_giua_danh_sach_chi_tiet_va_tong_quan():
+    """RS-14: "Bài n" là vị trí trong danh sách đang thấy, ở mọi nơi (danh sách, chi tiết)."""
+    from fastapi.testclient import TestClient
+    from app.main import app
+    with TestClient(app) as client:
+        rows = client.get("/api/v1/lessons").json()
+        assert [r["order"] for r in rows] == list(range(1, len(rows) + 1))
+        for row in rows:
+            assert client.get(f"/api/v1/lessons/{row['id']}").json()["order"] == row["order"], row["id"]
