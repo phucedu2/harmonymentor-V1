@@ -8,13 +8,13 @@ from sqlalchemy.orm import Session
 
 from ..contracts.learning import ReviewAnswerIn, ReviewAnswerOut, ReviewStateOut
 from ..auth.deps import get_current_user
-from ..db.models import ReviewItem, ReviewState, User
+from ..db.models import MasteryState, ReviewItem, ReviewState, User
 from ..db.session import get_db
 from ..services.grading_service import is_self_check
 from ..services.learning_service import answer_review
 from ..services.review_scheduler import leitner_box
 
-# ADR-002: mỗi lượt ôn tối đa 20 thẻ, quá hạn lâu nhất lên trước.
+# ADR-002: mỗi lượt ôn tối đa 20 thẻ, quá hạn lâu nhất (theo ngày) lên trước; cùng ngày thì kỹ năng yếu lên trước.
 DUE_QUEUE_LIMIT = 20
 
 router = APIRouter(prefix="/api/v1/review", tags=["review"])
@@ -33,9 +33,12 @@ def due_reviews(
     if not include_future:
         stmt = stmt.where(ReviewState.due_at <= datetime.now(timezone.utc))
     stmt = stmt.order_by(ReviewState.due_at, ReviewItem.id)
-    if not include_future:
-        stmt = stmt.limit(DUE_QUEUE_LIMIT)
     rows = db.execute(stmt).all()
+    if not include_future:
+        # RS-15: cùng một ngày hẹn thì kỹ năng yếu nhất lên trước; chưa đánh giá xếp sau kỹ năng đã biết yếu.
+        scores = {m.skill_id: m.score for m in db.scalars(select(MasteryState).where(MasteryState.user_id == user.id))}
+        rows = sorted(rows, key=lambda r: (r[0].due_at.date(), scores.get(r[1].skill_id, 0.5), r[0].due_at, r[1].id))
+        rows = rows[:DUE_QUEUE_LIMIT]
     out = []
     for state, item in rows:
         self_check = is_self_check(item.grading_strategy, item.grader_config)

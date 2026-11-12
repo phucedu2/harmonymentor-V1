@@ -161,3 +161,30 @@ def test_spamming_remembered_does_not_climb_boxes():
         wrong = client.post("/api/v1/review/L01-F01/answer", json={"answer": "sai-có-chủ-đích", "rating": "auto"},
                             headers=headers).json()
         assert wrong["correct"] is False and wrong["leitner_box"] == 1 and wrong["interval_days"] == 1
+
+
+def test_rs15_cung_ngay_thi_ky_nang_yeu_len_truoc():
+    """RS-15: thẻ cùng ngày hẹn xếp theo mức thành thạo tăng dần, không theo mã thẻ."""
+    from app.db.models import MasteryState
+    with TestClient(app) as client:
+        user_id = make_user()
+        headers = auth(user_id)
+        answer_lesson_correctly(client, "L01", headers)
+        client.post("/api/v1/lessons/L01/complete", json={}, headers=headers)
+        base = client.get("/api/v1/review/due", headers=headers).json()
+        skills = sorted({c["skill_id"] for c in base})
+        assert len(skills) >= 2
+        weak, strong = skills[-1], skills[0]
+        today = datetime.now(timezone.utc) - timedelta(hours=1)
+        with SessionLocal() as db:
+            for state in db.scalars(select(ReviewState).where(ReviewState.user_id == user_id)):
+                state.due_at = today
+            for sid, score in ((weak, 0.1), (strong, 0.9)):
+                row = db.scalar(select(MasteryState).where(MasteryState.user_id == user_id, MasteryState.skill_id == sid))
+                if row is None:
+                    db.add(MasteryState(user_id=user_id, skill_id=sid, score=score, attempts_count=5))
+                else:
+                    row.score = score
+            db.commit()
+        order = [c["skill_id"] for c in client.get("/api/v1/review/due", headers=headers).json()]
+        assert order.index(weak) < order.index(strong)
