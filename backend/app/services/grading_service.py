@@ -135,6 +135,8 @@ def grade_payload(strategy: str, answer_key: dict[str, Any], grader_config: dict
             # ký hiệu phải viết liền, nên ở đây không bỏ khoảng trắng giữa số La Mã và chỉ số.
             typed = str(answer).strip()
             typed = re.sub(r"^([b#♭♯]?(?:vii|vi|iv|v|iii|ii|i))m7", r"\g<1>7", typed)
+            # RS-21: IMaj7, IMAJ7, I△7 cùng nghĩa với Imaj7 (chữ hoa/thường của "maj" không mang nghĩa).
+            typed = re.sub(r"^([b#♭♯]?(?:VII|VI|IV|V|III|II|I|vii|vi|iv|v|iii|ii|i))(?:[Mm][Aa][Jj]|△|Δ)7", r"\g<1>maj7", typed)
             result = grade_roman_numeral(
                 grader_config.get("key"),
                 grader_config.get("chord"),

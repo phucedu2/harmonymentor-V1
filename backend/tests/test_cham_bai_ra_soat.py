@@ -98,3 +98,10 @@ def test_mcq_giu_nguyen_phan_biet_hoa_thuong_cua_ky_hieu():
     assert _grade("L02-Q07", "D7") is True
     assert _grade("L02-Q07", "Dm7") is False
     assert _grade("L02-Q07", "Dmaj7") is False
+
+
+@pytest.mark.parametrize("typed,ok", [("Imaj7", True), ("IMaj7", True), ("IMAJ7", True), ("I△7", True), ("Imaj 7", False), ("Im7", False)])
+def test_rs21_imaj7_viet_hoa_thuong(typed, ok):
+    from app.services.grading_service import grade_payload
+    out = grade_payload("music_engine", {}, {"kind": "roman_numeral", "key": "C", "chord": "Cmaj7"}, typed)
+    assert out.correct is ok
