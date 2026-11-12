@@ -531,6 +531,49 @@ class AdminAuditLog(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
 
+class SourceDocument(Base):
+    """Tài liệu nhạc lý Quản trị viên tải lên để AI tóm tắt thành bài nháp (ADR-025). Chỉ giữ chữ đã trích theo trang,
+    không giữ file gốc. consent = đã tick "tôi có quyền dùng tài liệu này"; nội dung trang chọn có thể gửi tới Gemini."""
+
+    __tablename__ = "source_documents"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    uploaded_by: Mapped[Optional[str]] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
+    filename: Mapped[str] = mapped_column(String(240))
+    kind: Mapped[str] = mapped_column(String(8))
+    size_bytes: Mapped[int] = mapped_column(Integer)
+    sha256: Mapped[str] = mapped_column(String(64))
+    source_title: Mapped[str] = mapped_column(String(300))
+    source_note: Mapped[Optional[str]] = mapped_column(String(300), nullable=True)
+    consent: Mapped[bool] = mapped_column(Boolean, default=False)
+    pages: Mapped[list[str]] = mapped_column(JSON, default=list)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class AiLessonDraft(Base):
+    """Bản nháp bài học do AI tóm tắt từ SourceDocument. AI không bao giờ tự xuất bản: chỉ Quản trị viên bấm xuất bản,
+    lúc đó mới tạo Lesson/LessonBlock/Exercise thật (ADR-025)."""
+
+    __tablename__ = "ai_lesson_drafts"
+    __table_args__ = (CheckConstraint("status IN ('draft', 'published', 'rejected')", name="ck_ai_lesson_drafts_status"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    document_id: Mapped[str] = mapped_column(ForeignKey("source_documents.id", ondelete="CASCADE"), index=True)
+    created_by: Mapped[Optional[str]] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    status: Mapped[str] = mapped_column(String(16), default="draft")
+    page_from: Mapped[int] = mapped_column(Integer)
+    page_to: Mapped[int] = mapped_column(Integer)
+    content: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    engine_report: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    model: Mapped[Optional[str]] = mapped_column(String(80), nullable=True)
+    tokens_in: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    tokens_out: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    published_lesson_id: Mapped[Optional[str]] = mapped_column(String(32), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
+
+
 from sqlalchemy import event, inspect as sa_inspect, select  # noqa: E402
 
 _LOCKED_VERSION_COLUMNS = (

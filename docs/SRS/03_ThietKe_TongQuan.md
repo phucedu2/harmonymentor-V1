@@ -117,6 +117,7 @@ Người học và Quản trị viên dùng hệ thống qua trình duyệt. H�
 | Đoạn bài học liên quan (RAG)                       | Mã người dùng, token đăng nhập       |
 | Mục tiêu học tập và tên các kỹ năng yếu            | Lịch sử làm bài đầy đủ của người học |
 | Mã lỗi và đáp án của lượt làm đang được giải thích | Dữ liệu của người học khác           |
+| Chữ của các trang tài liệu nhạc lý mà Quản trị viên chọn để AI tóm tắt (chỉ khi Quản trị viên đã tick xác nhận có quyền dùng tài liệu; ADR-025) | Tệp gốc, tên Quản trị viên, email |
 
 Người dùng có thể là học sinh dưới 18 tuổi, nên nhóm phải đọc điều khoản sử dụng Gemini API về độ tuổi và về cách Google dùng dữ liệu của gói miễn phí trước khi demo với người dùng thật. Khi có người dùng thật, nên chuyển sang gói trả phí hoặc tắt AI.
 
