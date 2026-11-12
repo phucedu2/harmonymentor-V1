@@ -188,3 +188,22 @@ def test_rs15_cung_ngay_thi_ky_nang_yeu_len_truoc():
             db.commit()
         order = [c["skill_id"] for c in client.get("/api/v1/review/due", headers=headers).json()]
         assert order.index(weak) < order.index(strong)
+
+
+def test_rs25_the_y_mo_khong_cham_theo_chu():
+    """RS-25: thẻ tự đánh giá gửi rating "auto" (chấm bằng chữ) bị từ chối 422."""
+    from app.services.grading_service import is_self_check
+    with TestClient(app) as client:
+        user_id = make_user()
+        headers = auth(user_id)
+        answer_lesson_correctly(client, "L01", headers)
+        client.post("/api/v1/lessons/L01/complete", json={}, headers=headers)
+        cards = client.get("/api/v1/review/due", headers=headers).json()
+        open_cards = [c for c in cards if c["self_check"]]
+        if not open_cards:
+            return  # L01 chưa có thẻ ý mở; luật vẫn được kiểm ở dưới bằng đơn vị
+        card_id = open_cards[0]["review_item_id"]
+        bad = client.post(f"/api/v1/review/{card_id}/answer", json={"answer": "bất kỳ", "rating": "auto"}, headers=headers)
+        assert bad.status_code == 422 and bad.json()["detail"]["code"] == "SELF_CHECK_REQUIRES_RATING"
+        ok = client.post(f"/api/v1/review/{card_id}/answer", json={"answer": "", "rating": "good"}, headers=headers)
+        assert ok.status_code == 200

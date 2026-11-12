@@ -62,6 +62,8 @@ def submit_review_answer(review_item_id: str, body: ReviewAnswerIn, user: User =
         code = str(exc)
         status = 409 if code == "REVIEW_STATE_NOT_ACTIVE" else 404
         raise HTTPException(status_code=status, detail={"code": code}) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail={"code": str(exc)}) from exc
     return ReviewAnswerOut(
         review_attempt_id=review_attempt.id, review_item_id=item.id, correct=outcome.correct,
         rating_applied=applied, next_stage=state.stage, interval_days=state.interval_days,
