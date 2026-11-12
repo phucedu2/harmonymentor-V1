@@ -116,24 +116,6 @@ DRAFT_LESSON_SPECS: list[dict[str, Any]] = [
         ],
     ),
     _draft_lesson(
-        "L11", "Vòng hợp âm Pop và phối hợp âm cho giai điệu",
-        [
-            "Nhận ra các vòng hợp âm Pop thường gặp bằng số La Mã, ví dụ I–V–vi–IV và I–vi–IV–V.",
-            "Chuyển một vòng hợp âm sang giọng khác bằng số La Mã.",
-            "Chọn hợp âm chứa nốt giai điệu ở phách mạnh để phối hợp âm cho một giai điệu đơn giản.",
-        ],
-        [src("OMT_V2", "Popular Music → Harmonic Schemas", _UNVERIFIED), OMT_ROMAN, FANK_DIATONIC],
-        [
-            "Vòng hợp âm là chuỗi số La Mã lặp lại; cùng một vòng nghe giống nhau ở mọi giọng.",
-            "Một vài vòng phổ biến: I–V–vi–IV, vi–IV–I–V, I–vi–IV–V.",
-            "Phối hợp âm: nốt giai điệu ở phách mạnh nên là nốt của hợp âm đang vang.",
-        ],
-        [
-            "Đây là mức độ lạ 0: mọi hợp âm nằm trong giọng. Muốn lạ hơn, xem L05 (át phụ) và L06 (hợp âm mượn).",
-            "Mục tiêu A: chọn một vòng, đặt mỗi hợp âm 1 ô nhịp, là đã có backing track 4 ô.",
-        ],
-    ),
-    _draft_lesson(
         "L12", "Phân tích và phối lại một ca khúc",
         [
             "Phân tích vòng hợp âm của một bài tự sáng tác hoặc bài mẫu không bản quyền bằng số La Mã và chức năng T–PD–D.",

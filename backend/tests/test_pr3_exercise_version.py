@@ -41,6 +41,9 @@ KNOWN_SNAPSHOTS = json.loads(
 )["versions"]
 
 DEMO_1011_IDS = {"L01-Q07", "L01-Q08", "L02-Q07", "L02-Q08", "L02-Q09", "L02-Q10"}
+# 15 câu bổ sung 12/11/2026 để mỗi kỹ năng L01–L04 đủ 3 câu (tests/test_lesson_l11.py kiểm đáp án bằng Engine).
+RS_FILL_IDS = {"L01-Q09", "L01-Q10", "L01-Q11", "L01-Q12", "L02-Q11", "L02-Q12", "L03-Q07", "L03-Q08", "L03-Q09", "L03-Q10",
+               "L03-Q11", "L03-Q12", "L04-Q07", "L04-Q08", "L04-Q09"}
 
 CURRENT_VERSION_IDS = {
     "L01-Q01-v4", "L01-Q02-v4", "L01-Q03-v5", "L01-Q04-v4", "L01-Q05-v6", "L01-Q06-v4",
@@ -64,7 +67,7 @@ def drafts_visible(monkeypatch):
 
 
 # Bài mở thêm ngày 10–11/11/2026 (L05, L06, L07, L08): câu mới phát hành v1, có test riêng ở test_phase04b_curriculum.
-OPENED_1011_LESSONS = {"L05", "L06", "L07", "L08"}
+OPENED_1011_LESSONS = {"L05", "L06", "L07", "L08", "L11"}  # L11 mở 12/11/2026
 
 
 def specs() -> list[dict]:
@@ -72,7 +75,7 @@ def specs() -> list[dict]:
     changed = copy.deepcopy(LESSON_SPECS)
     for lesson in changed:
         lesson["exercises"] = [x for x in lesson["exercises"]
-                               if x["id"] not in DEMO_1011_IDS and lesson["id"] not in OPENED_1011_LESSONS]
+                               if x["id"] not in DEMO_1011_IDS | RS_FILL_IDS and lesson["id"] not in OPENED_1011_LESSONS]
         if lesson["id"] in OPENED_1011_LESSONS:
             lesson["review_items"] = []
     return changed

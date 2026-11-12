@@ -25,17 +25,18 @@ def make_user() -> str:
     return user_id
 
 
-def test_curriculum_bank_is_exactly_8_54_64_and_ids_are_unique():
-    assert len(LESSON_SPECS) == 8
+def test_curriculum_bank_is_exactly_9_73_70_and_ids_are_unique():
+    assert len(LESSON_SPECS) == 9
     everything = all_exercises()
     exercises = [x for x in everything if x.get("status", "published") != "draft"]
     reviews = all_review_items()
     # 48 câu gốc + 6 câu demo 10/11 (Thắng + Đạt duyệt, phát hành 04/11/2026), L05–L08 (L07 đã tính từ trước) mở 10–11/11, trừ L07-Q06 và L08-Q06 để draft.
-    assert len(exercises) == 52
-    assert len(reviews) == 64
+    # + 15 câu bổ sung L01–L04 (mỗi kỹ năng đủ 3 câu) và bài L11 "Vòng hợp âm Pop" (6 câu, 6 thẻ), 12/11/2026.
+    assert len(exercises) == 73
+    assert len(reviews) == 70
     assert len({x["id"] for x in everything}) == len(everything)
     assert [x["id"] for x in everything if x.get("status") == "draft"] == ["L07-Q06", "L08-Q06"]
-    assert len({x["id"] for x in reviews}) == 64
+    assert len({x["id"] for x in reviews}) == 70
 
 
 def test_every_item_is_skill_mapped_and_source_grounded():
@@ -85,12 +86,12 @@ def test_skill_prerequisites_are_persisted():
 def test_all_eight_lessons_are_migrated():
     with TestClient(app) as client:
         lessons = {x["id"]: x for x in client.get("/api/v1/lessons").json()}
-        assert set(MIGRATED_LESSON_IDS) == {"L01", "L02", "L03", "L04", "L05", "L06", "L07", "L08"}
-        expected_block_counts = {"L01": 15, "L02": 10, "L03": 9, "L04": 11, "L05": 11, "L06": 10, "L07": 9, "L08": 8}
-        expected_exercises = {"L01": 8, "L02": 10, "L07": 5, "L08": 5}  # L07-Q06, L08-Q06 draft chờ Đạt; còn lại 6 câu
+        assert set(MIGRATED_LESSON_IDS) == {"L01", "L02", "L03", "L04", "L05", "L06", "L07", "L08", "L11"}
+        expected_block_counts = {"L01": 15, "L02": 10, "L03": 9, "L04": 11, "L05": 11, "L06": 10, "L07": 9, "L08": 8, "L11": 11}
+        expected_exercises = {"L01": 12, "L02": 12, "L03": 12, "L04": 9, "L07": 5, "L08": 5}  # L07-Q06, L08-Q06 draft chờ Đạt; còn lại 6 câu
         for lesson_id in expected_block_counts:
             assert lessons[lesson_id]["exercise_count"] == expected_exercises.get(lesson_id, 6), lesson_id
-            assert lessons[lesson_id]["review_item_count"] == 8
+            assert lessons[lesson_id]["review_item_count"] == (6 if lesson_id == "L11" else 8)
             assert lessons[lesson_id]["block_count"] == expected_block_counts[lesson_id]
             assert lessons[lesson_id]["status"] == "reviewed"
 

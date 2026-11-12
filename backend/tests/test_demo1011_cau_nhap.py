@@ -172,7 +172,7 @@ def next_lessons(client, uid: str) -> list[str]:
 
 def test_published_questions_are_shown_and_required(client):
     """Thắng + Đạt duyệt 04/11/2026: 6 câu đã phát hành, hiện cho người học và cần đúng để hoàn thành bài."""
-    for lesson_id, n in (("L01", 8), ("L02", 10)):
+    for lesson_id, n in (("L01", 12), ("L02", 12)):
         shown = [x["id"] for x in client.get(f"/api/v1/lessons/{lesson_id}").json()["exercises"]]
         assert len(shown) == n and {i for i in NEW_IDS if i[:3] == lesson_id} <= set(shown)
     uid = new_user()

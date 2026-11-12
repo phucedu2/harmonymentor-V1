@@ -35,7 +35,7 @@ from app.services.grading_service import is_self_check
 from tests.auth_helpers import auth
 
 BANG_7 = ["L01", "L02", "L09", "L10", "L03", "L05", "L11", "L06", "L04", "L07", "L08", "L12"]
-PUBLISHED_ORDER = [x for x in BANG_7 if x not in {"L09", "L10", "L11", "L12"}]
+PUBLISHED_ORDER = [x for x in BANG_7 if x not in {"L09", "L10", "L12"}]
 
 
 @pytest.fixture()
@@ -65,7 +65,7 @@ def test_nguoi_hoc_khong_thay_noi_dung_nhap():
         lessons = client.get("/api/v1/lessons").json()
         assert [x["id"] for x in lessons] == PUBLISHED_ORDER
         # Số "Bài n" liền nhau theo danh sách đang thấy, không nhảy vì bài nháp bị ẩn.
-        assert [x["order"] for x in lessons] == list(range(1, 9))
+        assert [x["order"] for x in lessons] == list(range(1, 10))
         assert next(x for x in lessons if x["id"] == "L03")["track"] == "M2. Hòa âm chức năng"
         assert client.get("/api/v1/lessons/L09").status_code == 404
         l01 = client.get("/api/v1/lessons/L01").json()
@@ -76,7 +76,7 @@ def test_nguoi_hoc_khong_thay_noi_dung_nhap():
         assert client.post("/api/v1/lessons/L09/start", headers=auth("demo-user")).status_code == 404
         overview = client.get("/api/v1/learning/overview", headers=auth("demo-user")).json()
         assert [x["lesson_id"] for x in overview["lessons"]] == PUBLISHED_ORDER
-        assert overview["total_lessons"] == 8
+        assert overview["total_lessons"] == 9
 
 
 def test_che_do_nhap_hien_du_12_bai(drafts_on):
@@ -121,7 +121,7 @@ def test_seed_doi_thu_tu_tren_csdl_cu(tmp_path):
             lesson.order_index = -100 - int(lesson.id[1:])
         db.flush()
         for lesson in db.scalars(select(Lesson)).all():
-            if lesson.id in {"L09", "L10", "L11", "L12"}:
+            if lesson.id in {"L09", "L10", "L12"}:
                 db.delete(lesson)
             else:
                 lesson.order_index = int(lesson.id[1:])

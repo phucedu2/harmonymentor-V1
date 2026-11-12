@@ -59,7 +59,7 @@ def test_start_lesson_is_idempotent_and_overview_tracks_attempts():
         assert lesson["attempted_exercises"] == 1
         assert lesson["correct_exercises"] == 1
         assert lesson["attempt_count"] == 1
-        assert lesson["practice_progress_percent"] == 17
+        assert lesson["practice_progress_percent"] == 11
         assert lesson["attempted_exercise_ids"] == ["L04-Q01"]
 
 

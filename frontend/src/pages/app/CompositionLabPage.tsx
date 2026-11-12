@@ -75,8 +75,15 @@ export default function CompositionLabPage() {
         setOptions(opts);
         setProjects(list);
         const style = opts.styles[0];
-        setDraft({ id: null, name: "Vòng hợp âm đầu tiên", key: "C", tempo: style.default_bpm, bars: 4, style: style.id,
-          chords: starterProgression(opts, "C", 4), seed: 1, energy: 2, mix: DEFAULT_MIX, mode: "loop", form: null });
+        // Bài học mở Lab với vòng có sẵn: ?key=C&numerals=I,V,vi,IV (số La Mã đổi thành hợp âm của giọng). Sai thì dùng vòng mặc định.
+        const query = new URLSearchParams(window.location.search);
+        const presetKey = opts.keys.find((k) => k.key === query.get("key"))?.key;
+        const numerals = (query.get("numerals") ?? "").split(",").map((n) => n.trim()).filter(Boolean).slice(0, opts.bars.max);
+        const presetChords = presetKey ? numerals.map((n) => chordsOfKey(opts, presetKey).find((c) => c.numeral === n)?.symbol ?? null) : [];
+        const fromLesson = presetKey && presetChords.length > 0 && presetChords.every(Boolean);
+        setDraft({ id: null, name: fromLesson ? "Vòng từ bài học" : "Vòng hợp âm đầu tiên", key: fromLesson ? presetKey : "C",
+          tempo: style.default_bpm, bars: fromLesson ? presetChords.length : 4, style: style.id,
+          chords: fromLesson ? presetChords : starterProgression(opts, "C", 4), seed: 1, energy: 2, mix: DEFAULT_MIX, mode: "loop", form: null });
       })
       .catch((e) => setLoadError(errorText(e)));
     return () => bandPlayer.stop();

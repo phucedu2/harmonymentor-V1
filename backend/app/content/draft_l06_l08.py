@@ -204,4 +204,6 @@ L08_DRAFT_BLOCKS: list[Block] = [
 # Đạt duyệt 09/11/2026 (Phúc báo trong thread): bỏ status draft, người học thấy.
 # 10/11/2026: L06 và L08 đã nạp vào kho AI Tutor (nhãn sinh lại, ngưỡng chọn lại, đã đo).
 # 11/11/2026: Thắng chốt mở rộng Engine (ADR-019) nên L07 mở cho người học và nạp vào kho; không còn bài nào chờ.
-TUTOR_KB_PENDING: frozenset[str] = frozenset()
+# 12/11/2026: L11 (Vòng hợp âm Pop) mở cho người học nhưng chưa vào kho AI Tutor: nạp cần dựng lại chỉ mục Gemini
+# (khóa chỉ có trên máy Phúc) và đo lại định tuyến. Bỏ L11 khỏi tập này khi đã dựng chỉ mục.
+TUTOR_KB_PENDING: frozenset[str] = frozenset({"L11"})
