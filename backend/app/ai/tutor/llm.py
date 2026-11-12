@@ -30,7 +30,7 @@ class LLMResult:
 class LLMProvider(Protocol):
     model: str
 
-    def generate(self, system: str, user: str, schema: dict[str, Any]) -> LLMResult: ...
+    def generate(self, system: str, user: str, schema: dict[str, Any], max_output_tokens: int | None = None) -> LLMResult: ...
 
 
 def _status(exc: Exception) -> int | None:
@@ -60,22 +60,22 @@ class GeminiProvider:
     def __repr__(self) -> str:
         return f"GeminiProvider(model={self.model!r}, fallback={self.fallback_model!r})"
 
-    def _call(self, model: str, system: str, user: str, schema: dict[str, Any]):
+    def _call(self, model: str, system: str, user: str, schema: dict[str, Any], max_output_tokens: int | None = None):
         from google.genai import types
 
         return self._client.models.generate_content(
             model=model, contents=user,
             config=types.GenerateContentConfig(system_instruction=system, response_mime_type="application/json",
                                                response_json_schema=schema, temperature=0.2,
-                                               max_output_tokens=1024))
+                                               max_output_tokens=max_output_tokens or 1024))
 
-    def generate(self, system: str, user: str, schema: dict[str, Any]) -> LLMResult:
+    def generate(self, system: str, user: str, schema: dict[str, Any], max_output_tokens: int | None = None) -> LLMResult:
         start = time.perf_counter()
         models = [self.model, self.fallback_model or self.model]
         last = "unavailable"
         for attempt, model in enumerate(models, start=1):
             try:
-                resp = self._call(model, system, user, schema)
+                resp = self._call(model, system, user, schema, max_output_tokens)
                 usage = getattr(resp, "usage_metadata", None)
                 text = resp.text or ""
                 if not text:
@@ -106,7 +106,7 @@ class FakeProvider:
     model: str = "fake-llm"
     calls: list[tuple[str, str]] = field(default_factory=list)
 
-    def generate(self, system: str, user: str, schema: dict[str, Any]) -> LLMResult:
+    def generate(self, system: str, user: str, schema: dict[str, Any], max_output_tokens: int | None = None) -> LLMResult:
         self.calls.append((system, user))
         i = len(self.calls) - 1
         item = self.script[i] if i < len(self.script) else (self.script[-1] if self.script else "{}")

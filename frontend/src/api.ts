@@ -296,7 +296,32 @@ export type AdminStats = {
 };
 export type AdminAudit = { id: number; actor_id: string | null; action: string; target_type: string; target_id: string; created_at: string };
 
+export type AiDocument = { id: string; filename: string; kind: string; page_count: number; source_title: string; source_note: string | null; created_at: string };
+export type AiQuestion = { kind: "mcq" | "build_chord" | "build_scale"; prompt: string; skill_id: string; explanation: string; page: number;
+  options?: string[]; answer?: string; symbol?: string; tonic?: string; scale_type?: string; engine_answer?: string[] | null };
+export type AiDraftContent = { title: string; objectives: string[]; blocks: { title: string; paragraphs: string[]; page: number }[];
+  questions: AiQuestion[]; dropped_questions: string[] };
+export type AiDraft = { id: string; status: "draft" | "published" | "rejected"; document: AiDocument | null; page_from: number; page_to: number;
+  model: string | null; published_lesson_id: string | null; content: AiDraftContent; engine: AdminEngineReport; created_at: string };
+export type AiDraftRow = { id: string; status: string; title: string | null; questions: number; flags: number; published_lesson_id: string | null; created_at: string };
+
 export const api = {
+  aiStatus: () => apiCall<{ enabled: boolean }>("/admin/ai/status"),
+  aiDocuments: () => apiCall<AiDocument[]>("/admin/ai/documents"),
+  aiUpload: (file: File, sourceTitle: string, sourceNote: string, consent: boolean) => {
+    const form = new FormData();
+    form.append("file", file); form.append("source_title", sourceTitle); form.append("source_note", sourceNote); form.append("consent", String(consent));
+    return apiCall<AiDocument>("/admin/ai/documents", { method: "POST", body: form });
+  },
+  aiMakeDraft: (docId: string, pageFrom: number, pageTo: number, topic: string) =>
+    apiPost<AiDraft>(`/admin/ai/documents/${encodeURIComponent(docId)}/draft`, { page_from: pageFrom, page_to: pageTo, topic: topic || null }),
+  aiDrafts: () => apiCall<AiDraftRow[]>("/admin/ai/drafts"),
+  aiDraft: (id: string) => apiCall<AiDraft>(`/admin/ai/drafts/${encodeURIComponent(id)}`),
+  aiSaveDraft: (id: string, content: Omit<AiDraftContent, "dropped_questions">) =>
+    apiCall<AiDraft>(`/admin/ai/drafts/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(content) }),
+  aiPublish: (id: string, acknowledge: boolean) =>
+    apiPost<{ lesson_id: string; title: string }>(`/admin/ai/drafts/${encodeURIComponent(id)}/publish`, { acknowledge_engine_flags: acknowledge }),
+  aiReject: (id: string) => apiPost<{ id: string }>(`/admin/ai/drafts/${encodeURIComponent(id)}/reject`, {}),
   adminLessons: () => apiCall<AdminLessonRow[]>("/admin/lessons"),
   adminLesson: (id: string) => apiCall<AdminLessonDetail>(`/admin/lessons/${encodeURIComponent(id)}`),
   adminSaveDraft: (lessonId: string, blockId: string, payload: Record<string, unknown>, note?: string) =>
