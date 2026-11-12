@@ -2,6 +2,8 @@
 
 Trạng thái: **Đề xuất 02/11/2026**, chờ **Thắng** duyệt. Nhánh `phuc-music` (Draft PR #18). Phúc đã quyết trong prompt (1A, 2A, 5A, 6A, 7B, 8A–12A) và trả lời 7 câu làm rõ (1A–7A, 02/11). Phúc chọn phương án không thay cho Thắng duyệt.
 
+> Cập nhật 12/11/2026: **đã làm**, chế độ Bài hát đang chạy trong Harmony Lab. Chữ ký của Thắng vẫn chờ.
+
 Sổ tay nghiệp vụ đi kèm: [`docs/backing-track/CAU_TRUC_BAI_HAT.md`](../backing-track/CAU_TRUC_BAI_HAT.md).
 
 ## Bối cảnh

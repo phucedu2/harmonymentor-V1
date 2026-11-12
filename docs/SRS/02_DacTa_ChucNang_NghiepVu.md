@@ -195,7 +195,7 @@ Trang công khai, đăng ký, đăng nhập, phân quyền, hồ sơ và mục t
 | **Mã**     | **Tên chức năng**              | **Mô tả**                                                                                                      | **Ưu tiên** | **GĐ** |
 |------------|--------------------------------|----------------------------------------------------------------------------------------------------------------|-------------|--------|
 | FR-VIS-01  | Xem trang chủ                  | Khách xem trang chủ và phần giới thiệu hệ thống.                                                               | P0          | 1      |
-| FR-VIS-02  | Xem chương trình học           | Khách xem tổng quan chương trình 8 bài.                                                                       | P0          | 1      |
+| FR-VIS-02  | Xem chương trình học           | Khách xem tổng quan chương trình 9 bài.                                                                       | P0          | 1      |
 | FR-VIS-03  | Xem thông tin khóa học         | Khách xem tên, mô tả và cấp độ khóa học.                                                                       | P0          | 1      |
 | FR-VIS-04  | Xem giới thiệu tính năng       | Khách xem giới thiệu Luyện tập, AI Tutor và Harmony Lab.                                                       | P1          | 1      |
 | FR-VIS-05  | Đăng ký tài khoản              | Khách tạo tài khoản mới.                                                                                       | P0          | 1      |

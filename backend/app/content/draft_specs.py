@@ -195,9 +195,9 @@ DRAFT_REVIEW_ITEMS: dict[str, list[dict[str, Any]]] = {
 L05_DRAFT_BLOCKS: list[tuple[str, str, dict[str, Any]]] = [
     ("L05-B01", "callout", {
         "title": "Trước khi học át phụ",
-        "prompt": "Bài này dùng lại ba thứ đã học: hợp âm bảy át (V7) ở Lesson 2, chức năng Dominant ở Lesson 3 và "
-                  "tiến trình ii–V–I ở Lesson 4. Nếu chưa chắc G7 trong C major gồm G–B–D–F và vì sao nó muốn về C, "
-                  "hãy ôn lại Lesson 2 và Lesson 3 trước."}),
+        "prompt": "Bài này dùng lại hai thứ đã học: hợp âm bảy át (V7) ở bài về âm giai trưởng và hợp âm bảy, và chức năng "
+                  "Dominant ở bài về chức năng hòa âm. Nếu chưa chắc G7 trong C major gồm G–B–D–F và vì sao nó muốn về C, "
+                  "hãy ôn lại hai bài đó trước. Bài này không cần biết ii–V–I."}),
     ("L05-B02", "theory", {
         "title": "1. Át phụ là gì",
         "paragraphs": [
@@ -234,7 +234,7 @@ L05_DRAFT_BLOCKS: list[tuple[str, str, dict[str, Any]]] = [
         "paragraphs": [
             "Bước 1: tìm root của át phụ. Lấy root của chord đích rồi đi lên một quãng 5 đúng. Chord đích Dm7 có "
             "root D; D lên quãng 5 đúng là A.",
-            "Bước 2: dựng hợp âm bảy át trên root đó, đúng công thức dominant seventh ở Lesson 2 (major triad + "
+            "Bước 2: dựng hợp âm bảy át trên root đó, đúng công thức dominant seventh đã học ở bài về hợp âm bảy (major triad + "
             "minor seventh). Trên A ta được A7 = A–C#–E–G.",
             "Dấu hiệu nhận ra át phụ: nó có nốt không thuộc key. A7 chứa C#, mà C major không có C#. C# cách D nửa "
             "cung, nên nó kéo lên D giống như B trong G7 kéo lên C. Nốt này đóng vai cảm âm (leading tone) của "

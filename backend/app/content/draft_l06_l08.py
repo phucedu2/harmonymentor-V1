@@ -16,8 +16,8 @@ Block = tuple[str, str, dict[str, Any]]
 L06_DRAFT_BLOCKS: list[Block] = [
     ("L06-B01", "callout", {
         "title": "Trước khi học hợp âm mượn",
-        "prompt": "Bài này dùng lại hợp âm trưởng, thứ (Lesson 2) và ba chức năng Tonic, Subdominant, Dominant "
-                  "(Lesson 3). Nếu chưa chắc F trong C major thuộc nhóm Subdominant, hãy ôn Lesson 3 trước."}),
+        "prompt": "Bài này dùng lại hợp âm trưởng, thứ và ba chức năng Tonic, Subdominant, Dominant (bài về chức năng "
+                  "hòa âm). Nếu chưa chắc F trong C major thuộc nhóm Subdominant, hãy ôn bài đó trước."}),
     ("L06-B02", "theory", {
         "title": "1. Hợp âm mượn là gì",
         "paragraphs": [
@@ -90,8 +90,8 @@ L06_DRAFT_BLOCKS: list[Block] = [
 L07_DRAFT_BLOCKS: list[Block] = [
     ("L07-B01", "callout", {
         "title": "Trước khi học tension và chord-scale",
-        "prompt": "Bài này dùng hợp âm bảy (Lesson 2) và tiến trình ii–V–I (Lesson 4). Nếu chưa chắc Dm7–G7–Cmaj7 "
-                  "gồm những nốt nào, hãy ôn lại Lesson 4 trước."}),
+        "prompt": "Bài này dùng hợp âm bảy và tiến trình ii–V–I (bài về ii–V–I và guide tone). Nếu chưa chắc Dm7–G7–Cmaj7 "
+                  "gồm những nốt nào, hãy ôn lại bài đó trước."}),
     ("L07-B02", "theory", {
         "title": "1. Chord tone và tension",
         "paragraphs": [
@@ -152,8 +152,8 @@ L07_DRAFT_BLOCKS: list[Block] = [
 L08_DRAFT_BLOCKS: list[Block] = [
     ("L08-B01", "callout", {
         "title": "Trước khi học shell voicing",
-        "prompt": "Bài này dùng hợp âm bảy (Lesson 2) và guide tone của ii–V–I (Lesson 4). Nếu chưa chắc quãng 3 và "
-                  "quãng 7 của G7 là nốt nào, hãy ôn lại Lesson 4 trước."}),
+        "prompt": "Bài này dùng hợp âm bảy và guide tone của ii–V–I (bài về ii–V–I và guide tone). Nếu chưa chắc quãng 3 và "
+                  "quãng 7 của G7 là nốt nào, hãy ôn lại bài đó trước."}),
     ("L08-B02", "theory", {
         "title": "1. Voicing và shell voicing",
         "paragraphs": [
