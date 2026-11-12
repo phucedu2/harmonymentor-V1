@@ -189,7 +189,7 @@ Nhóm chọn kiến trúc nguyên khối chia module (Modular Monolith): toàn b
 |-----------------|---------------------------------------------------------------------------------------------------|
 | Trang chủ       | Giới thiệu hệ thống, chương trình học, nút Đăng ký và Đăng nhập.                                  |
 | Bảng điều khiển | Mục tiêu học tập, 3–5 bài được gợi ý kèm lý do, kỹ năng yếu, số thẻ ôn đến hạn.                   |
-| Học             | 12 bài theo 5 module. Trong bài: các bước học, mục lục, piano, khuông nhạc, bài tập.              |
+| Học             | 8 bài theo 4 module. Trong bài: các bước học, mục lục, piano, khuông nhạc, bài tập.              |
 | Luyện tập       | Bài tập ngẫu nhiên theo kỹ năng và mức độ Dễ, Vừa, Khó.                                           |
 | Ôn tập          | Flashcard đến hạn, lật thẻ, tự đánh giá.                                                          |
 | Tiến độ         | Tiến độ theo bài, mức thành thạo theo kỹ năng, số thẻ ở từng hộp Leitner.                         |
