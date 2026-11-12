@@ -70,8 +70,7 @@ CASES = [
     ("L03-Q04", "T D PD T", False),
     ("L01-Q03", "1 3b 5", True),
     ("L01-Q03", "1-3-5", False),
-    ("L01-Q05", "khong", True),
-    ("L01-Q05", "Có", False),
+    ("L01-Q05", "Có, cùng một phím thì luôn có cùng một tên", False),
     # câu dựng nốt bằng Engine: dấu tách khác và viết liền không còn văng lỗi
     ("L01-Q02", "GBD", True),
     ("L01-Q02", "G/B/D", True),

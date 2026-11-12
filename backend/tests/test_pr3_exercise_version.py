@@ -43,7 +43,7 @@ KNOWN_SNAPSHOTS = json.loads(
 DEMO_1011_IDS = {"L01-Q07", "L01-Q08", "L02-Q07", "L02-Q08", "L02-Q09", "L02-Q10"}
 
 CURRENT_VERSION_IDS = {
-    "L01-Q01-v4", "L01-Q02-v4", "L01-Q03-v5", "L01-Q04-v4", "L01-Q05-v5", "L01-Q06-v4",
+    "L01-Q01-v4", "L01-Q02-v4", "L01-Q03-v5", "L01-Q04-v4", "L01-Q05-v6", "L01-Q06-v4",
     "L02-Q01-v1", "L02-Q02-v1", "L02-Q03-v1", "L02-Q04-v1", "L02-Q05-v1", "L02-Q06-v1",
     "L03-Q01-v1", "L03-Q02-v1", "L03-Q03-v1", "L03-Q04-v2", "L03-Q05-v2", "L03-Q06-v1",
     "L04-Q01-v1", "L04-Q02-v2", "L04-Q03-v1", "L04-Q04-v2", "L04-Q05-v2", "L04-Q06-v2",
@@ -153,7 +153,9 @@ def test_seeded_snapshots_equal_git_history_snapshots(factory):
     seed(factory)
     with factory() as db:
         for version in db.scalars(select(ExerciseVersion)).all():
-            known = KNOWN_SNAPSHOTS[version.id]
+            known = KNOWN_SNAPSHOTS.get(version.id)
+            if known is None:
+                continue  # phiên bản phát hành sau PR-3 (ADR-006) không thuộc lịch sử git mà migration khôi phục
             for name in ("kind", "prompt", "options", "grading_strategy", "answer_key", "grader_config", "explanation", "provenance"):
                 assert getattr(version, name) == known[name], (version.id, name)
 
