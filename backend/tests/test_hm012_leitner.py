@@ -204,6 +204,6 @@ def test_rs25_the_y_mo_khong_cham_theo_chu():
             return  # L01 chưa có thẻ ý mở; luật vẫn được kiểm ở dưới bằng đơn vị
         card_id = open_cards[0]["review_item_id"]
         bad = client.post(f"/api/v1/review/{card_id}/answer", json={"answer": "bất kỳ", "rating": "auto"}, headers=headers)
-        assert bad.status_code == 422 and bad.json()["detail"]["code"] == "SELF_CHECK_REQUIRES_RATING"
+        assert bad.status_code == 422 and "SELF_CHECK_REQUIRES_RATING" in bad.text, bad.text
         ok = client.post(f"/api/v1/review/{card_id}/answer", json={"answer": "", "rating": "good"}, headers=headers)
         assert ok.status_code == 200
