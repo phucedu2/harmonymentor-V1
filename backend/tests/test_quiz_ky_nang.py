@@ -55,7 +55,9 @@ def test_quiz_ky_nang_khong_ton_tai_la_404_va_can_dang_nhap(client):
 def test_quiz_uu_tien_cau_chua_lam_roi_cau_da_dung(client):
     h = learner()
     first = client.get("/api/v1/practice/quiz?skill_id=chord.triad_build&n=1", headers=h).json()["questions"][0]
-    # làm sai câu đó: lần sau nó không nằm trong nhóm "chưa làm", nên câu chưa làm phải xuất hiện trước
-    client.post("/api/v1/attempts", headers=h, json={"exercise_version_id": first["exercise_version_id"], "answer": "###", "input_method": "text"})
+    # làm sai câu đó: lần sau nó không nằm trong nhóm "chưa làm", nên câu chưa làm phải xuất hiện trước.
+    # Đáp án phải đọc được tên nốt: "###" bị /attempts trả 422 (INVALID_PITCH) nên không ghi lượt làm nào.
+    r = client.post("/api/v1/attempts", headers=h, json={"exercise_version_id": first["exercise_version_id"], "answer": "C Db D", "input_method": "text"})
+    assert r.status_code == 200 and r.json()["correct"] is False
     again = client.get("/api/v1/practice/quiz?skill_id=chord.triad_build&n=1", headers=h).json()["questions"][0]
     assert again["exercise_id"] != first["exercise_id"]
