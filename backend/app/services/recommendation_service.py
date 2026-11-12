@@ -234,16 +234,34 @@ def recommend_for_user(db: Session, user: User, *, k: int = 5, now: datetime | N
         "content_source": content_source, "draft_descriptions": draft,
     }
     next_items = [_item(r) for r in nxt.ranked]
+    route_fallback = False
+    if not next_items:
+        # RS-04: luật tiên quyết có thể khóa mọi bài chưa học (ví dụ vừa sai vài câu Bài 1). Người học không
+        # nên thấy "không có gì để học": đưa bài kế tiếp theo lộ trình, ghi rõ đây là bước theo thứ tự chứ
+        # không phải kết quả xếp hạng (không điểm, không tính vào đánh giá gợi ý).
+        pending = [i for i in infos if i.lesson_id not in status]
+        if pending:
+            first = min(pending, key=lambda i: i.order)
+            next_items = [{
+                "lesson_id": first.lesson_id, "order": first.order, "title": first.title, "score": 0.0,
+                "components": {"content": 0.0, "mastery": 0.0, "due": 0.0, "cf": None},
+                "reason_code": "route",
+                "reason": "Bài kế tiếp theo lộ trình. Bạn có thể học ngay và củng cố kỹ năng tiên quyết song song.",
+                "badge": "Theo lộ trình", "skills": sorted(first.skills),
+            }]
+            route_fallback = True
     review_items = [_item(r, label="Ôn lại") for r in rev.ranked]
     log = RecommendationLog(
         id="rec-" + uuid4().hex, user_id=user.id, lesson_ids=[x["lesson_id"] for x in next_items],
         scores=[dict(x, list="next") for x in next_items] + [dict(x, list="review") for x in review_items],
         explanation="\n".join(f"{x['lesson_id']}: {x['reason']}" for x in next_items + review_items) or None,
-        context=dict(context, review_ids=[x["lesson_id"] for x in review_items]), created_at=now,
+        context=dict(context, review_ids=[x["lesson_id"] for x in review_items], route_fallback=route_fallback),
+        created_at=now,
     )
     db.add(log)
     db.commit()
     return {**context, "generated_at": now, "log_id": log.id, "few_eligible": nxt.few_eligible,
+            "route_fallback": route_fallback,
             "continue": cont, "next": next_items, "review": review_items}
 
 

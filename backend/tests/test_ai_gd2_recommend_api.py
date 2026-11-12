@@ -345,3 +345,31 @@ def test_startup_warns_when_embedding_config_differs_from_skill_file(monkeypatch
     msg = rs.embedding_config_mismatch(replace(on, gemini_embed_model=store["model"], gemini_embed_dim=1536))
     assert msg and "1536" in msg and "build_skill_embeddings" in msg
     assert rs.embedding_config_mismatch(replace(rs.settings, ai_enabled=False, gemini_embed_dim=1536)) is None
+
+
+def test_rs04_khi_chua_bai_nao_du_dieu_kien_van_goi_y_bai_ke_tiep_theo_lo_trinh():
+    # Hoàn thành L01 nhưng chưa kỹ năng nào đạt ngưỡng mở L02: trước đây "next" rỗng và người học thấy
+    # "Chưa có bài mới đủ điều kiện". Giờ có đúng một bài theo lộ trình, đánh dấu rõ không phải điểm xếp hạng.
+    uid = make_user()
+    headers = auth(uid)
+    assert client.post("/api/v1/lessons/L01/start", headers=headers).status_code == 200
+    answer_lesson_correctly(client, "L01", headers)
+    assert client.post("/api/v1/lessons/L01/complete", headers=headers).status_code == 200
+    with SessionLocal() as db:
+        for state in db.scalars(select(MasteryState).where(MasteryState.user_id == uid)):
+            state.score = 0.3
+        db.commit()
+    body = get(uid)
+    assert body["route_fallback"] is True
+    assert len(body["next"]) == 1
+    item = body["next"][0]
+    assert item["reason_code"] == "route" and item["badge"] == "Theo lộ trình" and item["score"] == 0.0
+    assert item["lesson_id"] not in ("L01",)
+    with SessionLocal() as db:
+        log = db.get(RecommendationLog, body["log_id"])
+        assert log.lesson_ids == [item["lesson_id"]] and log.context["route_fallback"] is True
+
+
+def test_rs04_xep_hang_binh_thuong_khong_bi_thay_bang_lo_trinh():
+    body = get(make_user())
+    assert body["route_fallback"] is False and ids(body["next"]) == ["L01"]

@@ -123,7 +123,8 @@ def test_2a_wrong_due_review_counts_zero():
     learn_lesson(user_id, "L01", DAY0)
     card = next(cid for cid, self_check in cards(user_id, "interval.naming") if not self_check)
     review(user_id, card, DAY0 + timedelta(minutes=5), correct=False)
-    assert score(user_id, "interval.naming") == pytest.approx(0.30 * 0.7)
+    # L01 nay có 3 câu độc lập cho interval.naming (RS: đủ 3 câu/kỹ năng): 1 − 0,7³, rồi nhân 0,7 vì ôn sai.
+    assert score(user_id, "interval.naming") == pytest.approx((1 - 0.7 ** 3) * 0.7)
 
 
 def test_2a_self_check_card_never_counts():

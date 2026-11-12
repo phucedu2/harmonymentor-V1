@@ -166,7 +166,10 @@ def answer_review(db: Session, user_id: str, review_item_id: str, answer, rating
     ))
     if state is None:
         raise LookupError("REVIEW_STATE_NOT_ACTIVE")
-    if is_self_check(item.grading_strategy, item.grader_config) and rating != "auto":
+    if is_self_check(item.grading_strategy, item.grader_config) and rating == "auto":
+        # RS-25: câu ý mở không được chấm theo từ khóa; bắt buộc người học tự đánh giá.
+        raise ValueError("SELF_CHECK_REQUIRES_RATING")
+    if is_self_check(item.grading_strategy, item.grader_config):
         # Thẻ ý mở: người học lật thẻ rồi tự đánh giá, máy không đoán nghĩa câu tự luận.
         correct = rating != "again"
         outcome = GradeOutcome(correct, 1.0 if correct else 0.0, None if correct else "SELF_REPORTED_MISS",

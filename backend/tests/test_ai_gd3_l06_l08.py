@@ -54,7 +54,7 @@ def test_blocks_reviewed_and_visible_kb_follows_pending_list(lesson, blocks):
     assert all(p.get("status") != DRAFT and block_visible(p) for _, _, p in blocks)
     in_kb = bool([c for c in lesson_chunks() if c.lesson_id == lesson])
     assert in_kb == (lesson not in TUTOR_KB_PENDING)
-    assert TUTOR_KB_PENDING == frozenset()
+    assert TUTOR_KB_PENDING == frozenset({"L11"})  # chờ dựng chỉ mục Gemini, xem draft_l06_l08.py
 
 
 @pytest.mark.parametrize("lesson, blocks", LESSONS.items())

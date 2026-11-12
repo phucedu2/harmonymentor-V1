@@ -31,10 +31,17 @@ SCALE_WITH_NOTES = re.compile(
 # "D–F# là M3", "từ D lên Gb là quãng d4", "A–C = quãng 3 thứ". Chỉ bắt câu khẳng định ngay sau cặp nốt
 # ("là", "=", ":"), nên "D–Gb không phải M3" không bị hiểu thành D–Gb = M3. Nốt dưới trước, đi lên.
 _IV_QUAL_VI = {"trưởng": "M", "thứ": "m", "đúng": "P", "tăng": "A", "giảm": "d"}
+# RS-26: AI hay viết "quãng ba giảm" (số bằng chữ) và "B và F tạo quãng ...". Số bằng chữ được đổi về chữ số.
+_NUM_WORDS = {"hai": "2", "ba": "3", "bốn": "4", "tư": "4", "năm": "5", "sáu": "6", "bảy": "7", "tám": "8"}
+_NUM = r"(?P<num>[1-8]|hai|ba|bốn|tư|năm|sáu|bảy|tám)"
+_IV_TAIL = (rf"(?:(?P<code>[PMmAd][1-8])(?![A-Za-z0-9])|{_NUM}\s*(?P<qual>trưởng|thứ|đúng|tăng|giảm)(?![\wÀ-ỹ]))")
 INTERVAL_WITH_NAME = re.compile(
     rf"(?<![A-Za-z0-9#])(?P<lo>{NOTE})\s*(?:–|—|-|→|lên)\s*(?P<hi>{NOTE})(?![A-Za-z0-9#–—-])\s*"
-    rf"(?:là|=|:)\s*(?:một\s+)?(?:quãng\s*)?"
-    rf"(?:(?P<code>[PMmAd][1-8])(?![A-Za-z0-9])|(?P<num>[1-8])\s*(?P<qual>trưởng|thứ|đúng|tăng|giảm))")
+    rf"(?:(?:tạo\s+(?:thành|nên)|tạo|là|=|:)\s*)(?:một\s+)?(?:quãng\s*)?{_IV_TAIL}")
+# "B và F tạo quãng ba giảm": thứ tự nốt không rõ, nên đúng nếu khớp một trong hai chiều (xem guardrail).
+INTERVAL_PAIR_WITH_NAME = re.compile(
+    rf"(?<![A-Za-z0-9#])(?P<lo>{NOTE})\s+(?:và|với)\s+(?P<hi>{NOTE})(?![A-Za-z0-9#])\s*(?:\([^)]*\)\s*)?"
+    rf"(?:(?:tạo\s+(?:thành|nên)|tạo|là|=|:)\s*)(?:một\s+)?quãng\s*{_IV_TAIL}")
 
 
 # "V7 trong G trưởng là D7", "V7 của G là G7", "Am7 là vi7 trong C trưởng". Chỉ giọng trưởng: giọng thứ
@@ -53,7 +60,7 @@ def interval_name(match: re.Match) -> str:
     """Tên quãng dạng mã Engine (M3, d4...) từ một kết quả INTERVAL_WITH_NAME."""
     if match["code"]:
         return match["code"]
-    return _IV_QUAL_VI[match["qual"]] + match["num"]
+    return _IV_QUAL_VI[match["qual"]] + _NUM_WORDS.get(match["num"], match["num"])
 
 
 SYMBOL_IN_QUESTION = re.compile(rf"(?<![A-Za-z0-9#])(?P<sym>{NOTE}(?:maj7|M7|m7b5|ø7|dim7|dim|aug|m7|m|7))"

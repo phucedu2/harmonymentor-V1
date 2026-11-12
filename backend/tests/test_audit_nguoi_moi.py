@@ -55,9 +55,9 @@ def test_runtime_lessons_have_no_keyword_graded_exercises():
 
 def test_yes_no_question_is_a_choice_and_rejects_the_wrong_choice():
     q05 = item("L01-Q05")
-    assert q05["options"] == ["Có", "Không"]
-    assert grade("L01-Q05", "Không") is True
-    assert grade("L01-Q05", "Có") is False
+    assert len(q05["options"]) == 4
+    assert grade("L01-Q05", "Không, tên đúng còn phụ thuộc số quãng và ngữ cảnh") is True
+    assert grade("L01-Q05", "Có, cùng một phím thì luôn có cùng một tên") is False
 
 
 @pytest.mark.parametrize("answer", ["không biết", "Khong biet", "tôi không hiểu", "idk"])
@@ -151,7 +151,7 @@ def test_lesson_cannot_be_completed_by_guessing():
 def test_changed_questions_publish_a_new_version():
     with TestClient(app) as client:
         versions = {e["id"]: e["version_id"] for e in client.get("/api/v1/lessons/L01").json()["exercises"]}
-        assert versions["L01-Q05"] == "L01-Q05-v5"
+        assert versions["L01-Q05"] == "L01-Q05-v6"
         assert versions["L01-Q01"] == "L01-Q01-v4"
 
 

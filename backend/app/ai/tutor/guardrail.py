@@ -16,7 +16,7 @@ from typing import Any, Iterable
 from ...music_engine import tools as engine
 from ...music_engine.errors import MusicEngineError
 from ...music_engine.roman import diatonic_chords
-from .notes import (CHORD_IS_ROMAN_IN_KEY, CHORD_WITH_NOTES, INTERVAL_WITH_NAME, NOTE_SEQ, ROMAN_IN_KEY_IS_CHORD,
+from .notes import (CHORD_IS_ROMAN_IN_KEY, CHORD_WITH_NOTES, INTERVAL_PAIR_WITH_NAME, INTERVAL_WITH_NAME, NOTE_SEQ, ROMAN_IN_KEY_IS_CHORD,
                     SCALE_WITH_NOTES, SYMBOL_IN_QUESTION, interval_name, norm_accidentals, solfege_to_letters,
                     split_notes)
 from .schema import Claim
@@ -149,6 +149,17 @@ def scan_reply(reply: str) -> list[CheckedClaim]:
         value, _ = run_tool("identify_interval", args)
         out.append(CheckedClaim("identify_interval", args, claimed, value,
                                 _compare("identify_interval", claimed, value), "scanned"))
+    for m in INTERVAL_PAIR_WITH_NAME.finditer(text):
+        lo, hi = norm_accidentals(m["lo"]), norm_accidentals(m["hi"])
+        claimed = interval_name(m)
+        up, _ = run_tool("identify_interval", {"lower": lo, "upper": hi})
+        down, _ = run_tool("identify_interval", {"lower": hi, "upper": lo})
+        # "B và F" không nói nốt nào ở dưới: đúng nếu khớp một trong hai chiều, sai khi cả hai đều khác.
+        hit = next((v for v in (up, down) if v == claimed), None)
+        args = {"lower": lo, "upper": hi} if hit in (None, up) else {"lower": hi, "upper": lo}
+        out.append(CheckedClaim("identify_interval", args, claimed, hit or up,
+                                "unsupported" if up is None and down is None else ("verified" if hit else "contradicted"),
+                                "scanned"))
     # "Dm7: D F A C là ii7": chữ C cuối dãy nốt không phải hợp âm C, nên bỏ khớp nằm trong một dãy nốt.
     seqs = [m.span() for m in re.finditer(NOTE_SEQ, text)]
     for pattern in (ROMAN_IN_KEY_IS_CHORD, CHORD_IS_ROMAN_IN_KEY):

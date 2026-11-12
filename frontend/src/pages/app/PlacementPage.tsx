@@ -17,6 +17,8 @@ export default function PlacementPage() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [confirmRetake, setConfirmRetake] = useState(false);
+  // RS-08: người chưa từng học nhạc lý không nên bị 12 câu làm nản; hỏi trước, "chưa học" thì vào thẳng Bài 1.
+  const [experienced, setExperienced] = useState(false);
 
   useEffect(() => { api.placement().then(setPlacement).catch(() => setLoadError(true)); }, []);
 
@@ -51,6 +53,19 @@ export default function PlacementPage() {
         Bạn làm đúng {right}/{placement.questions.length} câu. Kỹ năng làm đúng được tính là đủ để học tiếp (0,65).
       </PageHeading>
       <ButtonLink to="/app">Về trang Tổng quan</ButtonLink>
+    </section>;
+  }
+
+  if (!done && !experienced) {
+    return <section>
+      <PageHeading eyebrow="Kiểm tra đầu vào" title="Bạn đã học nhạc lý chưa?">
+        Nếu chưa, bạn học từ Bài 1 là phù hợp nhất. Nếu đã biết một ít, 12 câu ngắn giúp hệ thống gợi ý đúng chỗ bắt đầu.
+      </PageHeading>
+      {error && <div className="my-3"><Alert tone="danger">{error}</Alert></div>}
+      <div className="mt-4 flex flex-wrap gap-3">
+        <Button type="button" onClick={skip} loading={busy}>Chưa học, bắt đầu từ Bài 1</Button>
+        <Button type="button" variant="secondary" onClick={() => setExperienced(true)} disabled={busy}>Đã học một ít, làm 12 câu</Button>
+      </div>
     </section>;
   }
 

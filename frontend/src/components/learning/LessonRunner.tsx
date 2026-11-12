@@ -26,7 +26,7 @@ import * as ui from "./lessonStyles";
 import { annotateTerms, claimTerms, firstAppearances, readTermOwners, termsForLesson, writeTermOwners } from "./TermText";
 import { useAuth } from "../../auth/AuthProvider";
 import { requestExplain } from "../../lib/tutorBus";
-import { Button } from "../ui/Button";
+import { Button, ButtonLink } from "../ui/Button";
 import { Badge, ChipButton, ProgressBar, ResultBox } from "../ui/Page";
 
 export const REVIEW_MODE_LABELS: Record<string, string> = {
@@ -55,7 +55,7 @@ function inputPresentation(exercise: LessonExercise): InputPresentation {
   if (exercise.skill_id.startsWith("chord.") && exercise.kind === "build") {
     return {
       placeholder: "Ví dụ định dạng: Nốt-Nốt-Nốt",
-      hint: "Tên nốt có thể ngăn cách bằng dấu -, khoảng trắng hoặc dấu phẩy. Có thể gõ Eb hoặc E♭.",
+      hint: "Tên nốt có thể ngăn cách bằng dấu -, khoảng trắng hoặc dấu phẩy. Có thể gõ Eb hoặc E♭. Cần đủ các nốt của hợp âm, không bắt buộc đúng thứ tự.",
     };
   }
   if (exercise.skill_id.includes("scale") && exercise.kind === "build") {
@@ -542,6 +542,11 @@ function BlockRenderer({
     return <article className={`${ui.block} ${ui.blockTone.compose}`}><span className={ui.kicker}>Dùng vào sáng tác</span><h3>{title}</h3>
       {goals.length > 0 && <p className="flex flex-wrap gap-2">{goals.map((goal) => <Badge key={goal} tone="warning">{GOAL_LABELS[goal] ?? `Mục tiêu ${goal}`}</Badge>)}</p>}
       {items.length > 0 && <ul>{items.map((item) => <li key={item}>{item}</li>)}</ul>}
+      {typeof block.payload.lab_key === "string" && Array.isArray(block.payload.lab_numerals) && <p className="mt-2">
+        <ButtonLink to={`/app/composition?key=${encodeURIComponent(block.payload.lab_key)}&numerals=${encodeURIComponent((block.payload.lab_numerals as string[]).join(","))}`} variant="secondary">
+          Mở trong Harmony Lab
+        </ButtonLink>
+      </p>}
     </article>;
   }
 

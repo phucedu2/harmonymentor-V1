@@ -2,6 +2,8 @@
 
 Trạng thái: **Đề xuất 02/11/2026**, chờ **Thắng** duyệt. Nhánh `phuc-music` (Draft PR #18). Phúc đã trả lời 13 câu làm rõ (1A…13A, ngày 02/11). Phúc chọn phương án không thay cho Thắng duyệt. Nguồn Rhodes/clavi: VCSL TX81Z (FM), Phúc chọn trên thẻ quyết định 02/11/2026.
 
+> Cập nhật 12/11/2026: **đã làm**, bộ phối khí và nhạc cụ mẫu đang chạy trong Harmony Lab. Chữ ký của Thắng vẫn chờ.
+
 ## Bối cảnh
 
 Backing track của Harmony Lab (ADR-010) phát bằng synth Tone.js, nghe như nhạc game 8-bit. Số đo bản cũ trên 36 bản thu: −9,7 đến −11,3 LUFS, đỉnh thật tới +0,3 dBTP, mỗi bản 162–2 190 mẫu chạm trần (vỡ tiếng). Mục tiêu là nghe như ban nhạc thu phòng thu, nhưng vẫn giữ các nguyên tắc sau:
