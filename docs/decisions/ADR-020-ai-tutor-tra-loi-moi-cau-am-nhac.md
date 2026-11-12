@@ -16,6 +16,8 @@ ADR-017 (góp ý thầy G1) đặt luồng B "ngoài bài học": Music Engine t
 6. **Khi AI không gọi được** (khóa hỏng, hết lượt, mất mạng): luồng B dùng dữ kiện Engine nếu tính được; không thì "chưa trả lời được lúc này, bạn thử lại sau" (không còn nói "không biết", vì thật ra AI đang lỗi) kèm bài gần nhất. `AI_ENABLED=false` vẫn demo được (nguyên tắc 3).
 7. **Hạn mức**: câu luồng B giờ tính vào hạn mức mỗi người mỗi ngày (`AI_DAILY_QUOTA`) và ngân sách chung như luồng A; quá hạn mức người dùng thì 429, quá ngân sách chung thì dùng câu viết sẵn.
 
+8. **Luồng A, AI tự nói không biết**: nếu kho có đoạn "giống chữ" nhưng AI trả lời không trích được đoạn nào và tự nói "không biết / chưa dạy" (ví dụ "piano có bao nhiêu phím"), dịch vụ hỏi lại theo kiến thức chung như luồng B (thêm một lượt gọi). Lỗi hoặc hết hạn mức thì giữ câu cũ.
+
 ## Không đổi
 
 Luồng A (trong bài, có trích dẫn), D (hướng dẫn), G (chào hỏi), ngưỡng định tuyến và dữ liệu huấn luyện. Chuỗi canh gác, kiểm tấn công prompt, không gửi dữ liệu cá nhân cho Gemini.

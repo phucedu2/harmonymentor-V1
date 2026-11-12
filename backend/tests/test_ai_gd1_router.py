@@ -379,3 +379,13 @@ def test_non_music_or_blocked_still_refused(q):
     from app.ai.tutor.general import broad_music
     assert not broad_music(q)
     assert router.decide(q, None).flow == "C"
+
+
+def test_api_flow_a_uncited_answer_retried_as_general(fake):
+    # Kho có đoạn bài cho câu hỏi, nhưng AI nói bài chưa dạy (không trích được đoạn nào): hỏi lại theo kiến thức chung.
+    fake.script = [general_reply("Mình không biết câu này vì các bài học hiện có chưa dạy."),
+                   general_reply("Cmaj7 là hợp âm bảy trưởng, gồm C E G B.",
+                                 [{"tool": "get_chord_tones", "args": {"symbol": "Cmaj7"}, "result": "C E G B"}])]
+    body = ask("Cmaj7 khác C7 chỗ nào?")
+    assert len(fake.calls) == 2 and "LESSON_CHUNKS" in fake.calls[0][1] and "general_music" in fake.calls[1][1]
+    assert body["source_label"] == "Chưa có trong bài học, đây là kiến thức chung" and "C E G B" in body["reply"]

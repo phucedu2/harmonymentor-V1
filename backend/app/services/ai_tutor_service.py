@@ -13,6 +13,7 @@ Gửi cho Gemini chỉ những gì SRS 03 Bảng 3 cho phép: câu hỏi, tối 
 
 from __future__ import annotations
 
+import re
 import time
 import uuid
 from dataclasses import dataclass
@@ -32,6 +33,7 @@ from ..ai.tutor.intent import classify
 from ..ai.tutor.llm import LLMProvider, LLMResult, LLMUnavailable
 from ..ai.tutor.notes import solfege_to_letters, split_notes
 from ..ai.tutor.engine_query import fact_text
+from ..ai.tutor.general import fold
 from ..ai.tutor.retriever import Hit, Retrieval, help_page, retrieve, retrieve_for_skill
 from ..ai.tutor.router import decide
 from ..ai.tutor.schema import LLM_SCHEMA, TutorAnswer, parse_answer
@@ -273,6 +275,11 @@ def _dont_know(dec, titles: dict[str, str]) -> Draft:
                  suggested_lesson=dec.nearest_lesson)
 
 
+def _says_unknown(reply: str) -> bool:
+    """AI tự nói bài chưa dạy / không biết (prompt luồng A dặn câu này khi đoạn bài không trả lời được câu hỏi)."""
+    return bool(re.search(r"\bkhong biet\b|\bchua (?:day|duoc day|co trong bai)\b", fold(reply)))
+
+
 def _b_without_ai(dec, titles: dict[str, str], reason: str) -> Draft:
     """Luồng B khi không gọi được AI (ADR-020, trả lời 4A): có dữ kiện Engine thì trả dữ kiện, không thì nói thật
     là chưa trả lời được lúc này kèm bài gần nhất. Không nói "không biết" vì thật ra là AI đang lỗi."""
@@ -404,6 +411,16 @@ def answer_question(db: Session, user: User, question: str, turns: Sequence[tupl
     # Câu LLM không trích được đoạn nào (trích dẫn bịa đã bị bỏ, hoặc LLM tự nói "không biết") thì không gắn nhãn
     # "Từ bài học": người học thấy rõ câu này chưa có nguồn trong bài (góp ý thầy G1).
     d.flow, d.source_label = "A", (fb.LABEL_LESSON if d.citations else fb.LABEL_UNCITED)
+    if not d.citations and d.intent != "out_of_scope" and _says_unknown(d.reply):
+        # Kho có đoạn "giống chữ" nhưng AI không trích được đoạn nào (thường là "bài chưa dạy", ví dụ "piano có bao
+        # nhiêu phím"): hỏi lại theo kiến thức chung như luồng B (ADR-020). AI lỗi hoặc hết hạn mức thì giữ câu cũ.
+        try:
+            g = _general_answer(db, user, question, turns, dec, titles, facts, provider, now)
+        except QuotaExceeded:
+            return d, meta
+        if g.route in ("general_llm", "out_of_scope"):
+            g.llm_calls += d.llm_calls
+            return g, meta
     return d, meta
 
 
