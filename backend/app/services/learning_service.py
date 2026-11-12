@@ -20,6 +20,7 @@ from ..db.models import (
     User,
 )
 from ..content import versioning
+from ..content.overrides import hidden_lesson_ids
 from . import mastery_service
 from .grading_service import GradeOutcome, grade_payload, is_self_check
 from .review_scheduler import activate_lesson_reviews, apply_review_result
@@ -196,7 +197,7 @@ def answer_review(db: Session, user_id: str, review_item_id: str, answer, rating
 def start_lesson(db: Session, user_id: str, lesson_id: str) -> LessonProgress:
     require_user(db, user_id)
     lesson = db.get(Lesson, lesson_id)
-    if lesson is None or not versioning.lesson_visible(lesson):
+    if lesson is None or not versioning.lesson_visible(lesson) or lesson_id in hidden_lesson_ids(db):
         raise LookupError("LESSON_NOT_FOUND")
     # Frontend có thể gọi start nhiều lần cùng lúc (StrictMode, mở lại bài); "đọc rồi thêm" sẽ đụng
     # uq_user_lesson_progress trên PostgreSQL (HM-010), nên chèn kiểu "có rồi thì bỏ qua".
@@ -225,7 +226,8 @@ def _insert_progress_if_missing(db: Session, user_id: str, lesson_id: str, now: 
 def visible_lessons(db: Session) -> list[Lesson]:
     """Bài người học được thấy, theo thứ tự SRS Bảng 7; bài nháp chỉ hiện khi bật SHOW_DRAFT_CONTENT."""
     lessons = db.scalars(select(Lesson).order_by(Lesson.order_index)).unique().all()
-    return [lesson for lesson in lessons if versioning.lesson_visible(lesson)]
+    hidden = hidden_lesson_ids(db)  # bài Quản trị viên đã ẩn (ADR-023)
+    return [lesson for lesson in lessons if versioning.lesson_visible(lesson) and lesson.id not in hidden]
 
 
 def display_order(lessons: list[Lesson]) -> dict[str, int]:
