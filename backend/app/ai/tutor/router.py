@@ -31,6 +31,7 @@ from typing import Any
 from ...music_engine.chord import parse_chord_symbol
 from ..embedder import Embedder
 from .engine_query import EngineAnswer, engine_answer
+from .general import about_app, broad_music
 from .retriever import Hit, Retrieval, help_base, knowledge_base, retrieve
 from .route_classifier import RouteLabel, classify_route
 
@@ -299,6 +300,7 @@ class Signals:
     outside_kb: bool
     unknown_terms: list[str]
     untaught: str | None = None
+    broad_music: bool = False      # từ khóa âm nhạc rộng (nhạc cụ, thể loại, lịch sử...), ADR-020
 
 
 def gather(question: str, embedder: Embedder | None, *, top_k: int = 4) -> Signals:
@@ -306,10 +308,21 @@ def gather(question: str, embedder: Embedder | None, *, top_k: int = 4) -> Signa
     return Signals(question, classify_route(question), eng,
                    retrieve(question, embedder, top_k=top_k, min_score=-1.0, bm25_min_score=-1.0),
                    retrieve(question, embedder, top_k=2, min_score=-1.0, bm25_min_score=-1.0, chunks=list(help_base())),
-                   later_lesson(question), outside_kb(eng), unknown_terms(question), untaught_concept(question))
+                   later_lesson(question), outside_kb(eng), unknown_terms(question), untaught_concept(question),
+                   broad_music(question))
 
 
 def route(sig: Signals, th: dict[str, float]) -> Decision:
+    dec = _route(sig, th)
+    # ADR-020: mọi câu liên quan âm nhạc đều được trả lời. Tầng 1 học phạm vi hẹp nên có thể từ chối nhầm câu về nhạc
+    # cụ, thể loại, lịch sử; câu có từ khóa âm nhạc (và không thuộc nhóm cấm) đi luồng B thay vì bị từ chối.
+    if sig.broad_music and (dec.flow == "C" or (dec.flow == "D" and not about_app(sig.question))):
+        return Decision("B", "unknown", dec.label, dec.lesson, dec.help, dec.engine, "music_broad:" + dec.reason,
+                        nearest_lesson=dec.nearest_lesson)
+    return dec
+
+
+def _route(sig: Signals, th: dict[str, float]) -> Decision:
     label, eng, lesson, question = sig.label, sig.engine, sig.lesson, sig.question
     nearest = lesson.hits[0].chunk.lesson_id if lesson.hits else None
     gray, accept = th["lesson_gray"], th["lesson_accept"]

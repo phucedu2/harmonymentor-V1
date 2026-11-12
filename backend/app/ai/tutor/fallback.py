@@ -6,8 +6,9 @@ from typing import Sequence
 
 from .retriever import Hit
 
-OUT_OF_SCOPE = ("Mình chỉ hỗ trợ nhạc lý trong khóa HarmonyMentor (nốt, quãng, hợp âm, âm giai, chức năng, "
-                "vòng hòa âm). Bạn thử hỏi một câu về các chủ đề đó nhé.")
+# ADR-020 (12/11/2026): mình là trợ lý âm nhạc; ngoài âm nhạc thì nói không biết và gợi ý hỏi nhạc lý.
+OUT_OF_SCOPE = ("Mình chỉ là trợ lý âm nhạc nên câu này mình không biết. Bạn thử hỏi mình về nhạc lý, hòa âm, "
+                "nhạc cụ hay cách luyện tập, ví dụ \"Cmaj7 gồm những nốt nào?\" nhé.")
 INJECTION = "Mình không làm theo yêu cầu đó được. Mình ở đây để giúp bạn học nhạc lý trong khóa."
 UNSURE = "Mình chưa chắc về câu này vì bài học hiện có chưa nói rõ."
 # Luồng B, C, D, G (ADR-017). Viết sẵn, không qua LLM, để chắc chắn không có kiến thức "tự nghĩ ra".
@@ -27,9 +28,13 @@ LABEL_HELP = "Hướng dẫn sử dụng"
 LABEL_UNKNOWN = "Không biết"
 LABEL_REFUSE = "Ngoài phạm vi"
 LABEL_LATER = "Bạn sẽ học sau"
+LABEL_GENERAL = "Chưa có trong bài học, đây là kiến thức chung"
 LABEL_UNCITED = "Chưa có trích dẫn bài học"
 DONT_KNOW_LATER = "Mình chưa trả lời câu này vì nội dung đó thuộc bài bạn sẽ học sau, mình không đoán trước."
 UNAVAILABLE = "Trợ lý AI đang tạm nghỉ, nên mình trả lời bằng phần bài học liên quan nhất."
+# Luồng B khi không gọi được AI (ADR-020): có dữ kiện Engine thì dùng, không thì nói thật là chưa trả lời được lúc này.
+B_BUSY = "Trợ lý AI chưa trả lời được câu này lúc này, bạn thử hỏi lại sau ít phút nhé."
+B_OFF = "Trợ lý AI đang tạm nghỉ nên mình chưa trả lời được câu này."
 BUSY = "Trợ lý AI chưa trả lời được lúc này, nên mình trả lời bằng phần bài học liên quan nhất."
 
 # Gợi mở theo mã lỗi, không chứa đáp án (mức 1–2). Mức 3 thêm lời giải của câu (explanation đã duyệt).
