@@ -31,7 +31,7 @@ function LessonRow({ item, onOpen }: { item: RecLesson; onOpen: (item: RecLesson
       <span className="font-semibold">Bài {item.order}. {item.title}</span>
     </div>
     <p className="mt-1 text-sm">{item.reason}</p>
-    <Why item={item} />
+    {item.reason_code !== "route" && <Why item={item} />}
     <Button variant="secondary" className="mt-2" onClick={() => onOpen(item)}>
       {item.label ? "Ôn lại bài này" : "Mở bài"}
     </Button>
@@ -100,7 +100,7 @@ export default function RecommendedLessons() {
       <h3 className="text-sm font-semibold">Bài nên học tiếp</h3>
       {!data ? (failed ? null : <p className="mt-1 text-muted">Đang tính gợi ý…</p>)
         : data.next.length ? <ul className="mt-2 grid gap-2">{data.next.map((x) => <LessonRow key={x.lesson_id} item={x} onOpen={open} />)}</ul>
-        : <p className="mt-1 text-muted">Chưa có bài mới đủ điều kiện. Hãy củng cố các kỹ năng tiên quyết (đạt 60%) để mở bài tiếp theo.</p>}
+        : <p className="mt-1 text-muted">Bạn đã bắt đầu mọi bài hiện có. Hãy hoàn thành bài đang học hoặc ôn lại các bài đã xong.</p>}
     </div>
 
     {data?.review.length ? <div className="mt-3">

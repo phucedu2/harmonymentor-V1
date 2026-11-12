@@ -76,5 +76,6 @@ LESSON_SKILLS = {
     "L05": ["harmony.secondary_dominant.identify", "harmony.secondary_dominant.build", "harmony.secondary_dominant.apply"],
     "L06": ["scale.parallel_minor", "harmony.modal_interchange.identify", "harmony.modal_interchange.apply"],
     "L07": ["tension.naming", "mode.basic", "chord_scale.basic", "chord_scale.context"],
+    "L11": ["function.progression", "chord.triad_build"],
     "L08": ["voicing.shell", "voicing.guide_tones", "voicing.voice_leading"],
 }

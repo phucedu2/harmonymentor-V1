@@ -2,6 +2,8 @@
 
 Trạng thái: **Đề xuất 07/11/2026**, chờ nhóm duyệt qua Draft PR GĐ2b (nhánh `ai-gop-y/gd2b-fine-tune`). Căn cứ: góp ý thầy G6, quyết định GĐ2 6A–9A (Phúc, 07/11/2026), báo cáo `docs/giai-doan/ai-gop-y/03_FINETUNE.md`.
 
+> Cập nhật 12/11/2026: mô hình tinh chỉnh ghi trong SRS là **thử nghiệm, mặc định tắt**. Mặc định AI Tutor vẫn dùng e5 gốc (bật bản tinh chỉnh bằng `E5_HM=1` cùng `LOCAL_EMBED_DIR`). SRS 01 mục 2 đã thêm một câu về điều này.
+
 ## Bối cảnh
 
 - Với e5-small gốc, điểm cosine bị nén.

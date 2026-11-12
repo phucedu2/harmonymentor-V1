@@ -2,6 +2,8 @@
 
 Trạng thái: **Đề xuất 31/10/2026**, nhánh `phuc-music` (Draft PR #18). Phúc chọn làm Bước 4 ngay (câu 1A) và kèm ADR này để Thắng ký. Schema dự án làm theo ERD tài liệu 04 (câu 9A), phần nào lệch ERD thì cần Thắng duyệt. Phúc chọn phương án không thay cho việc Thắng duyệt. Luật nhạc lý và lời giải thích tiếng Việt cần Astra kiểm.
 
+> Cập nhật 12/11/2026: **đã làm** và đã gộp vào `phuc-music`. Harmony Lab nay vượt bản rút gọn của SRS (9 phong cách, chế độ Bài hát, gợi ý hợp âm theo luật); phần AI xếp hạng gợi ý **chưa có**. SRS 01 mục 3 và FR-17/FR-18 đã sửa theo (xem `docs/SRS/SUA_SRS_12-11-2026.md`). Việc ADR cần Thắng ký vẫn còn.
+
 ## Bối cảnh
 
 - FR-17 (Harmony Lab) và FR-18 (gợi ý hợp âm) được tài liệu 04 xếp vào Giai đoạn 2. Mục 6.8 mô tả dữ liệu dự án, Bảng 8 liệt kê bảng, Bảng 23 liệt kê phép biến đổi, Bảng 24 liệt kê cảnh báo và Bảng 25 mô tả bố cục màn hình.

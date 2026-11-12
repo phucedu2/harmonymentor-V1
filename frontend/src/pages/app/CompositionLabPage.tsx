@@ -75,8 +75,15 @@ export default function CompositionLabPage() {
         setOptions(opts);
         setProjects(list);
         const style = opts.styles[0];
-        setDraft({ id: null, name: "Vòng hợp âm đầu tiên", key: "C", tempo: style.default_bpm, bars: 4, style: style.id,
-          chords: starterProgression(opts, "C", 4), seed: 1, energy: 2, mix: DEFAULT_MIX, mode: "loop", form: null });
+        // Bài học mở Lab với vòng có sẵn: ?key=C&numerals=I,V,vi,IV (số La Mã đổi thành hợp âm của giọng). Sai thì dùng vòng mặc định.
+        const query = new URLSearchParams(window.location.search);
+        const presetKey = opts.keys.find((k) => k.key === query.get("key"))?.key;
+        const numerals = (query.get("numerals") ?? "").split(",").map((n) => n.trim()).filter(Boolean).slice(0, opts.bars.max);
+        const presetChords = presetKey ? numerals.map((n) => chordsOfKey(opts, presetKey).find((c) => c.numeral === n)?.symbol ?? null) : [];
+        const fromLesson = presetKey && presetChords.length > 0 && presetChords.every(Boolean);
+        setDraft({ id: null, name: fromLesson ? "Vòng từ bài học" : "Vòng hợp âm đầu tiên", key: fromLesson ? presetKey : "C",
+          tempo: style.default_bpm, bars: fromLesson ? presetChords.length : 4, style: style.id,
+          chords: fromLesson ? presetChords : starterProgression(opts, "C", 4), seed: 1, energy: 2, mix: DEFAULT_MIX, mode: "loop", form: null });
       })
       .catch((e) => setLoadError(errorText(e)));
     return () => bandPlayer.stop();
@@ -593,7 +600,7 @@ function BarEditor({ index, chord, voicing, keyName, keyChords, chords, levels, 
       </div>
       <Button className="justify-self-start" loading={loading} onClick={() => void ask()}>Gợi ý hợp âm thay cho ô {index + 1}</Button>
       {error && <Alert tone="danger">{error}</Alert>}
-      {candidates && candidates.length === 0 && <p className="text-muted">Chưa có gợi ý cho hợp âm này ở mức độ lạ đã chọn.</p>}
+      {candidates && candidates.length === 0 && <p className="text-muted">Chưa có gợi ý cho ô này ở mức độ lạ đã chọn (mức {maxLevel}). Hãy thử một mức thấp hơn, hoặc đổi hợp âm ở ô bên cạnh rồi hỏi lại. Các thuật ngữ như bậc, chức năng át, át phụ được giải thích trong các bài học về chức năng hòa âm và hợp âm mượn.</p>}
       {candidates && candidates.length > 0 && <p className="text-xs text-muted">Gợi ý sinh theo luật nhạc lý, xếp từ quen tai tới lạ tai. Chưa dùng AI.</p>}
       {groups.map(([level, items]) => <div key={level} className="grid gap-2">
         <h3 className="text-sm font-semibold text-ink">Độ lạ {level}: {items[0].level_label}</h3>

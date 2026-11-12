@@ -77,7 +77,7 @@ class RecLessonOut(BaseModel):
     title: str
     score: float
     components: RecComponentsOut
-    reason_code: Literal["content", "mastery", "due", "cf", "foundation"]
+    reason_code: Literal["content", "mastery", "due", "cf", "foundation", "route"]
     reason: str
     badge: str
     skills: list[str]
@@ -105,6 +105,7 @@ class RecommendOut(BaseModel):
     content_source: Literal["embedding", "none"]
     draft_descriptions: bool
     few_eligible: bool
+    route_fallback: bool = False
     continue_: list[ContinueLessonOut] = Field(alias="continue", serialization_alias="continue")
     next: list[RecLessonOut]
     review: list[RecLessonOut]

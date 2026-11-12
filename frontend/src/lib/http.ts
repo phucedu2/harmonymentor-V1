@@ -40,8 +40,16 @@ export function onSessionChange(listener: (session: AuthResponse | null) => void
   return () => { sessionListeners.delete(listener); };
 }
 
+// RS-24: cookie refresh là httpOnly nên JS không biết có phiên cũ hay không; một cờ không nhạy cảm
+// (không chứa token) cho biết có nên gọi /auth/refresh khi mở trang, để khách chưa đăng nhập không sinh lỗi 401 trong console.
+const SESSION_HINT = "hm.has-session";
+export function hasSessionHint(): boolean {
+  try { return localStorage.getItem(SESSION_HINT) === "1"; } catch { return true; }
+}
+
 export function setSession(session: AuthResponse | null) {
   accessToken = session?.access_token ?? null;
+  try { if (session) localStorage.setItem(SESSION_HINT, "1"); else localStorage.removeItem(SESSION_HINT); } catch { /* chế độ riêng tư */ }
   sessionListeners.forEach((listener) => listener(session));
 }
 
