@@ -55,7 +55,7 @@ function inputPresentation(exercise: LessonExercise): InputPresentation {
   if (exercise.skill_id.startsWith("chord.") && exercise.kind === "build") {
     return {
       placeholder: "Ví dụ định dạng: Nốt-Nốt-Nốt",
-      hint: "Tên nốt có thể ngăn cách bằng dấu -, khoảng trắng hoặc dấu phẩy. Có thể gõ Eb hoặc E♭.",
+      hint: "Tên nốt có thể ngăn cách bằng dấu -, khoảng trắng hoặc dấu phẩy. Có thể gõ Eb hoặc E♭. Cần đủ các nốt của hợp âm, không bắt buộc đúng thứ tự.",
     };
   }
   if (exercise.skill_id.includes("scale") && exercise.kind === "build") {
