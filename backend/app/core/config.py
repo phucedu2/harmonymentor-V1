@@ -19,7 +19,8 @@ def _flag(name: str, default: str) -> bool:
 class Settings:
     app_name: str = os.getenv("APP_NAME", "HarmonyMentor API")
     app_version: str = os.getenv("APP_VERSION", "0.5.4-dev")
-    database_url: str = os.getenv("DATABASE_URL", "sqlite:///./harmonymentor_dev.db")
+    # Dùng `or` vì .env mẫu có dòng `DATABASE_URL=` rỗng; chuỗi rỗng phải rơi về SQLite khi chạy ngoài Docker.
+    database_url: str = os.getenv("DATABASE_URL") or "sqlite:///./harmonymentor_dev.db"
     auto_create_schema: bool = os.getenv("AUTO_CREATE_SCHEMA", "1").lower() not in {"0", "false", "no"}
     seed_demo_content: bool = os.getenv("SEED_DEMO_CONTENT", "1").lower() not in {"0", "false", "no"}
 
