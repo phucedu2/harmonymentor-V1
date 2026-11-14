@@ -35,7 +35,10 @@ def test_curriculum_bank_is_exactly_9_73_70_and_ids_are_unique():
     assert len(exercises) == 73
     assert len(reviews) == 70
     assert len({x["id"] for x in everything}) == len(everything)
-    assert [x["id"] for x in everything if x.get("status") == "draft"] == ["L07-Q06", "L08-Q06"]
+    # + 10 câu draft 14/11/2026 (RS-04: mỗi kỹ năng L05–L07 đủ 3 câu), chờ Đạt duyệt rồi mới phát hành.
+    assert [x["id"] for x in everything if x.get("status") == "draft"] == [
+        "L05-Q07", "L05-Q08", "L05-Q09", "L06-Q07", "L06-Q08", "L06-Q09", "L06-Q10",
+        "L07-Q06", "L07-Q07", "L07-Q08", "L07-Q09", "L08-Q06"]
     assert len({x["id"] for x in reviews}) == 70
 
 

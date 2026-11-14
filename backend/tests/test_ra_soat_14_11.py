@@ -75,3 +75,19 @@ def test_rs19_trailing_punctuation_after_note_name():
     assert _split_notes(["Son", "Si", "Rê."]) == ["G", "B", "D"]
     assert _split_notes("Son Si Rê.") == ["G", "B", "D"]
     assert _split_notes(["Rê,", "Fa;", "La"]) == ["D", "F", "A"]
+
+
+def test_rs11_song_example_blocks_are_valid_draft_and_hidden():
+    """RS-11: ví dụ nghe được gắn vòng hợp âm quen thuộc; hợp âm do Engine hiểu, khối nháp ẩn với người học."""
+    from app.content.draft_specs import SONG_EXAMPLE_BLOCKS, blocks_with_drafts
+    from app.content.curriculum_specs import LESSON_SPECS
+    from app.content.versioning import block_visible
+    from app.music_engine import parse_chord_symbol
+
+    by_id = {s["id"]: s for s in LESSON_SPECS}
+    for lesson_id, (_, _, progression, _) in SONG_EXAMPLE_BLOCKS.items():
+        for symbol in progression:
+            parse_chord_symbol(symbol)   # ném lỗi nếu Engine không hiểu
+        blocks = [b for b in blocks_with_drafts(by_id[lesson_id]) if b[0] == f"{lesson_id}-BVD"]
+        assert len(blocks) == 1 and blocks[0][2]["status"] == "draft"
+        assert not block_visible(blocks[0][2])
