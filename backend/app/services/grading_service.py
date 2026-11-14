@@ -79,7 +79,8 @@ def _split_notes(answer: Any) -> list[str]:
         # Viết liền "GBD" chỉ tách khi toàn chữ hoa (chữ b thường là dấu giáng, như "Bb").
         if re.fullmatch(r"(?:[A-G][#♯♭b]?)+", text) and len(text) > 2 and not re.fullmatch(r"[A-G][#♯♭b]?", text):
             return re.findall(r"[A-G][#♯♭b]?(?=[A-G]|$)", text)
-        return [_solfege_to_letter(x) for x in re.split(r"[\s,;./+–—−-]+", text) if x]
+        # RS-19: dấu câu cuối câu (".", "!", "?", "…") không phải một phần tên nốt.
+        return [_solfege_to_letter(x) for x in re.split(r"[\s,;:./+–—−!?…-]+", text) if x]
     return []
 
 
