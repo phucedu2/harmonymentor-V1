@@ -25,6 +25,7 @@ THANKS = "Không có gì! Cần gì về nhạc lý trong khóa thì bạn cứ 
 LABEL_LESSON = "Từ bài học"
 LABEL_ENGINE = "Ngoài bài học, theo Music Engine"
 LABEL_HELP = "Hướng dẫn sử dụng"
+LABEL_FAQ = "Hỏi đáp cơ bản"
 LABEL_UNKNOWN = "Không biết"
 LABEL_REFUSE = "Ngoài phạm vi"
 LABEL_LATER = "Bạn sẽ học sau"
