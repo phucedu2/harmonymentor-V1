@@ -351,6 +351,27 @@ def _help_answer(dec) -> Draft:
                  source_label=fb.LABEL_HELP, help_page={"path": path, "title": name})
 
 
+def _recommend_answer(db: Session, user: User, embedder: Embedder | None, now: datetime) -> Draft:
+    """RS-27: "nên học bài nào tiếp" lấy đúng kết quả của hệ gợi ý (cùng nguồn với thẻ "Gợi ý cho bạn"), không để AI đoán."""
+    from .recommendation_service import recommend_for_user  # nhập muộn: tránh vòng import giữa hai service
+
+    rec = recommend_for_user(db, user, k=3, now=now, embedder=embedder)
+    items = rec.get("continue", [])[:1] + rec.get("next", [])[:2]
+    if not items:
+        text = "Bạn đã học hết các bài đang mở. Hãy vào Ôn tập hoặc Luyện tập để giữ vững kỹ năng nhé."
+        return Draft(text, "study_advice", [], [], "ok", "recommend", 0, ["Mở trang Luyện tập"], flow="D",
+                     source_label=fb.LABEL_RECOMMEND, help_page={"path": "/app/luyen-tap", "title": "Luyện tập"})
+    lines = []
+    for it in items:
+        why = "bạn đang học dở bài này" if it.get("status") == "started" else it.get("reason") or ""
+        lines.append(f"• {it['title']} ({it['lesson_id']}): {why}".rstrip(": "))
+    text = "Theo tiến độ của bạn, mình gợi ý:\n" + "\n".join(lines)
+    first = items[0]["lesson_id"]
+    return Draft(text, "study_advice", [], [], "ok", "recommend", 0, [f"Mở bài {first}"], flow="D",
+                 source_label=fb.LABEL_RECOMMEND, suggested_lesson=first,
+                 help_page={"path": "/app", "title": "Tổng quan"})
+
+
 def answer_question(db: Session, user: User, question: str, turns: Sequence[tuple[str, str]],
                     embedder: Embedder | None, provider: LLMProvider | None, now: datetime) -> tuple[Draft, dict]:
     titles = lesson_titles()
@@ -372,6 +393,8 @@ def answer_question(db: Session, user: User, question: str, turns: Sequence[tupl
     if dec.flow == "C":
         return Draft(fb.OUT_OF_SCOPE, "out_of_scope", [], [], "ok", "out_of_scope", flow="C",
                      source_label=fb.LABEL_REFUSE), meta
+    if dec.flow == "D" and dec.kind == "recommend":
+        return _recommend_answer(db, user, embedder, now), meta
     if dec.flow == "D":
         return _help_answer(dec), meta
     if dec.flow == "B":

@@ -88,7 +88,7 @@ _SYM_IN_KB = re.compile(r"(?<![A-Za-z0-9#])([A-G](?:#|b)?(?:maj7|M7|m7b5|ø7|dim
 @dataclass
 class Decision:
     flow: str                      # A | B | C | D | G
-    kind: str                      # lesson | engine | unknown | refuse | help | help_unknown | greeting
+    kind: str                      # lesson | engine | unknown | refuse | help | help_unknown | greeting | recommend
     label: RouteLabel
     lesson: Retrieval
     help: Retrieval | None
@@ -240,6 +240,21 @@ def _fold(text: str) -> str:
     return "".join(ch for ch in t if unicodedata.category(ch) != "Mn")
 
 
+# RS-27: câu hỏi "nên học gì tiếp" là tư vấn lộ trình, không phải câu ngoài âm nhạc. Trả lời bằng hệ gợi ý.
+# So trên chữ đã bỏ dấu nên "nen hoc bai nao" và "nên học bài nào" như nhau.
+_STUDY_ADVICE = re.compile(
+    r"\bnen hoc\b"
+    r"|\bhoc (bai |cai )?(gi|nao)( tiep| truoc| bay gio| tiep theo)\b"
+    r"|\bbai (tiep theo|nao tiep|ke tiep)\b"
+    r"|\b(goi y|de xuat) (cho (minh|toi|em) )?(bai|lo trinh)\b"
+    r"|\blo trinh (hoc )?(cua )?(minh|toi|em)\b"
+)
+
+
+def study_advice(question: str) -> bool:
+    return bool(_STUDY_ADVICE.search(_fold(question)))
+
+
 def later_lesson(question: str) -> str | None:
     """Bài CHƯA có trong kho mà dạy khái niệm câu hỏi nhắc tới; None nếu không có."""
     in_kb = {c.lesson_id for c in knowledge_base()}
@@ -313,6 +328,8 @@ def gather(question: str, embedder: Embedder | None, *, top_k: int = 4) -> Signa
 
 
 def route(sig: Signals, th: dict[str, float]) -> Decision:
+    if study_advice(sig.question):
+        return Decision("D", "recommend", sig.label, sig.lesson, sig.help, sig.engine, "study_advice")
     dec = _route(sig, th)
     # ADR-020: mọi câu liên quan âm nhạc đều được trả lời. Tầng 1 học phạm vi hẹp nên có thể từ chối nhầm câu về nhạc
     # cụ, thể loại, lịch sử; câu có từ khóa âm nhạc (và không thuộc nhóm cấm) đi luồng B thay vì bị từ chối.
