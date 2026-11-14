@@ -341,8 +341,10 @@ def route(sig: Signals, th: dict[str, float]) -> Decision:
 
 def _route(sig: Signals, th: dict[str, float]) -> Decision:
     label, eng, lesson, question = sig.label, sig.engine, sig.lesson, sig.question
-    nearest = lesson.hits[0].chunk.lesson_id if lesson.hits else None
     gray, accept = th["lesson_gray"], th["lesson_accept"]
+    # RS-28: điểm khớp dưới vùng xám thì đoạn đứng đầu chỉ là trùng chữ ngẫu nhiên ("hợp âm là gì" → bài hợp âm mượn).
+    # Không gợi ý "bài gần nhất" khi chưa chắc; người học thấy câu trả lời không kèm bài lạc đề.
+    nearest = lesson.hits[0].chunk.lesson_id if lesson.hits and lesson.best_score >= gray else None
     keep = [h for h in lesson.hits if h.score >= gray]
 
     def d(flow, kind, reason, **kw):
