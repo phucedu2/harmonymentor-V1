@@ -114,9 +114,21 @@ function readStoredView(): boolean {
   try { return window.localStorage.getItem(viewStorageKey) === "all"; } catch { return false; }
 }
 
-function readStoredStep(lessonId: string): number {
-  try { return Number(window.localStorage.getItem(stepStorageKey(lessonId)) ?? 0) || 0; }
-  catch { return 0; }
+function readStoredStep(lessonId: string): number | null {
+  try {
+    const raw = window.localStorage.getItem(stepStorageKey(lessonId));
+    return raw === null ? null : Number(raw) || 0;
+  } catch { return null; }
+}
+
+// RS-17: máy chưa lưu vị trí (đổi máy, trình duyệt khác) mà người học đã có câu đúng thì mở tới câu
+// checkpoint chưa đúng đầu tiên; checkpoint đã đúng hết thì mở phần kiểm tra cuối bài. Chưa làm gì thì mở Bước 1.
+export function resumeStep(steps: { id: string; exerciseId?: string }[], correctIds: Set<string>): number {
+  if (correctIds.size === 0) return 0;
+  const pending = steps.findIndex((step) => step.exerciseId !== undefined && !correctIds.has(step.exerciseId));
+  if (pending >= 0) return pending;
+  const quiz = steps.findIndex((step) => step.id === "quiz");
+  return quiz >= 0 ? quiz : 0;
 }
 
 export default function LessonRunner({
@@ -144,7 +156,8 @@ export default function LessonRunner({
   const [startError, setStartError] = useState(false);
   const [outdatedNotice, setOutdatedNotice] = useState<string | null>(null);
   const [lesson1Root, setLesson1Root] = useState("C");
-  const [stepIndex, setStepIndex] = useState(() => readStoredStep(lesson.id));
+  const storedStep = useMemo(() => readStoredStep(lesson.id), [lesson.id]);
+  const [stepIndex, setStepIndex] = useState(() => storedStep ?? 0);
   // "Xem cả bài" (bố cục cuộn một trang của v0.5.3) và "Từng bước" (PR #6) dùng chung một danh sách
   // bước và cùng trạng thái chấm, nên đổi chế độ không làm mất câu đã đúng.
   const [viewAll, setViewAll] = useState(() => readStoredView());
@@ -290,6 +303,12 @@ export default function LessonRunner({
     topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
   const step = steps[current];
+
+  useEffect(() => {
+    // Chỉ chạy một lần khi mở bài: vị trí đã lưu trên máy này và khối được AI Tutor trỏ tới được ưu tiên.
+    if (storedStep !== null || focusBlockId) return;
+    setStepIndex(resumeStep(steps, new Set(initialProgress?.correct_exercise_ids ?? [])));
+  }, [lesson.id]);
 
   useEffect(() => {
     if (!focusBlockId) return;
