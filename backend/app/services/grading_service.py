@@ -63,6 +63,8 @@ _SOLFEGE_RE = re.compile(r"^(do|re|mi|fa|son|sol|la|si)\s*(thang|giang|#|b|♯|�
 
 
 def _solfege_to_letter(token: str) -> str:
+    # RS-19: dấu câu cuối ("Rê.", "La,") không thuộc tên nốt; bỏ đi để không báo lỗi khó hiểu.
+    token = token.strip().rstrip(".,;:!?")
     match = _SOLFEGE_RE.match(_strip_accents(token).casefold().replace("đ", "d"))
     if not match:
         return token
@@ -72,7 +74,7 @@ def _solfege_to_letter(token: str) -> str:
 
 def _split_notes(answer: Any) -> list[str]:
     if isinstance(answer, list):
-        return [_solfege_to_letter(str(x).strip()) for x in answer if str(x).strip()]
+        return [n for n in (_solfege_to_letter(str(x)) for x in answer) if n]
     if isinstance(answer, str):
         # "Rê thăng" là một nốt: nối tên Đô–Rê–Mi với dấu hóa viết bằng chữ trước khi tách.
         text = re.sub(r"\s+(thăng|giáng|thang|giang)\b", r"\1", answer.strip(), flags=re.IGNORECASE)
