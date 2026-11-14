@@ -1,14 +1,18 @@
 """Nhà cung cấp LLM cho AI Tutor: Gemini khi bật AI, FakeProvider trong test (không gọi mạng).
 
-Đề GĐ3 mục 3: hết giờ 15 giây, thử lại đúng 1 lần khi 429/503 (GĐ0 đã gặp 503 "high demand" thật với
-gemini-3.6-flash), ghi token và độ trễ. Lần thử lại dùng mô hình dự phòng. Lỗi nào cũng thành
+Hết giờ 8 giây (RS-29, Phúc chốt 14/11/2026), thử lại đúng 1 lần khi 429/503/hết giờ (GĐ0 đã gặp 503 "high demand"
+thật với gemini-3.6-flash), ghi token, độ trễ và mã lỗi (không ghi khóa hay nội dung câu hỏi). Lần thử lại dùng mô hình dự phòng. Lỗi nào cũng thành
 LLMUnavailable để dịch vụ chuyển sang câu trả lời dự phòng theo luật, không trả 500 cho người học."""
 
 from __future__ import annotations
 
+import logging
 import time
 from dataclasses import dataclass, field
 from typing import Any, Callable, Protocol, Sequence
+
+
+log = logging.getLogger("harmonymentor.llm")
 
 
 class LLMUnavailable(RuntimeError):
@@ -46,7 +50,7 @@ def _status(exc: Exception) -> int | None:
 
 
 class GeminiProvider:
-    def __init__(self, *, api_key: str, model: str, fallback_model: str | None = None, timeout_s: float = 15.0,
+    def __init__(self, *, api_key: str, model: str, fallback_model: str | None = None, timeout_s: float = 8.0,
                  client: Any | None = None, sleep: Callable[[float], None] = time.sleep):
         self.model, self.fallback_model, self.timeout_s, self._sleep = model, fallback_model, timeout_s, sleep
         if client is None:
@@ -88,11 +92,12 @@ class GeminiProvider:
             except Exception as exc:  # SDK, httpx: nhiều loại lỗi
                 code = _status(exc)
                 name = type(exc).__name__.lower()
-                if "timeout" in name or "timeout" in str(exc).lower()[:80]:
-                    last = "timeout"
-                    break  # đã chờ 15 giây, không bắt người học chờ thêm 15 giây nữa
-                last = "rate_limited" if code == 429 else "unavailable"
-                if code not in (429, 503) or attempt == len(models):
+                is_timeout = "timeout" in name or "timeout" in str(exc).lower()[:80]
+                last = "timeout" if is_timeout else ("rate_limited" if code == 429 else "unavailable")
+                # Chỉ ghi loại lỗi và mã HTTP: không ghi nội dung lỗi (có thể chứa URL/khóa) hay câu hỏi của người học.
+                log.warning("gemini_error model=%s attempt=%d reason=%s status=%s type=%s",
+                            model, attempt, last, code, type(exc).__name__)
+                if not (is_timeout or code in (429, 503)) or attempt == len(models):
                     break
                 self._sleep(1.0)
         raise LLMUnavailable(last)

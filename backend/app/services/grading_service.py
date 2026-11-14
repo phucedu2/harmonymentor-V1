@@ -63,6 +63,8 @@ _SOLFEGE_RE = re.compile(r"^(do|re|mi|fa|son|sol|la|si)\s*(thang|giang|#|b|♯|�
 
 
 def _solfege_to_letter(token: str) -> str:
+    # RS-19: dấu câu cuối ("Rê.", "La,") không thuộc tên nốt; bỏ đi để không báo lỗi khó hiểu.
+    token = token.strip().rstrip(".,;:!?")
     match = _SOLFEGE_RE.match(_strip_accents(token).casefold().replace("đ", "d"))
     if not match:
         return token
@@ -72,7 +74,7 @@ def _solfege_to_letter(token: str) -> str:
 
 def _split_notes(answer: Any) -> list[str]:
     if isinstance(answer, list):
-        return [_solfege_to_letter(str(x).strip()) for x in answer if str(x).strip()]
+        return [n for n in (_solfege_to_letter(str(x)) for x in answer) if n]
     if isinstance(answer, str):
         # "Rê thăng" là một nốt: nối tên Đô–Rê–Mi với dấu hóa viết bằng chữ trước khi tách.
         text = re.sub(r"\s+(thăng|giáng|thang|giang)\b", r"\1", answer.strip(), flags=re.IGNORECASE)
@@ -101,6 +103,42 @@ def _structured_rubric(answer: Any, accepted: list[Any]) -> bool | None:
 def is_self_check(strategy: str | None, grader_config: dict[str, Any]) -> bool:
     """Thẻ ôn có ý mở (chấm theo từ khóa) để người học tự đánh giá sau khi lật thẻ."""
     return strategy == "rubric" and grader_config.get("mode") == "contains_any"
+
+
+# HM-011 (RS-20): cách nhập hợp lệ do PHIÊN BẢN câu hỏi quyết định, không do trình duyệt tự khai.
+PIANO_NAMES = ("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B")   # đúng 12 tên VirtualPiano gửi
+
+
+class InputRejected(ValueError):
+    """Bài nộp bị từ chối trước khi chấm (422, không ghi lượt làm). `code` là mã lỗi API."""
+
+    def __init__(self, code: str):
+        super().__init__(code)
+        self.code = code
+
+
+def allowed_input_methods(options: list[str] | None, grader_config: dict[str, Any] | None) -> list[str]:
+    """Có khai báo thì theo khai báo; không thì câu có lựa chọn là `choice`, còn lại là `text`."""
+    declared = (grader_config or {}).get("allowed_input_methods")
+    if declared:
+        return [str(m) for m in declared]
+    return ["choice"] if options else ["text"]
+
+
+def validate_input(options: list[str] | None, grader_config: dict[str, Any] | None, answer: Any,
+                   input_method: str | None) -> str:
+    """Trả cách nhập hiệu lực (mặc định là cách đầu tiên được phép) hoặc ném InputRejected."""
+    allowed = allowed_input_methods(options, grader_config)
+    method = input_method or allowed[0]
+    if method not in allowed:
+        raise InputRejected("INPUT_METHOD_NOT_ALLOWED")
+    if method == "choice" and not (isinstance(answer, str) and answer in (options or [])):
+        raise InputRejected("ANSWER_NOT_IN_OPTIONS")
+    if method == "piano":
+        names = answer.split() if isinstance(answer, str) else None
+        if not names or len(set(names)) != len(names) or any(n not in PIANO_NAMES for n in names):
+            raise InputRejected("INVALID_PIANO_PAYLOAD")
+    return method
 
 
 def _grading_mode(grader_config: dict[str, Any], input_method: str | None) -> str:

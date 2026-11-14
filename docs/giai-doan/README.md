@@ -44,6 +44,7 @@ Các giai đoạn 0.2 → 2.3 là lộ trình của bản code gốc (zip v0.1.0
 | [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Quản trị: sửa chữ khối bài (nháp, Engine soát, lịch sử), người dùng, thống kê có biểu đồ (ADR-023, 12/11) | [ADR-023](../decisions/ADR-023-quan-tri-noi-dung-nguoi-dung-thong-ke.md) |
 | [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Quiz 10 câu theo kỹ năng, bản rút gọn từ ngân hàng câu (ADR-024, 12/11) | [ADR-024](../decisions/ADR-024-quiz-theo-ky-nang-rut-gon.md) |
 | [ai-gop-y](ai-gop-y/) | v0.5.4-dev | AI tóm tắt tài liệu nhạc lý thành bản nháp bài học, Admin duyệt rồi mới xuất bản (ADR-025, 12/11) | [ADR-025](../decisions/ADR-025-ai-tom-tat-tai-lieu-thanh-ban-nhap.md) |
+| [ra-soat-14-11](ra-soat-14-11/) | v0.5.4-dev | Sửa lỗi rà soát còn lại: RS-07, 17, 19, 20 (HM-011), 27, 28, 29; nháp RS-04, RS-11; đề xuất RS-08 | [BAO_CAO.md](ra-soat-14-11/BAO_CAO.md) |
 
 ## Quy ước cho giai đoạn sau
 

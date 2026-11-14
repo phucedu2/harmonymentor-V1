@@ -25,6 +25,7 @@ from sqlalchemy.orm import Session
 
 from ..ai.embedder import Embedder
 from ..ai.mastery import vn_day
+from ..ai.tutor import faq
 from ..ai.tutor import fallback as fb
 from ..ai.tutor import prompt as pr
 from ..ai.tutor.guardrail import GuardResult, check_answer, engine_facts_for, run_tool, scan_reply
@@ -280,13 +281,27 @@ def _says_unknown(reply: str) -> bool:
     return bool(re.search(r"\bkhong biet\b|\bchua (?:day|duoc day|co trong bai)\b", fold(reply)))
 
 
-def _b_without_ai(dec, titles: dict[str, str], reason: str) -> Draft:
+def _faq_answer(question: str, titles: dict[str, str], reason: str) -> Draft | None:
+    """RS-07: câu định nghĩa cơ bản khi không gọi được AI. Trả lời từ kho hỏi đáp (nội dung đã soát bằng Engine
+    trong test), kèm bài dạy phần đó; không có mục khớp thì None để dùng câu dự phòng cũ."""
+    item = faq.match(question, show_draft=settings.show_draft_content)
+    if item is None:
+        return None
+    text = f"{item.answer} Học kỹ ở bài {item.lesson_id} “{titles.get(item.lesson_id, item.lesson_id)}”."
+    return Draft(text, "concept", [], [], "ok", "faq", 0, [f"Mở bài {item.lesson_id}"], flow="A",
+                 source_label=fb.LABEL_FAQ, suggested_lesson=item.lesson_id, fallback_reason=reason)
+
+
+def _b_without_ai(dec, titles: dict[str, str], reason: str, question: str = "") -> Draft:
     """Luồng B khi không gọi được AI (ADR-020, trả lời 4A): có dữ kiện Engine thì trả dữ kiện, không thì nói thật
     là chưa trả lời được lúc này kèm bài gần nhất. Không nói "không biết" vì thật ra là AI đang lỗi."""
     if dec.kind == "engine":
         d = _engine_only_answer(dec, titles)
         d.fallback_reason = reason
         return d
+    hit = _faq_answer(question, titles, reason)
+    if hit is not None:
+        return hit
     text = (fb.B_OFF if reason == "ai_disabled" else fb.B_BUSY) + _pointer(dec, titles)
     actions = [f"Mở bài {dec.nearest_lesson}"] if dec.nearest_lesson else []
     return Draft(text, "concept", [], [], "fallback", "ai_off", 0, actions, flow="B", source_label=fb.LABEL_UNKNOWN,
@@ -300,9 +315,9 @@ def _general_answer(db: Session, user: User, question: str, turns: Sequence[tupl
     trong bài học"; mọi nốt/hợp âm/âm giai/quãng trong câu được Music Engine quét lại. Sai thì soạn lại 1 lần,
     vẫn sai thì bỏ câu AI và trả dữ kiện Engine (hoặc "chưa trả lời được")."""
     if provider is None:
-        return _b_without_ai(dec, titles, "ai_disabled")
+        return _b_without_ai(dec, titles, "ai_disabled", question)
     if _llm_rows_today(db, now, None) >= settings.ai_global_daily_budget:
-        return _b_without_ai(dec, titles, "global_budget")
+        return _b_without_ai(dec, titles, "global_budget", question)
     used = _llm_rows_today(db, now, user.id)
     if used >= settings.ai_daily_quota:
         raise QuotaExceeded(used, settings.ai_daily_quota)
@@ -313,11 +328,11 @@ def _general_answer(db: Session, user: User, question: str, turns: Sequence[tupl
     try:
         ans, guard, results, reason = _llm_round(provider, build, {}, titles, system=pr.SYSTEM_GENERAL)
     except LLMUnavailable as exc:
-        d = _b_without_ai(dec, titles, exc.reason)
+        d = _b_without_ai(dec, titles, exc.reason, question)
         d.llm_calls = 1
         return d
     if ans is None:
-        d = _b_without_ai(dec, titles, reason or "invalid")
+        d = _b_without_ai(dec, titles, reason or "invalid", question)
         d.llm_calls, d.llm = len(results), results[-1] if results else None
         return d
     merged = _merge_results(results)
@@ -351,6 +366,43 @@ def _help_answer(dec) -> Draft:
                  source_label=fb.LABEL_HELP, help_page={"path": path, "title": name})
 
 
+# RS-27: "mình nên học bài nào tiếp" là câu xin tư vấn học, không phải câu nhạc lý hay ngoài phạm vi. Trả lời từ hệ gợi ý
+# (cùng nguồn với mục "Bài nên học tiếp" ở Tổng quan) nên không cần AI và không bịa bài.
+_STUDY_ADVICE = re.compile(
+    r"\b(?:nen|can|phai) (?:hoc|bat dau|lam) (?:bai |cai |phan |gi |tiep|nao|tu )|"
+    r"\bhoc (?:gi|bai nao|bai gi|cai gi|tiep (?:bai )?(?:nao|gi)?|bai tiep)\b.*\b(?:tiep|ke tiep|bay gio|dau tien)\b|"
+    r"\bbai (?:nao|gi) (?:tiep|nen hoc|ke tiep|tiep theo)|\bbai tiep theo\b|\bbat dau tu (?:dau|bai nao)\b|"
+    r"\bgoi y (?:bai|lo trinh|bai hoc)\b|\blo trinh (?:hoc|cua toi|cho toi)\b")
+
+
+def is_study_advice(question: str) -> bool:
+    return bool(_STUDY_ADVICE.search(fold(question)))
+
+
+def _study_advice_answer(db: Session, user: User, embedder: Embedder | None, now: datetime) -> Draft:
+    from .recommendation_service import recommend_for_user
+
+    rec = recommend_for_user(db, user, k=3, now=now, embedder=embedder)
+    started = rec.get("continue") or []
+    nxt = rec.get("next") or []
+    lines, lesson, actions = [], None, []
+    if started:
+        c = started[0]
+        lines.append(f"Bạn đang học dở Bài {c['order']}. {c['title']}, hãy hoàn thành bài này trước.")
+        lesson = c["lesson_id"]
+    if nxt:
+        n = nxt[0]
+        lines.append(f"Bài nên học tiếp: Bài {n['order']}. {n['title']}. {n['reason']}")
+        lesson = lesson or n["lesson_id"]
+    if not lines:
+        lines.append("Hiện chưa có bài mới đủ điều kiện để gợi ý. Bạn thử luyện tập thêm hoặc ôn lại thẻ đến hạn "
+                     "nhé, mình sẽ gợi ý bài mới khi kỹ năng nền của bạn đủ vững.")
+    if lesson:
+        actions.append(f"Mở bài {lesson}")
+    return Draft(" ".join(lines), "study_advice", [], [], "ok", "study_advice", 0, actions, flow="D",
+                 source_label=fb.LABEL_ADVICE, suggested_lesson=lesson)
+
+
 def answer_question(db: Session, user: User, question: str, turns: Sequence[tuple[str, str]],
                     embedder: Embedder | None, provider: LLMProvider | None, now: datetime) -> tuple[Draft, dict]:
     titles = lesson_titles()
@@ -358,6 +410,8 @@ def answer_question(db: Session, user: User, question: str, turns: Sequence[tupl
     if looks_like_injection(question):
         return Draft(fb.INJECTION, "out_of_scope", [], [], "ok", "refused_injection", flow="C",
                      source_label=fb.LABEL_REFUSE), meta
+    if is_study_advice(question):
+        return _study_advice_answer(db, user, embedder, now), meta
     dec = decide(question, embedder, top_k=settings.rag_top_k)
     meta["router"] = dec.log()
     intent = classify(question)
@@ -380,6 +434,9 @@ def answer_question(db: Session, user: User, question: str, turns: Sequence[tupl
     # Luồng A: có đoạn bài đủ điểm.
     hits = dec.hits
     if provider is None:
+        hit = _faq_answer(question, titles, "ai_disabled")
+        if hit is not None:
+            return hit, meta
         d = offline_answer(hits, facts, titles, "ai_disabled")
         d.flow, d.source_label = "A", fb.LABEL_LESSON
         return d, meta

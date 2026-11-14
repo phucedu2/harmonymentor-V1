@@ -173,14 +173,30 @@ def test_429_twice_is_rate_limited():
     assert e.value.reason == "rate_limited" and len(models.calls) == 2
 
 
-def test_timeout_not_retried():
+def test_timeout_retried_once_with_fallback_model():
+    """RS-29 (Phúc chốt 14/11): hết giờ thì thử lại đúng 1 lần bằng mô hình dự phòng, không hơn."""
     class ReadTimeout(Exception):
         pass
 
-    p, models = provider([ReadTimeout("timed out")])
+    p, models = provider([ReadTimeout("timed out"), ReadTimeout("timed out")])
     with pytest.raises(LLMUnavailable) as e:
         p.generate("s", "u", LLM_SCHEMA)
-    assert e.value.reason == "timeout" and models.calls == ["m1"]
+    assert e.value.reason == "timeout" and models.calls == ["m1", "m2"]
+
+    p, models = provider([ReadTimeout("timed out"), answer()])
+    assert p.generate("s", "u", LLM_SCHEMA).model == "m2"
+
+
+def test_gemini_error_is_logged_without_message_or_question(caplog):
+    class Boom(Exception):
+        pass
+
+    p, _ = provider([Boom("secret-key-AQ.xyz in url"), Boom("again")])
+    with caplog.at_level("WARNING", logger="harmonymentor.llm"), pytest.raises(LLMUnavailable):
+        p.generate("s", "câu hỏi riêng tư", LLM_SCHEMA)
+    text = " ".join(r.getMessage() for r in caplog.records)
+    assert "gemini_error" in text and "unavailable" in text and "Boom" in text
+    assert "secret-key" not in text and "riêng tư" not in text
 
 
 def test_400_not_retried_and_key_not_in_repr():

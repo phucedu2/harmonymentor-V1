@@ -1,0 +1,69 @@
+{
+  "_ghi_chu": "RS-07: hỏi đáp cơ bản cho người mới, dùng khi AI tắt hoặc Gemini lỗi. Claude soạn 14/11/2026 theo nội dung Bài 1 và Bài 2; status draft, chỉ Đạt được đổi thành approved. Mọi nốt và hợp âm trong câu trả lời được test quét lại bằng Music Engine (tests/test_lo2_rs07_faq.py). 'cau_hoi' viết KHÔNG DẤU, chữ thường: câu người học gõ được bỏ dấu, bỏ dấu câu và từ đệm rồi so khớp nguyên câu.",
+  "muc": [
+    {
+      "id": "FAQ-01",
+      "status": "draft",
+      "cau_hoi": ["hop am la gi", "hop am la sao", "hop am nghia la gi", "chord la gi"],
+      "tra_loi": "Hợp âm là từ ba nốt trở lên vang cùng lúc. Hợp âm cơ bản nhất là hợp âm ba (triad): nốt gốc, nốt cách nó một quãng 3 và nốt cách nó một quãng 5. Ví dụ hợp âm C gồm C E G.",
+      "bai": "L01",
+      "nguon": "Bài 1 (L01), phần dựng hợp âm ba nốt"
+    },
+    {
+      "id": "FAQ-02",
+      "status": "draft",
+      "cau_hoi": ["c la not gi", "c la gi", "do re mi la c d e", "do re mi la not gi", "c d e f g a b la gi", "ten not nhac", "cac not nhac", "not do la not nao", "not c la not gi"],
+      "tra_loi": "C D E F G A B là tên quốc tế của Đô Rê Mi Fa Sol La Si: C là Đô, D là Rê, E là Mi, F là Fa, G là Sol, A là La, B là Si.",
+      "bai": "L01",
+      "nguon": "Bài 1 (L01), khối Đô–Rê–Mi chính là C–D–E"
+    },
+    {
+      "id": "FAQ-03",
+      "status": "draft",
+      "cau_hoi": ["nua cung la gi", "nua cung la sao", "semitone la gi", "half step la gi"],
+      "tra_loi": "Nửa cung (semitone) là khoảng cách giữa hai phím sát nhau trên đàn piano, tính cả phím đen. Ví dụ từ E lên F là nửa cung, từ C lên C# cũng là nửa cung.",
+      "bai": "L01",
+      "nguon": "Bài 1 (L01), phần đếm bước nửa cung trên bàn phím"
+    },
+    {
+      "id": "FAQ-04",
+      "status": "draft",
+      "cau_hoi": ["mot cung la gi", "nguyen cung la gi", "whole step la gi", "cung la gi"],
+      "tra_loi": "Một cung bằng hai nửa cung. Ví dụ từ C lên D là một cung, vì ở giữa còn phím đen C#.",
+      "bai": "L01",
+      "nguon": "Bài 1 (L01), phần đếm bước nửa cung trên bàn phím"
+    },
+    {
+      "id": "FAQ-05",
+      "status": "draft",
+      "cau_hoi": ["quang la gi", "quang la sao", "interval la gi", "quang trong nhac la gi"],
+      "tra_loi": "Quãng là khoảng cách cao độ giữa hai nốt. Tên số của quãng đếm theo chữ cái, tính cả hai đầu: C lên E là quãng 3 (C, D, E), C lên G là quãng 5.",
+      "bai": "L01",
+      "nguon": "Bài 1 (L01), phần đếm tên chữ cái của quãng"
+    },
+    {
+      "id": "FAQ-06",
+      "status": "draft",
+      "cau_hoi": ["dau thang la gi", "dau giang la gi", "thang va giang la gi", "thang giang la gi", "sharp flat la gi"],
+      "tra_loi": "Dấu thăng (#) nâng nốt lên nửa cung, dấu giáng (b) hạ nốt xuống nửa cung. Ví dụ C# cao hơn C nửa cung, Bb thấp hơn B nửa cung.",
+      "bai": "L01",
+      "nguon": "Bài 1 (L01), phần bàn phím và tên nốt"
+    },
+    {
+      "id": "FAQ-07",
+      "status": "draft",
+      "cau_hoi": ["hop am truong va hop am thu khac nhau the nao", "hop am truong va thu khac nhau", "truong va thu khac nhau the nao", "hop am truong la gi", "hop am thu la gi", "major va minor khac nhau"],
+      "tra_loi": "Hợp âm trưởng có quãng 3 trưởng ở dưới (4 nửa cung), hợp âm thứ có quãng 3 thứ (3 nửa cung); quãng 5 giữ nguyên. Ví dụ C gồm C E G, còn Cm gồm C Eb G. Trưởng thường nghe sáng, thứ thường nghe buồn hơn.",
+      "bai": "L01",
+      "nguon": "Bài 1 (L01), phần hợp âm trưởng và thứ"
+    },
+    {
+      "id": "FAQ-08",
+      "status": "draft",
+      "cau_hoi": ["am giai la gi", "scale la gi", "thang am la gi", "giong la gi"],
+      "tra_loi": "Âm giai (scale) là dãy nốt đi lên theo một khuôn cung và nửa cung cố định. Âm giai C trưởng gồm C D E F G A B, đi theo khuôn cung, cung, nửa cung, cung, cung, cung, nửa cung.",
+      "bai": "L02",
+      "nguon": "Bài 2 (L02), phần giọng và âm giai"
+    }
+  ]
+}

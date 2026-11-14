@@ -291,6 +291,28 @@ DRAFT_LESSON_BLOCKS: dict[str, list[tuple[str, str, dict[str, Any]]]] = {
 }
 
 
+# RS-11 (14/11/2026): mỗi bài một ví dụ nghe được gắn với vòng hợp âm quen thuộc trong nhạc đại chúng. Chỉ nói về DẠNG vòng
+# ("rất phổ biến trong pop"), không khẳng định bài hát cụ thể nào dùng (bài học từ RS-30: không nêu khẳng định không nguồn).
+# Mọi hợp âm là triad/bảy đã kiểm bằng Engine. status draft nên ẩn với người học cho tới khi Đạt duyệt.
+SONG_EXAMPLE_BLOCKS: dict[str, tuple[str, str, list[str], str]] = {
+    "L02": ("Nghe vòng I–vi–ii–V toàn hợp âm bảy",
+            "Nghe Cmaj7 – Am7 – Dm7 – G7. Vòng I–vi–ii–V này quen thuộc trong nhạc jazz và pop kiểu cũ. Chú ý G7 kéo về Cmaj7 khi vòng lặp lại.",
+            ["Cmaj7", "Am7", "Dm7", "G7"], "C"),
+    "L03": ("Nghe vòng I–V–vi–IV quen thuộc trong pop",
+            "Nghe C – G – Am – F. Vòng I–V–vi–IV rất phổ biến trong nhạc pop. Thử gọi tên chức năng từng hợp âm: Tonic, Dominant, Tonic thay thế (vi), Subdominant.",
+            ["C", "G", "Am", "F"], "C"),
+    "L04": ("Nghe ii–V–I ở giọng F",
+            "Nghe Gm7 – C7 – Fmaj7. Đây vẫn là ii–V–I như Dm7 – G7 – Cmaj7, chỉ dời sang giọng F. Nghe xem G7 → Cmaj7 và C7 → Fmaj7 có cùng cảm giác “về nhà” không.",
+            ["Gm7", "C7", "Fmaj7"], "F"),
+    "L05": ("Nghe secondary dominant A7 kéo về Dm",
+            "Nghe C – A7 – Dm – G7 – C. A7 là V7/ii nên kéo mạnh về Dm, rồi G7 đưa về C. Chú ý nốt C# trong A7 làm Dm nghe như một chủ âm tạm thời.",
+            ["C", "A7", "Dm", "G7", "C"], "C"),
+    "L06": ("Nghe F rồi Fm: đổi một nốt, đổi màu",
+            "Nghe C – F – Fm – C. Fm mượn từ C minor: nốt A của F thành Ab, màu sáng chuyển sang tối nhưng Fm vẫn đứng ở vị trí bậc IV.",
+            ["C", "F", "Fm", "C"], "C"),
+}
+
+
 def blocks_with_drafts(spec: dict[str, Any]) -> list[tuple[str, str, dict[str, Any]]]:
     """Khối của bài kèm các khối nháp ("Dùng vào sáng tác", thẻ ôn đề xuất) chèn trước khối tóm tắt cuối."""
     blocks = list(spec["blocks"]) or list(DRAFT_LESSON_BLOCKS.get(spec["id"], []))
@@ -304,5 +326,10 @@ def blocks_with_drafts(spec: dict[str, Any]) -> list[tuple[str, str, dict[str, A
         drafts.append((f"{spec['id']}-BTHE", "theory", {
             "status": DRAFT, "title": "Thẻ ôn tự diễn đạt (nháp, chờ Đạt duyệt)",
             "items": [f"Mặt trước: {card['front']} · Đáp án: {card['back']}" for card in cards]}))
+    example = SONG_EXAMPLE_BLOCKS.get(spec["id"])
+    if example:
+        title, prompt, progression, key = example
+        drafts.append((f"{spec['id']}-BVD", "audio", {"status": DRAFT, "title": title, "prompt": prompt,
+                                                      "progression": progression, "key": key, "bpm": 72}))
     at = len(blocks) - 1 if blocks and blocks[-1][1] == "summary" else len(blocks)
     return blocks[:at] + drafts + blocks[at:]

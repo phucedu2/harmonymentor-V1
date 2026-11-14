@@ -179,10 +179,13 @@ def test_seed_after_upgrade_is_idempotent(legacy_engine):
     new_ids = ["L01-Q05", "L01-Q07", "L01-Q08", "L02-Q07", "L02-Q08", "L02-Q09", "L02-Q10"]
     new_ids += [f"L05-Q0{i}" for i in range(1, 7)] + [f"L06-Q0{i}" for i in range(1, 7)]
     new_ids += ["L01-Q09", "L01-Q10", "L01-Q11", "L01-Q12", "L02-Q11", "L02-Q12", "L03-Q07", "L03-Q08", "L03-Q09",
-                "L03-Q10", "L03-Q11", "L03-Q12", "L04-Q07", "L04-Q08", "L04-Q09"] + [f"L11-Q0{i}" for i in range(1, 7)]
+                "L03-Q10", "L03-Q11", "L03-Q12", "L04-Q07", "L04-Q08", "L04-Q09", "L04-Q03"] + [f"L11-Q0{i}" for i in range(1, 7)]   # L04-Q03 lên v2: HM-011 bật piano (ADR-006)
     new_ids += [f"L07-Q0{i}" for i in range(1, 7)] + [f"L08-Q0{i}" for i in range(1, 7)]
-    # L07-Q06 và L08-Q06 để draft chờ Đạt viết lại thành câu chọn
-    assert added == sorted((x, "draft" if x in {"L07-Q06", "L08-Q06"} else "published") for x in new_ids)
+    # L07-Q06 và L08-Q06 để draft chờ Đạt viết lại thành câu chọn; 10 câu RS-04 (14/11) cũng draft chờ Đạt duyệt
+    drafts = {"L07-Q06", "L08-Q06", "L05-Q07", "L05-Q08", "L05-Q09", "L06-Q07", "L06-Q08", "L06-Q09", "L06-Q10",
+              "L07-Q07", "L07-Q08", "L07-Q09"}
+    new_ids += sorted(drafts - set(new_ids))
+    assert added == sorted((x, "draft" if x in drafts else "published") for x in new_ids)
     with factory() as db:
         # Câu L01-Q01 vẫn hiện bằng v4 dù có một bản cũ v1 không khôi phục được.
         assert current_version(db.get(Exercise, "L01-Q01")).id == "L01-Q01-v4"

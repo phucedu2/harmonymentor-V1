@@ -9,6 +9,7 @@ import {
   type LessonLearningProgress,
 } from "../../api";
 import ChordInspector, { ProgressionInspector } from "./ChordInspector";
+import { resumeStepIndex } from "../../lib/resumeStep";
 import { parseProgressionSymbols, pitchClassOf } from "../../audio/musicUtils";
 import { ChordAudioSet, ProgressionAudio } from "../music/AudioControls";
 import GlossaryBlock from "../music/GlossaryBlock";
@@ -291,6 +292,14 @@ export default function LessonRunner({
   }
   const step = steps[current];
 
+  // RS-17: chưa có vị trí lưu trên trình duyệt này (đổi máy) thì mở lại theo tiến độ máy chủ; không cần migration.
+  useEffect(() => {
+    if (focusBlockId || initialProgress?.status !== "started") return;
+    try { if (window.localStorage.getItem(stepStorageKey(lesson.id)) !== null) return; } catch { /* không đọc được: vẫn đoán theo máy chủ */ }
+    const resume = resumeStepIndex(steps.map((item) => item.exerciseId), new Set(initialProgress?.correct_exercise_ids ?? []));
+    if (resume > 0) setStepIndex(resume);
+  }, []);
+
   useEffect(() => {
     if (!focusBlockId) return;
     const index = steps.findIndex((item) => item.id === focusBlockId);
@@ -517,7 +526,7 @@ function BlockRenderer({
         onSelectionChange={setPianoSelection}
         showOctaveNumbers={block.payload.show_octave_numbers !== false}
       />
-      {exercise && evidenceMode === "pitch_class" && <div className="mt-3 grid items-start gap-2">
+      {exercise && evidenceMode === "pitch_class" && (exercise.allowed_input_methods ?? []).includes("piano") && <div className="mt-3 grid items-start gap-2">
         <Button className="justify-self-start" disabled={pianoEvidenceBusy || pianoSelection.length === 0} onClick={() => void submitPianoEvidence()}>{pianoEvidenceBusy ? "Đang kiểm tra…" : submitLabel}</Button>
         {pianoEvidenceResult && <ResultBox correct={pianoEvidenceResult.correct} title={pianoEvidenceResult.correct ? "Chính xác" : "Chưa đúng, thử lại nhé"}><p>{pianoEvidenceResult.feedback}</p>{pianoEvidenceResult.explanation && <p className={ui.explanation}><b>Giải thích:</b> {pianoEvidenceResult.explanation}</p>}</ResultBox>}
         {pianoEvidenceError && <div className={ui.resultBad}>{pianoEvidenceError}</div>}
