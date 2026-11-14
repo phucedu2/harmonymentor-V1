@@ -2,6 +2,29 @@
 
 File này ghi lại việc đã xong, việc đang dở, lệnh để chạy lại và việc tiếp theo. Cập nhật sau mỗi phiên việc. Lịch sử trước 27/10/2026 xem `docs/AI_USAGE.md` và các báo cáo trong `docs/giai-doan/`.
 
+## 14/11/2026: lô 2 sau rà soát (nhánh `lo-2-ra-soat`, PR vào `phuc-music`)
+
+**Đã xong** (mã RS theo báo cáo rà soát 11–12/11)
+- RS-27: "nên học bài nào tiếp" trả lời bằng hệ gợi ý (luồng D, ý định `study_advice`), không còn bị từ chối.
+- RS-28 (một phần): điểm khớp dưới vùng xám thì không gợi ý "bài gần nhất" lạc đề.
+- RS-07: kho hỏi đáp cơ bản 8 mục (`backend/app/ai/tutor/faq_co_ban.json`, nháp) khi AI tắt hoặc Gemini lỗi, khớp cả câu không dấu.
+- RS-29: Gemini chờ tối đa 8 giây (`AI_TIMEOUT_SECONDS`), log ghi mã và loại lỗi, che khóa.
+- RS-20 / HM-011: quyền nhập theo phiên bản câu (hợp đồng bản 2, Thắng duyệt); L04-Q03 lên v2 cho phép piano; 22 test từ PR #15.
+- RS-19: dấu câu cuối (! ? … :) không làm hỏng tên nốt.
+- RS-17: đổi máy thì mở bài ở câu chưa làm đúng đầu tiên.
+- RS-04, RS-11 (nội dung nháp): 10 câu cho 6 kỹ năng còn dưới 3 câu; khối "Nghe trong vòng hợp âm quen" cho L01–L08.
+
+**Đang dở / chờ**
+- Đạt duyệt nội dung nháp theo `docs/noi-dung/DUYET_LO2_14-11.md` (8 mục hỏi đáp, 10 câu, 8 khối nghe).
+- RS-28 phần "câu không dấu khớp kém" ở BM25 chưa sửa: bù điểm chữ bỏ dấu kéo câu ngoài lề ("hoa tri cua sat") vào luồng bài học, hỏng test an toàn định tuyến. Đã giảm tác động bằng kho hỏi đáp so khớp không dấu.
+- Không làm: RS-04 phần "Luyện tập tính mức thành thạo" (cần Thắng quyết luật).
+
+**Lệnh chạy lại**
+```bash
+cd backend && pytest -q -m "not postgres and not live"     # 14/11: 1336 passed, 1 skipped (máy Phúc, Windows)
+cd frontend && npm test && npm run build                   # 14/11: 278 passed, build đạt
+```
+
 ## 04/11/2026: demo AI 10/11 (nhánh `ai/demo-1011`, Draft PR #25, xếp chồng trên `ai/gd4-danh-gia`)
 
 **Đã xong** (báo cáo `docs/giai-doan/demo-1011/BAO_CAO.md`)
