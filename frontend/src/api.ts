@@ -39,6 +39,8 @@ export type LessonExercise = {
   prompt: string;
   options?: string[] | null;
   grading_strategy: string;
+  // HM-011: máy chủ cho biết câu này nhận cách nhập nào; nút "Kiểm tra bằng piano" chỉ hiện khi có "piano".
+  allowed_input_methods?: InputMethod[];
   skill_id: string;
 };
 export type ReviewItem = { id: string; mode: string; front: string; back: string; skill_id: string };
@@ -388,7 +390,7 @@ export const api = {
   lesson1Theory: (root: string) => apiCall<Lesson1Theory>(`/music/lesson1/${encodeURIComponent(root)}`),
   inspectChord: (symbol: string, key?: string) =>
     apiCall<ChordInspection>(`/music/chords/inspect?symbol=${encodeURIComponent(symbol)}${key ? `&key=${encodeURIComponent(key)}` : ""}`),
-  submitAttempt: (exerciseVersionId: string, answer: unknown, inputMethod: InputMethod = "text") =>
+  submitAttempt: (exerciseVersionId: string, answer: unknown, inputMethod?: InputMethod) =>
     apiPost<AttemptResult>("/attempts", { exercise_version_id: exerciseVersionId, answer, input_method: inputMethod }),
   completeLesson: (lessonId: string) =>
     apiPost<CompleteLessonResult>(`/lessons/${encodeURIComponent(lessonId)}/complete`, {}),
