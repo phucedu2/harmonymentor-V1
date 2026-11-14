@@ -8,6 +8,7 @@ from ..auth.deps import get_current_user
 from ..db.models import User
 from ..db.session import get_db
 from ..core.errors import AppError
+from ..services.grading_service import AttemptRejected
 from ..services.learning_service import (
     EXPLANATION_AFTER_WRONG,
     ExerciseVersionSuperseded,
@@ -23,6 +24,8 @@ router = APIRouter(prefix="/api/v1/attempts", tags=["attempts"])
 def create_attempt(body: AttemptIn, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     try:
         attempt, outcome = submit_attempt(db, user.id, body.exercise_version_id, body.answer, body.input_method)
+    except AttemptRejected as exc:
+        raise AppError(422, exc.code, exc.message) from exc
     except ExerciseVersionSuperseded as exc:
         # Không chấm theo đề cũ; frontend tải lại bài để người học làm phiên bản hiện hành (ADR-006).
         raise AppError(409, "EXERCISE_VERSION_SUPERSEDED",

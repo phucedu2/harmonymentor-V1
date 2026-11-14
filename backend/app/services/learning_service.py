@@ -22,7 +22,7 @@ from ..db.models import (
 from ..content import versioning
 from ..content.overrides import hidden_lesson_ids
 from . import mastery_service
-from .grading_service import GradeOutcome, grade_payload, is_self_check
+from .grading_service import AttemptRejected, GradeOutcome, check_submission, grade_payload, is_self_check
 from .review_scheduler import activate_lesson_reviews, apply_review_result
 
 
@@ -89,10 +89,12 @@ def wrong_attempt_count(db: Session, user_id: str, exercise_id: str) -> int:
 
 
 def submit_attempt(db: Session, user_id: str, version_id: str, answer,
-                   input_method: str = "text", now: datetime | None = None) -> tuple[Attempt, GradeOutcome]:
+                   input_method: str | None = None, now: datetime | None = None) -> tuple[Attempt, GradeOutcome]:
     user = require_user(db, user_id)
     version, exercise = require_exercise_version(db, version_id)
     now = now or utcnow()
+    # HM-011: quyền nhập theo phiên bản câu hỏi; lượt sai cách nhập bị từ chối trước khi ghi gì vào CSDL.
+    input_method = check_submission(version.options, version.grader_config, answer, input_method)
     # Cách chấm lấy từ ảnh chụp của phiên bản, không lấy từ exercises (HM-003: bản cũ rubric từng bị chấm bằng exact).
     outcome = grade_payload(version.grading_strategy, version.answer_key, version.grader_config, answer,
                             input_method=input_method)

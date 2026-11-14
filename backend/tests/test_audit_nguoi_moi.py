@@ -106,8 +106,11 @@ def test_solfege_names_are_understood():
 # --- Piano không mang chính tả tên nốt ---------------------------------------------
 
 def test_piano_input_grades_pitch_only_but_typed_input_keeps_spelling():
-    config = {"kind": "build_chord", "symbol": "Eb"}
+    # HM-011: chấm cao độ chỉ khi câu khai báo cho phép piano; câu không khai báo vẫn chấm chính tả.
+    config = {"kind": "build_chord", "symbol": "Eb", "allowed_input_methods": ["text", "piano"]}
     assert grade_payload("music_engine", {}, config, "D# G A#", input_method="piano").correct is True
+    no_piano = {"kind": "build_chord", "symbol": "Eb"}
+    assert grade_payload("music_engine", {}, no_piano, "D# G A#", input_method="piano").correct is False
     assert grade_payload("music_engine", {}, config, "D# G A#").correct is False
     assert grade_payload("music_engine", {}, config, "Eb G Bb").correct is True
 

@@ -104,10 +104,48 @@ def is_self_check(strategy: str | None, grader_config: dict[str, Any]) -> bool:
     return strategy == "rubric" and grader_config.get("mode") == "contains_any"
 
 
+# HM-011 (RS-20): 12 tên VirtualPiano gửi, chỉ dùng dấu thăng, không quãng tám.
+PIANO_NAMES = ("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B")
+
+
+class AttemptRejected(ValueError):
+    """Lượt nộp không hợp lệ với phiên bản câu hỏi: trả 422, không ghi lượt làm."""
+
+    def __init__(self, code: str, message: str):
+        super().__init__(code)
+        self.code, self.message = code, message
+
+
+def allowed_input_methods(options: list[str] | None, grader_config: dict[str, Any] | None) -> list[str]:
+    """Cách nhập hợp lệ do phiên bản câu hỏi quyết định, không do trình duyệt (hợp đồng HM-011 bản 2).
+    Câu có options chỉ nhận "choice", câu không có options nhận "text"; "piano" chỉ khi grader_config khai báo."""
+    declared = (grader_config or {}).get("allowed_input_methods")
+    if declared:
+        return list(declared)
+    return ["choice"] if options else ["text"]
+
+
+def check_submission(options: list[str] | None, grader_config: dict[str, Any] | None, answer: Any,
+                     input_method: str | None) -> str:
+    """Trả cách nhập dùng để chấm, hoặc ném AttemptRejected. Thiếu input_method thì dùng cách nhập mặc định của câu."""
+    allowed = allowed_input_methods(options, grader_config)
+    method = input_method or allowed[0]
+    if method not in allowed:
+        raise AttemptRejected("INPUT_METHOD_NOT_ALLOWED", "Câu này không nhận cách trả lời đó.")
+    if method == "choice" and (not isinstance(answer, str) or answer not in (options or [])):
+        raise AttemptRejected("ANSWER_NOT_IN_OPTIONS", "Hãy chọn một trong các phương án của câu hỏi.")
+    if method == "piano":
+        notes = answer.split() if isinstance(answer, str) else []
+        if not notes or any(n not in PIANO_NAMES for n in notes) or len(set(notes)) != len(notes):
+            raise AttemptRejected("INVALID_PIANO_PAYLOAD", "Dữ liệu phím đàn không hợp lệ.")
+    return method
+
+
 def _grading_mode(grader_config: dict[str, Any], input_method: str | None) -> str:
     # Phím đàn không mang thông tin chính tả: phím giữa D và E vừa là D# vừa là Eb. Bài nộp bằng
-    # piano chỉ chấm cao độ; chính tả tên nốt được chấm ở bài gõ chữ.
-    if input_method == "piano":
+    # piano chỉ chấm cao độ; chính tả tên nốt được chấm ở bài gõ chữ. HM-011: chỉ khi câu cho phép piano,
+    # để client không tự chuyển sang chấm cao độ cho câu luyện chính tả.
+    if input_method == "piano" and "piano" in (grader_config.get("allowed_input_methods") or []):
         return "pitch_class_only"
     return grader_config.get("grading_mode", "strict_spelling")
 

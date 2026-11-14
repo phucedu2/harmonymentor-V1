@@ -29,6 +29,7 @@ from ..services.learning_service import (
     start_lesson,
     visible_lessons,
 )
+from ..services.grading_service import allowed_input_methods
 
 router = APIRouter(prefix="/api/v1/lessons", tags=["lessons"])
 
@@ -76,6 +77,7 @@ def get_lesson(lesson_id: str, db: Session = Depends(get_db)):
             id=exercise.id, version_id=version.id, version=version.version, position=exercise.position,
             kind=version.kind, prompt=version.prompt, options=version.options,
             grading_strategy=version.grading_strategy, skill_id=exercise.skill_id,
+            allowed_input_methods=allowed_input_methods(version.options, version.grader_config),
         ))
 
     base = _summary(lesson, display_order(visible_lessons(db))[lesson.id], db).model_dump()

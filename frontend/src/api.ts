@@ -40,6 +40,8 @@ export type LessonExercise = {
   options?: string[] | null;
   grading_strategy: string;
   skill_id: string;
+  // HM-011: cách nhập máy chủ cho phép với phiên bản câu này ("text" | "choice" | "piano").
+  allowed_input_methods?: InputMethod[];
 };
 export type ReviewItem = { id: string; mode: string; front: string; back: string; skill_id: string };
 export type SourceRef = { source_id: string; title: string; author?: string | null; locator: string; note?: string | null; url?: string | null };

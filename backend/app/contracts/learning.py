@@ -32,6 +32,8 @@ class ExerciseOut(BaseModel):
     options: list[str] | None = None
     grading_strategy: str
     skill_id: str
+    # HM-011: frontend chỉ hiện nút "Kiểm tra bằng piano" khi phiên bản này cho phép.
+    allowed_input_methods: list[str] = Field(default_factory=lambda: ["text"])
 
 
 class ReviewItemOut(BaseModel):
@@ -77,7 +79,8 @@ class AttemptIn(BaseModel):
     exercise_version_id: str
     answer: Any
     # "piano": đáp án chọn trên phím đàn, chỉ chấm cao độ (phím không mang chính tả tên nốt).
-    input_method: Literal["text", "choice", "piano"] = "text"
+    # HM-011: không gửi thì máy chủ dùng cách nhập mặc định của câu; cách nhập hợp lệ do câu quyết định.
+    input_method: Literal["text", "choice", "piano"] | None = None
 
 
 class AttemptErrorOut(BaseModel):

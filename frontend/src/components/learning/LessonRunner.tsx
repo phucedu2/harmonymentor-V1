@@ -517,7 +517,7 @@ function BlockRenderer({
         onSelectionChange={setPianoSelection}
         showOctaveNumbers={block.payload.show_octave_numbers !== false}
       />
-      {exercise && evidenceMode === "pitch_class" && <div className="mt-3 grid items-start gap-2">
+      {exercise && evidenceMode === "pitch_class" && (exercise.allowed_input_methods ?? []).includes("piano") && <div className="mt-3 grid items-start gap-2">
         <Button className="justify-self-start" disabled={pianoEvidenceBusy || pianoSelection.length === 0} onClick={() => void submitPianoEvidence()}>{pianoEvidenceBusy ? "Đang kiểm tra…" : submitLabel}</Button>
         {pianoEvidenceResult && <ResultBox correct={pianoEvidenceResult.correct} title={pianoEvidenceResult.correct ? "Chính xác" : "Chưa đúng, thử lại nhé"}><p>{pianoEvidenceResult.feedback}</p>{pianoEvidenceResult.explanation && <p className={ui.explanation}><b>Giải thích:</b> {pianoEvidenceResult.explanation}</p>}</ResultBox>}
         {pianoEvidenceError && <div className={ui.resultBad}>{pianoEvidenceError}</div>}
@@ -587,7 +587,7 @@ function ExerciseCard({
     if (!answer.trim()) return;
     setBusy(true); setError(null);
     try {
-      const response = await api.submitAttempt(exercise.version_id, answer, exercise.options ? "choice" : "text");
+      const response = await api.submitAttempt(exercise.version_id, answer, exercise.options?.length ? "choice" : "text");
       setResult(response);
       onAttempt(exercise.id, response);
     } catch (e) {

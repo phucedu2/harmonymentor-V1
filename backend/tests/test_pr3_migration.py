@@ -180,6 +180,7 @@ def test_seed_after_upgrade_is_idempotent(legacy_engine):
     new_ids += [f"L05-Q0{i}" for i in range(1, 7)] + [f"L06-Q0{i}" for i in range(1, 7)]
     new_ids += ["L01-Q09", "L01-Q10", "L01-Q11", "L01-Q12", "L02-Q11", "L02-Q12", "L03-Q07", "L03-Q08", "L03-Q09",
                 "L03-Q10", "L03-Q11", "L03-Q12", "L04-Q07", "L04-Q08", "L04-Q09"] + [f"L11-Q0{i}" for i in range(1, 7)]
+    new_ids += ["L04-Q03"]  # HM-011: bản v2 cho phép nộp bằng piano (ADR-006)
     new_ids += [f"L07-Q0{i}" for i in range(1, 7)] + [f"L08-Q0{i}" for i in range(1, 7)]
     # L07-Q06 và L08-Q06 để draft chờ Đạt viết lại thành câu chọn
     assert added == sorted((x, "draft" if x in {"L07-Q06", "L08-Q06"} else "published") for x in new_ids)
