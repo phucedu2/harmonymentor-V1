@@ -291,10 +291,49 @@ DRAFT_LESSON_BLOCKS: dict[str, list[tuple[str, str, dict[str, Any]]]] = {
 }
 
 
+# RS-11 (14/11/2026): mỗi bài một vòng hợp âm quen để người học thấy bài học dùng vào bài hát. Chỉ nêu tên vòng và
+# giọng, không chép giai điệu hay lời, không khẳng định hợp âm của một bài hát cụ thể (RS-30). Claude soạn, nháp
+# chờ Đạt duyệt; khối nháp không vào kho AI Tutor nên file vector không lệch.
+_SONG_NOTE = "Claude soạn 14/11/2026. Vòng hợp âm phổ biến, không chép bài hát có bản quyền."
+SONG_BLOCKS: dict[str, tuple[str, list[str], str]] = {
+    "L01": ("Ba hợp âm đệm được rất nhiều bài hát", ["C", "F", "G", "C"],
+            "Chỉ với ba hợp âm ba C, F, G là đệm được rất nhiều bài hát thiếu nhi và dân ca. Nghe vòng C–F–G–C, rồi tự "
+            "dựng lại ba hợp âm trên piano bằng cách bỏ cách một chữ cái: C–E–G, F–A–C, G–B–D."),
+    "L02": ("Vòng bốn hợp âm của nhạc pop", ["C", "G", "Am", "F"],
+            "Vòng I–V–vi–IV gồm bốn hợp âm thuận giọng của C major và xuất hiện trong rất nhiều bài pop. Cả bốn hợp âm "
+            "đều dựng từ các nốt của âm giai C trưởng, không có dấu hóa nào."),
+    "L03": ("Vòng đi – về quen tai", ["C", "Am", "F", "G"],
+            "Vòng I–vi–IV–V đi từ chủ (C), qua hạ át (F) tới át (G). Nghe tới G sẽ thấy câu nhạc chưa xong và muốn "
+            "quay về C: đó chính là chức năng át bạn vừa học."),
+    "L04": ("ii–V–I: câu kết của jazz và bossa nova", ["Dm7", "G7", "Cmaj7"],
+            "ii–V–I là câu kết gặp nhiều nhất trong jazz và bossa nova. Nghe chậm và để ý nốt F của Dm7 đi xuống E "
+            "của Cmaj7, còn B của G7 đi lên C."),
+    "L05": ("Át phụ trong vòng pop", ["C", "E7", "Am", "F"],
+            "Trong vòng pop, đặt E7 trước Am (E7 là át phụ của Am) tạo lực kéo mạnh về Am. Nốt G# của E7 là nốt dẫn "
+            "đi lên A, nên tai nghe như Am là đích trong chốc lát."),
+    "L06": ("Màu buồn chen vào cuối câu", ["C", "F", "Fm", "C"],
+            "Đổi F thành Fm (iv mượn từ C minor) ngay trước khi về C là cách nhiều bản ballad tạo cảm giác bâng khuâng. "
+            "Chỉ một nốt đổi: A thành Ab."),
+    "L07": ("Vòng hợp âm bảy kiểu lo-fi", ["Cmaj7", "Am7", "Dm7", "G7"],
+            "Vòng I–vi–ii–V với hợp âm bảy là nền của nhiều bài lo-fi và R&B. Thử thêm tension 9 lên từng hợp âm để "
+            "nghe màu mềm hơn, nhưng giữ nguyên bốn nốt chính của mỗi hợp âm."),
+    "L08": ("ii–V–I bằng shell voicing", ["Dm7", "G7", "Cmaj7"],
+            "Nghe lại ii–V–I, rồi tự bấm chỉ ba nốt cho mỗi hợp âm: nốt gốc, quãng 3 và quãng 7 (shell voicing). "
+            "Ba nốt là đủ để nghe ra hướng đi của câu kết."),
+}
+
+
 def blocks_with_drafts(spec: dict[str, Any]) -> list[tuple[str, str, dict[str, Any]]]:
     """Khối của bài kèm các khối nháp ("Dùng vào sáng tác", thẻ ôn đề xuất) chèn trước khối tóm tắt cuối."""
     blocks = list(spec["blocks"]) or list(DRAFT_LESSON_BLOCKS.get(spec["id"], []))
     drafts = []
+    # Nghe vòng quen trước, rồi mới tới "Dùng vào sáng tác" (RS-11).
+    song = SONG_BLOCKS.get(spec["id"])
+    if song:
+        title, progression, prompt = song
+        drafts.append((f"{spec['id']}-BNGHE", "audio", {"status": DRAFT, "title": f"Nghe trong vòng hợp âm quen: {title}",
+                                                       "prompt": prompt, "progression": progression, "key": "C",
+                                                       "note": _SONG_NOTE}))
     items = COMPOSE_BLOCKS.get(spec["id"])
     if items:
         drafts.append((f"{spec['id']}-BSTAC", "compose_link", {"status": DRAFT, "title": "Dùng vào sáng tác",
