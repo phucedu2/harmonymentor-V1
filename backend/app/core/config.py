@@ -63,7 +63,7 @@ class Settings:
     # AI Tutor (GĐ3). Tên biến theo 03 Bảng cấu hình khi có; mô hình đã xác nhận qua models.list ở GĐ0.
     gemini_model: str = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
     gemini_fallback_model: str = os.getenv("GEMINI_FALLBACK_MODEL", "gemini-3.6-flash")
-    ai_timeout_seconds: float = float(os.getenv("AI_TIMEOUT_SECONDS", "15"))
+    ai_timeout_seconds: float = float(os.getenv("AI_TIMEOUT_SECONDS", "8"))
     ai_daily_quota: int = int(os.getenv("AI_DAILY_QUOTA", "30"))          # lượt hỏi AI / người / ngày VN
     # Trần chung cả hệ thống / ngày để một sự cố (vòng lặp, bị lạm dụng) không đốt hết hạn mức Gemini.
     ai_global_daily_budget: int = int(os.getenv("AI_GLOBAL_DAILY_BUDGET", "1000"))
