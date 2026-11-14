@@ -6,6 +6,8 @@ LLMUnavailable để dịch vụ chuyển sang câu trả lời dự phòng theo
 
 from __future__ import annotations
 
+import logging
+import re
 import time
 from dataclasses import dataclass, field
 from typing import Any, Callable, Protocol, Sequence
@@ -33,6 +35,15 @@ class LLMProvider(Protocol):
     def generate(self, system: str, user: str, schema: dict[str, Any], max_output_tokens: int | None = None) -> LLMResult: ...
 
 
+log = logging.getLogger("harmonymentor.llm")
+# Khóa API không bao giờ vào log: che mọi chuỗi giống khóa Google ("AIza…", "AQ.…") và tham số key=…
+_SECRET = re.compile(r"(AIza[0-9A-Za-z_\-]{10,}|AQ\.[0-9A-Za-z_\-]{10,}|key=[^&\s]+)")
+
+
+def _safe(text: str) -> str:
+    return _SECRET.sub("[đã che]", text)[:200]
+
+
 def _status(exc: Exception) -> int | None:
     for attr in ("code", "status_code", "status"):
         v = getattr(exc, attr, None)
@@ -46,7 +57,7 @@ def _status(exc: Exception) -> int | None:
 
 
 class GeminiProvider:
-    def __init__(self, *, api_key: str, model: str, fallback_model: str | None = None, timeout_s: float = 15.0,
+    def __init__(self, *, api_key: str, model: str, fallback_model: str | None = None, timeout_s: float = 8.0,
                  client: Any | None = None, sleep: Callable[[float], None] = time.sleep):
         self.model, self.fallback_model, self.timeout_s, self._sleep = model, fallback_model, timeout_s, sleep
         if client is None:
@@ -88,9 +99,12 @@ class GeminiProvider:
             except Exception as exc:  # SDK, httpx: nhiều loại lỗi
                 code = _status(exc)
                 name = type(exc).__name__.lower()
+                # RS-29: ghi lý do lỗi để biết Gemini hỏng vì đâu (trước đây log chỉ có "unavailable").
+                log.warning("gemini_error model=%s attempt=%d status=%s type=%s msg=%s", model, attempt, code,
+                            type(exc).__name__, _safe(str(exc)))
                 if "timeout" in name or "timeout" in str(exc).lower()[:80]:
                     last = "timeout"
-                    break  # đã chờ 15 giây, không bắt người học chờ thêm 15 giây nữa
+                    break  # đã chờ hết thời gian, không bắt người học chờ thêm một lượt nữa
                 last = "rate_limited" if code == 429 else "unavailable"
                 if code not in (429, 503) or attempt == len(models):
                     break
