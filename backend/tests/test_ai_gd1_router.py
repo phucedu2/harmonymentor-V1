@@ -343,7 +343,7 @@ def test_api_flow_b_ai_off_keeps_old_behaviour():
         assert body["flow"] == "B" and body["source_label"] == "Ngoài bài học, theo Music Engine"
         assert "Csus4 gồm các nốt C, F, G." in body["reply"] and "chưa đối chiếu" in body["reply"]
         assert body["engine_claims"][0]["status"] == "verified"
-        assert "tạm nghỉ" in ask("Kết cấu fugue là gì?")["reply"]
+        assert "chưa tìm thấy" in ask("Kết cấu fugue là gì?")["reply"]
     finally:
         app.dependency_overrides.pop(ai_tutor.embedder_dep, None)
         app.dependency_overrides.pop(ai_tutor.provider_dep, None)

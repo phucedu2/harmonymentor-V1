@@ -324,8 +324,9 @@ def route(sig: Signals, th: dict[str, float]) -> Decision:
 
 def _route(sig: Signals, th: dict[str, float]) -> Decision:
     label, eng, lesson, question = sig.label, sig.engine, sig.lesson, sig.question
-    nearest = lesson.hits[0].chunk.lesson_id if lesson.hits else None
     gray, accept = th["lesson_gray"], th["lesson_accept"]
+    # RS-28: điểm khớp thấp hơn ngưỡng xám thì không gợi ý "bài gần nhất" (gợi ý lạc đề dễ làm người mới hiểu nhầm).
+    nearest = lesson.hits[0].chunk.lesson_id if lesson.hits and lesson.best_score >= gray else None
     keep = [h for h in lesson.hits if h.score >= gray]
 
     def d(flow, kind, reason, **kw):

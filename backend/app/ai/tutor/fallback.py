@@ -29,12 +29,13 @@ LABEL_UNKNOWN = "Không biết"
 LABEL_REFUSE = "Ngoài phạm vi"
 LABEL_LATER = "Bạn sẽ học sau"
 LABEL_GENERAL = "Chưa có trong bài học, đây là kiến thức chung"
+LABEL_ADVICE = "Gợi ý theo tiến độ của bạn"
 LABEL_UNCITED = "Chưa có trích dẫn bài học"
 DONT_KNOW_LATER = "Mình chưa trả lời câu này vì nội dung đó thuộc bài bạn sẽ học sau, mình không đoán trước."
 UNAVAILABLE = "Trợ lý AI đang tạm nghỉ, nên mình trả lời bằng phần bài học liên quan nhất."
 # Luồng B khi không gọi được AI (ADR-020): có dữ kiện Engine thì dùng, không thì nói thật là chưa trả lời được lúc này.
 B_BUSY = "Trợ lý AI chưa trả lời được câu này lúc này, bạn thử hỏi lại sau ít phút nhé."
-B_OFF = "Trợ lý AI đang tạm nghỉ nên mình chưa trả lời được câu này."
+B_OFF = "Mình chưa tìm thấy nội dung này trong bài học, và trợ lý AI đang tắt nên mình chưa trả lời thêm được."
 BUSY = "Trợ lý AI chưa trả lời được lúc này, nên mình trả lời bằng phần bài học liên quan nhất."
 
 # Gợi mở theo mã lỗi, không chứa đáp án (mức 1–2). Mức 3 thêm lời giải của câu (explanation đã duyệt).
