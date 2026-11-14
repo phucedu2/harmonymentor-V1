@@ -121,7 +121,8 @@ def test_upgrade_keeps_every_row_and_restores_only_existing_versions(legacy_engi
     versions_before = snapshot_table(legacy_engine, VERSION_CORE_SQL)
     exercises_before = snapshot_table(legacy_engine, "SELECT id, lesson_id, skill_id FROM exercises ORDER BY id")
 
-    alembic_to(legacy_engine, "head")
+    # Nâng đúng tới PR-3 (không phải "head"): migration sau PR-3 (vd practice_attempts) có test riêng.
+    alembic_to(legacy_engine, PR3)
 
     # Không mất, không đổi, không thêm dòng nào; chỉ thêm cột.
     assert snapshot_table(legacy_engine, ATTEMPTS_SQL) == attempts_before
@@ -170,7 +171,21 @@ def test_seed_after_upgrade_is_idempotent(legacy_engine):
     for _ in range(2):
         with factory() as db:
             seed_initial_data(db)
-    assert snapshot_table(legacy_engine, "SELECT id, content_hash, snapshot_origin, status FROM exercise_versions ORDER BY id") == before
+    after = snapshot_table(legacy_engine, "SELECT id, content_hash, snapshot_origin, status FROM exercise_versions ORDER BY id")
+    # Seed chỉ được THÊM câu mới của nguồn (L01-Q05 bản v6 từ RS-22, 6 câu demo 10/11 và câu L05, L06, L07, L08 mở ngày 10–11/11, đã phát hành),
+    # không đổi dòng nào đã có từ migration.
+    assert [row for row in after if row[0] in {r[0] for r in before}] == before
+    added = sorted((row[0].rsplit("-v", 1)[0], row[3]) for row in after if row[0] not in {r[0] for r in before})
+    new_ids = ["L01-Q05", "L01-Q07", "L01-Q08", "L02-Q07", "L02-Q08", "L02-Q09", "L02-Q10"]
+    new_ids += [f"L05-Q0{i}" for i in range(1, 7)] + [f"L06-Q0{i}" for i in range(1, 7)]
+    new_ids += ["L01-Q09", "L01-Q10", "L01-Q11", "L01-Q12", "L02-Q11", "L02-Q12", "L03-Q07", "L03-Q08", "L03-Q09",
+                "L03-Q10", "L03-Q11", "L03-Q12", "L04-Q07", "L04-Q08", "L04-Q09", "L04-Q03"] + [f"L11-Q0{i}" for i in range(1, 7)]   # L04-Q03 lên v2: HM-011 bật piano (ADR-006)
+    new_ids += [f"L07-Q0{i}" for i in range(1, 7)] + [f"L08-Q0{i}" for i in range(1, 7)]
+    # L07-Q06 và L08-Q06 để draft chờ Đạt viết lại thành câu chọn; 10 câu RS-04 (14/11) cũng draft chờ Đạt duyệt
+    drafts = {"L07-Q06", "L08-Q06", "L05-Q07", "L05-Q08", "L05-Q09", "L06-Q07", "L06-Q08", "L06-Q09", "L06-Q10",
+              "L07-Q07", "L07-Q08", "L07-Q09"}
+    new_ids += sorted(drafts - set(new_ids))
+    assert added == sorted((x, "draft" if x in drafts else "published") for x in new_ids)
     with factory() as db:
         # Câu L01-Q01 vẫn hiện bằng v4 dù có một bản cũ v1 không khôi phục được.
         assert current_version(db.get(Exercise, "L01-Q01")).id == "L01-Q01-v4"
@@ -198,7 +213,7 @@ def test_current_version_not_matching_source_is_marked_missing(legacy_engine):
 
 def test_downgrade_is_refused(legacy_engine):
     load_fixture(legacy_engine)
-    alembic_to(legacy_engine, "head")
+    alembic_to(legacy_engine, PR3)
     with pytest.raises(RuntimeError, match="khôi phục CSDL từ bản sao lưu"):
         alembic_to(legacy_engine, BEFORE_PR3, downgrade=True)
     assert snapshot_table(legacy_engine, "SELECT version_num FROM alembic_version") == [(PR3,)]

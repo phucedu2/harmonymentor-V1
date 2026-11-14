@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from ..music_engine.grading import grade_build_chord, grade_build_scale, grade_roman_numeral
+from . import answer_match
 
 
 @dataclass
@@ -62,6 +63,8 @@ _SOLFEGE_RE = re.compile(r"^(do|re|mi|fa|son|sol|la|si)\s*(thang|giang|#|b|♯|�
 
 
 def _solfege_to_letter(token: str) -> str:
+    # RS-19: dấu câu cuối ("Rê.", "La,") không thuộc tên nốt; bỏ đi để không báo lỗi khó hiểu.
+    token = token.strip().rstrip(".,;:!?")
     match = _SOLFEGE_RE.match(_strip_accents(token).casefold().replace("đ", "d"))
     if not match:
         return token
@@ -71,17 +74,71 @@ def _solfege_to_letter(token: str) -> str:
 
 def _split_notes(answer: Any) -> list[str]:
     if isinstance(answer, list):
-        return [_solfege_to_letter(str(x).strip()) for x in answer if str(x).strip()]
+        return [n for n in (_solfege_to_letter(str(x)) for x in answer) if n]
     if isinstance(answer, str):
         # "Rê thăng" là một nốt: nối tên Đô–Rê–Mi với dấu hóa viết bằng chữ trước khi tách.
         text = re.sub(r"\s+(thăng|giáng|thang|giang)\b", r"\1", answer.strip(), flags=re.IGNORECASE)
-        return [_solfege_to_letter(x) for x in re.split(r"[\s,;–—-]+", text) if x]
+        # Viết liền "GBD" chỉ tách khi toàn chữ hoa (chữ b thường là dấu giáng, như "Bb").
+        if re.fullmatch(r"(?:[A-G][#♯♭b]?)+", text) and len(text) > 2 and not re.fullmatch(r"[A-G][#♯♭b]?", text):
+            return re.findall(r"[A-G][#♯♭b]?(?=[A-G]|$)", text)
+        return [_solfege_to_letter(x) for x in re.split(r"[\s,;./+–—−-]+", text) if x]
     return []
+
+
+def _structured_rubric(answer: Any, accepted: list[Any]) -> bool | None:
+    """Rubric mà đáp án chấp nhận là danh sách nốt hoặc chuỗi chức năng: so theo nội dung, không theo chuỗi gõ."""
+    if not accepted:
+        return None
+    note_sets = [answer_match.note_list(a) for a in accepted]
+    if all(n is not None for n in note_sets):
+        have = answer_match.note_list(answer)
+        return have is not None and sorted(have) in [sorted(n) for n in note_sets if n]
+    functions = [answer_match.function_tokens(a) for a in accepted]
+    if all(f is not None for f in functions):
+        have_f = answer_match.function_tokens(answer)
+        return have_f is not None and have_f in functions
+    return None
 
 
 def is_self_check(strategy: str | None, grader_config: dict[str, Any]) -> bool:
     """Thẻ ôn có ý mở (chấm theo từ khóa) để người học tự đánh giá sau khi lật thẻ."""
     return strategy == "rubric" and grader_config.get("mode") == "contains_any"
+
+
+# HM-011 (RS-20): cách nhập hợp lệ do PHIÊN BẢN câu hỏi quyết định, không do trình duyệt tự khai.
+PIANO_NAMES = ("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B")   # đúng 12 tên VirtualPiano gửi
+
+
+class InputRejected(ValueError):
+    """Bài nộp bị từ chối trước khi chấm (422, không ghi lượt làm). `code` là mã lỗi API."""
+
+    def __init__(self, code: str):
+        super().__init__(code)
+        self.code = code
+
+
+def allowed_input_methods(options: list[str] | None, grader_config: dict[str, Any] | None) -> list[str]:
+    """Có khai báo thì theo khai báo; không thì câu có lựa chọn là `choice`, còn lại là `text`."""
+    declared = (grader_config or {}).get("allowed_input_methods")
+    if declared:
+        return [str(m) for m in declared]
+    return ["choice"] if options else ["text"]
+
+
+def validate_input(options: list[str] | None, grader_config: dict[str, Any] | None, answer: Any,
+                   input_method: str | None) -> str:
+    """Trả cách nhập hiệu lực (mặc định là cách đầu tiên được phép) hoặc ném InputRejected."""
+    allowed = allowed_input_methods(options, grader_config)
+    method = input_method or allowed[0]
+    if method not in allowed:
+        raise InputRejected("INPUT_METHOD_NOT_ALLOWED")
+    if method == "choice" and not (isinstance(answer, str) and answer in (options or [])):
+        raise InputRejected("ANSWER_NOT_IN_OPTIONS")
+    if method == "piano":
+        names = answer.split() if isinstance(answer, str) else None
+        if not names or len(set(names)) != len(names) or any(n not in PIANO_NAMES for n in names):
+            raise InputRejected("INVALID_PIANO_PAYLOAD")
+    return method
 
 
 def _grading_mode(grader_config: dict[str, Any], input_method: str | None) -> str:
@@ -112,10 +169,16 @@ def grade_payload(strategy: str, answer_key: dict[str, Any], grader_config: dict
                 grading_mode=mode,
             )
         elif kind == "roman_numeral":
+            # "iim7" là cách jazz viết ii7 (chữ thường đã là thứ). "V 7" vẫn sai: nhóm chốt ở demo 10/11 là
+            # ký hiệu phải viết liền, nên ở đây không bỏ khoảng trắng giữa số La Mã và chỉ số.
+            typed = str(answer).strip()
+            typed = re.sub(r"^([b#♭♯]?(?:vii|vi|iv|v|iii|ii|i))m7", r"\g<1>7", typed)
+            # RS-21: IMaj7, IMAJ7, I△7 cùng nghĩa với Imaj7 (chữ hoa/thường của "maj" không mang nghĩa).
+            typed = re.sub(r"^([b#♭♯]?(?:VII|VI|IV|V|III|II|I|vii|vi|iv|v|iii|ii|i))(?:[Mm][Aa][Jj]|△|Δ)7", r"\g<1>maj7", typed)
             result = grade_roman_numeral(
                 grader_config.get("key"),
                 grader_config.get("chord"),
-                str(answer),
+                typed,
             )
         else:
             return GradeOutcome(False, 0.0, "UNSUPPORTED_GRADER", "Dạng chấm bằng Music Engine này chưa được hỗ trợ.", [
@@ -135,8 +198,16 @@ def grade_payload(strategy: str, answer_key: dict[str, Any], grader_config: dict
         if isinstance(expected, list):
             got = answer if isinstance(answer, list) else _split_notes(answer)
             correct = [_normalize_text(x, grader_config) for x in got] == [_normalize_text(x, grader_config) for x in expected]
+        elif not grader_config.get("case_sensitive") and (symbolic := answer_match.symbolic_equal(answer, expected)) is not None:
+            # Ký hiệu hợp âm/số La Mã: giữ M/m và hoa/thường của số La Mã (RS-01), nhận cách viết khác (RS-02).
+            correct = symbolic
+        elif answer_match.is_formula(expected) and grader_config.get("sequence"):
+            correct = answer_match.formula_tokens(answer) == answer_match.formula_tokens(expected)
         else:
             correct = _normalize_text(answer, grader_config) == _normalize_text(expected, grader_config)
+            if not correct and not grader_config.get("case_sensitive", False):
+                # "khong" cho đáp án "Không": gõ không dấu không làm đổi nghĩa câu trả lời chữ.
+                correct = _strip_accents(_normalize_text(answer, grader_config)) == _strip_accents(_normalize_text(expected, grader_config))
         return GradeOutcome(
             correct=correct,
             score=1.0 if correct else 0.0,
@@ -150,7 +221,10 @@ def grade_payload(strategy: str, answer_key: dict[str, Any], grader_config: dict
         got = _normalize_text(answer, grader_config)
         normalized = [_normalize_text(x, grader_config) for x in accepted]
         mode = grader_config.get("mode", "equals_any")
-        if mode == "contains_any":
+        structured = None if mode == "contains_any" else _structured_rubric(answer, accepted)
+        if structured is not None:
+            correct = structured
+        elif mode == "contains_any":
             unsure = any(phrase in _strip_accents(got) for phrase in _UNSURE_PHRASES)
             correct = not unsure and any(candidate and candidate in got for candidate in normalized)
         else:

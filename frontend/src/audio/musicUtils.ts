@@ -27,14 +27,13 @@ export function normalizePitchClass(note: string): string {
   return PITCH_CLASSES[parsed.pc];
 }
 
+// Không quy về pitch class trước (không % 12): số quãng tám đi theo chữ cái, nên
+// B#4 = 72 và Cb5 = 71, giống Note.midi của Music Engine (SRS 4.4.1, HM-001).
 export function scientificToMidi(note: string): number | null {
   const match = note.trim().match(/^([A-Ga-g])((?:#{1,2}|b{1,2}|x|♯{1,2}|♭{1,2})?)(-?\d+)$/);
   if (!match) return null;
-  const pc = normalizePitchClass(`${match[1]}${match[2] ?? ""}`);
-  const index = PITCH_CLASSES.indexOf(pc);
-  if (index < 0) return null;
   const octave = Number(match[3]);
-  return (octave + 1) * 12 + index;
+  return (octave + 1) * 12 + NATURAL_PC[match[1].toUpperCase()] + accidentalOffset(match[2] ?? "");
 }
 
 export function midiToScientific(midi: number): string {
@@ -73,4 +72,17 @@ export function parseProgressionSymbols(text: string): string[] {
     .split(/\s*(?:→|->|–|—)\s*/)
     .map((part) => part.trim())
     .filter(Boolean);
+}
+
+// Phím đen không cho biết tên nốt: phím giữa D và E vừa là D# vừa là Eb. Khi hiện phím người học
+// đã bấm, ghi cả hai tên (D#/Eb4) để không ngầm "sửa" Eb thành D#. Tên chính tả đúng theo
+// hợp âm do Music Engine trả trong lời giải; payload gửi máy chủ vẫn là tên thăng (HM-011).
+const BLACK_KEY_LABELS: Record<string, string> = { "C#": "C#/Db", "D#": "D#/Eb", "F#": "F#/Gb", "G#": "G#/Ab", "A#": "A#/Bb" };
+
+export function pianoKeyLabel(scientific: string): string {
+  const match = scientific.trim().match(/^(.*?)(-?\d+)?$/);
+  const name = match?.[1] ?? scientific;
+  const octave = match?.[2] ?? "";
+  const label = BLACK_KEY_LABELS[normalizePitchClass(name)] ?? name;
+  return `${label}${octave}`;
 }

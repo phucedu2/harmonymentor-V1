@@ -1,0 +1,53 @@
+"""Bossa nova (id cũ "bossa"): rim click clave bossa, kick 1 và 'a' của 2/4, bass gốc–năm, guitar nhát chặn lệch phách."""
+PACK = {
+    "label": "Bossa nova", "description": "Cảm giác 2, rim click theo clave, bass gốc–năm, hợp âm 7/9 nảy lệch phách.",
+    "default_bpm": 130, "bpm_range": [110, 150], "grid": 16, "color": "ninth",
+    "feel": {"swing": 0.0, "swing_sub": "8n", "sigma_ms": {"drums": 5, "bass": 7, "keys": 9, "guitar": 9},
+             "pocket_ms": {"kick": 0, "snare": 0, "hat": -2, "bass": 0, "keys": 3, "guitar": 0},
+             "roll_ms": [3, 10], "strum_ms": [5, 9]},
+    "keys": {"instrument": "epiano", "voicing": "rootless", "range": [52, 76], "top": 67, "max_span": 11,
+             "patterns": {1: ["o==============="], 2: ["o=======o=======", "o==============."],
+                          3: ["x=====o=..x=====", "o=======..x====="]}},
+    "bass": {"instrument": "upright", "range": [28, 50], "approach": ["fifth", "below"],
+             "patterns": {1: ["R=======5======="], 2: ["R=====5.5=====R.", "R=====5.5=====A."],
+                          3: ["R=====5.5=====A.", "R==5..5.5==R..A."]}},
+    "guitar": {"instrument": "guitar", "voicing": "shell", "min_energy": 1,
+               "patterns": {1: ["s.......s......."], 2: ["S..s..S...S..s..", "S..s..s...S..s.."],
+                            3: ["S..s..S...S..s..s.S..s..S..s..s.", "S.sS..S.s.S..s.."]}},
+    "drums": {
+        "patterns": {
+            1: [{"xstick": "x..x..x...x...x.", "hh_c": "o.o.o.o.o.o.o.o."}],
+            2: [{"kick": "x..ox..ox..ox..o", "xstick": "x..x..x...x...x.", "hh_c": "o.o.o.o.o.o.o.o."},
+                {"kick": "x..ox..ox..ox..o", "xstick": "x..x..x...x...x.", "br_hh": "x.o.x.o.x.o.x.o."}],
+            3: [{"kick": "x..ox..ox..ox..o", "xstick": "x..x...x..x..x..", "ride": "x.o.x.o.x.o.x.o."}],
+        },
+        "fills": {"small": [{"kick": "x..ox..ox..o....", "xstick": "x..x..x...x.....", "tom_h": "............x.x.",
+                             "tom_f": ".............x.x", "hh_c": "o.o.o.o.o.o....."}],
+                  "big": [{"kick": "x..ox..ox.......", "xstick": "x..x..x.........", "tom_h": "........x.x.....",
+                           "tom_m": "..........x.x...", "tom_f": "............x.xx"}]},
+        "perc": {2: [{"shaker": "xoooxoooxoooxooo"}], 3: [{"shaker": "xoooxoooxoooxooo", "conga_l": "......x.......x."}]},
+    },
+    "fx": {"reverb": 0.14, "room": "room", "delay": 0.0, "lofi": False, "chorus": False, "drive": False},
+}
+
+PACK["song"] = {
+    "forms": {
+        "short": [("intro", 4, "A", 1), ("verse", 8, "A", 2, "A"), ("chorus", 8, "B", 3, "B"),
+                  ("verse", 8, "A", 3, "A"), ("outro", 4, "A", 2)],
+        "medium": [("intro", 4, "A", 1), ("verse", 8, "A", 2, "A"), ("verse", 8, "A", 2, "A"), ("chorus", 8, "B", 3, "B"),
+                   ("verse", 8, "A", 3, "A"), ("solo", 16, "A", 4, "Instrumental"), ("verse", 8, "A", 3, "A"),
+                   ("outro", 8, "A", 2)],
+        "full": [("intro", 8, "A", 1), ("verse", 8, "A", 2, "A"), ("verse", 8, "A", 2, "A"), ("chorus", 8, "B", 3, "B"),
+                 ("verse", 8, "A", 3, "A"), ("solo", 16, "A", 4, "Instrumental"), ("chorus", 8, "B", 4, "B"),
+                 ("verse", 8, "A", 3, "A"), ("verse", 8, "A", 3, "A"), ("chorus", 8, "B", 4, "B"),
+                 ("verse", 8, "A", 3, "A"), ("verse", 4, "A", 2, "A (tag)"), ("outro", 16, "A", 2)],
+    },
+    "parts": {"intro": ["guitar", "hook"]},
+    "verse_stick": False,
+    # Bù độ to Chorus − Verse (dB) đo trên bản thu 02/11/2026, xem song.sec_db.
+    "chorus_trim_db": 2.3,
+    "ending": "fade",
+    "surprises": [("stop_time", "solo"), ("reverse_cymbal", "chorus"), ("stop_time", "chorus")],
+    "transitions": {},
+    "hook": {"instrument": "piano", "rhythms": ["x==.x==.x=======", "..x..x..x=======", "x.x...x.x======="]},
+}

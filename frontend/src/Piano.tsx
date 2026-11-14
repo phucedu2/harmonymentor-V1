@@ -17,19 +17,20 @@ export default function Piano({ good = [], bad = [], active = [], label = "Bàn 
   const goodPc = new Set(good.map(pitchClass));
   const badPc = new Set(bad.map(pitchClass));
   const activePc = new Set(active.map(pitchClass));
+  // Token của @theme trong index.css. Biến SVG trỏ tới biến CSS không tồn tại sẽ tô đen toàn bộ phím.
   const color = (pc: number, black: boolean) =>
-    goodPc.has(pc) ? "var(--good)" : badPc.has(pc) ? "var(--bad)" : activePc.has(pc) ? "var(--accent)" : black ? "var(--key-black)" : "var(--key-white)";
+    goodPc.has(pc) ? "var(--color-success)" : badPc.has(pc) ? "var(--color-danger)" : activePc.has(pc) ? "var(--color-primary)" : black ? "var(--color-ink)" : "var(--color-surface)";
   const whites = [0, 1].flatMap((o) => WHITE.map((pc) => ({ pc, o })));
   const W = 28;
   return (
     <svg className="piano" viewBox={`0 0 ${whites.length * W} 110`} role="img" aria-label={label}>
       {whites.map(({ pc, o }, i) => (
-        <rect key={`w${o}${pc}`} x={i * W} y={0} width={W} height={110} fill={color(pc, false)} stroke="var(--line)" />
+        <rect key={`w${o}${pc}`} x={i * W} y={0} width={W} height={110} fill={color(pc, false)} stroke="var(--color-line)" />
       ))}
       {whites.map(({ pc, o }, i) =>
         BLACK_AFTER[pc] !== undefined ? (
           <rect key={`b${o}${pc}`} x={i * W + W * 0.65} y={0} width={W * 0.7} height={68} rx={2}
-            fill={color(BLACK_AFTER[pc], true)} stroke="var(--line)" />
+            fill={color(BLACK_AFTER[pc], true)} stroke="var(--color-line)" />
         ) : null,
       )}
     </svg>

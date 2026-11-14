@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { api, type ChordInspection } from "../../api";
 import { audioEngine } from "../../audio/AudioEngine";
+import { buttonClass } from "../ui/Button";
 import { midiToScientific, pitchClassesToAscendingNotes, scientificToMidi } from "../../audio/musicUtils";
 
 export function NoteAudioButton({ notes, label = "Nghe" }: { notes: string[]; label?: string }) {
@@ -16,7 +17,7 @@ export function NoteAudioButton({ notes, label = "Nghe" }: { notes: string[]; la
       : pitchClassesToAscendingNotes(notes);
     await audioEngine.playChord(scientific, "2n");
   };
-  return <button type="button" className="audio-button" onClick={() => void play()}>▶ {label}</button>;
+  return <button type="button" className={buttonClass("secondary")} onClick={() => void play()}><span aria-hidden="true">▶</span> {label}</button>;
 }
 
 export function ProgressionAudio({
@@ -65,11 +66,11 @@ export function ProgressionAudio({
     }
   };
 
-  return <div className="audio-controls">
-    <button type="button" onClick={() => void play()} disabled={busy || chords.length !== symbols.length}>▶ Phát progression</button>
-    <button type="button" className={metronome ? "active-toggle" : ""} onClick={() => void toggleMetronome()}>{metronome ? "■ Dừng metronome" : "♩ Metronome"}</button>
-    <label>BPM <input type="number" min={40} max={180} value={bpm} onChange={(event) => setBpm(Math.max(40, Math.min(180, Number(event.target.value) || 80)))} /></label>
-    <button type="button" className="text-button" onClick={() => { audioEngine.stopAll(); setMetronome(false); }}>Dừng audio</button>
+  return <div className="mt-3 flex flex-wrap items-center gap-2">
+    <button type="button" className={buttonClass("primary")} onClick={() => void play()} disabled={busy || chords.length !== symbols.length}><span aria-hidden="true">▶</span> Phát vòng hợp âm</button>
+    <button type="button" aria-pressed={metronome} className={buttonClass(metronome ? "primary" : "secondary")} onClick={() => void toggleMetronome()}>{metronome ? "■ Dừng máy đếm nhịp" : "♩ Máy đếm nhịp"}</button>
+    <label className="inline-flex items-center gap-2 text-sm text-muted">Tốc độ (BPM) <input className="min-h-11 w-20 rounded-lg border border-line bg-surface px-2 text-ink" type="number" min={40} max={180} value={bpm} onChange={(event) => setBpm(Math.max(40, Math.min(180, Number(event.target.value) || 80)))} /></label>
+    <button type="button" className={buttonClass("ghost")} onClick={() => { audioEngine.stopAll(); setMetronome(false); }}>Dừng âm thanh</button>
   </div>;
 }
 
@@ -83,13 +84,14 @@ export function ChordAudioSet({ symbols, contextKey }: { symbols: string[]; cont
     return () => { cancelled = true; };
   }, [symbols.join("|"), contextKey]);
 
-  return <div className="chord-audio-set">
+  return <div className="mt-3 flex flex-wrap items-center gap-2">
     {symbols.map((symbol) => {
       const chord = chords.find((item) => item.symbol === symbol);
       return <button
         type="button"
         key={symbol}
-        className="audio-button"
+        className={buttonClass("secondary")}
+        aria-label={`Nghe hợp âm ${symbol}`}
         disabled={!chord}
         onClick={() => chord && void audioEngine.playChord(pitchClassesToAscendingNotes(chord.notes, 3), "2n")}
       >▶ {symbol}</button>;

@@ -11,6 +11,7 @@ from ..core.errors import AppError
 from ..services.learning_service import (
     EXPLANATION_AFTER_WRONG,
     ExerciseVersionSuperseded,
+    InputRejected,
     submit_attempt,
     wrong_attempt_count,
 )
@@ -29,6 +30,14 @@ def create_attempt(body: AttemptIn, user: User = Depends(get_current_user), db: 
                        "Câu hỏi này vừa được cập nhật. Hãy tải lại câu hỏi và trả lời theo đề mới.",
                        fields={"exercise_version_id": exc.version_id,
                                "current_version_id": exc.current_version_id}) from exc
+    except InputRejected as exc:
+        # HM-011: cách nhập không hợp lệ với câu này; không ghi lượt làm.
+        messages = {
+            "INPUT_METHOD_NOT_ALLOWED": "Câu này không nhận cách nhập đó.",
+            "ANSWER_NOT_IN_OPTIONS": "Đáp án phải là một trong các lựa chọn của câu.",
+            "INVALID_PIANO_PAYLOAD": "Dữ liệu từ phím đàn không hợp lệ.",
+        }
+        raise AppError(422, exc.code, messages.get(exc.code, "Bài nộp không hợp lệ.")) from exc
     except LookupError as exc:
         code = str(exc)
         raise HTTPException(status_code=404, detail={"code": code}) from exc

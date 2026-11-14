@@ -4,7 +4,8 @@ name: CI
 
 on:
   pull_request:
-    branches: [main]
+    # phuc-music: các Draft PR xếp chồng của pipeline AI (ai/gd*) đích nhánh này cũng cần CI.
+    branches: [main, phuc-music]
   push:
     branches: [main]
   workflow_dispatch:
@@ -51,14 +52,26 @@ jobs:
       - name: Kiểm tra cú pháp Python
         run: python -m compileall -q app tests migrations ../scripts
 
+      # ADR-017: mô hình nhúng e5-small (470 MB) không nằm trong git. Tải một lần, lưu cache theo bản cố định
+      # (HF_REVISION trong app/ai/local_embedder.py) để test định tuyến bằng e5 chạy thật, không bị skip.
+      - name: Cache mô hình e5-small
+        uses: actions/cache@v4
+        with:
+          path: backend/models
+          key: e5-small-${{ hashFiles('backend/app/ai/local_embedder.py') }}
+
+      - name: Tải mô hình e5-small (kiểm SHA-256)
+        run: python -m app.ai.local_embedder download
+
       # Nhóm postgres chạy ở job riêng; ở đây không đặt TEST_DATABASE_URL nên phải loại ra, nếu không sẽ bị skip.
+      # Nhóm live gọi Gemini thật, CI không có khóa và không gọi mạng (nhiệm vụ AI mục 5.4).
       - name: Chạy pytest
-        run: pytest -q -m "not postgres" --junitxml=../ket-qua-sqlite.xml
+        run: pytest -q -m "not postgres and not live" --junitxml=../ket-qua-sqlite.xml
 
       # Mức tối thiểu = số test đạt sau PR-3 (27/10/2026): 281 cũ + 38 test phiên bản câu hỏi; ai xóa test thì CI đỏ.
-      - name: Kiểm số test (0 skip, ít nhất 325 đạt)
+      - name: Kiểm số test (0 skip, ít nhất 966 đạt)
         if: ${{ !cancelled() }}
-        run: python ../scripts/ci/kiem_junit.py ../ket-qua-sqlite.xml --min-passed 325 --title "Backend SQLite"
+        run: python ../scripts/ci/kiem_junit.py ../ket-qua-sqlite.xml --min-passed 1317 --title "Backend SQLite"
 
       - name: Lưu kết quả JUnit
         if: ${{ !cancelled() }}
@@ -138,7 +151,7 @@ jobs:
       # pytest vẫn trả mã 0 khi các test này bị skip, nên phải đếm riêng.
       - name: Kiểm số test (0 skip, ít nhất 21 đạt)
         if: ${{ !cancelled() }}
-        run: python ../scripts/ci/kiem_junit.py ../ket-qua-postgres.xml --min-passed 21 --title "PostgreSQL HM-010 + PR-3"
+        run: python ../scripts/ci/kiem_junit.py ../ket-qua-postgres.xml --min-passed 25 --title "PostgreSQL HM-010 + PR-3"
 
       # Test tự xóa schema hm_pgtest_* của mình; còn sót là lớp dọn dẹp của PR-1 hỏng.
       - name: Không còn schema test sót lại
@@ -171,6 +184,10 @@ jobs:
 
       - name: npm ci
         run: npm ci
+
+      # Vitest: test đơn vị frontend (HM-001 so ký âm/MIDI L01 với bảng sinh từ Music Engine).
+      - name: npm test
+        run: npm test
 
       # build = tsc -b (kiểm kiểu TypeScript) + vite build; lỗi nào cũng làm bước này đỏ.
       - name: npm run build

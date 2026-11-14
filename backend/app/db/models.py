@@ -34,6 +34,10 @@ class User(Base):
     goal_text: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=sa_true())
     is_synthetic: Mapped[bool] = mapped_column(Boolean, default=False, server_default=sa_false())
+    # Vector mục tiêu (04 ERD ghi vector(384) cho MiniLM; Gemini 768 chiều nên lưu JSON + tên mô hình, GĐ2).
+    # Chỉ so với vector mô tả kỹ năng cùng mô hình; khác mô hình thì tầng nội dung dùng dự phòng.
+    goal_embedding: Mapped[Optional[list[float]]] = mapped_column(JSON, nullable=True)
+    goal_embedding_model: Mapped[Optional[str]] = mapped_column(String(80), nullable=True)
 
 
 class RefreshToken(Base):
@@ -55,6 +59,12 @@ class Skill(Base):
     id: Mapped[str] = mapped_column(String(120), primary_key=True)
     name: Mapped[str] = mapped_column(String(200))
     domain: Mapped[str] = mapped_column(String(80), default="theory")
+    # ADR-008 / CP2_ANH_XA_KY_NANG.md: srs_code = phạm vi MVP, group_code = một chiều của vector KNN.
+    srs_code: Mapped[Optional[str]] = mapped_column(String(40), nullable=True)
+    group_code: Mapped[Optional[str]] = mapped_column(String(40), nullable=True, index=True)
+    # 04 Bảng 19. Đọc từ cột thay vì hằng số để đổi ngưỡng từng kỹ năng không cần sửa code.
+    ready_threshold: Mapped[float] = mapped_column(Float, default=0.6, server_default="0.6")
+    mastery_threshold: Mapped[float] = mapped_column(Float, default=0.8, server_default="0.8")
 
 
 class SkillPrerequisite(Base):
@@ -184,6 +194,8 @@ class Attempt(Base):
     score: Mapped[float] = mapped_column(Float, default=0.0)
     primary_error: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     feedback: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    # Lượt của Admin (nguyên tắc 8): vẫn ghi để xem trước bài, không tính mastery/thống kê.
+    is_test: Mapped[bool] = mapped_column(Boolean, default=False, server_default=sa_false())
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
 
 
@@ -250,12 +262,317 @@ class ReviewAttempt(Base):
     correct: Mapped[bool] = mapped_column(Boolean)
     rating: Mapped[str] = mapped_column(String(16), default="auto")
     response_time_ms: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    # Ngày hẹn của thẻ TRƯỚC lượt này: luật ôn 2A cần biết lượt có đến hạn không, và rebuild_mastery
+    # cần tính lại đúng như lúc đó. NULL ở lượt ôn cũ (trước GĐ1).
+    due_before: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
 
 
 # --- Bảo vệ phiên bản đã khóa ở tầng ORM (HM-003, ADR-006) ---------------------------------------
 # Lưới này chặn mọi đường ghi qua SQLAlchemy (seed, Admin sau này). Câu SQL viết tay thì không đi qua đây:
 # trên PostgreSQL có thêm trigger do migration PR-3 tạo; trên SQLite chỉ có lưới này.
+
+
+class PracticeAttempt(Base):
+    """Lượt làm ở trang Luyện tập (đề sinh ngẫu nhiên, không thuộc bài học) — FR-LRN-08 "lịch sử học tập".
+
+    Tách khỏi `attempts` vì `attempts.exercise_version_id` bắt buộc trỏ tới câu đã phát hành (ADR-006),
+    còn đề luyện tập do Music Engine sinh mỗi lần. Chỉ ghi lịch sử, KHÔNG cập nhật mastery: luyện tập
+    có tính vào mastery hay không là quyết định còn mở của PR-5 (D-3). Bảng chưa có trong ERD tài liệu 04,
+    xem ADR-009-de-xuat (chờ Thắng duyệt schema).
+    """
+
+    __tablename__ = "practice_attempts"
+    __table_args__ = (CheckConstraint("kind IN ('chord', 'interval', 'scale', 'roman')", name="ck_practice_kind"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    kind: Mapped[str] = mapped_column(String(16))
+    level: Mapped[Optional[str]] = mapped_column(String(8), nullable=True)
+    question: Mapped[dict[str, Any]] = mapped_column(JSON)
+    answer: Mapped[Any] = mapped_column(JSON)
+    correct: Mapped[bool] = mapped_column(Boolean)
+    primary_error: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    # Lượt của Admin không tính vào thống kê (nguyên tắc bất biến số 8).
+    is_test: Mapped[bool] = mapped_column(Boolean, default=False, server_default=sa_false())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+
+class MasteryState(Base):
+    """Mức thành thạo hiện tại của một người học ở một kỹ năng MVP (04 mục 2, 6.3).
+
+    Không có dòng = "chưa đánh giá", khác với "yếu" (có dòng, điểm thấp, đủ 5 lượt).
+    """
+
+    __tablename__ = "mastery_states"
+    __table_args__ = (UniqueConstraint("user_id", "skill_id", name="uq_mastery_user_skill"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    skill_id: Mapped[str] = mapped_column(ForeignKey("skills.id"), index=True)
+    score: Mapped[float] = mapped_column(Float, default=0.0)
+    attempts_count: Mapped[int] = mapped_column(Integer, default=0)
+    last_error_code: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class MasteryEvent(Base):
+    """Nhật ký từng lần mastery được xét, để giải thích điểm và để kiểm `rebuild_mastery`.
+
+    counted=false: lượt có ghi nhận (attempts_count tăng) nhưng không đổi điểm, ví dụ đúng lặp lại.
+    """
+
+    __tablename__ = "mastery_events"
+    __table_args__ = (CheckConstraint("source IN ('attempt', 'review', 'placement')", name="ck_mastery_event_source"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    skill_id: Mapped[str] = mapped_column(ForeignKey("skills.id"), index=True)
+    source: Mapped[str] = mapped_column(String(16))
+    source_id: Mapped[str] = mapped_column(String(64))
+    result: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    counted: Mapped[bool] = mapped_column(Boolean, default=True)
+    score_before: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    score_after: Mapped[float] = mapped_column(Float)
+    vn_day: Mapped[str] = mapped_column(String(10), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+
+
+class RecommendationLog(Base):
+    """Một lần gợi ý (04 ERD): danh sách bài, điểm từng tầng và lý do, để đo tỷ lệ bấm ở GĐ5.
+
+    `context` (ngoài ERD) giữ cấu hình đã dùng: chế độ trọng số, nguồn cf, lý do dự phòng, ngưỡng chiều chung.
+    """
+
+    __tablename__ = "recommendation_logs"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    lesson_ids: Mapped[list[str]] = mapped_column(JSON, default=list)
+    scores: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list)
+    explanation: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    context: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    clicked_lesson_id: Mapped[Optional[str]] = mapped_column(String(32), nullable=True)
+    clicked_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+
+
+class ChatSession(Base):
+    """Phiên chat AI Tutor (04 Bảng 7). id là UUID dạng chuỗi để chạy được cả SQLite và PostgreSQL."""
+
+    __tablename__ = "chat_sessions"
+    __table_args__ = (CheckConstraint("mode IN ('companion', 'harmony_assistant')", name="ck_chat_sessions_mode"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    mode: Mapped[str] = mapped_column(String(24), default="companion")
+    summary: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+
+
+class ChatMessage(Base):
+    """Một tin nhắn (04 Bảng 7). tool_calls giữ lời gọi Music Engine, cách truy xuất và việc có gọi LLM hay không
+    (để tính hạn mức). Tin nhắn của người dùng chỉ lưu ở đây, không gửi cho Gemini ngoài 6 tin gần nhất."""
+
+    __tablename__ = "chat_messages"
+    __table_args__ = (
+        CheckConstraint("role IN ('user', 'assistant', 'tool')", name="ck_chat_messages_role"),
+        CheckConstraint("status IN ('ok', 'failed', 'fallback')", name="ck_chat_messages_status"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    session_id: Mapped[str] = mapped_column(ForeignKey("chat_sessions.id", ondelete="CASCADE"), index=True)
+    role: Mapped[str] = mapped_column(String(16))
+    content: Mapped[str] = mapped_column(Text)
+    intent: Mapped[Optional[str]] = mapped_column(String(32), nullable=True)
+    citations: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list)
+    engine_claims: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list)
+    tool_calls: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    hint_level: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    status: Mapped[str] = mapped_column(String(16), default="ok")
+    latency_ms: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    tokens_in: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    tokens_out: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+
+
+class ChatFeedback(Base):
+    __tablename__ = "chat_feedback"
+    __table_args__ = (CheckConstraint("stars BETWEEN 1 AND 5", name="ck_chat_feedback_stars"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    message_id: Mapped[int] = mapped_column(ForeignKey("chat_messages.id", ondelete="CASCADE"), unique=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    stars: Mapped[int] = mapped_column(Integer)
+    comment: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+
+class PlacementResult(Base):
+    """Bài kiểm tra đầu vào (UC-06): một dòng mỗi người học, làm lại phải xác nhận."""
+
+    __tablename__ = "placement_results"
+    __table_args__ = (CheckConstraint("status IN ('completed', 'skipped')", name="ck_placement_status"),)
+
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
+    status: Mapped[str] = mapped_column(String(16))
+    # [{exercise_version_id, skill_id, answer, correct}]: không ghi vào attempts để lượt làm trong bài
+    # sau này vẫn là "đúng lần đầu" (placement chỉ là ước lượng ban đầu).
+    answers: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list)
+    taken_count: Mapped[int] = mapped_column(Integer, default=1)
+    completed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class CompositionProject(Base):
+    """Dự án Harmony Lab (FR-17, tài liệu 04 Bảng 8 và mục 6.8): lưu ký hiệu, thời gian theo phách, không lưu âm thanh.
+
+    Thêm `style` (mẫu nền pop/ballad/bossa/lofi) và `created_at`/`updated_at` so với ERD; xem ADR-010 (chờ Thắng duyệt).
+    """
+
+    __tablename__ = "composition_projects"
+    __table_args__ = (
+        CheckConstraint("tempo_bpm BETWEEN 60 AND 160", name="ck_composition_tempo"),
+        CheckConstraint("bars BETWEEN 4 AND 8", name="ck_composition_bars"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    name: Mapped[str] = mapped_column(String(120))
+    key: Mapped[str] = mapped_column(String(8))
+    tempo_bpm: Mapped[int] = mapped_column(Integer)
+    time_signature: Mapped[str] = mapped_column(String(8), default="4/4", server_default="4/4")
+    bars: Mapped[int] = mapped_column(Integer)
+    style: Mapped[str] = mapped_column(String(16))
+    is_test: Mapped[bool] = mapped_column(Boolean, default=False, server_default=sa_false())
+    # Bộ phối khí (ADR-012 đề xuất, migration a7c4d5e6f8b9): cùng seed + năng lượng + phiên bản luật → cùng bản phối.
+    seed: Mapped[int] = mapped_column(Integer, default=1, server_default="1")
+    energy: Mapped[int] = mapped_column(Integer, default=2, server_default="2")
+    mix: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
+    arrangement_version: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    # Chế độ Bài hát (ADR-013 đề xuất, migration b8d5e6f7a9c1): các đoạn + vòng A/B/C + cờ hook/lên giọng.
+    # NULL = dự án vòng lặp (mọi dự án trước 02/11 chiều), mở ở chế độ Vòng lặp như cũ.
+    form: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    chord_events: Mapped[list["ChordEvent"]] = relationship(
+        back_populates="project", cascade="all, delete-orphan", order_by="ChordEvent.start_beat")
+    drum_events: Mapped[list["DrumEvent"]] = relationship(
+        back_populates="project", cascade="all, delete-orphan", order_by="DrumEvent.start_beat")
+
+
+class ChordEvent(Base):
+    __tablename__ = "chord_events"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    project_id: Mapped[str] = mapped_column(ForeignKey("composition_projects.id"), index=True)
+    start_beat: Mapped[float] = mapped_column(Float)
+    duration_beats: Mapped[float] = mapped_column(Float)
+    symbol: Mapped[str] = mapped_column(String(32))
+
+    project: Mapped[CompositionProject] = relationship(back_populates="chord_events")
+
+
+class DrumEvent(Base):
+    __tablename__ = "drum_events"
+    # 22 mã trống/bộ gõ ≤ 8 ký tự của bộ phối khí + "hat" cũ (migration a7c4d5e6f8b9, ADR-012 đề xuất).
+    __table_args__ = (CheckConstraint(
+        "drum IN ('kick', 'snare', 'hat', 'rim', 'xstick', 'br_snare', 'hh_c', 'hh_o', 'hh_p', 'br_hh', 'ride', "
+        "'ride_b', 'br_ride', 'crash', 'tom_h', 'tom_m', 'tom_f', 'conga_h', 'conga_l', 'shaker', 'tamb', 'tri', "
+        "'clap')", name="ck_drum_kind"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    project_id: Mapped[str] = mapped_column(ForeignKey("composition_projects.id"), index=True)
+    drum: Mapped[str] = mapped_column(String(8))
+    start_beat: Mapped[float] = mapped_column(Float)
+    velocity: Mapped[int] = mapped_column(Integer)
+
+    project: Mapped[CompositionProject] = relationship(back_populates="drum_events")
+
+
+class ContentRevision(Base):
+    """Bản sửa nội dung bài học do Quản trị viên tạo (ADR-023). Nội dung gốc vẫn ở curriculum_specs.py và được seed
+    mỗi lần khởi động; bản sửa nằm riêng nên seed không ghi đè và có thể khôi phục về bản cũ bất kỳ.
+
+    kind = "block": payload thay payload của khối `target`; kind = "visibility": payload {"hidden": bool} cho cả bài.
+    Bản hiệu lực của một khối là bản `published` mới nhất; bản `draft` chỉ Quản trị viên xem trước.
+    """
+
+    __tablename__ = "content_revisions"
+    __table_args__ = (
+        CheckConstraint("kind IN ('block', 'visibility')", name="ck_content_revisions_kind"),
+        CheckConstraint("status IN ('draft', 'published')", name="ck_content_revisions_status"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    lesson_id: Mapped[str] = mapped_column(ForeignKey("lessons.id", ondelete="CASCADE"), index=True)
+    kind: Mapped[str] = mapped_column(String(16))
+    target: Mapped[str] = mapped_column(String(64))
+    payload: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    status: Mapped[str] = mapped_column(String(16), default="draft")
+    note: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_by: Mapped[Optional[str]] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    published_by: Mapped[Optional[str]] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    published_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class AdminAuditLog(Base):
+    """Nhật ký thao tác của Quản trị viên (ai làm gì lên đối tượng nào). Không ghi nội dung tài liệu hay mật khẩu."""
+
+    __tablename__ = "admin_audit_log"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    actor_id: Mapped[Optional[str]] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
+    action: Mapped[str] = mapped_column(String(48), index=True)
+    target_type: Mapped[str] = mapped_column(String(32))
+    target_id: Mapped[str] = mapped_column(String(96))
+    detail: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class SourceDocument(Base):
+    """Tài liệu nhạc lý Quản trị viên tải lên để AI tóm tắt thành bài nháp (ADR-025). Chỉ giữ chữ đã trích theo trang,
+    không giữ file gốc. consent = đã tick "tôi có quyền dùng tài liệu này"; nội dung trang chọn có thể gửi tới Gemini."""
+
+    __tablename__ = "source_documents"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    uploaded_by: Mapped[Optional[str]] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
+    filename: Mapped[str] = mapped_column(String(240))
+    kind: Mapped[str] = mapped_column(String(8))
+    size_bytes: Mapped[int] = mapped_column(Integer)
+    sha256: Mapped[str] = mapped_column(String(64))
+    source_title: Mapped[str] = mapped_column(String(300))
+    source_note: Mapped[Optional[str]] = mapped_column(String(300), nullable=True)
+    consent: Mapped[bool] = mapped_column(Boolean, default=False)
+    pages: Mapped[list[str]] = mapped_column(JSON, default=list)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class AiLessonDraft(Base):
+    """Bản nháp bài học do AI tóm tắt từ SourceDocument. AI không bao giờ tự xuất bản: chỉ Quản trị viên bấm xuất bản,
+    lúc đó mới tạo Lesson/LessonBlock/Exercise thật (ADR-025)."""
+
+    __tablename__ = "ai_lesson_drafts"
+    __table_args__ = (CheckConstraint("status IN ('draft', 'published', 'rejected')", name="ck_ai_lesson_drafts_status"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    document_id: Mapped[str] = mapped_column(ForeignKey("source_documents.id", ondelete="CASCADE"), index=True)
+    created_by: Mapped[Optional[str]] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    status: Mapped[str] = mapped_column(String(16), default="draft")
+    page_from: Mapped[int] = mapped_column(Integer)
+    page_to: Mapped[int] = mapped_column(Integer)
+    content: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    engine_report: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    model: Mapped[Optional[str]] = mapped_column(String(80), nullable=True)
+    tokens_in: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    tokens_out: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    published_lesson_id: Mapped[Optional[str]] = mapped_column(String(32), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
+
 
 from sqlalchemy import event, inspect as sa_inspect, select  # noqa: E402
 
