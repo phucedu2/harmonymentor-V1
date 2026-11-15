@@ -49,3 +49,27 @@ class RelevanceConfig:
 def relevance_config() -> RelevanceConfig:
     """Đọc lại môi trường mỗi lần gọi để test và Admin đổi ngưỡng không cần khởi động lại."""
     return RelevanceConfig()
+
+
+@dataclass(frozen=True)
+class RagConfig:
+    """Kho vector Qdrant và nạp dữ liệu (T3). Mô hình nhúng mặc định là e5-small vì máy nhóm chỉ có CPU và 8 GB RAM."""
+
+    # Rỗng = không dùng Qdrant (AI Tutor tiếp tục dùng e5 + BM25 như trước, ADR-017). Trong Docker compose: http://qdrant:6333.
+    qdrant_url: str = field(default_factory=lambda: os.getenv("QDRANT_URL", ""))
+    collection: str = field(default_factory=lambda: os.getenv("QDRANT_COLLECTION", "harmony_knowledge"))
+    # e5 = multilingual-e5-small (384 chiều, 512 token). Mô hình lớn hơn (bge-m3, 1024 chiều, ~2,3 GB RAM) chưa hỗ trợ ở bản này.
+    embedder: str = field(default_factory=lambda: os.getenv("RAG_EMBEDDER", "e5"))
+    dim: int = field(default_factory=lambda: _i("RAG_EMBED_DIM", 384))
+    # Chia đoạn theo token của mô hình nhúng (e5 đọc tối đa 512 gồm tiền tố), chừa chỗ cho tiêu đề.
+    chunk_tokens: int = field(default_factory=lambda: _i("RAG_CHUNK_TOKENS", 320))
+    chunk_overlap_tokens: int = field(default_factory=lambda: _i("RAG_CHUNK_OVERLAP", 48))
+    top_k: int = field(default_factory=lambda: _i("QDRANT_TOP_K", 5))
+    # Cosine e5 bị nén (0,73–0,92), nên ngưỡng 0,80 chỉ là giá trị ban đầu; G5 hiệu chỉnh trên bộ câu chuẩn.
+    min_score: float = field(default_factory=lambda: _f("QDRANT_MIN_SCORE", 0.80))
+    corpus_dir: str = field(default_factory=lambda: os.getenv("RAG_CORPUS_DIR", "data/corpus/raw"))
+    upsert_batch: int = field(default_factory=lambda: _i("RAG_UPSERT_BATCH", 64))
+
+
+def rag_config() -> RagConfig:
+    return RagConfig()

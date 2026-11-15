@@ -28,6 +28,14 @@ jobs:
     name: Backend (SQLite, toàn bộ test)
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # G3: máy chủ Qdrant thật cho bài kiểm tích hợp (test_g3_qdrant.py); không có thì test đó bị skip và CI cấm skip.
+    services:
+      qdrant:
+        image: qdrant/qdrant:v1.12.4
+        ports:
+          - 6333:6333
+    env:
+      QDRANT_TEST_URL: http://localhost:6333
     defaults:
       run:
         working-directory: backend
@@ -71,7 +79,7 @@ jobs:
       # Mức tối thiểu = số test đạt sau PR-3 (27/10/2026): 281 cũ + 38 test phiên bản câu hỏi; ai xóa test thì CI đỏ.
       - name: Kiểm số test (0 skip, ít nhất 966 đạt)
         if: ${{ !cancelled() }}
-        run: python ../scripts/ci/kiem_junit.py ../ket-qua-sqlite.xml --min-passed 1337 --title "Backend SQLite"
+        run: python ../scripts/ci/kiem_junit.py ../ket-qua-sqlite.xml --min-passed 1350 --title "Backend SQLite"
 
       - name: Lưu kết quả JUnit
         if: ${{ !cancelled() }}

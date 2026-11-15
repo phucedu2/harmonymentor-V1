@@ -29,3 +29,6 @@ Thumbs.db
 .cache/
 docs/backing-track/nghe-thu/artifact.html
 backend/models/
+
+# Kho tài liệu thô cho RAG (T3): không đưa sách có bản quyền vào git
+data/corpus/raw/
