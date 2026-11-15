@@ -1,0 +1,4 @@
+source_id,title,author,url,license_or_permission,rights_cleared,reviewer,review_date,scope,notes
+DEMO-ORIGINAL-V1,Original demonstration examples,HarmonyMentor training starter,,Demo only; NOT reviewed,false,,,test_only,Replace with checked source citations before training
+OMT-V2,Open Music Theory Version 2,Various,https://viva.pressbooks.pub/openmusictheory/,Review chapter-specific CC BY-SA terms,false,,,candidate,Check chapter and individual media license before copying content
+HM-LESSON,L01-L08 published lessons,HarmonyMentor repository,https://github.com/phucedu2/harmonymentor-V1/tree/phuc-music,Original curriculum and source attribution must be reviewed,false,,,candidate,Only published blocks and authorized material

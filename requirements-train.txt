@@ -1,0 +1,9 @@
+# Install PyTorch + Unsloth using official CUDA-specific instructions first.
+# These are intentionally unpinned starter requirements; lock a known-good
+# compatible set of versions for reproducible project experiments.
+trl
+datasets
+peft
+accelerate
+bitsandbytes
+safetensors

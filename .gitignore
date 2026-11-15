@@ -29,3 +29,21 @@ Thumbs.db
 .cache/
 docs/backing-track/nghe-thu/artifact.html
 backend/models/
+
+# AI training outputs and model weights
+outputs/
+*.safetensors
+*.gguf
+*.pt
+*.pth
+*.ckpt
+*.onnx
+qdrant_storage/
+.qdrant*/
+
+# Local secrets and private datasets
+.env
+data/hm_training/private/
+
+# Downloaded starter archive
+harmonymentor_ai_training_starter.zip
