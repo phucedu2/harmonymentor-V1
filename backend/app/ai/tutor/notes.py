@@ -17,7 +17,9 @@ NOTE = r"[A-G](?:##|#|bb|b|x|♯|♭)?"
 # Hậu tố theo Music Engine (04 Bảng 16) và các cách viết hay gặp. Thứ tự dài trước ngắn.
 _QUAL = r"(?:maj7|M7|m7b5|ø7|ø|dim7|°7|dim|°|aug|\+|m7|min7|mM7|m|min|7|6|9|sus2|sus4)?"
 CHORD = rf"{NOTE}{_QUAL}"
-_SEP = r"\s*(?:[,–\-]|\s)\s*"
+# G8: "Eb, Gb, Bbb và Db" là cách viết tiếng Việt rất hay gặp; thiếu "và" thì chỉ bắt được 3 nốt đầu và
+# Engine báo sai nhầm (câu trả lời đúng bị soạn lại hoặc thay bằng dự phòng).
+_SEP = r"\s*(?:,?\s*(?:và|and)\s+|[,–\-]|\s)\s*"
 NOTE_SEQ = rf"{NOTE}(?:{_SEP}{NOTE}){{2,}}"
 
 # "G7 = G B D F", "Cmaj7 gồm C, E, G, B", "C7 (C – E – G – Bb)", "Cmaj7: C E G B"
