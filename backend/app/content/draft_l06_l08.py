@@ -60,12 +60,12 @@ L06_DRAFT_BLOCKS: list[Block] = [
         "note": "Hợp âm nào trong C major có nốt Ab? Nó thay cho hợp âm nào của key chính?"}),
     ("L06-B05", "progression", {
         "title": "4. Ví dụ: C – F – Fm – C",
-        "prompt": "C → F → Fm → C  =  I → IV → iv → I", "key": "C"}),
+        "prompt": "C → F → Fm → C  =  I → IV → iv → I", "key": "C", "numerals": ["I", "IV", "iv", "I"]}),
     ("L06-B06", "audio", {
         "title": "5. Nghe trước và sau khi mượn Fm",
         "prompt": "Nghe C → F → C, rồi nghe C → F → Fm → C. Chú ý Ab trong Fm làm màu âm tối đi, nhưng bạn vẫn nghe "
                   "tiến trình quay về C.",
-        "progression": ["C", "F", "Fm", "C"], "key": "C", "bpm": 72}),
+        "progression": ["C", "F", "Fm", "C"], "key": "C", "numerals": ["I", "IV", "iv", "I"], "bpm": 72}),
     ("L06-B07", "theory", {
         "title": "6. Mượn hợp âm hay chuyển giọng?",
         "paragraphs": [
@@ -134,7 +134,7 @@ L07_DRAFT_BLOCKS: list[Block] = [
         "title": "5. Nghe ii–V–I",
         "prompt": "Nghe Dm7 → G7 → Cmaj7. Mỗi hợp âm có thể đi với mode ở trên, nhưng tai và chức năng hợp âm vẫn quan "
                   "trọng hơn bảng.",
-        "progression": ["Dm7", "G7", "Cmaj7"], "key": "C", "bpm": 72}),
+        "progression": ["Dm7", "G7", "Cmaj7"], "key": "C", "numerals": ["ii7", "V7", "Imaj7"], "bpm": 72}),
     ("L07-BCP2", "checkpoint", {
         "title": "Chord-scale không phải đáp án duy nhất",
         "exercise_id": "L07-Q06",
@@ -190,7 +190,7 @@ L08_DRAFT_BLOCKS: list[Block] = [
     ("L08-B05", "audio", {
         "title": "4. Nghe ii–V–I",
         "prompt": "Nghe Dm7 → G7 → Cmaj7 và để ý hai nốt ở giữa (quãng 3 và quãng 7) chuyển rất ít.",
-        "progression": ["Dm7", "G7", "Cmaj7"], "key": "C", "bpm": 72}),
+        "progression": ["Dm7", "G7", "Cmaj7"], "key": "C", "numerals": ["ii7", "V7", "Imaj7"], "bpm": 72}),
     ("L08-B06", "summary", {
         "title": "Ghi nhớ",
         "items": [

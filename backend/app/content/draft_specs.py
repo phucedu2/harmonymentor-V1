@@ -255,12 +255,12 @@ L05_DRAFT_BLOCKS: list[tuple[str, str, dict[str, Any]]] = [
         "note": "Tìm root của V trong C major, đi lên quãng 5 đúng, rồi dựng hợp âm bảy át."}),
     ("L05-B06", "progression", {
         "title": "5. Ví dụ: chèn át phụ vào I–ii–V–I",
-        "prompt": "Cmaj7 → A7 → Dm7 → G7 → Cmaj7  =  I → V7/ii → ii7 → V7 → I", "key": "C"}),
+        "prompt": "Cmaj7 → A7 → Dm7 → G7 → Cmaj7  =  I → V7/ii → ii7 → V7 → I", "key": "C", "numerals": ["Imaj7", "V7/ii", "ii7", "V7", "Imaj7"]}),
     ("L05-B07", "audio", {
         "title": "6. Nghe trước và sau khi thêm át phụ",
         "prompt": "Nghe Cmaj7 → Dm7 → G7 → Cmaj7, rồi nghe bản có A7 chen trước Dm7. Chú ý C# trong A7 làm Dm7 "
                   "nghe như một điểm đến, rồi G7 vẫn kéo về Cmaj7 như cũ.",
-        "progression": ["Cmaj7", "A7", "Dm7", "G7", "Cmaj7"], "key": "C", "bpm": 72}),
+        "progression": ["Cmaj7", "A7", "Dm7", "G7", "Cmaj7"], "key": "C", "numerals": ["Imaj7", "V7/ii", "ii7", "V7", "Imaj7"], "bpm": 72}),
     ("L05-B08", "theory", {
         "title": "7. Tạo chủ tạm thời hay chuyển giọng?",
         "paragraphs": [
@@ -312,6 +312,12 @@ SONG_EXAMPLE_BLOCKS: dict[str, tuple[str, str, list[str], str]] = {
             ["C", "F", "Fm", "C"], "C"),
 }
 
+# Số La Mã của các ví dụ trên, để đổi giọng bằng Engine (app/content/progression.py).
+SONG_EXAMPLE_NUMERALS: dict[str, list[str]] = {
+    "L02": ["Imaj7", "vi7", "ii7", "V7"], "L03": ["I", "V", "vi", "IV"], "L04": ["ii7", "V7", "Imaj7"],
+    "L05": ["I", "V7/ii", "ii", "V7", "I"], "L06": ["I", "IV", "iv", "I"],
+}
+
 
 def blocks_with_drafts(spec: dict[str, Any]) -> list[tuple[str, str, dict[str, Any]]]:
     """Khối của bài kèm các khối nháp ("Dùng vào sáng tác", thẻ ôn đề xuất) chèn trước khối tóm tắt cuối."""
@@ -330,6 +336,7 @@ def blocks_with_drafts(spec: dict[str, Any]) -> list[tuple[str, str, dict[str, A
     if example:
         title, prompt, progression, key = example
         drafts.append((f"{spec['id']}-BVD", "audio", {"status": DRAFT, "title": title, "prompt": prompt,
-                                                      "progression": progression, "key": key, "bpm": 72}))
+                                                      "progression": progression, "key": key, "bpm": 72,
+                                                      "numerals": SONG_EXAMPLE_NUMERALS[spec["id"]]}))
     at = len(blocks) - 1 if blocks and blocks[-1][1] == "summary" else len(blocks)
     return blocks[:at] + drafts + blocks[at:]

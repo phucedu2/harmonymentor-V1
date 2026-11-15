@@ -62,11 +62,11 @@ L11_SPEC: dict[str, Any] = {
             ]}),
         ("L11-B05", "progression", {
             "title": "4. Ví dụ: I – V – vi – IV",
-            "prompt": "C → G → Am → F  =  I → V → vi → IV", "key": "C"}),
+            "prompt": "C → G → Am → F  =  I → V → vi → IV", "key": "C", "numerals": ["I", "V", "vi", "IV"]}),
         ("L11-B06", "audio", {
             "title": "5. Nghe vòng I – V – vi – IV",
             "prompt": "Nghe bốn hợp âm rồi nghe vòng lặp lại. Chú ý hợp âm cuối (F) tự nhiên dẫn về C đầu vòng.",
-            "progression": ["C", "G", "Am", "F"], "key": "C", "bpm": 80}),
+            "progression": ["C", "G", "Am", "F"], "key": "C", "numerals": ["I", "V", "vi", "IV"], "bpm": 80}),
         ("L11-BCP1", "checkpoint", {
             "title": "Đọc một vòng hợp âm",
             "exercise_id": "L11-Q01",
