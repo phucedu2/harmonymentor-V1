@@ -97,6 +97,9 @@ def message(body: ChatMessageIn, user: User = Depends(get_current_user), db: Ses
         raise AppError(404, "CHAT_SESSION_NOT_FOUND", "Không tìm thấy phiên chat.") from None
     except ts.QuotaExceeded as exc:
         raise _quota_error(exc) from None
+    except ts.RateLimited as exc:
+        raise AppError(429, "AI_RATE_LIMITED", f"Bạn hỏi nhanh quá. Đợi khoảng {exc.retry_after} giây rồi hỏi tiếp nhé.",
+                       retryable=True, headers={"Retry-After": str(exc.retry_after)}) from None
 
 
 @router.post("/explain-attempt", response_model=ChatReplyOut)

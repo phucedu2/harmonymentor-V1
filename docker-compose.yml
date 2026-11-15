@@ -48,6 +48,7 @@ services:
       AUTO_CREATE_SCHEMA: "0"
       TRUST_PROXY: "true"
       QDRANT_URL: http://qdrant:6333
+      RAG_ENABLED: ${RAG_ENABLED:-1}   # chatbot hỏi Qdrant (chưa nạp hoặc lỗi thì tự lùi về đường cũ); đặt 0 để tắt
     depends_on:
       db:
         condition: service_healthy

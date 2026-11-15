@@ -25,7 +25,9 @@ def lesson_records() -> list[Record]:
             id=point_id("lessons", f"{c.lesson_id}/{c.block_id}", i, c.content_hash),
             text=c.embed_text(titles.get(c.lesson_id, "")),
             payload={"source": "lessons", "lesson_id": c.lesson_id, "block_id": c.block_id, "title": c.title,
-                     "lang": "vi", "chunk_idx": i, "license": c.source, "text": c.text}))
+                     "lang": "vi", "chunk_idx": i, "license": c.source, "text": c.text,
+                     # Đủ để dựng lại Chunk của AI Tutor từ payload (pipeline chatbot không cần mở file bài)
+                     "chunk_id": c.chunk_id, "content_hash": c.content_hash, "search_hint": c.search_hint}))
     return out
 
 

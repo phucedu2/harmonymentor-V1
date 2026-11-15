@@ -95,12 +95,18 @@ class QdrantStore:
         return {"collection": self.collection, "dim": self.dim, "total": self.count(), "by_source": sources}
 
     @staticmethod
-    def _filter(filters: dict[str, str] | None):
+    def _filter(filters: dict[str, str | Sequence[str]] | None):
         if not filters:
             return None
-        return models.Filter(must=[models.FieldCondition(key=k, match=models.MatchValue(value=v)) for k, v in filters.items() if v])
+        must = []
+        for k, v in filters.items():
+            if not v:
+                continue
+            match = models.MatchValue(value=v) if isinstance(v, str) else models.MatchAny(any=list(v))
+            must.append(models.FieldCondition(key=k, match=match))
+        return models.Filter(must=must) if must else None
 
-    def search(self, vector: Sequence[float], *, top_k: int, min_score: float, filters: dict[str, str] | None = None) -> list[Hit]:
+    def search(self, vector: Sequence[float], *, top_k: int, min_score: float, filters: dict[str, str | Sequence[str]] | None = None) -> list[Hit]:
         res = self.client.query_points(self.collection, query=list(vector), limit=top_k, score_threshold=min_score,
                                        query_filter=self._filter(filters), with_payload=True)
         return [Hit(str(p.id), float(p.score), dict(p.payload or {})) for p in res.points]
