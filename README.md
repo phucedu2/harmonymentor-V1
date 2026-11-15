@@ -244,8 +244,8 @@ Bản đồ góp ý → việc đã làm: [`docs/AI_TEACHER_FEEDBACK_MAP.md`](do
 
 ```powershell
 docker compose up --build                                   # gồm dịch vụ Qdrant (nội bộ, không mở cổng)
+docker compose exec api python -m app.rag.ingest --source all   # nạp bài học + tài liệu ở data/corpus/raw/
 cd backend
-docker compose exec api python -m app.rag.ingest --source all                    # nạp bài học + tài liệu ở data/corpus/raw/
 python -m app.eval.run                                      # đo, ghi eval/report.md, lỗi nếu tụt so với baseline
 python -m app.ml.relevance_train                            # train lại bộ phân loại liên quan nhạc lý
 ```
