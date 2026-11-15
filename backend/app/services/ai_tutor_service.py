@@ -67,6 +67,14 @@ class QuotaExceeded(RuntimeError):
         self.used, self.quota = used, quota
 
 
+class RateLimited(RuntimeError):
+    """Hỏi quá nhanh (G4): giới hạn theo phút của pipeline, khác hạn mức ngày."""
+
+    def __init__(self, retry_after: int):
+        super().__init__("AI_RATE_LIMITED")
+        self.retry_after = retry_after
+
+
 @dataclass
 class Draft:
     """Câu trả lời trước khi lưu. claims là danh sách đã kiểm (dict), không phải điều AI tự khai."""
@@ -405,83 +413,10 @@ def _study_advice_answer(db: Session, user: User, embedder: Embedder | None, now
 
 def answer_question(db: Session, user: User, question: str, turns: Sequence[tuple[str, str]],
                     embedder: Embedder | None, provider: LLMProvider | None, now: datetime) -> tuple[Draft, dict]:
-    titles = lesson_titles()
-    meta: dict[str, Any] = {}
-    if looks_like_injection(question):
-        return Draft(fb.INJECTION, "out_of_scope", [], [], "ok", "refused_injection", flow="C",
-                     source_label=fb.LABEL_REFUSE), meta
-    if is_study_advice(question):
-        return _study_advice_answer(db, user, embedder, now), meta
-    dec = decide(question, embedder, top_k=settings.rag_top_k)
-    meta["router"] = dec.log()
-    intent = classify(question)
-    meta["intent_local"] = {"intent": intent.intent, "confidence": intent.confidence}
-    meta["retrieval"] = {"method": dec.lesson.method, "best_score": dec.lesson.best_score,
-                         "fallback_reason": dec.lesson.fallback_reason, "chunks": [h.chunk.chunk_id for h in dec.hits]}
-    facts = _engine_facts(dec.engine.facts)
-    meta["engine"] = facts
-    if dec.flow == "G":
-        thanks = any(w in question.lower() for w in ("cảm ơn", "cam on", "thank", "thanks", "thx"))
-        return Draft(fb.THANKS if thanks else fb.GREETING, "greeting", [], [], "ok", "greeting", flow="G"), meta
-    if dec.flow == "C":
-        return Draft(fb.OUT_OF_SCOPE, "out_of_scope", [], [], "ok", "out_of_scope", flow="C",
-                     source_label=fb.LABEL_REFUSE), meta
-    if dec.flow == "D":
-        return _help_answer(dec), meta
-    if dec.flow == "B":
-        return _general_answer(db, user, question, turns, dec, titles, facts, provider, now), meta
+    """Từ G4 (góp ý thầy T3) logic chạy dưới dạng pipeline nhiều bước ở services/ai_pipeline.py (sơ đồ docs/AI_PIPELINE.md)."""
+    from . import ai_pipeline
 
-    # Luồng A: có đoạn bài đủ điểm.
-    hits = dec.hits
-    if provider is None:
-        hit = _faq_answer(question, titles, "ai_disabled")
-        if hit is not None:
-            return hit, meta
-        d = offline_answer(hits, facts, titles, "ai_disabled")
-        d.flow, d.source_label = "A", fb.LABEL_LESSON
-        return d, meta
-    if _llm_rows_today(db, now, None) >= settings.ai_global_daily_budget:
-        d = offline_answer(hits, facts, titles, "global_budget")
-        d.flow, d.source_label = "A", fb.LABEL_LESSON
-        return d, meta
-    used = _llm_rows_today(db, now, user.id)
-    if used >= settings.ai_daily_quota:
-        raise QuotaExceeded(used, settings.ai_daily_quota)
-    allowed = {h.chunk.block_id: h for h in hits}
-    weak = _weak_skill_names(db, user.id)
-
-    def build(correction: str | None) -> str:
-        return pr.chat_prompt(question, hits, titles, turns, facts, user.goal_text, weak, correction)
-
-    try:
-        ans, guard, results, reason = _llm_round(provider, build, allowed, titles)
-    except LLMUnavailable as exc:
-        d = offline_answer(hits, facts, titles, exc.reason)
-        d.llm_calls, d.flow, d.source_label = 1, "A", fb.LABEL_LESSON
-        return d, meta
-    if ans is None:
-        d = offline_answer(hits, facts, titles, reason or "invalid")
-        d.llm_calls, d.llm = len(results), results[-1] if results else None
-        d.flow, d.source_label = "A", fb.LABEL_LESSON
-        return d, meta
-    d = _finish(ans, guard, allowed, titles, results, facts)
-    # Câu LLM không trích được đoạn nào (trích dẫn bịa đã bị bỏ, hoặc LLM tự nói "không biết") thì không gắn nhãn
-    # "Từ bài học": người học thấy rõ câu này chưa có nguồn trong bài (góp ý thầy G1).
-    d.flow, d.source_label = "A", (fb.LABEL_LESSON if d.citations else fb.LABEL_UNCITED)
-    # Không xét intent: prompt luồng A dặn câu "ngoài khóa học" đánh out_of_scope, nên Gemini gắn out_of_scope cho chính
-    # câu "không biết" ("piano có bao nhiêu phím", thử thật 12/11). Câu ngoài âm nhạc đã bị bộ định tuyến chặn, và
-    # prompt kiến thức chung là chốt thứ hai.
-    if not d.citations and _says_unknown(d.reply):
-        # Kho có đoạn "giống chữ" nhưng AI không trích được đoạn nào (thường là "bài chưa dạy", ví dụ "piano có bao
-        # nhiêu phím"): hỏi lại theo kiến thức chung như luồng B (ADR-020). AI lỗi hoặc hết hạn mức thì giữ câu cũ.
-        try:
-            g = _general_answer(db, user, question, turns, dec, titles, facts, provider, now)
-        except QuotaExceeded:
-            return d, meta
-        if g.route in ("general_llm", "out_of_scope"):
-            g.llm_calls += d.llm_calls
-            return g, meta
-    return d, meta
+    return ai_pipeline.run(db, user, question, turns, embedder, provider, now)
 
 
 def _save(db: Session, session: ChatSession, draft: Draft, meta: dict, started: float, now: datetime) -> ChatMessage:
@@ -539,6 +474,9 @@ def handle_message(db: Session, user: User, text: str, *, session_id: str | None
         draft, meta = answer_question(db, user, text, turns, embedder, provider, now)
     except QuotaExceeded:
         db.commit()  # tin nhắn vẫn được lưu (04 Bảng 11, mã 429)
+        raise
+    except RateLimited:
+        db.rollback()  # bấm dồn dập: không lưu tin nhắn nào để khỏi đầy lịch sử
         raise
     meta["suggested_actions"] = draft.suggested_actions or []
     msg = _save(db, session, draft, meta, started, now)

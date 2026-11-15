@@ -44,6 +44,11 @@ _BLOCKED = re.compile(
     r"hack|tan cong|bo qua (?:quy tac|huong dan)|ignore (?:previous|all))\b")
 
 
+def blocked(question: str) -> bool:
+    """Câu thuộc nhóm cấm (bản quyền, tải lậu, mua bán, tấn công): không trả lời, kể cả ngắn."""
+    return bool(_BLOCKED.search(fold(question)))
+
+
 def broad_music(question: str) -> bool:
     """Câu có dấu hiệu liên quan âm nhạc và không thuộc nhóm cấm."""
     f = fold(question)

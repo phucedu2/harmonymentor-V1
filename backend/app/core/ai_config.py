@@ -73,3 +73,30 @@ class RagConfig:
 
 def rag_config() -> RagConfig:
     return RagConfig()
+
+
+@dataclass(frozen=True)
+class PipelineConfig:
+    """Pipeline chatbot (T3 phần 2, G4). Mọi cờ đọc lại từ môi trường ở mỗi lần gọi để test và Admin đổi được."""
+
+    # Bật thì bước Retrieve hỏi Qdrant (cần QDRANT_URL và collection đã nạp); tắt hoặc Qdrant lỗi thì dùng đường e5 + BM25 cũ.
+    rag_enabled: bool = field(default_factory=lambda: os.getenv("RAG_ENABLED", "0").lower() in ("1", "true", "yes"))
+    # Nguồn trong Qdrant mà chatbot được trích. Mặc định chỉ bài học; thêm "corpus" để cho phép tài liệu ngoài.
+    rag_sources: tuple[str, ...] = field(default_factory=lambda: tuple(
+        s.strip() for s in os.getenv("RAG_SOURCES", "lessons").split(",") if s.strip()))
+    rerank_weight: float = field(default_factory=lambda: _f("RAG_RERANK_WEIGHT", 0.15))
+    rerank_pool: int = field(default_factory=lambda: _i("RAG_RERANK_POOL", 12))
+    # Số lượt hỏi tối đa mỗi người mỗi phút (0 = tắt). Trong bộ nhớ của tiến trình; nhiều worker thì mỗi worker đếm riêng.
+    rate_limit_per_min: int = field(default_factory=lambda: _i("CHAT_RATE_LIMIT_PER_MIN", 20))
+    # Câu lạc đề: trả lời tối đa chừng này câu rồi dẫn về nhạc lý (Phúc chốt 14/11/2026). "refuse" = từ chối như ADR-020.
+    offtopic_mode: str = field(default_factory=lambda: os.getenv("OFFTOPIC_MODE", "brief"))
+    offtopic_max_sentences: int = field(default_factory=lambda: _i("OFFTOPIC_MAX_SENTENCES", 2))
+    # Bật thì độ tin cậy truy xuất thấp là "mình không biết + gợi ý bài", không để Gemini trả lời bằng kiến thức chung (ADR-020).
+    strict_grounding: bool = field(default_factory=lambda: os.getenv("RAG_STRICT_GROUNDING", "0").lower() in ("1", "true", "yes"))
+    # Giá mỗi 1 triệu token (USD) để ước tính chi phí trong nhật ký. 0 = chưa cấu hình, không ghi chi phí.
+    price_in_per_m: float = field(default_factory=lambda: _f("AI_PRICE_IN_PER_M", 0.0))
+    price_out_per_m: float = field(default_factory=lambda: _f("AI_PRICE_OUT_PER_M", 0.0))
+
+
+def pipeline_config() -> PipelineConfig:
+    return PipelineConfig()
