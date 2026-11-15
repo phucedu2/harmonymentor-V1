@@ -12,6 +12,7 @@ import ChordInspector, { ProgressionInspector } from "./ChordInspector";
 import { resumeStepIndex } from "../../lib/resumeStep";
 import { parseProgressionSymbols, pitchClassOf } from "../../audio/musicUtils";
 import { ChordAudioSet, ProgressionAudio } from "../music/AudioControls";
+import KeyedProgression from "./KeyedProgression";
 import GlossaryBlock from "../music/GlossaryBlock";
 import NotationStaff from "../music/NotationStaff";
 import VirtualPiano from "../music/VirtualPiano";
@@ -397,6 +398,9 @@ function BlockRenderer({
   const progression = Array.isArray(block.payload.progression) ? block.payload.progression.filter((item): item is string => typeof item === "string") : [];
   const chords = Array.isArray(block.payload.chords) ? block.payload.chords.filter((item): item is string => typeof item === "string") : [];
   const bpm = typeof block.payload.bpm === "number" ? block.payload.bpm : 80;
+  // Bài khai báo số La Mã thì ví dụ đổi được sang 12 giọng (máy chủ/Engine tính ký hiệu), thay vì cố định giọng C.
+  const numerals = Array.isArray(block.payload.numerals) ? block.payload.numerals.filter((item): item is string => typeof item === "string") : [];
+  const defaultKey = typeof block.payload.key === "string" ? block.payload.key : "C";
   // Mỗi thuật ngữ chỉ chú giải một lần trong khối, dù xuất hiện ở nhiều đoạn.
   const claimed = new Set<string>();
   const t = (text: string) => annotateTerms(text, terms, claimed);
@@ -439,9 +443,13 @@ function BlockRenderer({
     const symbols = prompt ? parseProgressionSymbols(prompt) : [];
     return <article className={ui.block}>
       <span className={ui.kicker}>Vòng hợp âm</span><h3>{title}</h3>
-      {prompt && <ProgressionInspector text={prompt} contextKey={contextKey} />}
+      {numerals.length > 0
+        ? <KeyedProgression mode="progression" numerals={numerals} defaultKey={defaultKey} prompt={prompt} bpm={bpm} contextKey={contextKey} />
+        : <>
+          {prompt && <ProgressionInspector text={prompt} contextKey={contextKey} />}
+          {symbols.length > 1 && <ProgressionAudio symbols={symbols} contextKey={contextKey} initialBpm={bpm} />}
+        </>}
       <p className="text-xs text-muted">Rê chuột, focus hoặc nhấn vào từng hợp âm để xem cấu tạo. Bạn cũng có thể nghe cả progression.</p>
-      {symbols.length > 1 && <ProgressionAudio symbols={symbols} contextKey={contextKey} initialBpm={bpm} />}
     </article>;
   }
 
@@ -481,8 +489,12 @@ function BlockRenderer({
     return <article className={`${ui.block} ${ui.blockTone.audio}`}>
       <span className={ui.kicker}>Nghe</span><h3>{title}</h3>
       {prompt && <p>{prompt}</p>}
-      {progression.length > 1 && <ProgressionAudio symbols={progression} contextKey={contextKey} initialBpm={bpm} />}
-      {chords.length > 0 && <ChordAudioSet symbols={chords} contextKey={contextKey} />}
+      {numerals.length > 0 && (progression.length > 1 || chords.length > 0)
+        ? <KeyedProgression mode={progression.length > 1 ? "audio-progression" : "audio-chords"} numerals={numerals} defaultKey={defaultKey} bpm={bpm} contextKey={contextKey} />
+        : <>
+          {progression.length > 1 && <ProgressionAudio symbols={progression} contextKey={contextKey} initialBpm={bpm} />}
+          {chords.length > 0 && <ChordAudioSet symbols={chords} contextKey={contextKey} />}
+        </>}
     </article>;
   }
 
@@ -568,7 +580,7 @@ function BlockRenderer({
     {paragraphs.map((paragraph) => <p key={paragraph}>{t(paragraph)}</p>)}
     {items.length > 0 && <ul>{items.map((item) => <li key={item}>{t(item)}</li>)}</ul>}
     {prompt && <p className="rounded-lg bg-primary-soft px-3 py-2 text-ink">{t(prompt)}</p>}
-    {block.block_type === "theory" && title.toLowerCase().includes("triad") && <div className="mt-3 flex flex-wrap gap-2"><ChordInspector symbol="C" /><ChordInspector symbol="Cm" /><ChordInspector symbol="Cdim" /><ChordInspector symbol="Caug" /></div>}
+    {block.block_type === "theory" && title.toLowerCase().includes("triad") && <div className="mt-3 flex flex-wrap gap-2">{["", "m", "dim", "aug"].map((suffix) => <ChordInspector key={suffix} symbol={`${lesson1Root}${suffix}`} />)}</div>}
   </article>;
 }
 

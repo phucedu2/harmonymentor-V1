@@ -396,6 +396,9 @@ export const api = {
   lesson1Theory: (root: string) => apiCall<Lesson1Theory>(`/music/lesson1/${encodeURIComponent(root)}`),
   inspectChord: (symbol: string, key?: string) =>
     apiCall<ChordInspection>(`/music/chords/inspect?symbol=${encodeURIComponent(symbol)}${key ? `&key=${encodeURIComponent(key)}` : ""}`),
+  /** Vòng hợp âm của bài ở giọng bất kỳ: số La Mã -> ký hiệu, do Music Engine tính. */
+  progressionInKey: (key: string, numerals: string[]) =>
+    apiCall<{ key: string; keys: string[]; numerals: string[]; symbols: string[] }>(`/music/progression?key=${encodeURIComponent(key)}&numerals=${encodeURIComponent(numerals.join(","))}`),
   submitAttempt: (exerciseVersionId: string, answer: unknown, inputMethod?: InputMethod) =>
     apiPost<AttemptResult>("/attempts", { exercise_version_id: exerciseVersionId, answer, input_method: inputMethod }),
   completeLesson: (lessonId: string) =>

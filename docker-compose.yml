@@ -49,6 +49,11 @@ services:
       TRUST_PROXY: "true"
       QDRANT_URL: http://qdrant:6333
       RAG_ENABLED: ${RAG_ENABLED:-1}   # chatbot hỏi Qdrant (chưa nạp hoặc lỗi thì tự lùi về đường cũ); đặt 0 để tắt
+      RAG_CORPUS_DIR: /data/corpus/raw
+    # Bộ đánh giá (python -m app.eval.run) đọc /eval và ghi eval/report.md; kho tài liệu thô nằm ngoài image (gitignore)
+    volumes:
+      - ./eval:/eval
+      - ./data/corpus:/data/corpus:ro
     depends_on:
       db:
         condition: service_healthy
