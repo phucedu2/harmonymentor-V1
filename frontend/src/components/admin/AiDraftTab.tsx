@@ -95,6 +95,7 @@ export default function AiDraftTab() {
   const [range, setRange] = useState<Record<string, { from: string; to: string; topic: string }>>({});
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [pasted, setPasted] = useState("");
 
   const load = () => { api.aiDocuments().then(setDocs).catch(() => undefined); api.aiDrafts().then(setDrafts).catch(() => undefined); };
   useEffect(() => { api.aiStatus().then((s) => setEnabled(s.enabled)).catch(() => setEnabled(false)); load(); }, []);
@@ -103,9 +104,21 @@ export default function AiDraftTab() {
     e.preventDefault();
     if (!file) return;
     setBusy(true); setMsg(null);
-    try { await api.aiUpload(file, title, note, consent); setFile(null); setTitle(""); setNote(""); setConsent(false); load(); setMsg("Đã tải lên và trích chữ."); }
+    try { const d = await api.aiUpload(file, title, note, consent); setFile(null); setTitle(""); setNote(""); setConsent(false); load(); setMsg(d.relevance_reason ?? "Đã tải lên và trích chữ."); }
     catch (err) { setMsg(errMsg(err)); } finally { setBusy(false); }
   };
+  const paste = async () => {
+    setBusy(true); setMsg(null);
+    try { const d = await api.aiPasteText(pasted, title, note, consent); setPasted(""); setTitle(""); setNote(""); setConsent(false); load(); setMsg(d.relevance_reason ?? "Đã nhận chữ."); }
+    catch (err) { setMsg(errMsg(err)); } finally { setBusy(false); }
+  };
+  const review = async (d: AiDocument, decision: "approve" | "reject") => {
+    setBusy(true); setMsg(null);
+    try { await api.aiReviewDocument(d.id, decision); load(); setMsg(decision === "approve" ? "Đã duyệt: tài liệu dùng được để soạn bài." : "Đã từ chối và xóa chữ đã lưu."); }
+    catch (err) { setMsg(errMsg(err)); } finally { setBusy(false); }
+  };
+  const pending = docs.filter((d) => d.relevance_status === "pending");
+  const ready = docs.filter((d) => d.relevance_status === "accepted");
   const make = async (d: AiDocument) => {
     const r = range[d.id] ?? { from: "1", to: String(Math.min(d.page_count, 5)), topic: "" };
     setBusy(true); setMsg("AI đang soạn bản nháp, có thể mất đến một phút…");
@@ -121,18 +134,30 @@ export default function AiDraftTab() {
     <Card className="p-4">
       <CardTitle>Tải tài liệu nhạc lý</CardTitle>
       <form onSubmit={upload} className="mt-2 grid gap-2">
-        <input type="file" accept=".pdf,.docx,.md,.txt" aria-label="Tệp tài liệu" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+        <input type="file" accept=".pdf,.docx,.md,.txt,.png,.jpg,.jpeg,.webp,.xml,.musicxml,.mxl,.mid,.midi" aria-label="Tệp tài liệu" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
         <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Nguồn: tên sách, tác giả, năm (bắt buộc)" aria-label="Nguồn tài liệu" className="min-h-10 rounded-lg border border-line bg-surface px-3" />
         <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Ghi chú nguồn (không bắt buộc)" aria-label="Ghi chú nguồn" className="min-h-10 rounded-lg border border-line bg-surface px-3" />
         <label className="flex items-start gap-2 text-sm"><input type="checkbox" className="mt-1" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
           Tôi có quyền dùng tài liệu này, và hiểu rằng nội dung các trang đã chọn sẽ được gửi tới Gemini (Google) để tóm tắt.</label>
-        <p className="text-xs text-muted">PDF, DOCX, MD, TXT, tối đa 10 MB. PDF ảnh quét (không có chữ) chưa đọc được.</p>
+        <p className="text-xs text-muted">PDF (kể cả ảnh quét), DOCX, ảnh (OCR), MusicXML, MIDI, MD, TXT; tối đa 10 MB. Hệ thống chấm điểm liên quan nhạc lý: tài liệu lạc đề bị từ chối, tài liệu chưa chắc vào hàng chờ duyệt.</p>
         <Button type="submit" loading={busy} disabled={!file || !consent || !title.trim()}>Tải lên</Button>
       </form>
+      <details className="mt-3"><summary className="cursor-pointer text-sm font-semibold">Hoặc dán chữ trực tiếp</summary>
+        <textarea rows={5} value={pasted} onChange={(e) => setPasted(e.target.value)} aria-label="Chữ dán vào" placeholder="Dán đoạn lý thuyết nhạc lý vào đây (dùng chung nguồn và ô xác nhận ở trên)" className="mt-2 w-full rounded-lg border border-line bg-surface p-2" />
+        <Button variant="secondary" loading={busy} disabled={!pasted.trim() || !consent || !title.trim()} onClick={paste}>Kiểm tra và nhận chữ</Button>
+      </details>
     </Card>
 
-    {docs.length > 0 && <Card className="p-4"><CardTitle>Tài liệu đã tải</CardTitle><ul className="mt-2 grid gap-3">
-      {docs.map((d) => { const r = range[d.id] ?? { from: "1", to: String(Math.min(d.page_count, 5)), topic: "" };
+    {pending.length > 0 && <Card className="p-4"><CardTitle>Chờ duyệt nội dung nhạc lý ({pending.length})</CardTitle>
+      <p className="mt-1 text-sm text-muted">Hệ thống chưa chắc các tài liệu này nói về nhạc lý. Xem lý do rồi duyệt hoặc từ chối; tài liệu chưa duyệt chưa dùng để soạn bài được.</p>
+      <ul className="mt-2 grid gap-3">{pending.map((d) => <li key={d.id} className="rounded-lg border border-line p-3">
+        <p className="font-semibold">{d.filename} <span className="text-sm font-normal text-muted">· {d.source_title} · điểm {Math.round((d.relevance_score ?? 0) * 100)}/100</span></p>
+        <p className="mt-1 text-sm">{d.relevance_reason}</p>
+        <div className="mt-2 flex flex-wrap gap-2"><Button loading={busy} onClick={() => review(d, "approve")}>Duyệt, dùng được</Button>
+          <Button variant="ghost" loading={busy} onClick={() => review(d, "reject")}>Từ chối</Button></div></li>)}</ul></Card>}
+
+    {ready.length > 0 && <Card className="p-4"><CardTitle>Tài liệu đã tải</CardTitle><ul className="mt-2 grid gap-3">
+      {ready.map((d) => { const r = range[d.id] ?? { from: "1", to: String(Math.min(d.page_count, 5)), topic: "" };
         const upd = (patch: Partial<typeof r>) => setRange({ ...range, [d.id]: { ...r, ...patch } });
         return <li key={d.id} className="rounded-lg border border-line p-3">
           <p className="font-semibold">{d.filename} <span className="text-sm font-normal text-muted">· {d.page_count} trang/đoạn · {d.source_title}</span></p>

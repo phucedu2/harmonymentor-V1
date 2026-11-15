@@ -14,6 +14,7 @@ from ..core.errors import AppError
 from ..db.models import AdminAuditLog, Attempt, LessonProgress, User
 from ..db.session import get_db
 from ..ai.tutor.llm import LLMProvider, get_provider
+from ..core.ai_config import relevance_config
 from ..core.config import settings
 from ..db.models import SourceDocument
 from . import ai_service, content_service, stats_service
@@ -196,7 +197,8 @@ def ai_status(provider: LLMProvider | None = Depends(draft_provider_dep)):
 @router.post("/ai/documents")
 def upload_document(file: UploadFile = File(...), source_title: str = Form(...), source_note: str | None = Form(default=None),
                     consent: bool = Form(default=False), admin: User = Depends(require_admin), db: Session = Depends(get_db)):
-    data = file.file.read(ai_service.MAX_BYTES + 1)
+    # Đọc dư 1 byte để biết tệp vượt giới hạn mà không nạp cả tệp khổng lồ vào bộ nhớ.
+    data = file.file.read(relevance_config().max_bytes + 1)
     try:
         doc = ai_service.add_document(db, admin, file.filename or "tai-lieu", data, source_title, source_note, consent)
     except AdminContentError as exc:
@@ -204,10 +206,43 @@ def upload_document(file: UploadFile = File(...), source_title: str = Form(...),
     return ai_service.document_info(doc)
 
 
+class PasteIn(BaseModel):
+    text: str
+    source_title: str = Field(max_length=300)
+    source_note: str | None = Field(default=None, max_length=300)
+    consent: bool = False
+
+
+@router.post("/ai/documents/text")
+def paste_document(body: PasteIn, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    try:
+        doc = ai_service.add_pasted_text(db, admin, body.text, body.source_title, body.source_note, body.consent)
+    except AdminContentError as exc:
+        raise _wrap(exc) from exc
+    return ai_service.document_info(doc)
+
+
 @router.get("/ai/documents")
-def list_documents(db: Session = Depends(get_db)):
-    rows = db.scalars(select(SourceDocument).where(SourceDocument.deleted_at.is_(None)).order_by(SourceDocument.created_at.desc()).limit(50)).all()
+def list_documents(status: str | None = Query(default=None, pattern="^(accepted|pending)$"), db: Session = Depends(get_db)):
+    query = select(SourceDocument).where(SourceDocument.deleted_at.is_(None))
+    if status:
+        query = query.where(SourceDocument.relevance_status == status)
+    rows = db.scalars(query.order_by(SourceDocument.created_at.desc()).limit(50)).all()
     return [ai_service.document_info(d) for d in rows]
+
+
+class ReviewIn(BaseModel):
+    decision: str = Field(pattern="^(approve|reject)$")
+    note: str | None = Field(default=None, max_length=300)
+
+
+@router.post("/ai/documents/{doc_id}/review")
+def review_document(doc_id: str, body: ReviewIn, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    try:
+        doc = ai_service.review_document(db, admin, doc_id, body.decision, body.note)
+    except AdminContentError as exc:
+        raise _wrap(exc) from exc
+    return ai_service.document_info(doc)
 
 
 @router.post("/ai/documents/{doc_id}/draft")
