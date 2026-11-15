@@ -373,8 +373,10 @@ def main(argv=None) -> int:
 
     create_schema()
     with SessionLocal() as db:
-        db.add(User(id="eval-user", display_name="eval", email="eval@example.test"))
-        db.commit()
+        # Chạy lại nhiều lần trên cùng CSDL (Docker) không được trùng khóa; is_synthetic để loại khỏi dashboard (nguyên tắc 9)
+        if db.get(User, "eval-user") is None:
+            db.add(User(id="eval-user", display_name="eval", email="eval@example.test", is_synthetic=True))
+            db.commit()
         results = evaluate(db, db.get(User, "eval-user"), live=args.live, pause=args.pause)
     baseline = json.loads(BASELINE_PATH.read_text(encoding="utf-8")) if BASELINE_PATH.exists() else {}
     regs = [] if args.live else regressions(results, baseline)
