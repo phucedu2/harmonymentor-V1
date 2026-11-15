@@ -111,4 +111,10 @@ def default_scorer(cfg: RelevanceConfig | None = None) -> RelevanceScorer:
     cfg = cfg or relevance_config()
     if cfg.scorer == "lexicon":
         return LexiconScorer(cfg)
+    if cfg.scorer == "classifier":
+        from .classifier import classifier_scorer      # nhập muộn: classifier.py nhập lại Score/windows từ tệp này
+
+        scorer = classifier_scorer(cfg, _default_embedder())
+        if scorer is not None:
+            return scorer
     return HybridScorer(_default_embedder(), cfg)

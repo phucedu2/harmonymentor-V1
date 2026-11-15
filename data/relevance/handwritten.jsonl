@@ -1,0 +1,177 @@
+{"label": 0, "group": "neg:nau_an", "source": "Claude soạn 15/11", "text": "Để món canh chua ngon, bạn nên nêm me và cà chua trước, sau đó mới cho cá vào nấu chín tới rồi tắt bếp ngay."}
+{"label": 0, "group": "neg:nau_an", "source": "Claude soạn 15/11", "text": "Trộn bột mì với đường và bơ lạt, nhào đều tay rồi để bột nghỉ 30 phút trong ngăn mát trước khi cán mỏng nướng bánh quy."}
+{"label": 0, "group": "neg:nau_an", "source": "Claude soạn 15/11", "text": "Thịt kho tàu cần dùng thịt ba chỉ, trứng vịt luộc, nước dừa tươi và đun lửa nhỏ khoảng một tiếng cho thịt mềm."}
+{"label": 0, "group": "neg:nau_an", "source": "Claude soạn 15/11", "text": "To make a good risotto, toast the rice in butter, add warm stock one ladle at a time and stir until creamy."}
+{"label": 0, "group": "neg:nau_an", "source": "Claude soạn 15/11", "text": "Bún bò Huế có vị cay nhờ sa tế sả, nước dùng ninh từ xương bò và giò heo, ăn kèm rau sống và bắp chuối bào."}
+{"label": 0, "group": "neg:nau_an", "source": "Claude soạn 15/11", "text": "Muối dưa cải cần phơi héo rau, trộn với nước vo gạo và một chút đường, đậy kín vài ngày là chua vừa ăn."}
+{"label": 0, "group": "neg:nau_an", "source": "Claude soạn 15/11", "text": "Chiên cá cần lau thật khô, ướp muối và nghệ, để chảo nóng rồi mới thả cá để da giòn không bị dính."}
+{"label": 0, "group": "neg:nau_an", "source": "Claude soạn 15/11", "text": "Pha cà phê phin ngon thì dùng nước vừa sôi, ủ bột 30 giây trước khi chế đầy và đợi cà phê nhỏ giọt chậm."}
+{"label": 0, "group": "neg:nau_an", "source": "Claude soạn 15/11", "text": "Salad ức gà gồm rau xà lách, cà chua bi, dưa leo, ức gà áp chảo và sốt mè rang rưới lên trước khi ăn."}
+{"label": 0, "group": "neg:the_thao", "source": "Claude soạn 15/11", "text": "Đội chủ nhà dẫn trước 2–0 sau hiệp một nhờ hai pha phản công nhanh, nhưng đối thủ gỡ lại một bàn ở phút 70."}
+{"label": 0, "group": "neg:the_thao", "source": "Claude soạn 15/11", "text": "Vận động viên chạy 100 mét về nhất với thành tích 9 giây 95, phá kỷ lục quốc gia tồn tại suốt tám năm."}
+{"label": 0, "group": "neg:the_thao", "source": "Claude soạn 15/11", "text": "The coach changed the formation to 4-3-3 in the second half and the team created far more chances on the wings."}
+{"label": 0, "group": "neg:the_thao", "source": "Claude soạn 15/11", "text": "Giải bóng rổ học đường năm nay có 16 đội tham dự, vòng chung kết diễn ra vào cuối tuần tại nhà thi đấu thành phố."}
+{"label": 0, "group": "neg:the_thao", "source": "Claude soạn 15/11", "text": "Cầu thủ bị thẻ vàng thứ hai nên phải rời sân, đội bóng chơi thiếu người suốt hai mươi phút cuối trận."}
+{"label": 0, "group": "neg:the_thao", "source": "Claude soạn 15/11", "text": "Để chạy bộ không đau gối, bạn nên khởi động kỹ, chọn giày phù hợp và tăng quãng đường từ từ mỗi tuần."}
+{"label": 0, "group": "neg:the_thao", "source": "Claude soạn 15/11", "text": "Tay vợt hạt giống số một thua ở vòng ba sau năm set kéo dài gần bốn tiếng đồng hồ trên sân đất nện."}
+{"label": 0, "group": "neg:the_thao", "source": "Claude soạn 15/11", "text": "Lịch thi đấu vòng loại World Cup khu vực châu Á đã được công bố, trận mở màn diễn ra vào tháng sau."}
+{"label": 0, "group": "neg:the_thao", "source": "Claude soạn 15/11", "text": "Bơi sải cần phối hợp nhịp thở bên trái hoặc phải sau mỗi ba nhịp tay để giữ thân người cân bằng."}
+{"label": 0, "group": "neg:lap_trinh", "source": "Claude soạn 15/11", "text": "def is_prime(n): return n > 1 and all(n % i for i in range(2, int(n ** 0.5) + 1)). Hàm kiểm tra số nguyên tố trong O(√n)."}
+{"label": 0, "group": "neg:lap_trinh", "source": "Claude soạn 15/11", "text": "SELECT name, COUNT(*) FROM orders GROUP BY name HAVING COUNT(*) > 3; câu truy vấn này lọc khách mua hơn ba lần."}
+{"label": 0, "group": "neg:lap_trinh", "source": "Claude soạn 15/11", "text": "In React, useEffect runs after render and the cleanup function runs before the next effect or when the component unmounts."}
+{"label": 0, "group": "neg:lap_trinh", "source": "Claude soạn 15/11", "text": "Git rebase viết lại lịch sử commit nên không dùng trên nhánh đã đẩy lên chung, hãy dùng merge để an toàn hơn."}
+{"label": 0, "group": "neg:lap_trinh", "source": "Claude soạn 15/11", "text": "Lỗi NullPointerException xảy ra khi gọi phương thức trên biến chưa được gán đối tượng, hãy kiểm tra giá trị null trước."}
+{"label": 0, "group": "neg:lap_trinh", "source": "Claude soạn 15/11", "text": "Docker container chia sẻ nhân hệ điều hành với máy chủ nên khởi động nhanh hơn máy ảo và tốn ít bộ nhớ hơn."}
+{"label": 0, "group": "neg:lap_trinh", "source": "Claude soạn 15/11", "text": "Thuật toán sắp xếp nhanh chọn một phần tử chốt, chia mảng thành hai nửa nhỏ hơn và lớn hơn rồi đệ quy từng nửa."}
+{"label": 0, "group": "neg:lap_trinh", "source": "Claude soạn 15/11", "text": "Để triển khai API, bạn cần đặt biến môi trường cho cơ sở dữ liệu, cấu hình CORS và bật HTTPS trước khi mở ra ngoài."}
+{"label": 0, "group": "neg:lap_trinh", "source": "Claude soạn 15/11", "text": "const total = items.reduce((s, x) => s + x.price * x.qty, 0); // tính tổng tiền giỏ hàng"}
+{"label": 0, "group": "neg:phap_luat", "source": "Claude soạn 15/11", "text": "Hợp đồng lao động phải ghi rõ công việc, địa điểm làm việc, mức lương, thời hạn và điều kiện chấm dứt hợp đồng."}
+{"label": 0, "group": "neg:phap_luat", "source": "Claude soạn 15/11", "text": "Bên thuê nhà có nghĩa vụ trả tiền thuê đúng hạn và giữ gìn tài sản; bên cho thuê phải bảo đảm quyền sử dụng ổn định."}
+{"label": 0, "group": "neg:phap_luat", "source": "Claude soạn 15/11", "text": "Người nộp đơn cần chuẩn bị bản sao căn cước, giấy xác nhận cư trú và nộp hồ sơ tại bộ phận một cửa của phường."}
+{"label": 0, "group": "neg:phap_luat", "source": "Claude soạn 15/11", "text": "The defendant has fourteen days to file a response, otherwise the court may enter a default judgment against them."}
+{"label": 0, "group": "neg:phap_luat", "source": "Claude soạn 15/11", "text": "Mức phạt vi phạm nồng độ cồn được quy định theo từng mức, kèm tước giấy phép lái xe có thời hạn."}
+{"label": 0, "group": "neg:phap_luat", "source": "Claude soạn 15/11", "text": "Quyền sở hữu trí tuệ gồm quyền tác giả, quyền liên quan, sở hữu công nghiệp và quyền đối với giống cây trồng."}
+{"label": 0, "group": "neg:phap_luat", "source": "Claude soạn 15/11", "text": "Khi mua hàng online, người tiêu dùng có quyền đổi trả trong bảy ngày nếu sản phẩm không đúng mô tả của người bán."}
+{"label": 0, "group": "neg:phap_luat", "source": "Claude soạn 15/11", "text": "Điều khoản bảo mật yêu cầu hai bên không tiết lộ thông tin kinh doanh cho bên thứ ba trong vòng ba năm."}
+{"label": 0, "group": "neg:tai_chinh", "source": "Claude soạn 15/11", "text": "Lãi suất tiết kiệm kỳ hạn 12 tháng của các ngân hàng dao động quanh mức năm đến sáu phần trăm một năm."}
+{"label": 0, "group": "neg:tai_chinh", "source": "Claude soạn 15/11", "text": "Doanh nghiệp phải kê khai thuế giá trị gia tăng theo quý và nộp báo cáo tài chính trước ngày 31 tháng 3 hàng năm."}
+{"label": 0, "group": "neg:tai_chinh", "source": "Claude soạn 15/11", "text": "Để lập ngân sách cá nhân, hãy chia thu nhập thành nhu cầu thiết yếu, tiết kiệm và chi tiêu linh hoạt theo tỉ lệ 50-30-20."}
+{"label": 0, "group": "neg:tai_chinh", "source": "Claude soạn 15/11", "text": "The central bank held interest rates steady, citing sticky inflation and a resilient labor market."}
+{"label": 0, "group": "neg:tai_chinh", "source": "Claude soạn 15/11", "text": "Chỉ số VN-Index giảm hai phần trăm trong phiên chiều do áp lực bán của nhóm cổ phiếu ngân hàng."}
+{"label": 0, "group": "neg:tai_chinh", "source": "Claude soạn 15/11", "text": "Thẻ tín dụng tính lãi trên dư nợ khi không thanh toán đủ trong kỳ miễn lãi, nên cần trả đúng hạn mỗi tháng."}
+{"label": 0, "group": "neg:tai_chinh", "source": "Claude soạn 15/11", "text": "Vay mua nhà thường gồm giai đoạn ưu đãi lãi cố định rồi chuyển sang lãi thả nổi cộng biên độ của ngân hàng."}
+{"label": 0, "group": "neg:tai_chinh", "source": "Claude soạn 15/11", "text": "Quỹ đầu tư chỉ số có phí thấp và phù hợp với người muốn đầu tư dài hạn mà không cần chọn từng cổ phiếu."}
+{"label": 0, "group": "neg:suc_khoe", "source": "Claude soạn 15/11", "text": "Người lớn nên ngủ bảy đến chín tiếng mỗi đêm, tránh dùng điện thoại trước giờ ngủ ít nhất ba mươi phút."}
+{"label": 0, "group": "neg:suc_khoe", "source": "Claude soạn 15/11", "text": "Triệu chứng cảm cúm gồm sốt, đau họng, ho và mệt mỏi; hãy nghỉ ngơi, uống nhiều nước và theo dõi nhiệt độ."}
+{"label": 0, "group": "neg:suc_khoe", "source": "Claude soạn 15/11", "text": "Uống đủ nước giúp thận lọc tốt hơn, nhưng lượng cần thiết tùy theo cân nặng, thời tiết và mức vận động."}
+{"label": 0, "group": "neg:suc_khoe", "source": "Claude soạn 15/11", "text": "A balanced diet includes vegetables, whole grains, lean protein and healthy fats, with limited added sugar."}
+{"label": 0, "group": "neg:suc_khoe", "source": "Claude soạn 15/11", "text": "Trẻ sơ sinh cần được tiêm đủ các mũi vaccine trong chương trình tiêm chủng mở rộng theo lịch của trạm y tế."}
+{"label": 0, "group": "neg:suc_khoe", "source": "Claude soạn 15/11", "text": "Đau lưng do ngồi lâu có thể giảm bằng cách đứng dậy vận động mỗi giờ và điều chỉnh độ cao màn hình ngang tầm mắt."}
+{"label": 0, "group": "neg:suc_khoe", "source": "Claude soạn 15/11", "text": "Thuốc kháng sinh chỉ có tác dụng với vi khuẩn, không điều trị được bệnh do virus gây ra như cảm lạnh thông thường."}
+{"label": 0, "group": "neg:suc_khoe", "source": "Claude soạn 15/11", "text": "Tập thể dục vừa phải ba lần mỗi tuần giúp cải thiện tim mạch và tinh thần, chỉ cần bắt đầu từ mười lăm phút."}
+{"label": 0, "group": "neg:du_lich", "source": "Claude soạn 15/11", "text": "Đà Lạt vào mùa mưa se lạnh, du khách nên mang áo khoác mỏng và đặt phòng sớm vào dịp lễ cuối năm."}
+{"label": 0, "group": "neg:du_lich", "source": "Claude soạn 15/11", "text": "Vé máy bay giá rẻ thường mở bán trước ba đến sáu tháng, hãy đặt vé vào giữa tuần để có giá tốt hơn."}
+{"label": 0, "group": "neg:du_lich", "source": "Claude soạn 15/11", "text": "The old town is best explored on foot, with morning markets, small temples and street food on every corner."}
+{"label": 0, "group": "neg:du_lich", "source": "Claude soạn 15/11", "text": "Hộ chiếu cần còn hạn ít nhất sáu tháng và một số nước yêu cầu thị thực điện tử nộp trước chuyến đi."}
+{"label": 0, "group": "neg:du_lich", "source": "Claude soạn 15/11", "text": "Hội An nổi tiếng với phố cổ đèn lồng, may đo áo dài và các món cao lầu, mì Quảng, bánh mì phượng."}
+{"label": 0, "group": "neg:du_lich", "source": "Claude soạn 15/11", "text": "Khi đi leo núi, hãy mang theo đủ nước, đèn pin, áo mưa và báo lịch trình với người thân trước khi khởi hành."}
+{"label": 0, "group": "neg:du_lich", "source": "Claude soạn 15/11", "text": "Chuyến tàu đêm Hà Nội – Sa Pa mất khoảng tám tiếng, toa giường nằm có điều hòa và chăn gối sạch sẽ."}
+{"label": 0, "group": "neg:du_lich", "source": "Claude soạn 15/11", "text": "Mùa hoa anh đào ở Nhật Bản thường nở từ cuối tháng ba đến đầu tháng tư tùy theo vùng."}
+{"label": 0, "group": "neg:hoc_thuat", "source": "Claude soạn 15/11", "text": "Phương trình bậc hai ax² + bx + c = 0 có nghiệm x = (−b ± √(b² − 4ac)) / 2a khi biệt thức không âm."}
+{"label": 0, "group": "neg:hoc_thuat", "source": "Claude soạn 15/11", "text": "Định luật II Newton cho biết gia tốc của vật tỉ lệ thuận với lực tác dụng và tỉ lệ nghịch với khối lượng."}
+{"label": 0, "group": "neg:hoc_thuat", "source": "Claude soạn 15/11", "text": "Quang hợp là quá trình cây xanh dùng ánh sáng, nước và khí cacbonic để tạo ra đường và giải phóng oxy."}
+{"label": 0, "group": "neg:hoc_thuat", "source": "Claude soạn 15/11", "text": "The derivative of sin x is cos x, and the integral of cos x over an interval gives the net signed area."}
+{"label": 0, "group": "neg:hoc_thuat", "source": "Claude soạn 15/11", "text": "Chiến thắng Bạch Đằng năm 938 do Ngô Quyền lãnh đạo đã chấm dứt hơn một nghìn năm Bắc thuộc."}
+{"label": 0, "group": "neg:hoc_thuat", "source": "Claude soạn 15/11", "text": "Sông Mê Kông chảy qua sáu quốc gia và bồi đắp nên đồng bằng sông Cửu Long phì nhiêu ở miền nam Việt Nam."}
+{"label": 0, "group": "neg:hoc_thuat", "source": "Claude soạn 15/11", "text": "Nguyên tử gồm hạt nhân chứa proton và neutron, xung quanh là các electron chuyển động theo các lớp."}
+{"label": 0, "group": "neg:hoc_thuat", "source": "Claude soạn 15/11", "text": "Bài văn nghị luận xã hội cần có luận điểm rõ ràng, dẫn chứng cụ thể và lập luận chặt chẽ ở từng đoạn."}
+{"label": 0, "group": "neg:hoc_thuat", "source": "Claude soạn 15/11", "text": "Chu vi hình tròn bằng hai lần số pi nhân với bán kính, còn diện tích bằng pi nhân bán kính bình phương."}
+{"label": 0, "group": "neg:cong_nghe", "source": "Claude soạn 15/11", "text": "Cấu hình router Wi-Fi: đặt tên mạng, chọn chuẩn bảo mật WPA3 nếu thiết bị hỗ trợ và đổi mật khẩu quản trị mặc định."}
+{"label": 0, "group": "neg:cong_nghe", "source": "Claude soạn 15/11", "text": "Điện thoại mới dùng chip tiết kiệm điện hơn, màn hình 120 Hz và camera chính 50 megapixel chống rung quang học."}
+{"label": 0, "group": "neg:cong_nghe", "source": "Claude soạn 15/11", "text": "To free up disk space on Windows, clear temporary files, uninstall unused apps and move large folders to external storage."}
+{"label": 0, "group": "neg:cong_nghe", "source": "Claude soạn 15/11", "text": "Pin lithium-ion nên giữ ở mức 20–80% để bền hơn, tránh sạc qua đêm khi thiết bị nóng."}
+{"label": 0, "group": "neg:cong_nghe", "source": "Claude soạn 15/11", "text": "Mạng 5G cho tốc độ tải cao và độ trễ thấp nhưng vùng phủ sóng còn hạn chế ở một số khu vực."}
+{"label": 0, "group": "neg:cong_nghe", "source": "Claude soạn 15/11", "text": "Xe điện có chi phí vận hành thấp hơn vì ít bộ phận chuyển động và giá điện rẻ hơn so với xăng."}
+{"label": 0, "group": "neg:cong_nghe", "source": "Claude soạn 15/11", "text": "Máy giặt cửa trước tiết kiệm nước hơn cửa trên nhưng thời gian giặt thường lâu hơn một chút."}
+{"label": 0, "group": "neg:cong_nghe", "source": "Claude soạn 15/11", "text": "Khi laptop chạy chậm, hãy kiểm tra ứng dụng khởi động cùng máy, nâng cấp SSD và cập nhật trình điều khiển."}
+{"label": 0, "group": "neg:tin_tuc", "source": "Claude soạn 15/11", "text": "Thành phố khởi công tuyến đường vành đai mới dài mười hai kilômét, dự kiến hoàn thành sau hai năm."}
+{"label": 0, "group": "neg:tin_tuc", "source": "Claude soạn 15/11", "text": "Bộ Giáo dục công bố phương án thi tốt nghiệp trung học phổ thông, thí sinh đăng ký nguyện vọng từ đầu tháng sáu."}
+{"label": 0, "group": "neg:tin_tuc", "source": "Claude soạn 15/11", "text": "A severe storm is expected to make landfall on Thursday, and authorities have urged residents to secure their homes."}
+{"label": 0, "group": "neg:tin_tuc", "source": "Claude soạn 15/11", "text": "Giá xăng điều chỉnh giảm gần 300 đồng mỗi lít trong kỳ điều hành chiều nay theo thông báo liên bộ."}
+{"label": 0, "group": "neg:tin_tuc", "source": "Claude soạn 15/11", "text": "Triển lãm công nghệ quốc tế khai mạc với hơn hai trăm gian hàng của các doanh nghiệp trong và ngoài nước."}
+{"label": 0, "group": "neg:tin_tuc", "source": "Claude soạn 15/11", "text": "Nhiệt độ miền Bắc giảm mạnh do không khí lạnh tăng cường, vùng núi có nơi dưới năm độ C vào sáng sớm."}
+{"label": 0, "group": "neg:tin_tuc", "source": "Claude soạn 15/11", "text": "Hội nghị thượng đỉnh khu vực thảo luận về hợp tác thương mại, an ninh mạng và biến đổi khí hậu."}
+{"label": 0, "group": "neg:tin_tuc", "source": "Claude soạn 15/11", "text": "Đoàn tình nguyện sinh viên về xã vùng cao xây cầu, sửa trường học và tặng sách cho các em nhỏ."}
+{"label": 0, "group": "neg:mua_sam", "source": "Claude soạn 15/11", "text": "Cửa hàng giảm giá 30% cho đơn từ ba triệu đồng, miễn phí giao hàng nội thành và đổi trả trong mười lăm ngày."}
+{"label": 0, "group": "neg:mua_sam", "source": "Claude soạn 15/11", "text": "Khi chọn giày thể thao, hãy thử vào buổi chiều lúc chân hơi nở và để lại khoảng một ngón tay ở mũi giày."}
+{"label": 0, "group": "neg:mua_sam", "source": "Claude soạn 15/11", "text": "Free shipping applies to orders over fifty dollars, and the discount code expires at midnight on Sunday."}
+{"label": 0, "group": "neg:mua_sam", "source": "Claude soạn 15/11", "text": "Tủ lạnh inverter tiết kiệm điện, dung tích 300 lít phù hợp gia đình ba đến bốn người, bảo hành chính hãng hai năm."}
+{"label": 0, "group": "neg:mua_sam", "source": "Claude soạn 15/11", "text": "Nên so sánh giá giữa các sàn thương mại điện tử và đọc đánh giá có hình ảnh thật trước khi đặt mua."}
+{"label": 0, "group": "neg:mua_sam", "source": "Claude soạn 15/11", "text": "Quần áo mới nên giặt trước khi mặc lần đầu để bỏ bớt hóa chất xử lý vải và hạn chế phai màu."}
+{"label": 0, "group": "neg:mua_sam", "source": "Claude soạn 15/11", "text": "Đơn hàng được giao trong hai đến ba ngày làm việc, khách có thể theo dõi bằng mã vận đơn gửi qua tin nhắn."}
+{"label": 0, "group": "neg:mua_sam", "source": "Claude soạn 15/11", "text": "Chương trình tích điểm cho phép đổi điểm lấy phiếu mua hàng khi đạt đủ mười nghìn điểm trong năm."}
+{"label": 0, "group": "neg:lam_dep_thoi_trang", "source": "Claude soạn 15/11", "text": "Làn da dầu nên rửa mặt hai lần mỗi ngày, dùng kem chống nắng mỏng nhẹ và hạn chế tẩy tế bào chết quá nhiều."}
+{"label": 0, "group": "neg:lam_dep_thoi_trang", "source": "Claude soạn 15/11", "text": "Mùa thu năm nay áo khoác dáng dài, quần ống rộng và gam màu đất đang là xu hướng được yêu thích."}
+{"label": 0, "group": "neg:lam_dep_thoi_trang", "source": "Claude soạn 15/11", "text": "To remove stubborn makeup, use an oil-based cleanser first and follow with a gentle foaming wash."}
+{"label": 0, "group": "neg:lam_dep_thoi_trang", "source": "Claude soạn 15/11", "text": "Tóc nhuộm cần dùng dầu gội dành riêng và ủ dưỡng mỗi tuần để giữ màu bền, hạn chế khô xơ."}
+{"label": 0, "group": "neg:lam_dep_thoi_trang", "source": "Claude soạn 15/11", "text": "Phối đồ công sở nên chọn tông trung tính, áo sơ mi vừa vặn và giày da màu tối đơn giản."}
+{"label": 0, "group": "neg:lam_dep_thoi_trang", "source": "Claude soạn 15/11", "text": "Móng tay khỏe cần bổ sung đủ protein, tránh ngâm nước lâu và dưỡng ẩm bằng dầu chuyên dụng."}
+{"label": 0, "group": "neg:lam_dep_thoi_trang", "source": "Claude soạn 15/11", "text": "Nước hoa nên xịt lên cổ tay và sau tai, không chà xát để mùi hương lưu lại lâu hơn trên da."}
+{"label": 0, "group": "neg:game", "source": "Claude soạn 15/11", "text": "Trong trò chơi nhập vai này, bạn tích điểm kinh nghiệm để lên cấp, mở khóa kỹ năng và đổi trang bị hiếm."}
+{"label": 0, "group": "neg:game", "source": "Claude soạn 15/11", "text": "Boss cuối có ba giai đoạn, giai đoạn hai cần né đòn quét diện rộng rồi phản công khi nó lộ sơ hở."}
+{"label": 0, "group": "neg:game", "source": "Claude soạn 15/11", "text": "The speedrunner finished the game in under two hours by skipping cutscenes and exploiting a glitch in the third level."}
+{"label": 0, "group": "neg:game", "source": "Claude soạn 15/11", "text": "Máy chơi game thế hệ mới hỗ trợ ray tracing, thời gian tải gần như tức thì nhờ ổ cứng SSD tốc độ cao."}
+{"label": 0, "group": "neg:game", "source": "Claude soạn 15/11", "text": "Giải đấu thể thao điện tử mùa này có tổng giải thưởng năm triệu đô la và hai mươi đội tham dự."}
+{"label": 0, "group": "neg:game", "source": "Claude soạn 15/11", "text": "Muốn xếp hạng cao trong game bắn súng, hãy luyện kỹ năng ngắm, nghe tiếng bước chân và phối hợp đội hình."}
+{"label": 0, "group": "neg:game", "source": "Claude soạn 15/11", "text": "Bản cập nhật mới cân bằng lại sức mạnh các nhân vật và sửa nhiều lỗi treo máy trên điện thoại."}
+{"label": 0, "group": "neg:doi_song", "source": "Claude soạn 15/11", "text": "Nuôi chó con cần tiêm phòng đủ mũi, cho ăn đúng giờ và dẫn đi dạo mỗi ngày để chúng khỏe mạnh."}
+{"label": 0, "group": "neg:doi_song", "source": "Claude soạn 15/11", "text": "Trồng rau thủy canh tại nhà chỉ cần khay, dung dịch dinh dưỡng, ánh sáng đủ và thay nước định kỳ."}
+{"label": 0, "group": "neg:doi_song", "source": "Claude soạn 15/11", "text": "A tidy workspace helps focus: keep only what you need on the desk and set a fixed time for checking email."}
+{"label": 0, "group": "neg:doi_song", "source": "Claude soạn 15/11", "text": "Muốn tiết kiệm điện, hãy rút phích cắm thiết bị không dùng, đặt điều hòa 26 độ và vệ sinh lưới lọc."}
+{"label": 0, "group": "neg:doi_song", "source": "Claude soạn 15/11", "text": "Sửa vòi nước rỉ thường chỉ cần thay gioăng cao su, tắt van tổng trước khi tháo vòi ra kiểm tra."}
+{"label": 0, "group": "neg:doi_song", "source": "Claude soạn 15/11", "text": "Lớp học kỹ năng mềm giúp học sinh làm việc nhóm, thuyết trình và quản lý thời gian hiệu quả hơn."}
+{"label": 0, "group": "neg:doi_song", "source": "Claude soạn 15/11", "text": "Cuối tuần gia đình tôi thường đi chợ sớm, nấu bữa trưa chung rồi dọn nhà và xem phim buổi tối."}
+{"label": 0, "group": "neg:nhac_khong_ly_thuyet", "source": "Claude soạn 15/11 (âm nhạc nhưng không phải nhạc lý)", "text": "Ca sĩ trẻ vừa phát hành album thứ hai, bán hết vé buổi diễn đầu tiên chỉ sau mười lăm phút mở bán."}
+{"label": 0, "group": "neg:nhac_khong_ly_thuyet", "source": "Claude soạn 15/11 (âm nhạc nhưng không phải nhạc lý)", "text": "Lời bài hát: em ơi đừng khóc, mưa rơi trên phố vắng, anh nhớ em từng đêm, ngày mai nắng lại lên rồi."}
+{"label": 0, "group": "neg:nhac_khong_ly_thuyet", "source": "Claude soạn 15/11 (âm nhạc nhưng không phải nhạc lý)", "text": "Vé concert hạng VIP có giá 3 triệu đồng, kèm quyền vào sớm và một món quà lưu niệm của ban tổ chức."}
+{"label": 0, "group": "neg:nhac_khong_ly_thuyet", "source": "Claude soạn 15/11 (âm nhạc nhưng không phải nhạc lý)", "text": "Nền tảng nghe nhạc trực tuyến công bố mức chia sẻ doanh thu mới cho nghệ sĩ độc lập từ đầu năm sau."}
+{"label": 0, "group": "neg:nhac_khong_ly_thuyet", "source": "Claude soạn 15/11 (âm nhạc nhưng không phải nhạc lý)", "text": "Cây guitar điện này đang giảm giá còn bảy triệu đồng, tặng kèm dây đeo, capo và hộp đựng mềm."}
+{"label": 0, "group": "neg:nhac_khong_ly_thuyet", "source": "Claude soạn 15/11 (âm nhạc nhưng không phải nhạc lý)", "text": "Nữ ca sĩ chia sẻ về cuộc sống riêng tư và dự định kết hôn trong buổi phỏng vấn trên chương trình giải trí."}
+{"label": 0, "group": "neg:nhac_khong_ly_thuyet", "source": "Claude soạn 15/11 (âm nhạc nhưng không phải nhạc lý)", "text": "Lễ trao giải âm nhạc năm nay vinh danh nghệ sĩ của năm, album của năm và video ca nhạc xuất sắc nhất."}
+{"label": 0, "group": "neg:nhac_khong_ly_thuyet", "source": "Claude soạn 15/11 (âm nhạc nhưng không phải nhạc lý)", "text": "The band announced a world tour starting in March, with tickets going on sale to fan club members on Friday."}
+{"label": 0, "group": "neg:nhac_khong_ly_thuyet", "source": "Claude soạn 15/11 (âm nhạc nhưng không phải nhạc lý)", "text": "Karaoke gia đình có giá từ hai triệu đồng, kèm hai micro không dây và danh sách bài hát cập nhật hằng tháng."}
+{"label": 0, "group": "neg:nhac_khong_ly_thuyet", "source": "Claude soạn 15/11 (âm nhạc nhưng không phải nhạc lý)", "text": "Bản quyền âm nhạc trên mạng xã hội: video dùng nhạc nền có bản quyền có thể bị gỡ hoặc chặn tiếng tại một số quốc gia."}
+{"label": 0, "group": "neg:nhac_khong_ly_thuyet", "source": "Claude soạn 15/11 (âm nhạc nhưng không phải nhạc lý)", "text": "Nam ca sĩ gây tranh cãi sau phát ngôn trên mạng xã hội, công ty quản lý đã ra thông cáo giải thích."}
+{"label": 0, "group": "neg:nhac_khong_ly_thuyet", "source": "Claude soạn 15/11 (âm nhạc nhưng không phải nhạc lý)", "text": "Nhà hát tổ chức đêm nhạc từ thiện, toàn bộ tiền bán vé sẽ được quyên góp cho quỹ học bổng sinh viên nghèo."}
+{"label": 0, "group": "neg:nhac_khong_ly_thuyet", "source": "Claude soạn 15/11 (âm nhạc nhưng không phải nhạc lý)", "text": "Review tai nghe không dây: pin 30 giờ, chống ồn chủ động, kết nối Bluetooth ổn định nhưng giá hơi cao."}
+{"label": 0, "group": "neg:nhac_khong_ly_thuyet", "source": "Claude soạn 15/11 (âm nhạc nhưng không phải nhạc lý)", "text": "Chương trình tìm kiếm tài năng ca hát mở vòng sơ tuyển tại ba thành phố, thí sinh từ 16 tuổi đều có thể đăng ký."}
+{"label": 0, "group": "neg:nhac_khong_ly_thuyet", "source": "Claude soạn 15/11 (âm nhạc nhưng không phải nhạc lý)", "text": "Top 10 bài hát được nghe nhiều nhất tháng này gồm nhiều ca khúc nhạc trẻ và hai bản nhạc phim."}
+{"label": 0, "group": "neg:nhac_khong_ly_thuyet", "source": "Claude soạn 15/11 (âm nhạc nhưng không phải nhạc lý)", "text": "Đàn piano điện cũ được rao bán 12 triệu, người bán cam kết bàn phím còn nhạy và giao tận nơi trong nội thành."}
+{"label": 1, "group": "pos:nhip_phach", "source": "Claude soạn 15/11", "text": "Số chỉ nhịp 4/4 cho biết mỗi ô nhịp có bốn phách và mỗi phách là một nốt đen; phách một và phách ba thường mạnh hơn phách hai và bốn."}
+{"label": 1, "group": "pos:nhip_phach", "source": "Claude soạn 15/11", "text": "Nốt đen kéo dài một phách, nốt móc đơn bằng nửa phách, nốt trắng bằng hai phách và nốt tròn bằng bốn phách trong nhịp 4/4."}
+{"label": 1, "group": "pos:nhip_phach", "source": "Claude soạn 15/11", "text": "Dấu chấm dôi đặt sau nốt nhạc làm tăng thêm một nửa trường độ của nốt đó, ví dụ nốt đen chấm dôi dài một phách rưỡi."}
+{"label": 1, "group": "pos:nhip_phach", "source": "Claude soạn 15/11", "text": "Syncopation places emphasis on weak beats or off-beats, creating rhythmic tension against the steady pulse of the meter."}
+{"label": 1, "group": "pos:nhip_phach", "source": "Claude soạn 15/11", "text": "Nhịp 6/8 chia thành hai nhóm ba nốt móc đơn, nên cảm giác có hai phách lớn mỗi ô nhịp chứ không phải sáu phách đều nhau."}
+{"label": 1, "group": "pos:nhip_phach", "source": "Claude soạn 15/11", "text": "Tempo được ghi bằng số lần đập phách mỗi phút, ví dụ 120 BPM nghĩa là một phách kéo dài đúng nửa giây."}
+{"label": 1, "group": "pos:khuong_nhac", "source": "Claude soạn 15/11", "text": "Khóa Sol đặt nốt Sol trên dòng kẻ thứ hai của khuông nhạc, còn khóa Fa đặt nốt Fa trên dòng kẻ thứ tư, dùng cho các nốt trầm."}
+{"label": 1, "group": "pos:khuong_nhac", "source": "Claude soạn 15/11", "text": "Khuông nhạc gồm năm dòng kẻ và bốn khe, nốt được đọc theo vị trí trên dòng hoặc trong khe tính từ dưới lên."}
+{"label": 1, "group": "pos:khuong_nhac", "source": "Claude soạn 15/11", "text": "Dấu thăng nâng nốt lên nửa cung, dấu giáng hạ nốt xuống nửa cung và dấu hoàn trả nốt về cao độ tự nhiên."}
+{"label": 1, "group": "pos:khuong_nhac", "source": "Claude soạn 15/11", "text": "Ledger lines extend the staff above or below its five lines so that very high or low notes can still be notated."}
+{"label": 1, "group": "pos:khuong_nhac", "source": "Claude soạn 15/11", "text": "Hóa biểu ở đầu khuông cho biết giọng của bản nhạc, ví dụ một dấu thăng ở nốt Fa nghĩa là Sol trưởng hoặc Mi thứ."}
+{"label": 1, "group": "pos:khuong_nhac", "source": "Claude soạn 15/11", "text": "Nốt C giữa trên piano gọi là C4 hay Do giữa, nằm ngay dưới khuông Sol và trên khuông Fa trong bản nhạc piano."}
+{"label": 1, "group": "pos:quang", "source": "Claude soạn 15/11", "text": "Quãng ba trưởng gồm bốn nửa cung, quãng ba thứ gồm ba nửa cung, nên hợp âm trưởng nghe sáng hơn hợp âm thứ."}
+{"label": 1, "group": "pos:quang", "source": "Claude soạn 15/11", "text": "An interval is the distance between two notes; a perfect fifth spans seven semitones, such as C up to G."}
+{"label": 1, "group": "pos:quang", "source": "Claude soạn 15/11", "text": "Quãng bốn tăng, còn gọi là tritone, rộng sáu nửa cung và tạo cảm giác căng thẳng cần giải quyết trong hòa âm."}
+{"label": 1, "group": "pos:quang", "source": "Claude soạn 15/11", "text": "Quãng tám đúng gồm mười hai nửa cung, hai nốt cách nhau một quãng tám có cùng tên nhưng khác độ cao."}
+{"label": 1, "group": "pos:quang", "source": "Claude soạn 15/11", "text": "Khi đảo quãng, quãng ba trở thành quãng sáu và quãng đúng vẫn là quãng đúng, còn trưởng đổi thành thứ."}
+{"label": 1, "group": "pos:quang", "source": "Claude soạn 15/11", "text": "Quãng bảy trưởng chỉ cách quãng tám đúng một nửa cung, nên nốt dẫn rất muốn lên chủ âm."}
+{"label": 1, "group": "pos:am_giai_dieu_thuc", "source": "Claude soạn 15/11", "text": "Âm giai trưởng được xây theo mẫu cung, cung, nửa cung, cung, cung, cung, nửa cung bắt đầu từ chủ âm."}
+{"label": 1, "group": "pos:am_giai_dieu_thuc", "source": "Claude soạn 15/11", "text": "The natural minor scale lowers the third, sixth and seventh degrees of the major scale, giving a darker character."}
+{"label": 1, "group": "pos:am_giai_dieu_thuc", "source": "Claude soạn 15/11", "text": "Điệu thức Dorian giống âm giai thứ tự nhiên nhưng có bậc sáu nâng lên, thường dùng trong jazz và nhạc modal."}
+{"label": 1, "group": "pos:am_giai_dieu_thuc", "source": "Claude soạn 15/11", "text": "Âm giai thứ hòa âm nâng bậc bảy lên nửa cung để tạo nốt dẫn, vì thế giữa bậc sáu và bảy xuất hiện quãng hai tăng."}
+{"label": 1, "group": "pos:am_giai_dieu_thuc", "source": "Claude soạn 15/11", "text": "Âm giai ngũ cung không có nửa cung nên dễ ghép với nhiều hợp âm, phổ biến trong nhạc dân gian và blues."}
+{"label": 1, "group": "pos:am_giai_dieu_thuc", "source": "Claude soạn 15/11", "text": "Mỗi giọng trưởng có một giọng thứ song song dùng cùng hóa biểu, ví dụ Đô trưởng và La thứ không có dấu hóa."}
+{"label": 1, "group": "pos:hop_am", "source": "Claude soạn 15/11", "text": "Hợp âm ba trưởng gồm nốt gốc, quãng ba trưởng và quãng năm đúng; hợp âm ba thứ có quãng ba thứ thay cho quãng ba trưởng."}
+{"label": 1, "group": "pos:hop_am", "source": "Claude soạn 15/11", "text": "A dominant seventh chord adds a minor seventh above a major triad, for example G7 contains G, B, D and F."}
+{"label": 1, "group": "pos:hop_am", "source": "Claude soạn 15/11", "text": "Hợp âm giảm gồm hai quãng ba thứ chồng lên nhau, còn hợp âm tăng gồm hai quãng ba trưởng chồng lên nhau."}
+{"label": 1, "group": "pos:hop_am", "source": "Claude soạn 15/11", "text": "Hợp âm bảy nửa giảm, ký hiệu ø7, gồm tam âm giảm cộng quãng bảy thứ, thường xuất hiện ở bậc bảy của giọng trưởng."}
+{"label": 1, "group": "pos:hop_am", "source": "Claude soạn 15/11", "text": "Đảo hợp âm là đổi nốt thấp nhất: ở thể đảo một, nốt ba của hợp âm nằm ở bè trầm thay vì nốt gốc."}
+{"label": 1, "group": "pos:hop_am", "source": "Claude soạn 15/11", "text": "Hợp âm sus4 thay quãng ba bằng quãng bốn đúng, tạo cảm giác lơ lửng và thường giải về hợp âm trưởng."}
+{"label": 1, "group": "pos:hop_am", "source": "Claude soạn 15/11", "text": "Cmaj7 gồm C, E, G, B còn Cm7 gồm C, Eb, G, Bb; chỉ khác nhau ở quãng ba và quãng bảy."}
+{"label": 1, "group": "pos:hop_am", "source": "Claude soạn 15/11", "text": "Chord extensions such as the ninth, eleventh and thirteenth are stacked thirds above the seventh and add color to the harmony."}
+{"label": 1, "group": "pos:hoa_am_chuc_nang", "source": "Claude soạn 15/11", "text": "Trong giọng Đô trưởng, hợp âm I là chủ, IV là hạ át và V là át; tiến trình I–IV–V–I là khung cơ bản của hòa âm."}
+{"label": 1, "group": "pos:hoa_am_chuc_nang", "source": "Claude soạn 15/11", "text": "A perfect authentic cadence moves from the dominant to the tonic with the root in the bass, giving a strong sense of closure."}
+{"label": 1, "group": "pos:hoa_am_chuc_nang", "source": "Claude soạn 15/11", "text": "Hợp âm át phụ là hợp âm át của một bậc không phải chủ, ví dụ D7 hướng về G trong giọng Đô trưởng gọi là V7 của V."}
+{"label": 1, "group": "pos:hoa_am_chuc_nang", "source": "Claude soạn 15/11", "text": "Nốt dẫn là bậc bảy của âm giai, cách chủ âm nửa cung nên có xu hướng giải lên chủ âm."}
+{"label": 1, "group": "pos:hoa_am_chuc_nang", "source": "Claude soạn 15/11", "text": "Chuyển giọng là khi bản nhạc rời giọng chính sang giọng mới, thường dùng hợp âm chung hoặc hợp âm át của giọng đích."}
+{"label": 1, "group": "pos:hoa_am_chuc_nang", "source": "Claude soạn 15/11", "text": "Dẫn giọng mượt nghĩa là các bè di chuyển ít nhất có thể giữa hai hợp âm, giữ nguyên nốt chung và đi liền bậc."}
+{"label": 1, "group": "pos:hoa_am_chuc_nang", "source": "Claude soạn 15/11", "text": "Hợp âm vay mượn lấy từ giọng song song, chẳng hạn bVII hoặc iv trong giọng trưởng, đem lại màu sắc u buồn."}
+{"label": 1, "group": "pos:luyen_tai_thuc_hanh", "source": "Claude soạn 15/11", "text": "Luyện tai quãng bắt đầu với quãng ba, năm và tám, hát lại từng quãng rồi đối chiếu với đàn để nhớ âm thanh của chúng."}
+{"label": 1, "group": "pos:luyen_tai_thuc_hanh", "source": "Claude soạn 15/11", "text": "Ear training for chords starts by distinguishing major from minor triads before moving on to seventh chords and inversions."}
+{"label": 1, "group": "pos:luyen_tai_thuc_hanh", "source": "Claude soạn 15/11", "text": "Khi chép giai điệu theo cách nghe, hãy xác định chủ âm trước, sau đó đoán bậc của từng nốt trong âm giai."}
+{"label": 1, "group": "pos:luyen_tai_thuc_hanh", "source": "Claude soạn 15/11", "text": "Luyện xướng âm solfege giúp gắn tên bậc với cao độ: Do, Re, Mi, Fa, Sol, La, Si lên xuống theo âm giai."}
+{"label": 1, "group": "pos:luyen_tai_thuc_hanh", "source": "Claude soạn 15/11", "text": "Tập đọc nhạc đúng nhịp nên vỗ tay tiết tấu trước, đếm to các phách rồi mới thêm cao độ khi chơi hoặc hát."}
+{"label": 1, "group": "pos:ky_thuat_hoa_am_nang_cao", "source": "Claude soạn 15/11", "text": "Voice leading in four-part writing avoids parallel fifths and octaves and resolves the leading tone and chordal seventh by step."}
+{"label": 1, "group": "pos:ky_thuat_hoa_am_nang_cao", "source": "Claude soạn 15/11", "text": "Âm bao gồm quãng đối âm: quãng ba và sáu được coi là thuận, quãng hai và bảy là nghịch cần được giải quyết."}
+{"label": 1, "group": "pos:ky_thuat_hoa_am_nang_cao", "source": "Claude soạn 15/11", "text": "Hợp âm Neapolitan là hợp âm trưởng xây trên bậc hai hạ, thường ở thể đảo một và dẫn tới át trong giọng thứ."}
+{"label": 1, "group": "pos:ky_thuat_hoa_am_nang_cao", "source": "Claude soạn 15/11", "text": "Modulation to the relative major is common in minor-key pieces, often prepared by the dominant of the new key."}
