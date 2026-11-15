@@ -65,8 +65,9 @@ class RagConfig:
     chunk_tokens: int = field(default_factory=lambda: _i("RAG_CHUNK_TOKENS", 320))
     chunk_overlap_tokens: int = field(default_factory=lambda: _i("RAG_CHUNK_OVERLAP", 48))
     top_k: int = field(default_factory=lambda: _i("QDRANT_TOP_K", 5))
-    # Cosine e5 bị nén (0,73–0,92), nên ngưỡng 0,80 chỉ là giá trị ban đầu; G5 hiệu chỉnh trên bộ câu chuẩn.
-    min_score: float = field(default_factory=lambda: _f("QDRANT_MIN_SCORE", 0.80))
+    # Cosine e5 bị nén (0,73–0,92). G5 chọn 0,84 trên 57 câu đúng chủ đề và 24 câu lạc đề/tấn công (eval/report.md mục 2):
+    # nhận 93% câu đúng chủ đề, để lọt 4% câu lạc đề. Chỉ dùng cho lệnh `python -m app.rag.query`; chatbot dùng ngưỡng định tuyến.
+    min_score: float = field(default_factory=lambda: _f("QDRANT_MIN_SCORE", 0.84))
     corpus_dir: str = field(default_factory=lambda: os.getenv("RAG_CORPUS_DIR", "data/corpus/raw"))
     upsert_batch: int = field(default_factory=lambda: _i("RAG_UPSERT_BATCH", 64))
 
@@ -84,7 +85,9 @@ class PipelineConfig:
     # Nguồn trong Qdrant mà chatbot được trích. Mặc định chỉ bài học; thêm "corpus" để cho phép tài liệu ngoài.
     rag_sources: tuple[str, ...] = field(default_factory=lambda: tuple(
         s.strip() for s in os.getenv("RAG_SOURCES", "lessons").split(",") if s.strip()))
-    rerank_weight: float = field(default_factory=lambda: _f("RAG_RERANK_WEIGHT", 0.15))
+    # G5 đo trên 57 câu: rerank theo từ khóa với trọng số 0,02–0,15 không tăng cả HitRate lẫn MRR so với thứ tự Qdrant
+    # (0,15: HitRate 91,2 và MRR 0,788 so với 93,0 và 0,848). Nên mặc định 0 = chỉ bỏ trùng đoạn, giữ thứ tự Qdrant.
+    rerank_weight: float = field(default_factory=lambda: _f("RAG_RERANK_WEIGHT", 0.0))
     rerank_pool: int = field(default_factory=lambda: _i("RAG_RERANK_POOL", 12))
     # Số lượt hỏi tối đa mỗi người mỗi phút (0 = tắt). Trong bộ nhớ của tiến trình; nhiều worker thì mỗi worker đếm riêng.
     rate_limit_per_min: int = field(default_factory=lambda: _i("CHAT_RATE_LIMIT_PER_MIN", 20))

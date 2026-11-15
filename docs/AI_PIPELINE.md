@@ -46,7 +46,7 @@ flowchart TD
 | `intent` | Ý định cục bộ (`intent.py`), ghi vào nhật ký | |
 | `rewrite` | Câu hỏi nối tiếp ngắn ("còn Dm7 thì sao?") được nối với câu người học hỏi trước, **chỉ để truy xuất** | Bộ định tuyến vẫn xét câu gốc |
 | `retrieve` | `RAG_ENABLED=1`: hỏi Qdrant (top `RAG_RERANK_POOL`=12, lọc theo `RAG_SOURCES`, mặc định `lessons`). Qdrant chưa nạp, sai chiều hoặc lỗi: lùi về đường cũ và ghi lý do | Điểm là cosine e5 như đường cũ nên ngưỡng định tuyến giữ nguyên |
-| `rerank` | Xếp lại theo điểm vector + `RAG_RERANK_WEIGHT`=0,15 × độ trùng từ, bỏ trùng đoạn, cắt còn `RAG_TOP_K` | Giữ nguyên điểm vector của từng đoạn; chỉ chạy khi nguồn là Qdrant |
+| `rerank` | Xếp lại theo điểm vector + `RAG_RERANK_WEIGHT` × độ trùng từ, bỏ trùng đoạn, cắt còn `RAG_TOP_K` | Mặc định trọng số 0 (chỉ bỏ trùng, giữ thứ tự Qdrant): G5 đo trọng số 0,02–0,15 không giúp. Giữ nguyên điểm vector từng đoạn; chỉ chạy khi nguồn là Qdrant |
 | `route` | Bộ luật A/B/C/D/G của ADR-017/020 (nhãn tầng 1 + điểm truy xuất + Music Engine) | Không đổi |
 | `greeting`, `help` | Câu viết sẵn / mục hướng dẫn | Không gọi AI |
 | `off_topic` | Lạc đề: Gemini trả lời **tối đa 2 câu** (máy chủ tự cắt, tối đa 280 ký tự) rồi nối câu dẫn về nhạc lý. AI tắt, hết hạn mức, lỗi, nhóm cấm (bản quyền, tải lậu, mua bán, tấn công) hoặc `OFFTOPIC_MODE=refuse`: dùng câu từ chối cũ | Khác ADR-020 trước đây (chỉ từ chối) theo chốt của Phúc 14/11 |
@@ -61,6 +61,6 @@ flowchart TD
 
 ## Cờ cấu hình (đều ghi đè bằng biến môi trường, xem `.env.example`)
 
-`RAG_ENABLED`, `RAG_SOURCES`, `RAG_RERANK_WEIGHT`, `RAG_RERANK_POOL`, `CHAT_RATE_LIMIT_PER_MIN`, `OFFTOPIC_MODE` (`brief`|`refuse`), `OFFTOPIC_MAX_SENTENCES`, `RAG_STRICT_GROUNDING`, `AI_PRICE_IN_PER_M`, `AI_PRICE_OUT_PER_M`; Qdrant: `QDRANT_URL`, `QDRANT_COLLECTION`. Định nghĩa tập trung ở `backend/app/core/ai_config.py`.
+`RAG_ENABLED`, `RAG_SOURCES`, `RAG_RERANK_WEIGHT` (mặc định 0), `RAG_RERANK_POOL`, `CHAT_RATE_LIMIT_PER_MIN`, `OFFTOPIC_MODE` (`brief`|`refuse`), `OFFTOPIC_MAX_SENTENCES`, `RAG_STRICT_GROUNDING`, `AI_PRICE_IN_PER_M`, `AI_PRICE_OUT_PER_M`; Qdrant: `QDRANT_URL`, `QDRANT_COLLECTION`. Định nghĩa tập trung ở `backend/app/core/ai_config.py`.
 
 Gemini chỉ dùng qua `.env` (`GEMINI_API_KEY`, `AI_ENABLED=1`). Không có khóa thì `FakeProvider` (test) hoặc câu trả lời viết sẵn.
