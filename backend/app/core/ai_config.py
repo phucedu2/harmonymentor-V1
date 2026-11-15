@@ -6,6 +6,7 @@ phần cấu hình chung; test cần dựng cấu hình riêng. Cổng G3–G6 s
 from __future__ import annotations
 
 import os
+from pathlib import Path
 from dataclasses import dataclass, field
 
 
@@ -26,6 +27,11 @@ class RelevanceConfig:
     high: float = field(default_factory=lambda: _f("RELEVANCE_HIGH", 0.60))
     # "hybrid" = từ vựng nhạc lý + nhúng so với câu neo; "lexicon" = chỉ từ vựng (không cần mô hình); G6 thêm "classifier".
     scorer: str = field(default_factory=lambda: os.getenv("RELEVANCE_SCORER", "hybrid"))
+    # Khi scorer = "classifier" (G6, bộ phân loại tự huấn luyện): auto = mô hình tốt nhất ghi trong manifest mà máy đang dùng được;
+    # tfidf = chỉ chữ (không cần e5); e5 = đầu logistic trên vector e5. Thư mục chứa manifest.json và tệp mô hình.
+    classifier_model: str = field(default_factory=lambda: os.getenv("RELEVANCE_MODEL", "auto"))
+    model_dir: str = field(default_factory=lambda: os.getenv(
+        "RELEVANCE_MODEL_DIR", str(Path(__file__).resolve().parents[2] / "models" / "relevance")))
     lexicon_weight: float = field(default_factory=lambda: _f("RELEVANCE_LEXICON_WEIGHT", 0.5))
     # Cosine e5 bị nén (0,73–0,92 theo GĐ0), nên quy về 0..1 bằng đoạn [emb_floor, emb_ceil] đo trên bộ ca thật.
     emb_floor: float = field(default_factory=lambda: _f("RELEVANCE_EMB_FLOOR", 0.82))

@@ -9,4 +9,5 @@ venv/
 .env
 .env.*
 # mô hình tải trong Dockerfile, không gửi 470 MB từ máy vào build context
-models/
+models/*
+!models/relevance
