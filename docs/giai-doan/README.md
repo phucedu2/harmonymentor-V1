@@ -48,6 +48,7 @@ Các giai đoạn 0.2 → 2.3 là lộ trình của bản code gốc (zip v0.1.0
 | [gop-y-thay](gop-y-thay/) | v0.5.4-dev | Góp ý thầy T1–T6, cổng G2 (T1): cổng nhạc lý cho tài liệu Admin tải lên, 15/11 | [G2_BAO_CAO.md](gop-y-thay/G2_BAO_CAO.md) |
 | [gop-y-thay](gop-y-thay/) | v0.5.4-dev | Góp ý thầy T1–T6, cổng G3 (T3): Qdrant, nạp dữ liệu và truy vấn, 15/11 | [G3_BAO_CAO.md](gop-y-thay/G3_BAO_CAO.md) |
 | [gop-y-thay](gop-y-thay/) | v0.5.4-dev | Góp ý thầy T1–T6, cổng G4 (T3): pipeline chatbot kiểu n8n, lạc đề trả lời ngắn, 15/11 | [G4_BAO_CAO.md](gop-y-thay/G4_BAO_CAO.md) |
+| [gop-y-thay](gop-y-thay/) | v0.5.4-dev | Góp ý thầy T1–T6, cổng G5 (T2): bộ đánh giá 115 ca, hồi quy, hiệu chỉnh ngưỡng Qdrant, 15/11 | [G5_BAO_CAO.md](gop-y-thay/G5_BAO_CAO.md) |
 
 ## Quy ước cho giai đoạn sau
 
