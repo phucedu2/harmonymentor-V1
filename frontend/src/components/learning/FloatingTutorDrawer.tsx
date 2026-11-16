@@ -161,13 +161,13 @@ export default function FloatingTutorDrawer() {
 
   return <>
     {open && <section role="dialog" aria-label="AI Tutor" aria-modal="false"
-      className="fixed inset-x-2 bottom-20 z-40 flex max-h-[75vh] flex-col overflow-hidden rounded-2xl border border-line bg-bg shadow-2xl sm:inset-x-auto sm:right-5 sm:w-[380px]">
+      className="fixed inset-x-2 bottom-2 z-50 flex max-h-[85vh] md:bottom-24 md:max-h-[75vh] flex-col overflow-hidden rounded-2xl border border-line bg-bg shadow-2xl sm:inset-x-auto sm:right-5 sm:w-[380px]">
       <header className="flex items-center justify-between gap-2 border-b border-line bg-surface px-4 py-3">
         <div>
           <h2 className="font-display text-base font-semibold text-ink">AI Tutor</h2>
           <p className="text-xs text-muted">Trả lời dựa trên bài học, nốt nhạc kiểm bằng Music Engine{remaining !== null ? ` · còn ${remaining} lượt hôm nay` : ""}</p>
         </div>
-        <button type="button" className="rounded-md px-2 py-1 text-lg leading-none text-muted hover:text-ink" aria-label="Đóng AI Tutor" onClick={() => setOpen(false)}>×</button>
+        <button type="button" className="grid size-11 shrink-0 place-items-center rounded-full text-2xl leading-none text-muted hover:bg-bg hover:text-ink" aria-label="Đóng AI Tutor" onClick={() => setOpen(false)}>×</button>
       </header>
       <div ref={listRef} className="flex flex-1 flex-col gap-2 overflow-y-auto px-3 py-3" aria-live="polite">
         {items.length === 0 && <p className="rounded-lg bg-primary-soft px-3 py-2 text-sm text-ink">
@@ -196,8 +196,10 @@ export default function FloatingTutorDrawer() {
         </div>
       </form>
     </section>}
+    {/* FE-001: trên điện thoại khung chat phủ gần hết màn hình và có nút × riêng, nên ẩn nút tròn khi khung mở;
+        trước đây nút tròn nằm đè lên nút "Gửi". FE-002: nút nhỏ hơn (48px) để che ít chữ bài học hơn. */}
     <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-label={open ? "Đóng AI Tutor" : "Mở AI Tutor"}
-      className="fixed right-4 bottom-24 z-40 flex size-14 md:right-5 md:bottom-5 items-center justify-center rounded-full bg-primary text-sm font-bold text-white shadow-xl hover:bg-primary-strong">
+      className={`fixed right-3 bottom-24 z-40 size-12 items-center justify-center rounded-full bg-primary text-sm font-bold text-white shadow-xl ring-2 ring-bg hover:bg-primary-strong md:right-5 md:bottom-5 md:flex md:size-14 ${open ? "hidden" : "flex"}`}>
       {open ? "×" : "AI"}
     </button>
   </>;
