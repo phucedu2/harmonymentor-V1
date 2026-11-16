@@ -11,6 +11,7 @@ import {
 } from "../../api";
 import { audioEngine } from "../../audio/AudioEngine";
 import { bandPlayer } from "../../audio/band/player";
+import { instrumentsFor, loadInstruments, preferLite, prefetchInstruments } from "../../audio/band/samples";
 import {
   DEFAULT_MIX, GUITAR_TONE_LABELS, type Arrangement, type BandChannel, type BandMix, type FormSection, type GuitarTone, type ProgressionSlot, type SongForm,
   type SongLength,
@@ -127,6 +128,28 @@ export default function CompositionLabPage() {
   }, [chordKey]);
 
   const style = options?.styles.find((s) => s.id === draft?.style) ?? options?.styles[0];
+
+  // FE-012: khi trang rảnh, tải trước mẫu của phong cách đang chọn để lần bấm Phát đầu tiên không chờ tải mạng.
+  const styleInstruments = style ? `${style.instruments.keys}|${style.instruments.bass}` : "";
+  useEffect(() => {
+    if (!styleInstruments) return;
+    const [keys, bass] = styleInstruments.split("|");
+    const abort = new AbortController();
+    const list = instrumentsFor({ keys, bass }, true);
+    const lite = preferLite();
+    // Máy mạnh: tải xong thì giải nén luôn (giải nén 222 mẫu mất ~2,6 s, phần lớn thời gian chờ còn lại).
+    // Điện thoại/máy ≤ 4 GB RAM: chỉ tải file nén, không giữ bản giải nén trong RAM khi người dùng chưa bấm Phát.
+    const run = () => void prefetchInstruments(list, lite, abort.signal)
+      .then(() => (lite || abort.signal.aborted ? undefined : loadInstruments(list, false)))
+      .catch(() => undefined);
+    const idle = window.requestIdleCallback?.(run, { timeout: 3000 });
+    const timer = idle === undefined ? window.setTimeout(run, 1500) : undefined;
+    return () => {
+      abort.abort();
+      if (idle !== undefined) window.cancelIdleCallback(idle);
+      if (timer !== undefined) window.clearTimeout(timer);
+    };
+  }, [styleInstruments]);
 
   // Bản bài hát dựng ở backend mỗi khi form/vòng/phong cách đổi, để dòng thời gian, ghi chú và thời lượng luôn đúng.
   const songBody = draft?.mode === "song" && draft.form

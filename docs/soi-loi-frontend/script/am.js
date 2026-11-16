@@ -8,6 +8,9 @@ const { chromium } = require('playwright');
   await p.goto('http://localhost:4173/dang-nhap'); await p.fill('input[type=email]', email); await p.fill('input[type=password]', 'matkhau123');
   await p.locator('form button[type=submit]').click(); await p.waitForURL(/\/app/);
   await p.goto('http://localhost:4173/app/composition', { waitUntil: 'networkidle' });
+  // FE-012: WAIT=ms giả lập người dùng đọc trang trước khi bấm Phát (tải trước chạy lúc rảnh).
+  if (process.env.WAIT) { await p.waitForTimeout(Number(process.env.WAIT));
+    console.log('file mẫu đã tải trước khi bấm:', await p.evaluate(() => performance.getEntriesByType('resource').filter(r => /\/samples\/.+\.(mp3|ogg|wav|m4a)/.test(r.name)).length)); }
   for (const run of [1, 2]) {
     const t0 = Date.now(); await p.getByRole('button', { name: /^▶ Phát$|Phát$/ }).first().click();
     try { await p.waitForSelector('text=Đang tải nhạc cụ', { timeout: 1500 }); await p.waitForSelector('text=Đang tải nhạc cụ', { state: 'detached', timeout: 60000 }); } catch {}
