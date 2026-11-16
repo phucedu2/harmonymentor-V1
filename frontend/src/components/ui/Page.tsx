@@ -1,5 +1,5 @@
 // Khối giao diện dùng chung cho khu học (phuc-music Bước 3), thay các class CSS cũ trong styles.css.
-import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
+import { useEffect, useRef, type ButtonHTMLAttributes, type HTMLAttributes, type ReactNode } from "react";
 
 export function PageHeading({ eyebrow, title, children }: { eyebrow: string; title: ReactNode; children?: ReactNode }) {
   return (
@@ -81,9 +81,18 @@ export function ChipButton({ pressed, className = "", ...rest }: ButtonHTMLAttri
 }
 
 // Kết quả chấm: luôn có biểu tượng + chữ "Chính xác"/"Chưa đúng", không chỉ đổi màu.
+// FE-005: trên điện thoại kết quả chấm hay rơi xuống dưới mép màn hình hoặc nằm sau thanh nút dính đáy,
+// người học bấm "Kiểm tra" mà không thấy gì. Khi hiện, tự cuộn vừa đủ để thấy (scroll-mb chừa chỗ thanh đáy).
 export function ResultBox({ correct, title, children }: { correct: boolean; title?: ReactNode; children?: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof el.scrollIntoView !== "function") return;
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    el.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
+  }, [correct]);
   return (
-    <div role="status" className={`mt-3 rounded-xl border px-4 py-3 text-sm leading-relaxed ${correct ? "border-success/40 bg-success-soft text-ink" : "border-danger/40 bg-danger-soft text-ink"}`}>
+    <div ref={ref} role="status" className={`mt-3 scroll-mt-4 scroll-mb-28 rounded-xl border px-4 py-3 text-sm leading-relaxed ${correct ? "border-success/40 bg-success-soft text-ink" : "border-danger/40 bg-danger-soft text-ink"}`}>
       <p className={`font-semibold ${correct ? "text-success" : "text-danger"}`}><span aria-hidden="true">{correct ? "✓ " : "✗ "}</span>{title ?? (correct ? "Chính xác!" : "Chưa đúng.")}</p>
       {children && <div className="mt-1 space-y-1">{children}</div>}
     </div>
