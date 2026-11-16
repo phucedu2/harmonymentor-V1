@@ -63,3 +63,37 @@ def test_probe_va_grade_chay_voi_ai_gia(tmp_path, monkeypatch):
     md = tmp_path / "g.md"
     assert grade.main(["--answers", str(out), "--review", str(rev), "--out", str(md)]) == 0
     assert "T001" in md.read_text(encoding="utf-8")
+
+
+# --- G8 lượt 1: các câu LLM từng tự tính sai nay phải có dữ kiện Engine trong ENGINE_FACTS --------------------------
+
+import pytest
+
+from app.ai.tutor.engine_query import engine_answer, fact_text
+
+
+@pytest.mark.parametrize("q,want", [
+    ("trong giong G truong, Em7 la bac may", "Em7 là vi7"),
+    ("F#m7 trong key A major là số La Mã gì?", "F#m7 là vi7"),
+    ("Trong giọng Eb trưởng, Fm là hợp âm bậc mấy?", "Fm là ii"),
+    ("Bbm trong key Ab major là số La Mã gì?", "Bbm là ii"),
+    ("E natural minor scale có nốt gì?", "E F# G A B C D"),
+    ("D Mixolydian gồm những nốt nào?", "D E F# G A B C"),
+    ("What interval is Bb up to D?", "quãng M3"),
+    ("Nốt D và nốt C# phía trên cách nhau quãng gì?", "quãng M7"),
+    ("Quãng M7 có bao nhiêu nửa cung?", "11 nửa cung"),
+    ("Đảo quãng A4 thì được quãng gì?", "quãng d5"),
+    ("Giọng B thứ có mấy dấu hóa?", "2 dấu thăng: F# C#"),
+    ("Giọng thứ tương quan của Db trưởng là gì?", "Bb thứ"),
+    ("Hóa biểu có 2 dấu giáng là giọng trưởng nào?", "Bb trưởng"),
+    ("Thứ tự các dấu giáng trong hóa biểu là gì?", "Bb Eb Ab Db Gb Cb Fb"),
+])
+def test_engine_query_g8_nhan_dien_cau_engine_tinh_duoc(q, want):
+    text = " ".join(fact_text(f) for f in engine_answer(q).facts)
+    assert want in text, (q, text)
+
+
+def test_engine_query_g8_khong_bat_nham():
+    # "C major" trơ trọi hoặc câu thường không được hiểu là yêu cầu hóa biểu/âm giai.
+    assert not engine_answer("Mình thích nghe nhạc jazz buổi tối").facts
+    assert not [f for f in engine_answer("Hóa biểu là gì?").facts if f["tool"] == "key_signature"]

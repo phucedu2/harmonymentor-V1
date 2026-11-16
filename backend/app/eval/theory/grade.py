@@ -27,6 +27,22 @@ NOTE_TOKEN = re.compile(r"(?<![\w#])([A-G](?:bb|b|##|#)?)(?![\w#])")
 SYMBOLISH = re.compile(r"^[A-G](?:bb|b|##|#)?\S*$")
 
 
+def fold(text: str) -> str:
+    return strip_accents(text.lower())
+
+
+# Dạng từ chối vô cớ và lộ chữ nội bộ (đã bỏ dấu, hạ chữ). Câu "mình không biết vì bài chưa dạy" chỉ chấp nhận khi
+# câu hỏi thật sự ngoài khóa; ở đây cứ đánh dấu "cần xem" để người chấm quyết.
+_REFUSAL = [(r"khong (?:the )?tu tinh|khong duoc tu tinh|khong tu tinh", "không tự tính"),
+            (r"engine_facts", "lộ ENGINE_FACTS"),
+            (r"khong biet cau nay vi", "nói không biết vì bài chưa dạy"),
+            (r"chua tra loi duoc", "AI lỗi, câu dự phòng"),
+            (r"du lieu (?:chinh xac )?tu he thong|khong co (?:su ho tro|du lieu)", "viện dẫn hệ thống")]
+# Thuật ngữ sai gặp ở lượt 1 (16/11/2026): mỗi mục là một lỗi nhạc lý hoặc chữ bịa.
+_BAD_TERMS = ["ba cung ruoi", "giam kep", "thu bay truong", "blandimished", "nam giam", "9 cung ruoi", "thuong truong",
+              "hoa van"]
+
+
 def norm(text: str) -> str:
     return solfege_to_letters(text).translate(_ACC)
 
@@ -61,6 +77,13 @@ def auto_check(q: dict, a: dict) -> dict:
     for c in contradicted:
         c = c if isinstance(c, dict) else c.as_dict()
         problems.append(f"Engine bác: {c['tool']} {c['args']} AI ghi '{c['claimed']}', Engine: '{c['engine']}'")
+    # G8: từ chối vô cớ, lộ chữ nội bộ và thuật ngữ sai mà lần chạy đầu bắt được (xem docs G8_BAO_CAO).
+    for pat, why in _REFUSAL:
+        if re.search(pat, fold(reply)):
+            problems.append(f"từ chối/lộ chữ nội bộ: {why}")
+    bad_terms = [t for t in _BAD_TERMS if t in fold(reply)]
+    for t in bad_terms:
+        problems.append(f"thuật ngữ sai: '{t}'")
     exp = q.get("expect", {})
     found = notes_in(reply)
     missing = [n for n in exp.get("notes_all", []) if n not in found]
