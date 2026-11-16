@@ -117,4 +117,8 @@
   [data-surface="dark"] :focus-visible {
     @apply outline-signature;
   }
+  /* FE-009: menu khu học dính đầu màn hình dưới lg (~56px); cuộn tới phần tử (FE-004/FE-005) chừa chỗ cho nó. */
+  @media (width < 64rem) {
+    html:has([aria-label="Điều hướng chính"]) { scroll-padding-top: 4rem; }
+  }
 }
