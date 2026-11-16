@@ -23,11 +23,12 @@ export default function PublicLayout() {
               <ButtonLink to="/app">Vào học</ButtonLink>
             ) : (
               <>
-                <NavLink to="/dang-nhap" className="whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium text-ink hover:text-primary">Đăng nhập</NavLink>
-                <ButtonLink to="/dang-ky" className="hidden sm:inline-flex">Đăng ký</ButtonLink>
+                <NavLink to="/dang-nhap" className="whitespace-nowrap rounded-md px-2 py-2 text-sm font-medium text-ink hover:text-primary sm:px-3">Đăng nhập</NavLink>
+                {/* max-sm:hidden thay cho "hidden sm:inline-flex": lớp inline-flex của nút đè lớp hidden nên "Đăng ký" vẫn hiện và xuống 2 dòng. */}
+                <ButtonLink to="/dang-ky" className="max-sm:hidden">Đăng ký</ButtonLink>
               </>
             )}
-            <ThemeToggle className="ml-1 border-line text-ink hover:border-primary hover:text-primary" />
+            <ThemeToggle className="max-sm:size-10 sm:ml-1 border-line text-ink hover:border-primary hover:text-primary" />
           </nav>
         </div>
       </header>
