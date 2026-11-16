@@ -150,6 +150,7 @@ export default function LessonRunner({
   // bước và cùng trạng thái chấm, nên đổi chế độ không làm mất câu đã đúng.
   const [viewAll, setViewAll] = useState(() => readStoredView());
   const topRef = useRef<HTMLDivElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
   const indexRef = useRef<HTMLDetailsElement>(null);
 
   useEffect(() => {
@@ -288,7 +289,11 @@ export default function LessonRunner({
     setStepIndex(next);
     try { window.localStorage.setItem(stepStorageKey(lesson.id), String(next)); } catch { /* chế độ riêng tư: chỉ mất vị trí đã lưu */ }
     if (indexRef.current) indexRef.current.open = false;
-    topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    // FE-004: cuộn tới thẻ tiến độ chứ không về đầu trang; trên điện thoại tiêu đề bài 2 dòng + nút quay lại
+    // chiếm gần nửa màn hình, mỗi lần bấm "Bước tiếp" người học lại phải tự cuộn xuống tìm nội dung.
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const narrow = window.matchMedia?.("(max-width: 639px)").matches;
+    ((narrow ? progressRef.current : null) ?? topRef.current)?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
   }
   const step = steps[current];
 
@@ -318,10 +323,11 @@ export default function LessonRunner({
       <h1 className="mt-1 font-display text-3xl leading-tight font-semibold text-ink">Bài {lesson.order}. {lesson.title}</h1>
     </header>
 
-    <div className="mb-4 grid items-center gap-2 rounded-2xl border border-primary/25 bg-surface px-4 py-3 sm:grid-cols-[minmax(10rem,1fr)_2fr_auto] sm:gap-4">
+    {/* FE-004: điện thoại xếp 2 hàng (chữ + %, rồi thanh) thay vì 3 hàng để nhường chỗ cho nội dung bước. */}
+    <div ref={progressRef} className="mb-4 grid scroll-mt-3 grid-cols-[1fr_auto] items-center gap-x-3 gap-y-2 rounded-2xl border border-primary/25 bg-surface px-4 py-3 sm:grid-cols-[minmax(10rem,1fr)_2fr_auto] sm:gap-4">
       <div className="flex flex-col"><b className="text-ink">{viewAll ? `${steps.length} bước` : `Bước ${current + 1}/${steps.length}`}</b><span className="text-xs text-muted">Đã đúng {correctCount}/{total} câu hỏi</span></div>
-      <ProgressBar value={masteryPercent} label={`Đã đúng ${masteryPercent}% câu hỏi`} />
-      <strong className="font-mono text-primary">{masteryPercent}%</strong>
+      <ProgressBar className="col-span-2 row-start-2 sm:col-span-1 sm:row-start-auto" value={masteryPercent} label={`Đã đúng ${masteryPercent}% câu hỏi`} />
+      <strong className="col-start-2 row-start-1 font-mono text-primary sm:col-start-auto sm:row-start-auto">{masteryPercent}%</strong>
     </div>
     {outdatedNotice && <div className={ui.resultBad} role="status">{outdatedNotice}</div>}
     {startError && <div className={ui.resultBad} role="alert">Chưa lưu được trạng thái bắt đầu bài. Bạn vẫn học bình thường; tiến độ sẽ được lưu khi bạn hoàn thành bài.</div>}
