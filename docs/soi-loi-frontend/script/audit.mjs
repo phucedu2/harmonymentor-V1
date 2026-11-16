@@ -19,16 +19,20 @@ const login = async () => {
   await page.locator('form button[type=submit]').click(); await page.waitForURL(/\/app/);
 };
 const res = {};
-for (const [name, url] of PAGES) {
+for (const [name, url] of PAGES.filter(([n]) => !process.env.ONLY || process.env.ONLY.split(',').includes(n))) {
   res[name] = {};
   if (url.startsWith('/app')) await login();
   for (const scheme of ['light', 'dark']) {
     await page.emulateMedia({ colorScheme: scheme });
-    await page.goto(BASE + url, { waitUntil: 'networkidle' }); await page.waitForTimeout(1500);
+    // FE-014: "tối" là theme thật của app (localStorage hm-theme), đặt rồi tải lại trang.
+    await page.goto(BASE + url, { waitUntil: 'networkidle' });
+    await page.evaluate((s) => { try { if (s === 'dark') localStorage.setItem('hm-theme', 'dark'); else localStorage.removeItem('hm-theme'); } catch {} }, scheme);
+    await page.reload({ waitUntil: 'networkidle' }); await page.waitForTimeout(1500);
     await page.evaluate(axeSrc);
     const r = await page.evaluate(async () => await window.axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a','wcag2aa','wcag21a','wcag21aa','wcag22aa','best-practice'] } }));
     res[name]['axe_' + scheme] = r.violations.map(v => ({ id: v.id, impact: v.impact, n: v.nodes.length, help: v.help, targets: v.nodes.slice(0,4).map(n => n.target.join(' ')), summary: v.nodes[0]?.failureSummary?.slice(0,200) }));
   }
+  await page.evaluate(() => { try { localStorage.removeItem('hm-theme'); } catch {} }); // Lighthouse đo bản mặc định (sáng)
   for (const formFactor of ['desktop', 'mobile']) {
     if (url.startsWith('/app')) await login();
     const cfg = formFactor === 'desktop' ? (await import('/tmp/claude-0/tools/node_modules/lighthouse/core/config/desktop-config.js')).default : undefined;

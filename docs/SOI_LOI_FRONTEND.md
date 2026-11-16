@@ -31,10 +31,21 @@
 4. **FE-006 (đã sửa)** Thanh Phát/Lưu ở Harmony Lab 390 px xuống 3 dòng, bị nút AI che.
 5. **FE-003 (đã sửa)** Chữ màu đồng trên nền ngà 1,95:1 ở trang chủ.
 6. **FE-007 (đã sửa)** Vòng focus không đủ tương phản trên nền tối.
-7. **FE-012 (chưa sửa, P2)** Phát lần đầu chờ ~4 s, không báo trước; nên tải trước mẫu âm khi rảnh.
-8. **FE-009 (chưa sửa, P2)** Menu khu học trên điện thoại: 7 mục chen một hàng, không dính khi cuộn.
-9. **FE-014 (chưa sửa, P2)** Không có chế độ tối dù yêu cầu soi sáng/tối; cần Phúc quyết hướng theme.
-10. **FE-016 (chưa sửa, P2)** Chưa có khoảnh khắc thưởng khi đúng câu/hoàn thành bài.
+7. **FE-012 (đã sửa, đợt 2)** Phát lần đầu chờ ~3–4 s; giờ tải trước mẫu âm khi trang rảnh.
+8. **FE-009 (đã sửa, đợt 2)** Menu khu học trên điện thoại: 7 mục chen một hàng, không dính khi cuộn.
+9. **FE-014 (đã sửa, đợt 2)** Không có chế độ tối; giờ có chế độ tối + nút sáng/tối.
+10. **FE-016 (đã sửa, đợt 2)** Chưa có khoảnh khắc thưởng khi đúng câu/hoàn thành bài.
+
+## 1b. Đợt 2 (17/11/2026): Phúc chọn FE-009, FE-012, FE-016 và làm chế độ tối có nút sáng/tối
+
+| ID | Đã làm | Số đo / kiểm | Ảnh |
+|---|---|---|---|
+| FE-014 | Bộ token tối trong `index.css` dưới `:root[data-theme="dark"]` (Đồng & Gỉ sáng vẫn mặc định). Nút ☾/☀ ở header công khai và cạnh logo khu học, lưu `localStorage` (`hm-theme`), script nhỏ trong `index.html` đặt theme trước khi vẽ nên không nháy sáng. Chữ trên nút primary dùng token mới `on-primary`. Phím piano và khuông VexFlow giữ giấy sáng (`data-force-light`). Trang chủ chỉ lật phần "giấy", hero và dải tối giữ nguyên. Logo dùng sẵn bản tối của ADR-007. | Tương phản tối: chữ/nền 15,1:1, chữ phụ 7,3:1, primary trên thẻ 7,2:1, chữ trên nút 7,8:1, đỏ trên nền đỏ nhạt 7,4:1. axe sáng 0 / tối 0 nút lỗi ở 11 trang. | [Tổng quan](soi-loi-frontend/anh-loi/FE-014_sau_tong-quan.jpg), [Harmony Lab](soi-loi-frontend/anh-loi/FE-014_sau_harmony-lab.jpg), [Trang chủ 390](soi-loi-frontend/anh-loi/FE-014_sau_trang-chu-390.jpg) |
+| FE-009 | Menu khu học dưới 1024 px: một dòng cuộn ngang, dính đầu màn hình (57 px), tự kéo mục đang mở vào tầm nhìn. Không làm thanh tab đáy vì đáy đã có thanh "Bước tiếp" và thanh Phát. `scroll-padding-top` để FE-004/FE-005 không bị menu che. | "Quiz kỹ năng" 3 dòng → 1 dòng. Bài học 390 px sau "Bước tiếp": nội dung bước ở y = 320 px (đợt 1: 256 px, trước khi sửa: 455 px); đổi lấy menu luôn nhìn thấy. | [FE-009_sau.jpg](soi-loi-frontend/anh-loi/FE-009_sau.jpg) |
+| FE-012 | Khi trang Harmony Lab rảnh (`requestIdleCallback`), tải file nén của phong cách đang chọn vào Cache Storage, 2 luồng; bỏ qua khi bật tiết kiệm dữ liệu hoặc mạng 2G. Máy mạnh giải nén luôn; điện thoại/máy ≤ 4 GB chỉ tải, không giữ bản giải nén trong RAM. | Cloud localhost (`script/am.js`, `WAIT=8000`): bấm Phát lần đầu 3 333 ms → 290 ms. Bấm ngay khi vừa mở trang thì vẫn ~3,3 s. Phần lớn thời gian cũ là giải nén (~2,6 s), không phải tải. | (số đo) |
+| FE-016 | Trả lời đúng: dấu ✓ nảy và 4 nốt nhạc bay lên rồi tan trong 760 ms; hoàn thành bài: 7 nốt. Chỉ CSS (transform/opacity, 0 byte thư viện, không gây CLS), `aria-hidden`, tắt hẳn khi giảm chuyển động, không có âm. | Vitest 277 đạt (có test biến CSS). | [Sáng](soi-loi-frontend/anh-loi/FE-016_sau.jpg), [Tối](soi-loi-frontend/anh-loi/FE-016_sau_toi.jpg) |
+
+Lighthouse đợt 2 (`audit-dot2.json`, một lần chạy, mobile): Accessibility 100 ở cả 11 trang; Performance 89–100; LCP mobile lệch so với đợt 1 trong khoảng nhiễu giữa các lần chạy (Hồ sơ đo lần đầu 1 507 ms, chạy lại hai lần đều 1 357 ms). CLS Tổng quan vẫn 0,218 (FE-017 chưa làm). Ảnh đầy đủ 120 ảnh đợt 2 ở thư mục dự án `soi-loi-frontend/sau-dot2/`; ở đó "tối" là theme thật của app.
 
 ## 2. Mẫu tham chiếu
 
@@ -91,14 +102,14 @@ Cột "Ảnh" trỏ tới file trong `docs/soi-loi-frontend/`. "Đã sửa" ghi 
 | FE-006 | P1 | 7 | 1, 2 | Harmony Lab, thanh Phát/Tạo bản khác/Lưu, 390 px | frontend/src/pages/app/CompositionLabPage.tsx:46, :384–395 | [FE-006_truoc.jpg](soi-loi-frontend/anh-loi/FE-006_truoc.jpg) → [FE-006_sau.jpg](soi-loi-frontend/anh-loi/FE-006_sau.jpg) | Ba nút `size=lg` chia đều 390 px: "Tạo bản khác" xuống 3 dòng, "Lưu vòng này" 2 dòng, thanh cao ~100 px và nút AI đè lên nút Lưu. | Điện thoại: `whitespace-nowrap max-sm:!px-2 max-sm:!text-sm`, ẩn 🎲, thanh `pr-[4.25rem]` chừa nút AI. Chữ nút giữ nguyên. | S | Đã sửa (9c3ae6e) |
 | FE-007 | P1 | 8 | 1, 2 | Vòng focus bàn phím trên nền tối (thanh bên khu học, hero/dải tối trang chủ) | frontend/src/index.css:61–69; AppLayout.tsx:51; wow.css:35 | [FE-007_truoc.jpg](soi-loi-frontend/anh-loi/FE-007_truoc.jpg) → [FE-007_sau.jpg](soi-loi-frontend/anh-loi/FE-007_sau.jpg) | Outline #006D61 trên #081613 = 2,96:1, trên #0C231F = 2,63:1; WCAG 1.4.11 (non-text contrast) cần ≥ 3:1. | `[data-surface="dark"] :focus-visible { outline-signature }` (8,42:1) và verdigris trong các section tối của trang chủ. | S | Đã sửa (2d477bf, 9de3baa) |
 | FE-008 | P2 | 7 | 1 | Header trang công khai, 390 px | frontend/src/components/layout/PublicLayout.tsx:25–26 | [FE-008_hien-trang.jpg](soi-loi-frontend/anh-loi/FE-008_hien-trang.jpg) | "Đăng nhập" và "Đăng ký" xuống 2 dòng ở màn đầu tiên người mới thấy; trông vỡ. | Thêm `whitespace-nowrap` cho 2 link, giảm `px` ở `<sm`; hoặc thu "Harmony Mentor" thành logo biểu tượng ở `<sm`. | S | Chưa sửa (P2, chờ Phúc) |
-| FE-009 | P2 | 3, 7 | 1 | Menu khu học, 390 px | frontend/src/components/layout/AppLayout.tsx:57 | [FE-009_hien-trang.jpg](soi-loi-frontend/anh-loi/FE-009_hien-trang.jpg) | 7 mục `grid-flow-col auto-cols-fr` trong 390 px: "Quiz kỹ năng" 3 dòng; menu không dính khi cuộn nên ở cuối trang dài phải cuộn lên. | Thanh tab dính đáy 5 mục (Tổng quan, Học, Luyện tập, Sáng tác, Thêm ▸ Quiz/Tiến độ/Hồ sơ), hoặc tối thiểu `overflow-x-auto whitespace-nowrap`. Đổi điều hướng = diện mạo lớn. | M | Chưa sửa (P2, chờ Phúc) |
+| FE-009 | P2 | 3, 7 | 1 | Menu khu học, 390 px | frontend/src/components/layout/AppLayout.tsx:57 | [FE-009_hien-trang.jpg](soi-loi-frontend/anh-loi/FE-009_hien-trang.jpg) | 7 mục `grid-flow-col auto-cols-fr` trong 390 px: "Quiz kỹ năng" 3 dòng; menu không dính khi cuộn nên ở cuối trang dài phải cuộn lên. | Thanh tab dính đáy 5 mục (Tổng quan, Học, Luyện tập, Sáng tác, Thêm ▸ Quiz/Tiến độ/Hồ sơ), hoặc tối thiểu `overflow-x-auto whitespace-nowrap`. Đổi điều hướng = diện mạo lớn. | M | Đã sửa (0126881), đợt 2 |
 | FE-010 | P2 | 3 | 1 | Thẻ tiến độ trong bài | LessonRunner.tsx:326–331 | [FE-010_hien-trang.jpg](soi-loi-frontend/anh-loi/FE-010_hien-trang.jpg) | "Bước 6/18" đứng cạnh thanh 0% (thanh đo % câu đúng, không phải % bước) → người mới hiểu là "chưa tiến bộ". Yousician (R4) tách tiến độ và kết quả. | Thêm thanh mỏng tiến độ bước (6/18) hoặc đổi nhãn "0% câu đúng". Đổi chữ giao diện → kèm danh sách cho Đạt. | S | Chưa sửa (P2, chờ Phúc) |
 | FE-011 | P3 | 3 | 1 | Tổng quan | frontend/src/pages/Dashboard.tsx:38, :50 | [FE-011_hien-trang.jpg](soi-loi-frontend/anh-loi/FE-011_hien-trang.jpg) | Người mới thấy "Bài 1" hai lần (thẻ Bắt đầu học + Gợi ý cho bạn) và lời mời kiểm tra đầu vào nằm trên CTA chính. | Ẩn mục "Bài nên học tiếp" khi trùng bài ở thẻ Bắt đầu học; đưa lời mời kiểm tra đầu vào xuống dưới CTA. | S | Chưa sửa (P3) |
-| FE-012 | P2 | 6 | 1, 2 | Harmony Lab, bấm Phát lần đầu | frontend/src/audio/band/samples.ts | (số đo, không ảnh) | Đo trên cloud, localhost, không throttle: 4 141 ms từ bấm Phát tới khi hết "Đang tải nhạc cụ"; tải 221 file mẫu, 9 768 KB. Mạng 4G sẽ lâu hơn nhiều (phỏng đoán, chưa đo). Chrome Music Lab (R2) phát được ngay. | Tải trước nhóm mẫu của phong cách mặc định bằng `requestIdleCallback` khi mở trang; phát piano synth ngay rồi chuyển sang mẫu khi xong. | M | Chưa sửa (P2) |
+| FE-012 | P2 | 6 | 1, 2 | Harmony Lab, bấm Phát lần đầu | frontend/src/audio/band/samples.ts | (số đo, không ảnh) | Đo trên cloud, localhost, không throttle: 4 141 ms từ bấm Phát tới khi hết "Đang tải nhạc cụ"; tải 221 file mẫu, 9 768 KB. Mạng 4G sẽ lâu hơn nhiều (phỏng đoán, chưa đo). Chrome Music Lab (R2) phát được ngay. | Tải trước nhóm mẫu của phong cách mặc định bằng `requestIdleCallback` khi mở trang; phát piano synth ngay rồi chuyển sang mẫu khi xong. | M | Đã sửa (d0b2c26), đợt 2 |
 | FE-013 | P2 | 6 | 2 | Harmony Lab, khuông "Đang chọn C", 1440 px | frontend/src/components/music/NotationStaff.tsx | [FE-013_hien-trang.jpg](soi-loi-frontend/anh-loi/FE-013_hien-trang.jpg) | Khuông VexFlow chỉ ~190 px rộng trong khung 420 px; chữ "C: C – E – G" ~11 px. | Cho `NotationStaff` co theo khung (`width = container`), cỡ chữ chú thích ≥ 14 px. | S | Chưa sửa (P2) |
-| FE-014 | P2 | 2, 8 | 1, 2 | Toàn app: chế độ tối | frontend/src/index.css | [FE-014_hien-trang.jpg](soi-loi-frontend/anh-loi/FE-014_hien-trang.jpg) | 0 biến thể `dark:`, 1 chỗ `prefers-color-scheme`; ảnh sáng và tối giống hệt ở 12 trang × 5 cỡ. Yêu cầu soi sáng/tối không thực hiện được vì app chỉ có một chế độ. | Thêm bộ token tối trong `@theme` dưới `@media (prefers-color-scheme: dark)` + công tắc; cần Phúc duyệt hướng màu (gộp với việc theme mới). | L | Chưa sửa (diện mạo lớn, chờ Phúc) |
+| FE-014 | P2 | 2, 8 | 1, 2 | Toàn app: chế độ tối | frontend/src/index.css | [FE-014_hien-trang.jpg](soi-loi-frontend/anh-loi/FE-014_hien-trang.jpg) | 0 biến thể `dark:`, 1 chỗ `prefers-color-scheme`; ảnh sáng và tối giống hệt ở 12 trang × 5 cỡ. Yêu cầu soi sáng/tối không thực hiện được vì app chỉ có một chế độ. | Thêm bộ token tối trong `@theme` dưới `@media (prefers-color-scheme: dark)` + công tắc; cần Phúc duyệt hướng màu (gộp với việc theme mới). | L | Đã sửa (bc027a5), đợt 2 |
 | FE-015 | P2 | 6, 10 | 1, 2 | Học, Luyện tập, Tiến độ, Harmony Lab | frontend/src/audio/AudioEngine.ts:1; audio/band/*.ts | (console) | Console warning "The AudioContext was not allowed to start" ở 4 trang ngay khi mở: `import * as Tone` tạo AudioContext trước cú bấm. Không gây lỗi nhưng sinh cảnh báo và tốn tài nguyên. | Chỉ `import("tone")` động trong hàm phát (như trang chủ đã làm ở `wow/sound.tsx`). | M | Chưa sửa (P2) |
-| FE-016 | P2 | 5 | 1 | Câu đúng / hoàn thành bài | Page.tsx `ResultBox`; LessonRunner.tsx:259 | [FE-005_sau.jpg](soi-loi-frontend/anh-loi/FE-005_sau.jpg) | Đúng câu hay hoàn thành bài chỉ hiện ô xanh tĩnh. Prompt yêu cầu dồn wow vào khoảnh khắc thưởng; Duolingo (R3) dùng chuyển động + âm ngắn. | Hiệu ứng GSAP nhẹ (nốt nhạc bay lên 600 ms) khi `correct`, tắt khi reduced-motion; âm thưởng mặc định tắt. | M | Chưa sửa (diện mạo, chờ Phúc) |
+| FE-016 | P2 | 5 | 1 | Câu đúng / hoàn thành bài | Page.tsx `ResultBox`; LessonRunner.tsx:259 | [FE-005_sau.jpg](soi-loi-frontend/anh-loi/FE-005_sau.jpg) | Đúng câu hay hoàn thành bài chỉ hiện ô xanh tĩnh. Prompt yêu cầu dồn wow vào khoảnh khắc thưởng; Duolingo (R3) dùng chuyển động + âm ngắn. | Hiệu ứng GSAP nhẹ (nốt nhạc bay lên 600 ms) khi `correct`, tắt khi reduced-motion; âm thưởng mặc định tắt. | M | Đã sửa (979d606), đợt 2 |
 | FE-017 | P2 | 9 | 1 | Tổng quan, Lighthouse mobile | frontend/src/pages/Dashboard.tsx; components/learning/RecommendedLessons.tsx | (số đo) | CLS 0,214 (mức "cần cải thiện" 0,1–0,25): các thẻ hiện dần khi API trả về và đẩy nội dung xuống. | Skeleton có chiều cao cố định cho thẻ Bắt đầu học/Gợi ý/4 chỉ số. | S | Chưa sửa (P2) |
 | FE-018 | P2 | 9 | 1, 2 | Bundle | frontend/src/App.tsx:6; vite build | (số đo) | `index.js` 482 kB (163 kB gzip) gồm GSAP + Lenis + trang chủ, tải cả khi vào thẳng `/app`; `NotationStaff` 1 123 kB (692 kB gzip) do VexFlow kèm font. | Tách `HomePage` thành chunk riêng cho route `/app`; dùng bản `vexflow/bravura` thay bản đủ font. | M | Chưa sửa (P2) |
 | FE-019 | P3 | 3 | 1 | Danh sách bài, Quiz kỹ năng | dữ liệu bài từ API | [FE-019_hien-trang.jpg](soi-loi-frontend/anh-loi/FE-019_hien-trang.jpg) | Tên bài/kỹ năng còn tiếng Anh ("Secondary Dominants", "Modal Interchange…", "enharmonic spelling"). Là nội dung, không phải chữ giao diện. | Chuyển Đạt quyết; frontend không sửa. | — | Không thuộc frontend |
@@ -107,19 +118,28 @@ Cột "Ảnh" trỏ tới file trong `docs/soi-loi-frontend/`. "Đã sửa" ghi 
 
 ## 5. Chưa sửa và vì sao
 
-- Mọi lỗi P2/P3 chưa sửa vì quy tắc 3A (dừng hỏi Phúc trước). Cách sửa cụ thể đã ghi trong từng dòng; Phúc chọn ID nào thì làm ID đó.
-- Theme mới (tối kiểu sân khấu, sáng kiểu giấy nhạc) chưa làm: cắt theo 2A. Ngoài ra app chưa có chế độ tối nào (FE-014), nên làm theme trước khi có chế độ tối sẽ phải làm lại.
+- Đợt 2 đã làm FE-009, FE-012, FE-014, FE-016 theo lựa chọn của Phúc (17/11). P2/P3 còn lại (FE-008, 010, 011, 013, 015, 017, 018, 021) chưa sửa vì quy tắc 3A; cách sửa ghi trong từng dòng.
+- Theme mới (tối kiểu sân khấu, sáng kiểu giấy nhạc) chưa làm: cắt theo 2A. Chế độ tối đợt 2 dùng lại bảng Đồng & Gỉ, chưa phải theme mới.
+- FE-012 chỉ giúp khi người dùng ở trang vài giây trước khi bấm Phát; bấm ngay vẫn chờ. Muốn nhanh hơn nữa cần gộp/nén mẫu phía máy chủ (Thắng).
 - FE-020 là lỗi backend/AI (trả lời dự phòng khi AI tắt trích dẫn bài L07), ngoài phạm vi frontend; chuyển cho luồng T1–T6.
 
 ## 6. Việc cho từng thành viên
 
-- **Phúc:** chạy `docs/HUONG_DAN_CHAY_WINDOWS.md` mục 4 trên điện thoại thật hoặc DevTools 390 px; nghe Harmony Lab và trang chủ; chọn P2 nào làm tiếp (gợi ý: FE-009, FE-012, FE-016); quyết FE-014 (có làm chế độ tối không).
+- **Phúc:** chạy `docs/HUONG_DAN_CHAY_WINDOWS.md` mục 4 trên điện thoại thật hoặc DevTools 390 px (có thêm dòng FE-009/012/014/016); nghe Harmony Lab và trang chủ; xem chế độ tối có hợp mắt không.
 - **Thắng:** xem FE-020 (route dự phòng AI Tutor) cùng luồng T1–T6; FE-012 nếu muốn tải trước mẫu âm từ phía máy chủ (nén/gộp file).
 - **Đạt:** kiểm danh sách chữ giao diện ở mục 7 (đợt này chỉ đổi nhãn nút đóng thành vùng bấm lớn hơn, không đổi chữ); xem FE-019 (tên bài/kỹ năng còn tiếng Anh: "Secondary Dominants", "enharmonic spelling") vì đó là nội dung bài, không thuộc quyền sửa của frontend.
 
 ## 7. Chữ giao diện đã đổi (để Đạt kiểm)
 
-Đợt này **không đổi câu chữ nào** hiển thị cho người học. Thay đổi duy nhất liên quan chữ: biểu tượng 🎲 trên nút "Tạo bản khác" bị ẩn ở màn hình < 640 px (FE-006); chữ nút giữ nguyên.
+Đợt 1 **không đổi câu chữ nào** hiển thị cho người học. Thay đổi duy nhất liên quan chữ: biểu tượng 🎲 trên nút "Tạo bản khác" bị ẩn ở màn hình < 640 px (FE-006); chữ nút giữ nguyên.
+
+Đợt 2 thêm chữ mới cho nút sáng/tối (FE-014), chỉ đọc bằng trình đọc màn hình hoặc khi rê chuột:
+
+| Chỗ | Chữ |
+|---|---|
+| Nhãn đọc màn hình, đang sáng | "Đang dùng giao diện sáng. Bấm để chuyển sang tối" |
+| Nhãn đọc màn hình, đang tối | "Đang dùng giao diện tối. Bấm để chuyển sang sáng" |
+| Chú thích khi rê chuột | "Chuyển sang giao diện tối" / "Chuyển sang giao diện sáng" |
 
 ## 8. Lệnh đã chạy
 

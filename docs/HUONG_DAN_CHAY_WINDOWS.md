@@ -60,7 +60,11 @@ Mở DevTools (F12) → Toggle device toolbar (Ctrl+Shift+M) → chọn kích th
 | FE-005 | Trang Luyện tập, gõ `C E G#` rồi **Kiểm tra** | Ô "✗ Chưa đúng" tự hiện trong màn hình |
 | FE-006 | Harmony Lab | Ba nút Phát / Tạo bản khác / Lưu vòng này nằm trên một dòng, nút AI không đè |
 | FE-007 | Bấm Tab qua thanh bên tối | Vòng focus màu xanh ngọc nhìn rõ |
-| Âm thanh | Harmony Lab, bấm **Phát** lần đầu | Ghi lại số giây từ lúc bấm tới khi có tiếng (cloud đo 4,1 s chỉ để tải 221 mẫu âm, chưa tính giải mã trên máy yếu) |
+| FE-014 | Bấm nút ☾ (góc phải header trang chủ, cạnh logo trong khu học) | Cả app chuyển tối, bấm ☀ về sáng; tải lại trang vẫn giữ lựa chọn; phím piano và khuông nhạc vẫn nền sáng |
+| FE-009 | Khu học ở 390 px, cuộn xuống giữa trang | Menu 7 mục nằm một dòng, dính đầu màn hình, vuốt ngang được; mục đang mở luôn nhìn thấy |
+| FE-016 | Luyện tập, trả lời đúng một câu; hoàn thành Bài 1 | Vài nốt nhạc bay lên rồi tan (bản lớn hơn khi hoàn thành bài); bật "Giảm chuyển động" của Windows thì không còn hiệu ứng |
+| FE-012 | Harmony Lab: mở trang, đợi ~10 giây rồi mới bấm **Phát** | Có tiếng gần như ngay (cloud đo 0,3 s; trước đây 3,3 s). Ghi lại số giây trên máy Phúc |
+| Âm thanh | Harmony Lab, bấm **Phát** ngay khi vừa mở trang | Ghi lại số giây (chưa kịp tải trước nên vẫn chờ như cũ) |
 | Âm thanh | Trang chủ, bật âm thanh rồi cuộn qua cảnh khuông nhạc và vòng C–G–Am–F | Không rè, không chồng tiếng khi cuộn nhanh |
 
 Ghi kết quả vào cột "Kiểm trên máy Phúc" trong `docs/SOI_LOI_FRONTEND.md`.
