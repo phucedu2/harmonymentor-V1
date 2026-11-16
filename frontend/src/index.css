@@ -63,4 +63,8 @@
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-primary;
   }
+  /* FE-007: trong vùng nền tối (thanh bên khu học) vòng focus primary chỉ 2,96:1, dưới mức 3:1 của WCAG 1.4.11. */
+  [data-surface="dark"] :focus-visible {
+    @apply outline-signature;
+  }
 }

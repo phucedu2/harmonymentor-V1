@@ -48,7 +48,7 @@ export default function AppLayout() {
       <a href="#noi-dung" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-surface focus:px-3 focus:py-2">
         Bỏ qua, tới nội dung chính
       </a>
-      <aside className="bg-shell text-shell-text lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:gap-7 lg:px-4 lg:py-6">
+      <aside data-surface="dark" className="bg-shell text-shell-text lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:gap-7 lg:px-4 lg:py-6">
         <div className="flex items-center justify-between gap-3 px-4 pb-2 pt-3 lg:p-0">
           <Logo to="/app" inverted />
           <button type="button" className={`${signOutClass} lg:hidden`} onClick={signOut} disabled={leaving} aria-busy={leaving}>Đăng xuất</button>
