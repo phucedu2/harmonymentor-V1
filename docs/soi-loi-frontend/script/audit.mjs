@@ -38,7 +38,7 @@ for (const [name, url] of PAGES.filter(([n]) => !process.env.ONLY || process.env
     const cfg = formFactor === 'desktop' ? (await import('/tmp/claude-0/tools/node_modules/lighthouse/core/config/desktop-config.js')).default : undefined;
     const r = await lighthouse(BASE + url, { port: PORT, output: 'json', logLevel: 'error', onlyCategories: ['performance','accessibility','best-practices'], disableStorageReset: true, formFactor, screenEmulation: formFactor==='mobile'? undefined : undefined }, cfg);
     const a = r.lhr.audits;
-    res[name]['lh_' + formFactor] = { perf: Math.round(r.lhr.categories.performance.score*100), a11y: Math.round(r.lhr.categories.accessibility.score*100), bp: Math.round(r.lhr.categories['best-practices'].score*100), LCP: a['largest-contentful-paint'].numericValue|0, CLS: +a['cumulative-layout-shift'].numericValue.toFixed(3), TBT: a['total-blocking-time'].numericValue|0, FCP: a['first-contentful-paint'].numericValue|0, finalUrl: r.lhr.finalDisplayedUrl };
+    res[name]['lh_' + formFactor] = { perf: Math.round(r.lhr.categories.performance.score*100), a11y: Math.round(r.lhr.categories.accessibility.score*100), bp: Math.round(r.lhr.categories['best-practices'].score*100), LCP: a['largest-contentful-paint'].numericValue|0, CLS: +a['cumulative-layout-shift'].numericValue.toFixed(3), TBT: a['total-blocking-time'].numericValue|0, FCP: a['first-contentful-paint'].numericValue|0, finalUrl: r.lhr.finalDisplayedUrl, shifts: Object.keys(a).filter(k => /shift/.test(k)).map(k => k + ':' + JSON.stringify(a[k].details?.items?.slice(0,4) ?? a[k].details ?? null).slice(0, 700)) };
     console.log(name, formFactor, JSON.stringify(res[name]['lh_' + formFactor]));
   }
 }

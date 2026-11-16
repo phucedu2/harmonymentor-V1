@@ -1,5 +1,5 @@
 import { useEffect, useId, useMemo, useState } from "react";
-import { Accidental, Formatter, Renderer, Stave, StaveNote } from "vexflow";
+import { Accidental, Formatter, Renderer, Stave, StaveNote } from "vexflow/bravura";
 
 type NotationGroup = { label?: string; notes: string[] };
 

@@ -61,8 +61,9 @@ function GoalForm({ initial, onSaved }: { initial: string; onSaved: () => void }
   </form>;
 }
 
+// ready=false: chờ dữ liệu tổng quan (để biết bài nào cần ẩn) rồi mới vẽ danh sách, tránh vẽ rồi co lại (CLS).
 // excludeLessonId: bài đã nằm ở thẻ "Bắt đầu học" ngay trên, khỏi hiện lần hai (FE-011).
-export default function RecommendedLessons({ excludeLessonId }: { excludeLessonId?: string } = {}) {
+export default function RecommendedLessons({ excludeLessonId, ready = true }: { excludeLessonId?: string; ready?: boolean } = {}) {
   const navigate = useNavigate();
   const [data, setData] = useState<Recommendations | null>(null);
   const [goal, setGoal] = useState("");
@@ -100,7 +101,7 @@ export default function RecommendedLessons({ excludeLessonId }: { excludeLessonI
 
     <div className="mt-3">
       <h3 className="text-sm font-semibold">Bài nên học tiếp</h3>
-      {!data ? (failed ? null : <p className="mt-1 text-muted">Đang tính gợi ý…</p>)
+      {!data || !ready ? (failed ? null : <p className="mt-1 min-h-28 text-muted">Đang tính gợi ý…</p>)
         : nextItems.length ? <ul className="mt-2 grid gap-2">{nextItems.map((x) => <LessonRow key={x.lesson_id} item={x} onOpen={open} />)}</ul>
         : data.next.length ? <p className="mt-1 text-muted">Bài gợi ý nằm ở thẻ "Bắt đầu học" phía trên. Học xong bài đó, mình sẽ gợi ý bài kế tiếp.</p>
         : <p className="mt-1 text-muted">Bạn đã bắt đầu mọi bài hiện có. Hãy hoàn thành bài đang học hoặc ôn lại các bài đã xong.</p>}
