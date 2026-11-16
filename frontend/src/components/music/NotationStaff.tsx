@@ -85,7 +85,7 @@ export default function NotationStaff({ groups, clef = "treble", caption, large 
   return <div className="mt-3 min-w-0">
     <div data-part="notation-examples" className="grid items-start gap-3 [grid-template-columns:repeat(auto-fit,minmax(11.5rem,1fr))]">
       {groups.map((group, index) => <div data-force-light className="min-w-0 rounded-xl border border-line bg-surface p-2" key={`${group.label ?? "example"}-${index}`}>
-        <div id={`${elementId}-${index}`} className={`grid min-h-34 place-items-center overflow-hidden [&_svg]:block [&_svg]:h-auto [&_svg]:w-full ${large ? "[&_svg]:max-w-sm" : "[&_svg]:max-w-56"}`} role="img" aria-label={`Khuông nhạc: ${group.label ?? `ví dụ ${index + 1}`}, các nốt ${group.notes.join(", ")}`} />
+        <div id={`${elementId}-${index}`} className={`grid min-h-34 grid-cols-1 place-items-center overflow-hidden [&_svg]:block [&_svg]:h-auto [&_svg]:w-full ${large ? "[&_svg]:max-w-sm [&_svg]:w-full! [&_svg]:h-auto!" : "[&_svg]:max-w-56"}`} role="img" aria-label={`Khuông nhạc: ${group.label ?? `ví dụ ${index + 1}`}, các nốt ${group.notes.join(", ")}`} />
         {renderErrors[index] && <div data-part="notation-fallback" className="my-3 flex flex-col gap-1 rounded-lg border border-line bg-bg px-3 py-2 text-sm text-muted" role="status">
           <b>Ký âm tạm thời không hiển thị được.</b>
           <span>{renderErrors[index]}</span>
