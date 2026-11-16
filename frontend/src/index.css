@@ -122,3 +122,27 @@
     html:has([aria-label="Điều hướng chính"]) { scroll-padding-top: 4rem; }
   }
 }
+
+/* FE-016: khoảnh khắc thưởng khi đúng (ResultBox). Nốt bay lên 700 ms rồi tan; transform/opacity nên không gây
+   reflow hay CLS. prefers-reduced-motion: không hiện gì, chỉ còn dấu ✓ và chữ "Chính xác!". */
+.hm-reward { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
+.hm-reward i {
+  --i: 0; --n: 4; /* mặc định; ResultBox gán inline cho từng nốt */
+  position: absolute; bottom: 40%; left: calc(8% + var(--i) * (84% / var(--n)));
+  font-style: normal; font-size: 1.5rem; font-weight: 700; line-height: 1; opacity: 0;
+  color: var(--color-success);
+  animation: hm-reward-rise 760ms cubic-bezier(.2,.7,.3,1) calc(var(--i) * 55ms) both;
+}
+.hm-reward i:nth-child(3n + 2) { color: var(--color-primary); }
+.hm-reward i:nth-child(3n) { color: var(--color-brass); }
+@keyframes hm-reward-rise {
+  0% { opacity: 0; transform: translateY(6px) scale(.6) rotate(-8deg); }
+  25% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-46px) scale(1.1) rotate(10deg); }
+}
+.hm-reward-pop { display: inline-block; margin-right: .3em; animation: hm-reward-pop 420ms cubic-bezier(.3,1.6,.5,1) both; }
+@keyframes hm-reward-pop { 0% { transform: scale(.4); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .hm-reward { display: none; }
+  .hm-reward-pop { animation: none; }
+}

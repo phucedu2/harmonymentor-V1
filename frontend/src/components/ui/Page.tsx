@@ -83,7 +83,21 @@ export function ChipButton({ pressed, className = "", ...rest }: ButtonHTMLAttri
 // Kết quả chấm: luôn có biểu tượng + chữ "Chính xác"/"Chưa đúng", không chỉ đổi màu.
 // FE-005: trên điện thoại kết quả chấm hay rơi xuống dưới mép màn hình hoặc nằm sau thanh nút dính đáy,
 // người học bấm "Kiểm tra" mà không thấy gì. Khi hiện, tự cuộn vừa đủ để thấy (scroll-mb chừa chỗ thanh đáy).
-export function ResultBox({ correct, title, children }: { correct: boolean; title?: ReactNode; children?: ReactNode }) {
+// FE-016: trả lời đúng có "khoảnh khắc thưởng" nhỏ: vài nốt nhạc bay lên rồi tan (CSS, 0 byte thư viện);
+// hoàn thành bài dùng bản "big" nhiều nốt hơn. Chỉ trang trí (aria-hidden), tắt hẳn khi giảm chuyển động, không có âm.
+const REWARD_NOTES = ["♪", "♫", "♩", "♬", "♪", "♫", "♩"];
+function RewardBurst({ big }: { big: boolean }) {
+  const notes = big ? REWARD_NOTES : REWARD_NOTES.slice(0, 4);
+  return (
+    <span aria-hidden="true" className="hm-reward">
+      {notes.map((n, i) => <i key={i} style={{ ["--i" as string]: i, ["--n" as string]: notes.length }}>{n}</i>)}
+    </span>
+  );
+}
+
+export function ResultBox({ correct, title, children, celebrate = "small" }: {
+  correct: boolean; title?: ReactNode; children?: ReactNode; celebrate?: "small" | "big" | "none";
+}) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;
@@ -92,8 +106,9 @@ export function ResultBox({ correct, title, children }: { correct: boolean; titl
     el.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
   }, [correct]);
   return (
-    <div ref={ref} role="status" className={`mt-3 scroll-mt-4 scroll-mb-28 rounded-xl border px-4 py-3 text-sm leading-relaxed ${correct ? "border-success/40 bg-success-soft text-ink" : "border-danger/40 bg-danger-soft text-ink"}`}>
-      <p className={`font-semibold ${correct ? "text-success" : "text-danger"}`}><span aria-hidden="true">{correct ? "✓ " : "✗ "}</span>{title ?? (correct ? "Chính xác!" : "Chưa đúng.")}</p>
+    <div ref={ref} role="status" className={`relative mt-3 scroll-mt-4 scroll-mb-28 rounded-xl border px-4 py-3 text-sm leading-relaxed ${correct ? "border-success/40 bg-success-soft text-ink" : "border-danger/40 bg-danger-soft text-ink"}`}>
+      {correct && celebrate !== "none" && <RewardBurst big={celebrate === "big"} />}
+      <p className={`font-semibold ${correct ? "text-success" : "text-danger"}`}><span aria-hidden="true" className={correct && celebrate !== "none" ? "hm-reward-pop" : undefined}>{correct ? "✓ " : "✗ "}</span>{title ?? (correct ? "Chính xác!" : "Chưa đúng.")}</p>
       {children && <div className="mt-1 space-y-1">{children}</div>}
     </div>
   );

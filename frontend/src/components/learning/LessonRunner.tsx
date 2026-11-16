@@ -257,7 +257,7 @@ export default function LessonRunner({
             return <li key={exercise.id}><button type="button" className={ui.textButton} onClick={() => goTo(target >= 0 ? target : steps.length - 2)}>{exercise.prompt}</button></li>;
           })}</ul>}
           <Button size="lg" className="mt-2" disabled={!allCorrect || alreadyCompleted} onClick={complete}>{alreadyCompleted ? "Đã hoàn thành" : "Hoàn thành và lên lịch ôn"}</Button>
-          {completion && <ResultBox correct title="Hoàn thành!">{completion}</ResultBox>}
+          {completion && <ResultBox correct celebrate="big" title="Hoàn thành!">{completion}</ResultBox>}
           {completeError && <ResultBox correct={false} title="Chưa hoàn thành được">{completeError}</ResultBox>}
         </article>
         <article className={`${ui.block} mt-4`}>
