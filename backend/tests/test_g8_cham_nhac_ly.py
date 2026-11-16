@@ -154,3 +154,30 @@ def test_pipeline_ai_tu_choi_hai_lan_thi_tra_cau_engine(tmp_path, monkeypatch):
         d, _ = ts.answer_question(db, db.get(User, "eval-user"), "E natural minor scale có nốt gì?", [], None,
                                   Refuses(), datetime.now(timezone.utc))
     assert "E F# G A B C D" in d.reply and Refuses.calls == 2, (d.reply, Refuses.calls)
+
+
+def test_cau_dao_quang_khong_bi_dinh_tuyen_sang_huong_dan_web():
+    import json as _json
+    from datetime import datetime, timezone
+
+    from fastapi.testclient import TestClient
+
+    from app.ai.tutor import llm
+    from app.db.models import User
+    from app.db.session import SessionLocal
+    from app.main import app
+    from app.services import ai_tutor_service as ts
+
+    class Ok:
+        def generate(self, system, prompt, schema):
+            body = {"reply": "Đảo quãng P4 được quãng P5 (quãng năm đúng).", "citations": [], "engine_claims": [],
+                    "hint_level": 0, "suggested_actions": [], "intent": "concept"}
+            return llm.LLMResult(_json.dumps(body, ensure_ascii=False), "fake", 1, 1, 1, 1)
+
+    with TestClient(app), SessionLocal() as db:
+        if db.get(User, "eval-user") is None:
+            db.add(User(id="eval-user", display_name="eval", email="eval@example.test"))
+            db.commit()
+        d, _ = ts.answer_question(db, db.get(User, "eval-user"), "Đảo quãng P4 thì được quãng gì?", [], None, Ok(),
+                                  datetime.now(timezone.utc))
+    assert d.route != "help" and "P5" in d.reply, (d.route, d.reply)

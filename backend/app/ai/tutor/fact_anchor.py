@@ -70,8 +70,13 @@ def honoured(reply: str, f: dict[str, Any]) -> bool:
     return True
 
 
+def direct(question: str) -> bool:
+    """Câu đòi dữ kiện trực tiếp (nốt, quãng, bậc, hóa biểu...), khác câu khái niệm hay câu hỏi cách dùng web."""
+    return bool(_DIRECT.search(question))
+
+
 def missing(question: str, reply: str, facts: Sequence[dict[str, Any]]) -> list[dict[str, Any]]:
     """Dữ kiện Engine mà câu trả lời đáng ra phải nêu nhưng không nêu. Rỗng nếu câu hỏi không đòi dữ kiện trực tiếp."""
-    if not facts or len(facts) > 2 or not _DIRECT.search(question):
+    if not facts or len(facts) > 2 or not direct(question):
         return []
     return [f for f in facts if not honoured(reply, f)]
