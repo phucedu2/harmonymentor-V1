@@ -61,7 +61,8 @@ function GoalForm({ initial, onSaved }: { initial: string; onSaved: () => void }
   </form>;
 }
 
-export default function RecommendedLessons() {
+// excludeLessonId: bài đã nằm ở thẻ "Bắt đầu học" ngay trên, khỏi hiện lần hai (FE-011).
+export default function RecommendedLessons({ excludeLessonId }: { excludeLessonId?: string } = {}) {
   const navigate = useNavigate();
   const [data, setData] = useState<Recommendations | null>(null);
   const [goal, setGoal] = useState("");
@@ -79,6 +80,7 @@ export default function RecommendedLessons() {
     navigate(`/app/hoc?bai=${encodeURIComponent(item.lesson_id)}`);
   };
 
+  const nextItems = (data?.next ?? []).filter((x) => x.lesson_id !== excludeLessonId);
   return <Card className="mb-4 p-4" aria-labelledby="rec-title">
     <Kicker>Gợi ý cho bạn</Kicker>
     <CardTitle className="mt-1"><span id="rec-title">Học gì tiếp theo?</span></CardTitle>
@@ -99,7 +101,8 @@ export default function RecommendedLessons() {
     <div className="mt-3">
       <h3 className="text-sm font-semibold">Bài nên học tiếp</h3>
       {!data ? (failed ? null : <p className="mt-1 text-muted">Đang tính gợi ý…</p>)
-        : data.next.length ? <ul className="mt-2 grid gap-2">{data.next.map((x) => <LessonRow key={x.lesson_id} item={x} onOpen={open} />)}</ul>
+        : nextItems.length ? <ul className="mt-2 grid gap-2">{nextItems.map((x) => <LessonRow key={x.lesson_id} item={x} onOpen={open} />)}</ul>
+        : data.next.length ? <p className="mt-1 text-muted">Bài gợi ý nằm ở thẻ "Bắt đầu học" phía trên. Học xong bài đó, mình sẽ gợi ý bài kế tiếp.</p>
         : <p className="mt-1 text-muted">Bạn đã bắt đầu mọi bài hiện có. Hãy hoàn thành bài đang học hoặc ôn lại các bài đã xong.</p>}
     </div>
 

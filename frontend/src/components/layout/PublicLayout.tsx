@@ -14,7 +14,7 @@ export default function PublicLayout() {
         Bỏ qua, tới nội dung chính
       </a>
       <header className="border-b border-line bg-surface/90 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 py-3 sm:gap-4 sm:px-6">
           <Logo />
           <nav aria-label="Điều hướng trang chủ" className="flex items-center gap-1 sm:gap-2">
             <Link to="/#chuong-trinh" className="hidden rounded-md px-3 py-2 text-sm text-muted hover:text-ink sm:block">Chương trình</Link>
@@ -23,7 +23,7 @@ export default function PublicLayout() {
               <ButtonLink to="/app">Vào học</ButtonLink>
             ) : (
               <>
-                <NavLink to="/dang-nhap" className="rounded-md px-3 py-2 text-sm font-medium text-ink hover:text-primary">Đăng nhập</NavLink>
+                <NavLink to="/dang-nhap" className="whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium text-ink hover:text-primary">Đăng nhập</NavLink>
                 <ButtonLink to="/dang-ky" className="hidden sm:inline-flex">Đăng ký</ButtonLink>
               </>
             )}

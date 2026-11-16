@@ -326,8 +326,10 @@ export default function LessonRunner({
     {/* FE-004: điện thoại xếp 2 hàng (chữ + %, rồi thanh) thay vì 3 hàng để nhường chỗ cho nội dung bước. */}
     <div ref={progressRef} className="mb-4 grid scroll-mt-3 grid-cols-[1fr_auto] items-center gap-x-3 gap-y-2 rounded-2xl border border-primary/25 bg-surface px-4 py-3 sm:grid-cols-[minmax(10rem,1fr)_2fr_auto] sm:gap-4">
       <div className="flex flex-col"><b className="text-ink">{viewAll ? `${steps.length} bước` : `Bước ${current + 1}/${steps.length}`}</b><span className="text-xs text-muted">Đã đúng {correctCount}/{total} câu hỏi</span></div>
-      <ProgressBar className="col-span-2 row-start-2 sm:col-span-1 sm:row-start-auto" value={masteryPercent} label={`Đã đúng ${masteryPercent}% câu hỏi`} />
-      <strong className="col-start-2 row-start-1 font-mono text-primary sm:col-start-auto sm:row-start-auto">{masteryPercent}%</strong>
+      {/* FE-010: thanh đo BƯỚC đã đi (không phải % câu đúng), vì "Bước 6/18" cạnh thanh 0% dễ bị hiểu là chưa tiến bộ.
+          % câu đúng vẫn hiện, ghi rõ "đúng". */}
+      <ProgressBar className="col-span-2 row-start-2 sm:col-span-1 sm:row-start-auto" value={viewAll ? 100 : ((current + 1) / steps.length) * 100} label={viewAll ? `${steps.length} bước` : `Đang ở bước ${current + 1} trên ${steps.length}`} />
+      <strong className="col-start-2 row-start-1 font-mono text-primary sm:col-start-auto sm:row-start-auto" aria-label={`${masteryPercent}% câu đúng`}>{masteryPercent}% đúng</strong>
     </div>
     {outdatedNotice && <div className={ui.resultBad} role="status">{outdatedNotice}</div>}
     {startError && <div className={ui.resultBad} role="alert">Chưa lưu được trạng thái bắt đầu bài. Bạn vẫn học bình thường; tiến độ sẽ được lưu khi bạn hoàn thành bài.</div>}

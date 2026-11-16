@@ -20,6 +20,9 @@ export default function DashboardPage() {
   }, [overview]);
   const runnable = overview?.lessons.filter((lesson) => lesson.exercise_count > 0).length;
   const fresh = nextLesson?.status === "not_started";
+  const showPlacement = placement === "not_started" && overview?.started_lessons === 0;
+  // Còn đang tải (chưa biết) và người học chưa bắt đầu bài nào: giữ chỗ để không giật bố cục.
+  const placementPending = placement === null && (overview === null || overview.started_lessons === 0);
 
   return <section>
     <PageHeading eyebrow="Tổng quan" title={`Chào ${user?.display_name ?? "bạn"}`}>
@@ -28,13 +31,8 @@ export default function DashboardPage() {
         : "Học tiếp bài đang dở, rồi ôn các thẻ đến hạn để nhớ lâu."}
     </PageHeading>
 
-    {placement === "not_started" && overview?.started_lessons === 0 && <Card className="mb-4 p-4">
-      <p className="mb-2">Đã biết chút nhạc lý? Làm bài kiểm tra đầu vào 12 câu để hệ thống gợi ý bài phù hợp hơn.</p>
-      <ButtonLink to="/app/kiem-tra-dau-vao" variant="secondary">Làm bài kiểm tra đầu vào</ButtonLink>
-    </Card>}
-
     {/* Một việc chính: học tiếp. Nút chính đặt ngay đầu trang để luôn thấy trên màn 360px. */}
-    <Card className="mb-4 border-primary/30 p-6">
+    <Card className="mb-4 min-h-60 border-primary/30 p-6">
       <Badge>{fresh ? "Bắt đầu học" : "Học tiếp"}</Badge>
       <CardTitle className="mt-3 text-2xl">{nextLesson ? `Bài ${nextLesson.order}. ${nextLesson.title}` : "Đang tải lộ trình…"}</CardTitle>
       {nextLesson ? <>
@@ -47,7 +45,14 @@ export default function DashboardPage() {
       </div>
     </Card>
 
-    <RecommendedLessons />
+    {/* FE-011: lời mời kiểm tra đầu vào nằm dưới CTA chính (không chen lên trên). FE-017: giữ chỗ khi chưa biết
+        trạng thái, nếu không thẻ này hiện muộn và đẩy cả trang xuống (CLS 0,22). */}
+    {showPlacement ? <Card className="mb-4 flex min-h-36 flex-col items-start justify-center p-4">
+      <p className="mb-2">Đã biết chút nhạc lý? Làm bài kiểm tra đầu vào 12 câu để hệ thống gợi ý bài phù hợp hơn.</p>
+      <ButtonLink to="/app/kiem-tra-dau-vao" variant="secondary">Làm bài kiểm tra đầu vào</ButtonLink>
+    </Card> : placementPending ? <div aria-hidden="true" className="mb-4 min-h-36" /> : null}
+
+    <RecommendedLessons excludeLessonId={fresh ? nextLesson?.lesson_id : undefined} />
 
     <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-4">
       <Metric value={`${overview?.completed_lessons ?? "–"}/${runnable ?? "–"}`} label="bài đã hoàn thành" />

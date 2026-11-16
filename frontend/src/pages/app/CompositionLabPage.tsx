@@ -617,7 +617,7 @@ function BarEditor({ index, chord, voicing, keyName, keyChords, chords, levels, 
     </div>
 
     {voicing && chord && <div>
-      <NotationStaff groups={[{ label: `${chord}: ${voicing.notes.join(" – ")}`, notes: voicing.pitches.map((p) => p.name) }]} />
+      <NotationStaff large groups={[{ label: `${chord}: ${voicing.notes.join(" – ")}`, notes: voicing.pitches.map((p) => p.name) }]} />
       <Button variant="secondary" className="mt-2" onClick={() => playVoicing(voicing)}><span aria-hidden="true">▶</span> Nghe {chord}</Button>
     </div>}
 
