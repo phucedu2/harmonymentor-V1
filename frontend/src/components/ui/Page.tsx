@@ -74,7 +74,7 @@ export function ChipButton({ pressed, className = "", ...rest }: ButtonHTMLAttri
     <button
       type="button"
       aria-pressed={pressed}
-      className={`min-h-11 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${pressed ? "border-primary bg-primary text-white" : "border-line bg-surface text-ink hover:border-primary hover:text-primary"} ${className}`}
+      className={`min-h-11 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${pressed ? "border-primary bg-primary text-on-primary" : "border-line bg-surface text-ink hover:border-primary hover:text-primary"} ${className}`}
       {...rest}
     />
   );

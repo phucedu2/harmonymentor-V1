@@ -6,7 +6,7 @@ type Size = "md" | "lg";
 
 const base = "inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50";
 const variants: Record<Variant, string> = {
-  primary: "bg-primary text-white hover:bg-primary-strong",
+  primary: "bg-primary text-on-primary hover:bg-primary-strong",
   secondary: "border border-line bg-surface text-ink hover:border-primary hover:text-primary",
   ghost: "text-primary hover:bg-primary-soft",
 };

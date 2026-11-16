@@ -42,7 +42,7 @@ function ChordDemo() {
             aria-pressed={s === symbol}
             onClick={() => setSymbol(s)}
             className={`rounded-full border px-4 py-1.5 font-mono text-sm transition-colors ${
-              s === symbol ? "border-[var(--w-deep)] bg-[var(--w-deep)] text-white" : "border-[var(--w-line)] bg-white text-ink hover:border-[var(--w-deep)]"
+              s === symbol ? "border-[var(--w-deep)] bg-[var(--w-deep)] text-white" : "border-[var(--w-line)] bg-[var(--w-panel)] text-ink hover:border-[var(--w-deep)]"
             }`}
           >
             {prettyNote(s)}
@@ -59,7 +59,7 @@ function ChordDemo() {
         {chord.data && (
           <p className="text-sm text-muted">
             <span className="font-mono text-base font-semibold text-ink">{prettyNote(chord.data.symbol)}</span> gồm{" "}
-            <span className="font-mono text-base font-semibold text-[var(--w-deep)]">{chord.data.notes.map(prettyNote).join(" · ")}</span>
+            <span className="font-mono text-base font-semibold text-[var(--w-deep-text)]">{chord.data.notes.map(prettyNote).join(" · ")}</span>
           </p>
         )}
       </div>
@@ -105,7 +105,7 @@ function Curriculum() {
           <ol className="mt-3 space-y-2">
             {items.map((lesson) => (
               <li key={lesson.id} className="flex items-start gap-3 text-sm">
-                <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-md bg-[var(--w-ivory)] font-mono text-xs font-semibold text-[var(--w-deep)]">{lesson.order}</span>
+                <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-md bg-[var(--w-ivory)] font-mono text-xs font-semibold text-[var(--w-deep-text)]">{lesson.order}</span>
                 <span className="flex-1 text-ink">{lesson.title}</span>
                 {lesson.exercise_count === 0 && <span className="shrink-0 rounded-full bg-bg px-2 py-0.5 text-xs text-muted">Sắp có</span>}
               </li>
@@ -175,7 +175,7 @@ function HomeContent() {
               <article key={f.title} className="wow-panel reveal p-6">
                 <div className="flex items-center justify-between gap-2">
                   <h3 className="font-semibold">{f.title}</h3>
-                  {!f.ready && <span className="shrink-0 rounded-full bg-[var(--w-ivory)] px-2 py-0.5 text-xs font-medium text-[var(--w-deep)]">Sắp ra mắt</span>}
+                  {!f.ready && <span className="shrink-0 rounded-full bg-[var(--w-ivory)] px-2 py-0.5 text-xs font-medium text-[var(--w-deep-text)]">Sắp ra mắt</span>}
                 </div>
                 <p className="mt-2 text-sm text-[var(--w-ink-soft)]">{f.body}</p>
               </article>

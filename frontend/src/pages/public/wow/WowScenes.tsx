@@ -166,7 +166,7 @@ function Staff({ notes }: { notes: string[] }) {
   return (
     <svg viewBox="0 0 500 260" className="w-full max-w-xl" role="img" aria-label={`Khuông nhạc với các nốt ${notes.join(", ")}`}>
       {[0, 1, 2, 3, 4].map((i) => <line key={i} className="staff" x1={x0} x2={x1} y1={top + i * gap} y2={top + i * gap} />)}
-      <text x={x0 + 4} y={bottom + 10} fontSize="120" fontFamily="serif" fill="var(--w-lacquer)">𝄞</text>
+      <text x={x0 + 4} y={bottom + 10} fontSize="120" fontFamily="serif" fill="var(--w-on-paper)">𝄞</text>
       {notes.map((n, i) => {
         const y = staffY(n, bottom, gap);
         const x = 270;

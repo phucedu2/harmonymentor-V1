@@ -4,6 +4,7 @@ import { useAuth } from "../../auth/AuthProvider";
 import { PageLoader } from "../ui/PageLoader";
 import { Logo } from "./Logo";
 import FloatingTutorDrawer from "../learning/FloatingTutorDrawer";
+import { ThemeToggle } from "../../theme/ThemeToggle";
 
 // Bố cục khung lấy từ v0.5.3-dev (thanh bên tối, mục đang mở nổi khối), logic giữ của main:
 // NavLink theo route, RequireAuth ở App.tsx, đăng xuất về trang chủ.
@@ -29,6 +30,8 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
 const signOutClass =
   "inline-flex items-center justify-center gap-2 rounded-lg border border-shell-line px-3 py-2 text-sm font-semibold text-shell-text transition-colors hover:border-shell-muted hover:text-shell-ink disabled:opacity-50";
 
+const toggleClass = "lg:size-9 border-shell-line text-shell-text hover:border-shell-muted hover:text-shell-ink";
+
 export default function AppLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -51,7 +54,10 @@ export default function AppLayout() {
       <aside data-surface="dark" className="bg-shell text-shell-text lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:gap-7 lg:px-4 lg:py-6">
         <div className="flex items-center justify-between gap-3 px-4 pb-2 pt-3 lg:p-0">
           <Logo to="/app" inverted />
-          <button type="button" className={`${signOutClass} lg:hidden`} onClick={signOut} disabled={leaving} aria-busy={leaving}>Đăng xuất</button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle className={toggleClass} />
+            <button type="button" className={`${signOutClass} lg:hidden`} onClick={signOut} disabled={leaving} aria-busy={leaving}>Đăng xuất</button>
+          </div>
         </div>
         <nav aria-label="Điều hướng chính" className="px-3 pb-3 lg:p-0">
           <ul className="grid grid-flow-col auto-cols-fr gap-1 lg:grid-flow-row lg:auto-cols-auto lg:gap-1.5">

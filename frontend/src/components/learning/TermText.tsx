@@ -135,7 +135,7 @@ function Term({ term, children }: { term: GlossaryTerm; children: ReactNode }) {
     {open && <span id={id} role="note" className="fixed inset-x-4 bottom-24 z-30 grid gap-2 sm:absolute sm:inset-x-auto sm:bottom-auto sm:top-[calc(100%+6px)] sm:left-0 sm:w-72 rounded-xl border border-shell-line bg-shell p-3 text-left text-sm font-normal text-shell-text shadow-xl">
       <b className="text-shell-ink">{term.label}</b>
       <span>{term.definition}</span>
-      {term.sound && <button type="button" className="min-h-11 rounded-lg bg-primary px-3 font-semibold text-white hover:bg-primary-strong"
+      {term.sound && <button type="button" className="min-h-11 rounded-lg bg-primary px-3 font-semibold text-on-primary hover:bg-primary-strong"
         onClick={() => { setError(false); void playSound(term.sound!).catch(() => setError(true)); }}><span aria-hidden="true">▶</span> Nghe ví dụ</button>}
       {error && <span className="text-[#ffb4b0]">Chưa phát được âm thanh. Hãy thử lại.</span>}
       <button type="button" className="min-h-11 justify-self-end px-2 text-sm text-shell-muted underline" onClick={() => setOpen(false)}>Đóng</button>

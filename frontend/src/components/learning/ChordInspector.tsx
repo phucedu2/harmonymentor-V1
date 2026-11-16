@@ -97,7 +97,7 @@ export default function ChordInspector({ symbol, contextKey, compact = false, di
               {data.bass && <span className="grid grid-cols-[4.5rem_1fr] gap-2"><em className="text-[11px] text-shell-muted uppercase not-italic">Nốt bass</em><strong>{data.bass}</strong></span>}
               {data.context?.roman && <span className="grid grid-cols-[4.5rem_1fr] gap-2"><em className="text-[11px] text-shell-muted uppercase not-italic">Số La Mã</em><strong>{data.context.roman}</strong></span>}
               {data.context?.function && <span className="grid grid-cols-[4.5rem_1fr] gap-2"><em className="text-[11px] text-shell-muted uppercase not-italic">Chức năng</em><strong>{data.context.function}</strong></span>}
-              <button type="button" className="mt-1 min-h-11 w-full rounded-lg bg-primary px-3 text-sm font-semibold text-white hover:bg-primary-strong" onClick={() => void play()}>▶ Nghe hợp âm</button>
+              <button type="button" className="mt-1 min-h-11 w-full rounded-lg bg-primary px-3 text-sm font-semibold text-on-primary hover:bg-primary-strong" onClick={() => void play()}>▶ Nghe hợp âm</button>
               <span className="mt-0.5 border-t border-shell-line pt-2 text-[11px] text-shell-muted">Cấu tạo hợp âm được tính bởi Music Theory Engine. Voicing thực tế có thể lược/đảo nốt tùy bài tập và phong cách.</span>
             </>
           )}

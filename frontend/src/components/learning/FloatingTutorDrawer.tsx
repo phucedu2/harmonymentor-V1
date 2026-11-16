@@ -174,7 +174,7 @@ export default function FloatingTutorDrawer() {
           Hỏi mình về nốt, quãng, hợp âm, âm giai hay vòng hòa âm trong các bài, ví dụ “C7 khác Cmaj7 thế nào?”, hoặc cách dùng trang web. Câu ngoài bài học mình sẽ ghi rõ nguồn, không biết thì nói không biết. Sau khi làm sai một câu, bấm “Giải thích lỗi này” để nhận gợi ý từng bước.
         </p>}
         {items.map((item) => item.kind === "user"
-          ? <p key={item.id} className="ml-auto max-w-[85%] rounded-2xl rounded-br-sm bg-primary px-3 py-2 text-sm text-white">{item.text}</p>
+          ? <p key={item.id} className="ml-auto max-w-[85%] rounded-2xl rounded-br-sm bg-primary px-3 py-2 text-sm text-on-primary">{item.text}</p>
           : item.kind === "error"
             ? <div key={item.id} role="alert" className="rounded-lg bg-danger-soft px-3 py-2 text-sm text-danger">
                 {item.text}{item.retry && <button type="button" className="ml-2 font-semibold underline" onClick={item.retry}>Thử lại</button>}
@@ -199,7 +199,7 @@ export default function FloatingTutorDrawer() {
     {/* FE-001: trên điện thoại khung chat phủ gần hết màn hình và có nút × riêng, nên ẩn nút tròn khi khung mở;
         trước đây nút tròn nằm đè lên nút "Gửi". FE-002: nút nhỏ hơn (48px) để che ít chữ bài học hơn. */}
     <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-label={open ? "Đóng AI Tutor" : "Mở AI Tutor"}
-      className={`fixed right-3 bottom-24 z-40 size-12 items-center justify-center rounded-full bg-primary text-sm font-bold text-white shadow-xl ring-2 ring-bg hover:bg-primary-strong md:right-5 md:bottom-5 md:flex md:size-14 ${open ? "hidden" : "flex"}`}>
+      className={`fixed right-3 bottom-24 z-40 size-12 items-center justify-center rounded-full bg-primary text-sm font-bold text-on-primary shadow-xl ring-2 ring-bg hover:bg-primary-strong md:right-5 md:bottom-5 md:flex md:size-14 ${open ? "hidden" : "flex"}`}>
       {open ? "×" : "AI"}
     </button>
   </>;

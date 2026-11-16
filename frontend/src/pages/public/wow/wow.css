@@ -17,8 +17,15 @@
   --w-night: #081613;
   --w-ink-soft: #3d5550;
   --w-line: #d6dbcc;
-  color: var(--w-lacquer);
-  background: var(--w-ivory);
+  /* FE-014: tách màu "giấy" (nền phần sáng) khỏi ngà/sơn mài cố định để chế độ tối chỉ lật phần sáng;
+     hero, dải vòng hợp âm và dải cuối vốn tối nên giữ nguyên. */
+  --w-cream: #f2f3ea;
+  --w-paper: var(--w-ivory);
+  --w-on-paper: var(--w-lacquer);
+  --w-panel: #fff;
+  --w-deep-text: var(--w-deep);
+  color: var(--w-on-paper);
+  background: var(--w-paper);
   overflow-x: clip;
   /* Bàn phím Piano dùng các biến này (styles.css); đổi sang màu Đồng & Gỉ trong trang chủ. */
   --accent: var(--w-verdigris);
@@ -42,7 +49,7 @@
     radial-gradient(60% 50% at 75% 30%, rgba(69, 194, 171, 0.22), transparent 70%),
     radial-gradient(40% 40% at 15% 85%, rgba(224, 165, 62, 0.16), transparent 70%),
     var(--w-night);
-  color: var(--w-ivory);
+  color: var(--w-cream);
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -81,13 +88,13 @@
 .wow-cta:hover { transform: translateY(-2px) scale(1.02); }
 .wow-ghost {
   display: inline-flex; align-items: center; border-radius: 999px; padding: 0.95rem 1.6rem; font-weight: 600;
-  border: 1px solid rgba(242, 243, 234, 0.3); color: var(--w-ivory);
+  border: 1px solid rgba(242, 243, 234, 0.3); color: var(--w-cream);
 }
 .wow-ghost:hover { border-color: var(--w-verdigris); color: var(--w-verdigris); }
 
-.wow-sound { border: 1px solid rgba(242, 243, 234, 0.3); color: var(--w-ivory); background: rgba(8, 22, 19, 0.6); backdrop-filter: blur(6px); }
+.wow-sound { border: 1px solid rgba(242, 243, 234, 0.3); color: var(--w-cream); background: rgba(8, 22, 19, 0.6); backdrop-filter: blur(6px); }
 .wow-sound[aria-pressed="true"] { border-color: var(--w-verdigris); color: var(--w-verdigris); }
-.wow-sound.on-light { color: var(--w-lacquer); border-color: var(--w-line); background: rgba(242, 243, 234, 0.85); }
+.wow-sound.on-light { color: var(--w-on-paper); border-color: var(--w-line); background: color-mix(in srgb, var(--w-paper) 85%, transparent); }
 .wow-eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; }
 .wow-eq i { width: 3px; height: 4px; background: currentColor; border-radius: 1px; }
 .wow-eq[data-on="true"] i { animation: wow-eq 0.9s ease-in-out infinite; }
@@ -101,15 +108,15 @@
 @keyframes wow-drip { 0% { transform: scaleY(0); } 60% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
 
 /* ---------- Cảnh khuông nhạc ---------- */
-.wow-staff-scene { background: var(--w-ivory); }
-.wow-staff svg line.staff { stroke: var(--w-lacquer); stroke-width: 2; }
+.wow-staff-scene { background: var(--w-paper); }
+.wow-staff svg line.staff { stroke: var(--w-on-paper); stroke-width: 2; }
 .wow-staff .note ellipse { fill: var(--c); }
 .wow-staff .note text { fill: var(--w-lacquer); font-family: "Fraunces", serif; font-weight: 600; }
 .wow-step { position: absolute; inset: 0; }
-.wow-kicker { font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--w-deep); }
+.wow-kicker { font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--w-deep-text); }
 
 /* ---------- Dải vòng hợp âm ---------- */
-.wow-prog { background: var(--w-lacquer); color: var(--w-ivory); }
+.wow-prog { background: var(--w-lacquer); color: var(--w-cream); }
 .wow-card {
   flex: 0 0 auto; width: min(78vw, 420px); border-radius: 28px; padding: 2rem;
   background: linear-gradient(160deg, rgba(69, 194, 171, 0.14), rgba(8, 22, 19, 0.2));
@@ -121,9 +128,22 @@
 .wow-card .piano { --key-white: #f2f3ea; --key-black: #0c231f; --accent: #45c2ab; --line: #0c231f; }
 
 /* ---------- Phần dưới (giữ nội dung cũ, đổi màu) ---------- */
-.wow .wow-panel { background: #fff; border: 1px solid var(--w-line); border-radius: 22px; }
+.wow .wow-panel { background: var(--w-panel); border: 1px solid var(--w-line); border-radius: 22px; }
 .wow .reveal { will-change: transform, opacity; }
-.wow-final { background: var(--w-deep); color: var(--w-ivory); }
+.wow-final { background: var(--w-deep); color: var(--w-cream); }
+
+/* FE-014: chế độ tối của trang chủ. Chỉ phần "giấy" đổi; tương phản: chữ #E7EFEA/#10201C 14,6:1,
+   chữ phụ #A9BBB5 8,6:1, kicker #4CC2AD 8:1, đồng #E0A53E 8,4:1. */
+:root[data-theme="dark"] .wow {
+  --w-paper: #10201c;
+  --w-on-paper: #e7efea;
+  --w-panel: #172b26;
+  --w-line: #2f4a43;
+  --w-ink-soft: #a9bbb5;
+  --w-brass-deep: var(--w-brass);
+  --w-deep-text: #4cc2ad;
+  --w-ivory: #1d3631;
+}
 
 /* Giảm chuyển động: tắt hiệu ứng CSS lặp; GSAP tự chuyển sang bản nhẹ trong WowHome. */
 @media (prefers-reduced-motion: reduce) {

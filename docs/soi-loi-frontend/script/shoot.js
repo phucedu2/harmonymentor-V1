@@ -18,6 +18,8 @@ const only = process.env.ONLY ? process.env.ONLY.split(',') : null;
   const report = [];
   for (const scheme of ['light','dark']) for (const [w,h] of SIZES) {
     const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: Number(process.env.DSF||2), colorScheme: scheme, hasTouch: w < 800, isMobile: w < 800 && w < 500 });
+    // FE-014: "tối" giờ là theme thật của app (nút sáng/tối lưu localStorage), không chỉ prefers-color-scheme.
+    if (scheme === 'dark') await ctx.addInitScript(() => { try { localStorage.setItem('hm-theme', 'dark'); } catch {} });
     const page = await ctx.newPage();
     let logs = [];
     page.on('console', m => { if (['error','warning'].includes(m.type())) logs.push(`${m.type()}: ${m.text().slice(0,200)}`); });

@@ -4,6 +4,7 @@ import { useAuth } from "../../auth/AuthProvider";
 import { ButtonLink } from "../ui/Button";
 import { PageLoader } from "../ui/PageLoader";
 import { Logo } from "./Logo";
+import { ThemeToggle } from "../../theme/ThemeToggle";
 
 export default function PublicLayout() {
   const { status } = useAuth();
@@ -26,6 +27,7 @@ export default function PublicLayout() {
                 <ButtonLink to="/dang-ky" className="hidden sm:inline-flex">Đăng ký</ButtonLink>
               </>
             )}
+            <ThemeToggle className="ml-1 border-line text-ink hover:border-primary hover:text-primary" />
           </nav>
         </div>
       </header>

@@ -36,7 +36,7 @@ export default class LessonErrorBoundary extends Component<Props, State> {
         <summary className="cursor-pointer text-sm text-muted">Thông tin để báo cho nhóm phát triển</summary>
         <code className="mt-2 block font-mono text-sm break-words whitespace-pre-wrap">{this.state.error.message}</code>
       </details>
-      <button type="button" className="min-h-11 justify-self-start rounded-lg bg-primary px-4 font-semibold text-white hover:bg-primary-strong" onClick={this.reset}>Quay lại danh sách bài học</button>
+      <button type="button" className="min-h-11 justify-self-start rounded-lg bg-primary px-4 font-semibold text-on-primary hover:bg-primary-strong" onClick={this.reset}>Quay lại danh sách bài học</button>
     </section>;
   }
 }

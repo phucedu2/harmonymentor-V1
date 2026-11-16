@@ -10,6 +10,8 @@
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#0C231F" />
     <meta name="description" content="Học nhạc lý bằng cách chơi nó: học, luyện tập có chẩn đoán, ôn tập và sáng tác." />
+    <!-- FE-014: đặt theme trước khi vẽ để không nháy sáng khi người dùng đã chọn tối. -->
+    <script>try{if(localStorage.getItem("hm-theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
   </head>
   <body>
     <div id="root"></div>
