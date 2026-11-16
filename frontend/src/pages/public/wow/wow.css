@@ -10,6 +10,7 @@
   --w-deep: #006d61;
   --w-mid: #1f9683;
   --w-brass: #e0a53e;
+  --w-brass-deep: #9a6400;
   --w-felt: #b4343b;
   --w-ivory: #f2f3ea;
   --w-lacquer: #0c231f;
@@ -26,6 +27,12 @@
 }
 .wow .display { font-family: "Fraunces", Georgia, serif; font-weight: 600; letter-spacing: -0.02em; }
 .wow .display em { font-style: italic; color: var(--w-brass); }
+/* FE-003: đồng #E0A53E trên nền ngà chỉ 1,95:1 (axe color-contrast), kể cả chữ 48px cần ≥ 3:1.
+   Ở phần nền sáng dùng đồng sẫm #9A6400 (4,48:1); nền tối (hero, dải vòng hợp âm) giữ đồng sáng. */
+.wow section:not(.wow-hero):not(.wow-prog):not(.wow-final) .display em { color: var(--w-brass-deep); }
+
+/* FE-007: vòng focus mặc định #006D61 trên nền tối chỉ 2,6–3:1 (WCAG 1.4.11 cần ≥ 3:1); nền tối dùng verdigris (7,5–8,4:1). */
+.wow-hero :focus-visible, .wow-prog :focus-visible, .wow-final :focus-visible { outline-color: var(--w-verdigris); }
 
 /* ---------- Hero ---------- */
 .wow-hero {
