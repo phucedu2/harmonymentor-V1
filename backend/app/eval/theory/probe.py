@@ -39,7 +39,7 @@ def main(argv=None) -> int:
     from ...api.ai_tutor import embedder_dep
     from ...core.config import settings
     from ...db.models import User
-    from ...db.session import SessionLocal, create_schema
+    from ...db.session import SessionLocal, create_schema, engine
     from ...services import ai_tutor_service as ts
 
     provider = get_provider(settings)
@@ -57,7 +57,8 @@ def main(argv=None) -> int:
     todo = [q for q in questions if q["id"] not in done]
     print(f"{len(todo)} câu cần hỏi ({len(done)} đã có trong {out.name}). Mô hình: {settings.gemini_model}", flush=True)
     embedder = embedder_dep()
-    create_schema()
+    if engine.dialect.name == "sqlite":      # PostgreSQL do Alembic dựng, không dùng create_all
+        create_schema()
     limited = 0
     with SessionLocal() as db:
         if db.get(User, "eval-user") is None:

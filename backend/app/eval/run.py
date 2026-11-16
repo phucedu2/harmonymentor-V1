@@ -369,9 +369,10 @@ def main(argv=None) -> int:
         os.environ["AI_ENABLED"] = "0"
 
     from ..db.models import User
-    from ..db.session import SessionLocal, create_schema
+    from ..db.session import SessionLocal, create_schema, engine
 
-    create_schema()
+    if engine.dialect.name == "sqlite":      # CSDL thật (PostgreSQL) do Alembic dựng; create_all ở đây làm lệch lịch sử migration
+        create_schema()
     with SessionLocal() as db:
         # Chạy lại nhiều lần trên cùng CSDL (Docker) không được trùng khóa; is_synthetic để loại khỏi dashboard (nguyên tắc 9)
         if db.get(User, "eval-user") is None:
