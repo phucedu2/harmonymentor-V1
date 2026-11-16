@@ -97,3 +97,60 @@ def test_engine_query_g8_khong_bat_nham():
     # "C major" trơ trọi hoặc câu thường không được hiểu là yêu cầu hóa biểu/âm giai.
     assert not engine_answer("Mình thích nghe nhạc jazz buổi tối").facts
     assert not [f for f in engine_answer("Hóa biểu là gì?").facts if f["tool"] == "key_signature"]
+
+
+# --- G8: neo câu trả lời vào dữ kiện Engine -------------------------------------------------------------------------
+
+from app.ai.tutor import fact_anchor
+
+
+def _facts(q):
+    return engine_answer(q).facts
+
+
+@pytest.mark.parametrize("q,reply,ok", [
+    ("Em7 trong key G trưởng là số La Mã gì?", "Em7 là bậc vi7 trong giọng G.", True),
+    ("Trong giọng G trưởng, Em7 là bậc mấy?", "Em7 là bậc VI.", False),                       # sai hoa/thường
+    ("Giọng B thứ có mấy dấu hóa?", "Giọng B thứ có 2 dấu giáng là Bb và Eb.", False),
+    ("Giọng B thứ có mấy dấu hóa?", "B thứ có 2 dấu thăng là F# và C#.", True),
+    ("Đảo quãng A4 thì được quãng gì?", "Bạn sẽ được quãng P5.", False),
+    ("Đảo quãng A4 thì được quãng gì?", "Đảo A4 được quãng năm giảm (d5).", True),
+    ("E natural minor scale có nốt gì?", "Mình không tự tính nốt để tránh sai sót.", False),
+    ("E natural minor scale có nốt gì?", "Gồm E F# G A B C D.", True),
+    ("Quãng M7 có bao nhiêu nửa cung?", "M7 rộng hơn m7 một nửa cung.", False),
+    ("Quãng M7 có bao nhiêu nửa cung?", "Quãng M7 có 11 nửa cung.", True),
+    ("Vì sao G7 muốn về C?", "Vì có nốt dẫn.", True),                                     # câu khái niệm: không ép nêu kết quả
+])
+def test_fact_anchor_nhan_ra_cau_tra_loi_khong_neu_ket_qua_engine(q, reply, ok):
+    assert (not fact_anchor.missing(q, reply, _facts(q))) is ok, (q, reply)
+
+
+def test_pipeline_ai_tu_choi_hai_lan_thi_tra_cau_engine(tmp_path, monkeypatch):
+    """Gemini từ chối liệt kê nốt âm giai hai lần liền: người học vẫn nhận kết quả đúng từ Music Engine."""
+    import json as _json
+
+    from app.ai.tutor import llm
+    from app.db.models import User
+    from app.db.session import SessionLocal
+    from app.main import app
+    from app.services import ai_tutor_service as ts
+    from fastapi.testclient import TestClient
+
+    class Refuses:
+        calls = 0
+
+        def generate(self, system, prompt, schema):
+            Refuses.calls += 1
+            body = {"reply": "Mình không tự tính nốt các âm giai nên không liệt kê được.", "citations": [],
+                    "engine_claims": [], "hint_level": 0, "suggested_actions": [], "intent": "concept"}
+            return llm.LLMResult(_json.dumps(body, ensure_ascii=False), "fake", 1, 1, 1, 1)
+
+    from datetime import datetime, timezone
+
+    with TestClient(app), SessionLocal() as db:
+        if db.get(User, "eval-user") is None:
+            db.add(User(id="eval-user", display_name="eval", email="eval@example.test"))
+            db.commit()
+        d, _ = ts.answer_question(db, db.get(User, "eval-user"), "E natural minor scale có nốt gì?", [], None,
+                                  Refuses(), datetime.now(timezone.utc))
+    assert "E F# G A B C D" in d.reply and Refuses.calls == 2, (d.reply, Refuses.calls)

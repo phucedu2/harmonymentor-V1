@@ -33,6 +33,7 @@ from ..ai.tutor.injection import looks_like_injection
 from ..ai.tutor.intent import classify
 from ..ai.tutor.llm import LLMProvider, LLMResult, LLMUnavailable
 from ..ai.tutor.notes import solfege_to_letters, split_notes
+from ..ai.tutor import fact_anchor
 from ..ai.tutor.engine_query import fact_text
 from ..ai.tutor.general import fold
 from ..ai.tutor.retriever import Hit, Retrieval, help_page, retrieve, retrieve_for_skill
@@ -171,7 +172,9 @@ def _fact_claims(facts: Sequence[dict[str, Any]]) -> list[dict[str, Any]]:
 
 
 def _fact_lines(facts: Sequence[dict[str, Any]]) -> str:
-    return " ".join(f"{f['args']['symbol']} = {f['result']}." for f in facts if f["tool"] == "get_chord_tones")
+    # G8: trước đây chỉ in hợp âm; giờ in mọi dữ kiện (âm giai, quãng, hóa biểu...) để câu dự phòng vẫn trả lời được.
+    return " ".join(f"{f['args']['symbol']} = {f['result']}." if f["tool"] == "get_chord_tones" else fact_text(f)
+                    for f in facts)
 
 
 def offline_answer(question_hits: Sequence[Hit], facts: Sequence[dict[str, Any]], titles: dict[str, str],
@@ -202,6 +205,25 @@ def _check(ans: TutorAnswer, allowed: dict[str, Hit]) -> tuple[GuardResult, list
     return guard, bad_cites, leaked_prompt
 
 
+FACT_NOTE = "Music Engine:"
+
+
+def anchor_note(question: str, reply: str, facts: Sequence[dict[str, Any]]) -> str | None:
+    """Lời nhắc soạn lại khi câu trả lời không nêu kết quả Engine cho câu hỏi đòi dữ kiện trực tiếp (G8)."""
+    miss = fact_anchor.missing(question, reply, facts)
+    if not miss:
+        return None
+    return f"{FACT_NOTE} " + " ".join(fact_text(f) for f in miss) + " Hãy nêu đúng kết quả này (viết thẳng, không từ chối, không tự tính lại)."
+
+
+def facts_only_answer(dec, titles: dict[str, str], facts: Sequence[dict[str, Any]], reason: str, flow: str) -> Draft:
+    """Câu viết sẵn từ Music Engine khi AI hai lần liền không nêu đúng dữ kiện (G8)."""
+    text = " ".join(fact_text(f) for f in facts) + _pointer(dec, titles)
+    actions = [f"Mở bài {dec.nearest_lesson}"] if dec.nearest_lesson else []
+    return Draft(text, "concept", [], _fact_claims(facts), "ok", "engine_only", 0, actions, flow=flow,
+                 source_label=fb.LABEL_ENGINE, suggested_lesson=dec.nearest_lesson, fallback_reason=reason)
+
+
 def _llm_round(provider: LLMProvider, build, allowed: dict[str, Hit], titles: dict[str, str],
                extra_check=None, system: str | None = None) -> tuple[TutorAnswer | None, GuardResult | None, list[LLMResult], str | None]:
     """Gọi LLM, kiểm, soạn lại tối đa 1 lần. Trả (câu đạt hoặc None, kết quả kiểm, các lần gọi, lý do hỏng)."""
@@ -225,7 +247,8 @@ def _llm_round(provider: LLMProvider, build, allowed: dict[str, Hit], titles: di
             # Lần 2 vẫn có trích dẫn lạ thì bỏ trích dẫn đó thay vì bỏ cả câu trả lời đúng nhạc lý.
             ans.citations = [c for c in ans.citations if c.block_id in allowed]
             return ans, guard, results, None
-        reason = "engine_contradiction" if guard.contradicted else ("answer_leak" if extra else "bad_citation")
+        reason = ("engine_contradiction" if guard.contradicted else
+                  ("fact_missing" if extra and extra.startswith(FACT_NOTE) else "answer_leak" if extra else "bad_citation"))
         correction = pr.correction_note([c.as_dict() for c in guard.contradicted], bad_cites, False)
         if extra:
             correction += "\n- " + extra
@@ -334,13 +357,17 @@ def _general_answer(db: Session, user: User, question: str, turns: Sequence[tupl
         return pr.general_prompt(question, turns, facts, correction)
 
     try:
-        ans, guard, results, reason = _llm_round(provider, build, {}, titles, system=pr.SYSTEM_GENERAL)
+        ans, guard, results, reason = _llm_round(provider, build, {}, titles, system=pr.SYSTEM_GENERAL,
+                                                 extra_check=lambda a: anchor_note(question, a.reply, facts))
     except LLMUnavailable as exc:
         d = _b_without_ai(dec, titles, exc.reason, question)
         d.llm_calls = 1
         return d
     if ans is None:
-        d = _b_without_ai(dec, titles, reason or "invalid", question)
+        if reason == "fact_missing" and facts:
+            d = facts_only_answer(dec, titles, facts, reason, "B")
+        else:
+            d = _b_without_ai(dec, titles, reason or "invalid", question)
         d.llm_calls, d.llm = len(results), results[-1] if results else None
         return d
     merged = _merge_results(results)

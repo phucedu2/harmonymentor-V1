@@ -206,6 +206,8 @@ def _local_facts(text: str, out: EngineAnswer, seen: set) -> None:
     elif _SIG_WORDS.search(text) and keys:
         for tonic, mode in keys:
             _local(out, seen, "key_signature", {"key": tonic, "mode": mode}, lambda tonic=tonic, mode=mode: _sig_text(tonic, mode))
+        # "Giọng B thứ có mấy dấu hóa" cũng khớp mẫu "giọng X thứ" của âm giai; người học hỏi hóa biểu, không hỏi nốt.
+        out.facts = [f for f in out.facts if not (f["tool"] == "get_scale" and f["args"]["tonic"] in {k[0] for k in keys})]
     elif (m := _SIG_ORDER.search(text)):
         sharp = m["kind"].lower() in {"thăng", "thang"}
         order = _key.ORDER_OF_SHARPS if sharp else _key.ORDER_OF_FLATS

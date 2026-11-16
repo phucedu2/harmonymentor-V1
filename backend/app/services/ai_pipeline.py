@@ -448,7 +448,9 @@ class Safety(Node):
         return ctx.flow == "A"
 
     def _fail(self, ctx: Ctx, reason: str) -> None:
-        d = _lesson_flow(ts.offline_answer(ctx.hits, ctx.facts, ctx.titles, reason or "invalid"))
+        # G8: AI hai lần liền không nêu đúng kết quả Engine thì trả kết quả Engine kèm đoạn bài (có trích dẫn, vẫn "từ bài học").
+        lead = "Mình trả lời theo Music Engine và bài học nhé." if reason == "fact_missing" else None
+        d = _lesson_flow(ts.offline_answer(ctx.hits, ctx.facts, ctx.titles, reason or "invalid", lead=lead))
         d.llm_calls, d.llm = len(ctx.results), ctx.results[-1]
         _done(ctx, d)
 
@@ -461,11 +463,14 @@ class Safety(Node):
             ctx.set(guard=guard)
             if pr.CANARY in ans.reply:
                 return self._fail(ctx, "prompt_leak")      # đã lộ lệnh hệ thống: không cho cơ hội thứ hai
-            if not guard.contradicted and (not ctx.bad_cites or round_no == 2):
+            anchor = None if guard.contradicted else ts.anchor_note(ctx.question, ans.reply, ctx.facts)
+            if not guard.contradicted and not anchor and (not ctx.bad_cites or round_no == 2):
                 ans.citations = [c for c in ans.citations if c.block_id in ctx.allowed]
                 return self._accept(ctx, ans, guard)
-            reason = "engine_contradiction" if guard.contradicted else "bad_citation"
+            reason = "engine_contradiction" if guard.contradicted else ("fact_missing" if anchor else "bad_citation")
             note = pr.correction_note([c.as_dict() for c in guard.contradicted], ctx.bad_cites, False)
+            if anchor:
+                note += "\n- " + anchor
         if round_no == 1:
             ctx.set(correction=note)
             ctx.goto = "prompt"
