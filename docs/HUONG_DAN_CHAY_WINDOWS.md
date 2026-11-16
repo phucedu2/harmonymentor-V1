@@ -64,6 +64,10 @@ Mở DevTools (F12) → Toggle device toolbar (Ctrl+Shift+M) → chọn kích th
 | FE-009 | Khu học ở 390 px, cuộn xuống giữa trang | Menu 7 mục nằm một dòng, dính đầu màn hình, vuốt ngang được; mục đang mở luôn nhìn thấy |
 | FE-016 | Luyện tập, trả lời đúng một câu; hoàn thành Bài 1 | Vài nốt nhạc bay lên rồi tan (bản lớn hơn khi hoàn thành bài); bật "Giảm chuyển động" của Windows thì không còn hiệu ứng |
 | FE-012 | Harmony Lab: mở trang, đợi ~10 giây rồi mới bấm **Phát** | Có tiếng gần như ngay (cloud đo 0,3 s; trước đây 3,3 s). Ghi lại số giây trên máy Phúc |
+| FE-008 | Trang chủ ở 390 px (chưa đăng nhập) | Header một dòng: logo, "Đăng nhập", nút ☾; không có "Đăng ký" ở header (có nút "Bắt đầu miễn phí" ở trang), không cuộn ngang |
+| FE-011/017 | Tổng quan, tài khoản mới, tải lại vài lần ở 390 px | Nút "Làm bài kiểm tra đầu vào" nằm dưới thẻ "Bắt đầu học"; trang không giật khi dữ liệu về |
+| FE-010 | Bài 1, bấm "Bước tiếp" vài lần | Thanh tiến độ dài ra theo bước; chữ bên phải ghi "x% đúng" |
+| FE-015 | Mở F12 → Console, vào Học, Luyện tập | Không còn cảnh báo "AudioContext was not allowed to start" (Harmony Lab vẫn còn) |
 | Âm thanh | Harmony Lab, bấm **Phát** ngay khi vừa mở trang | Ghi lại số giây (chưa kịp tải trước nên vẫn chờ như cũ) |
 | Âm thanh | Trang chủ, bật âm thanh rồi cuộn qua cảnh khuông nhạc và vòng C–G–Am–F | Không rè, không chồng tiếng khi cuộn nhanh |
 
