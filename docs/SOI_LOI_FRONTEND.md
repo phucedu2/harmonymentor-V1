@@ -10,18 +10,18 @@
 
 ### Điểm 10 góc (0–4)
 
-| # | Góc soi | Trước | Sau | Lý do chính |
+| # | Góc soi | Trước | Sau (cuối đợt 5) | Lý do chính |
 |---|---|---|---|---|
-| 1 | Thứ bậc thị giác & bố cục | 3 | 3 | Máy tính gọn, nhịp chữ Fraunces/Be Vietnam Pro tốt. Điện thoại: phần đầu bài học chiếm ~55% màn hình (đã giảm, chưa đổi bố cục). |
-| 2 | Hệ thống thiết kế | 3 | 3 | Token `@theme` dùng nhất quán, 0 `any`. Trang chủ có bảng `--w-*` riêng trùng token; 2 component bàn phím (`Piano.tsx`, `VirtualPiano.tsx`). |
-| 3 | Kiến trúc thông tin & điều hướng | 2 | 2 | Thanh menu điện thoại 7 mục chen một hàng; Bài 1 xuất hiện 2 lần ở Tổng quan; thanh % cạnh "Bước x/18" dễ hiểu nhầm là tiến độ bước. Chưa sửa (P2). |
-| 4 | Trạng thái giao diện | 3 | 4 | Có loading/rỗng/lỗi/disabled. Trước: kết quả chấm rơi khỏi màn hình điện thoại (đã sửa FE-005). |
-| 5 | Chuyển động & vi tương tác | 3 | 3 | Trang chủ có scroll storytelling GSAP + Lenis, tôn trọng reduced-motion. Khu học gần như tĩnh, chưa có khoảnh khắc thưởng khi đúng/hoàn thành bài (P2, cần duyệt diện mạo). |
-| 6 | UX âm thanh & ký hiệu | 2 | 2 | Bấm Phát lần đầu ở Harmony Lab chờ 4,1 s (221 mẫu, 9,5 MB, localhost); AudioContext tạo trước cú bấm; khuông VexFlow trong Harmony Lab nhỏ; chunk VexFlow 1,12 MB. Chưa sửa (P2). |
-| 7 | Responsive & cảm ứng | 2 | 3 | Không cuộn ngang ở cả 5 cỡ. Trước: nút AI đè nút Gửi, thanh Harmony Lab xuống 3 dòng (đã sửa). Còn header công khai và menu khu học xuống dòng ở 390 px. |
-| 8 | Accessibility WCAG 2.2 AA | 3 | 4 | axe trước: 1 lỗi (tương phản 1,95:1), sau: 0. Vòng focus trên nền tối 2,96:1 → 8,4:1. Không có chế độ tối. |
-| 9 | Hiệu năng | 3 | 3 | Lighthouse desktop 97–100; mobile 82–100. CLS mobile Tổng quan 0,24. Bundle chính 482 kB (GSAP/Lenis/trang chủ nằm chung). |
-| 10 | Chất lượng code | 3 | 3 | 0 `any`, 2 `console.*`, TypeScript strict qua `tsc -b`. Trùng component bàn phím. |
+| 1 | Thứ bậc thị giác & bố cục | 3 | 3 | Máy tính gọn, nhịp chữ Fraunces/Be Vietnam Pro tốt. Điện thoại: nội dung bước bắt đầu ở 256 px thay vì 455 px (FE-004); phần đầu bài vẫn chiếm khá nhiều chỗ. |
+| 2 | Hệ thống thiết kế | 3 | 4 | Token nhất quán, chế độ tối là bộ token phụ (FE-014), 2 phương án nhận diện chỉ đổi token (theme/brands.css), quầng sáng trang chủ hết rgba ghi cứng. Còn 2 component bàn phím (FE-021 một phần). |
+| 3 | Kiến trúc thông tin & điều hướng | 2 | 3 | Menu điện thoại một hàng, dính đầu trang (FE-009); Tổng quan hết lặp Bài 1, CTA chính lên đầu (FE-011); thanh tiến độ đo theo bước (FE-010). Tên bài còn tiếng Anh (FE-019, nội dung). |
+| 4 | Trạng thái giao diện | 3 | 4 | Kết quả chấm tự hiện trong khung nhìn (FE-005); khung giữ chỗ khi chờ dữ liệu (FE-017). |
+| 5 | Chuyển động & vi tương tác | 3 | 4 | Có khoảnh khắc thưởng CSS khi đúng/hoàn thành bài (FE-016), nút AI thu vào mép khi cuộn và kéo được (FE-002, FE-023); mọi thứ tắt khi reduced-motion. |
+| 6 | UX âm thanh & ký hiệu | 2 | 3 | Lần phát đầu Harmony Lab 3,3 s → 0,29 s khi đã rảnh vài giây (FE-012); khuông lớn hơn (FE-013); Tone nạp khi cần (FE-015). Chưa ai nghe bằng tai; bấm Phát ngay khi mở trang vẫn phải chờ tải. |
+| 7 | Responsive & cảm ứng | 2 | 4 | Không cuộn ngang 320–1920 px; header công khai một dòng ở 390 px (FE-008); nút AI không còn đè nội dung (FE-001/002/006). Kéo bằng cảm ứng thật chưa thử trên máy. |
+| 8 | Accessibility WCAG 2.2 AA | 3 | 4 | axe 0 lỗi ở sáng và tối (và ở 2 phương án nhận diện); Lighthouse A11y điện thoại 100 cả 11 trang; kéo-thả có cách khác bằng phím (WCAG 2.5.7). |
+| 9 | Hiệu năng | 3 | 4 | Đo lại cuối (`audit-cuoi.json`, 11 trang): Lighthouse desktop Perf 100 cả 11 trang; điện thoại 98–100, CLS ≤ 0,014 (Tổng quan 0,24 → 0). VexFlow 1129 → 723 kB. Bundle chính chưa tách (thử thì LCP/CLS xấu hơn). |
+| 10 | Chất lượng code | 3 | 3 | 0 `any`, TypeScript strict; hết cảnh báo AudioContext ở 3/4 trang. Còn trùng component bàn phím; bundle chính chưa tách. |
 
 ### Top 10 việc quan trọng nhất
 
@@ -73,6 +73,17 @@ Lighthouse đợt 3 (`audit-dot3.json`, mobile, một lần chạy; trang chủ 
 | FE-022 (mới) | Do chính FE-014 gây ra: ở chế độ tối, bàn phím SVG trang chủ bị **lật ngược màu** (phím trắng tô #142723, phím đen #E7EFEA) vì nó dùng token `surface`/`ink`. Thêm `data-force-light` cho SVG, giống `VirtualPiano`. | Đo màu tô phím: trước `rgb(20,39,35)` cho phím trắng, sau `rgb(255,255,255)`. [trước](soi-loi-frontend/anh-loi/FE-021_truoc_toi.png) → [sau](soi-loi-frontend/anh-loi/FE-021_sau_toi.png) |
 
 Đo lại (`audit-dot4.json`): axe 0 lỗi sáng và tối ở Trang chủ, Tổng quan, Học. Lighthouse điện thoại: Trang chủ 99/100 (Perf/A11y), Tổng quan 100/100 CLS 0, Học 100/100 CLS 0.
+
+## 1e. Đợt 5 (17/11/2026, sáng): AI Tutor kéo được + việc còn sót từ đề ban đầu
+
+| ID | Đã làm | Kiểm chứng |
+|---|---|---|
+| FE-023 (Phúc yêu cầu) | Nút AI tròn kéo được ở mọi cỡ màn hình (thả ra dạt vào mép trái/phải gần nhất, giữ trong màn hình kể cả khi xoay máy). Khung chat kéo được ở thanh tiêu đề từ 640 px (điện thoại khung phủ gần hết màn hình nên không kéo). Vị trí nhớ theo máy (localStorage `hm-ai-nut`, `hm-ai-khung`). Nút ↺ trong khung đưa cả hai về góc phải dưới. Bàn phím: nút ⠿ hoặc nút AI + phím mũi tên (WCAG 2.5.7). Khi nút ở mép trái, khung mở ở bên trái. Bấm ×/↺ trong thanh tiêu đề không bị nhận nhầm là kéo. `src/components/learning/useDraggable.ts`, 3 test mới cho `clampPos`. | Playwright 1440: nút 1364,824 → kéo → 12,624; khung kéo 20,428 → 420,516; 2 lần ↑ → 420,468; tải lại giữ vị trí; ↺ → 1364,824. 390: 330,700 → 12,500. [ảnh 1440](soi-loi-frontend/anh-loi/FE-023_keo-khung_1440.png), [ảnh 390](soi-loi-frontend/anh-loi/FE-023_keo-nut_390.png). Chưa thử kéo bằng ngón tay trên điện thoại thật. |
+| Theme mới (đề: "1–2 phương án nhận diện dạng theme token, bật bằng 1 biến") | Hai phương án trong `src/theme/brands.css`, mỗi cái có sáng và tối: **Sân khấu** (tím đêm #17142B, primary tím #4B33B8, khi tối primary là đèn spotlight hổ phách #F2B33D) và **Giấy nhạc** (giấy kem #FBF8F1, mực khắc bản #1D1B18, bút chì đỏ #9E2A2B). Chỉ đổi màu; font, bố cục, logo giữ nguyên. Đồng & Gỉ vẫn mặc định. Bật bằng `VITE_BRAND=san-khau` (hoặc `giay-nhac`) khi build; thử nhanh bằng `?brand=san-khau` trên URL (`?brand=dong-gi` để về). | Tương phản mọi cặp chữ/nền ≥ 5,8:1 (`script/tuong-phan-theme.py`); axe 0 lỗi ở 3 phương án × sáng/tối × 5 trang (`theme/axe.json`). Ảnh so sánh (hàng trên sáng, hàng dưới tối; trái → phải: Đồng & Gỉ, Sân khấu, Giấy nhạc): [Tổng quan](soi-loi-frontend/theme/grid_tong-quan.jpg), [Trang chủ](soi-loi-frontend/theme/grid_trang-chu.jpg), [Harmony Lab](soi-loi-frontend/theme/grid_composition.jpg), [Học](soi-loi-frontend/theme/grid_hoc.jpg), [Luyện tập](soi-loi-frontend/theme/grid_luyen-tap.jpg), [Trang chủ 390](soi-loi-frontend/theme/grid_trang-chu-390.jpg). |
+
+Đo lại cuối đợt 5 (`audit-cuoi.json`): 11 trang, axe 0 lỗi sáng và tối; Lighthouse desktop 100/100/100 (Perf/A11y/BP) cả 11 trang; điện thoại Perf 98–100, A11y 100, BP 100. Bộ ảnh "sau" cuối: 12 trang × 5 cỡ × sáng/tối = 120 ảnh ở `/mnt/project-files/soi-loi-frontend/sau-cuoi/`, 0 trang cuộn ngang; console chỉ còn 2 cảnh báo AudioContext ở Harmony Lab (FE-015 đã biết).
+
+Logo không đổi (đề: "không xóa logo cũ"); ở hai phương án mới logo vẫn xanh Đồng & Gỉ. Nếu nhóm chọn một phương án, bước tiếp là làm logo theo màu đó.
 
 ## 2. Mẫu tham chiếu
 
@@ -146,7 +157,7 @@ Cột "Ảnh" trỏ tới file trong `docs/soi-loi-frontend/`. "Đã sửa" ghi 
 ## 5. Chưa sửa và vì sao
 
 - FE-021 (hai bàn phím piano): không gộp component, chỉ dùng chung bộ đọc tên nốt (mục 1d). FE-018: bundle chính 484 kB giữ nguyên, tách trang chủ đã thử và hoàn lại.
-- Theme mới (tối kiểu sân khấu, sáng kiểu giấy nhạc) chưa làm: cắt theo 2A. Chế độ tối dùng lại bảng Đồng & Gỉ.
+- Theme mới: đã làm ở đợt 5 dưới dạng token (mục 1e); logo theo màu mới chưa làm, chờ nhóm chọn phương án.
 - FE-019 (tên bài/kỹ năng tiếng Anh) là nội dung bài, thuộc Đạt. FE-020 là backend AI, thuộc luồng T1–T6.
 - FE-012 chỉ giúp khi người dùng ở trang vài giây trước khi bấm Phát; muốn nhanh hơn nữa cần gộp/nén mẫu phía máy chủ (Thắng).
 - Âm thanh chưa ai nghe bằng tai.
