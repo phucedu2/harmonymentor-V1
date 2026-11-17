@@ -39,7 +39,7 @@ Trạng thái: **Chấp nhận 17/11/2026**. Phúc báo nhóm chọn phương á
 ## Hệ quả
 
 - Ảnh chụp, slide, báo cáo cũ (màu xanh Đồng & Gỉ) sẽ khác app. Cần chụp lại cho slide bảo vệ.
-- File logo trong `docs/thuong-hieu/logo/*.svg` vẫn là bản Đồng & Gỉ. Muốn có file SVG/PNG Sân khấu để in hay đưa vào slide thì thêm bảng màu Sân khấu vào script `docs/thuong-hieu/_nguon/` rồi dựng lại; chưa làm.
-- `favicon.ico`, `apple-touch-icon.png`, `icon-192/512.png` (ảnh raster) vẫn là bản Đồng & Gỉ; chỉ favicon SVG đổi. Trình duyệt hiện đại dùng SVG.
+- Bộ file logo Sân khấu (17 SVG + PNG cho slide) ở `docs/thuong-hieu/logo/san-khau/`, dựng bằng `docs/thuong-hieu/_nguon/san_khau.py` (chỉ thay màu vỏ/chữ/viền, script tự kiểm màu nốt không đổi). Bộ Đồng & Gỉ trong `logo/*.svg` giữ nguyên.
+- Icon PNG cho app (`icon-192/512-san-khau.png`, `apple-touch-icon-san-khau.png`) đã có; manifest trỏ bản Sân khấu kể cả khi chạy `?brand=dong-gi` (manifest là file tĩnh). `favicon.ico` 48px vẫn là Đồng & Gỉ (trình duyệt dùng favicon SVG trước).
 - Nếu `VITE_BRAND=dong-gi` thì `site.webmanifest` vẫn mang màu Sân khấu (file tĩnh); chỉ ảnh hưởng màu thanh tiêu đề khi cài app lên màn hình chính.
 - Đổi lại về Đồng & Gỉ cho cả nhóm chỉ cần sửa một dòng trong `vite.config.ts`.

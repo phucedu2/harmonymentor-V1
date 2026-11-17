@@ -65,7 +65,7 @@ Trong app: `frontend/src/components/brand/HarmonyMentorLogo.tsx` (+ `logo.css`) 
 - Lỗ: **không đổi**, vẫn 12 màu nốt. Lỗ thấp nhất `#D48FD1` trên ô `#17142B` = 7,4 : 1.
 - Chữ: `#17142B` trên nền sáng `#F4F2F8` (16,1 : 1); `#ECEBF5` trên nền tối `#0E0C1B` (16,3 : 1).
 - Trong app màu lấy từ `frontend/src/theme/brands.css` (biến `--hm-logo-*`). Favicon: `frontend/public/favicon-san-khau.svg`.
-- File SVG/PNG trong `docs/thuong-hieu/logo/` chưa có bản Sân khấu (cần thêm bảng màu vào `_nguon/` rồi dựng lại).
+- Bản Sân khấu của mọi file logo: `docs/thuong-hieu/logo/san-khau/` (SVG) và `san-khau/png/` (PNG, ngang 2400px, biểu tượng 1024px). Dựng lại: `python3 docs/thuong-hieu/_nguon/san_khau.py`. Bản tối dùng viền vàng `#F2B33D`, chữ `#ECEBF5`; lỗ nốt giữ màu gốc.
 
 So sánh hai bản: `docs/soi-loi-frontend/theme/logo-dong-gi-vs-san-khau.png`.
 
