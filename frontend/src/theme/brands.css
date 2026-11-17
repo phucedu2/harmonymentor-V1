@@ -88,6 +88,17 @@
   --hm-logo-lacquer: #1a1630; --hm-logo-edge: #f2b33d; --hm-logo-text: #ecebf5; --hm-logo-hole: #0e0c1b;
 }
 
+/* Logo bản Giấy nhạc (phương án dự phòng, ADR-026): cùng luật như Sân khấu, lỗ nốt giữ nguyên màu. */
+:root[data-brand="giay-nhac"] {
+  --hm-logo-ink: #1d1b18; --hm-logo-deep: #9e2a2b; --hm-logo-sig: #9e2a2b;
+  --hm-logo-lacquer: #1d1b18; --hm-logo-edge: #1d1b18; --hm-logo-text: #1d1b18; --hm-logo-hole: #1d1b18;
+}
+:root[data-brand="giay-nhac"] [data-theme="dark"],
+:root[data-brand="giay-nhac"][data-theme="dark"] {
+  --hm-logo-ink: #f3eee3; --hm-logo-deep: #f0938a; --hm-logo-sig: #f5aaa2;
+  --hm-logo-lacquer: #2a2620; --hm-logo-edge: #f0938a; --hm-logo-text: #f3eee3; --hm-logo-hole: #17150f;
+}
+
 /* ---------- B. "Giấy nhạc": giấy kem + mực khắc bản + bút chì đỏ của thầy ---------- */
 /* Sáng: ink/bg 16,2 · muted/bg 6,9 · primary/bg 7,0 · trắng/primary 7,4 · success/bg 6,1 */
 :root[data-brand="giay-nhac"],
