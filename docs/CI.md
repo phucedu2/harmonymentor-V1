@@ -20,6 +20,12 @@ Test PostgreSQL tự bỏ qua khi thiếu `TEST_DATABASE_URL` hoặc khi URL kh�
 - Hai CSDL tạm: `harmony_ci_migrate` (`DATABASE_URL`, cho migration) và `harmony_test` (`TEST_DATABASE_URL`, cho test). Vì hai CSDL khác nhau và tên CSDL test kết thúc `_test`, lớp bảo vệ trong `backend/tests/pg_test_db.py` (PR-1) cho phép chạy. Nếu ai đặt sai, test bị skip và CI đỏ.
 - Mật khẩu `ci_only_not_secret` chỉ dùng cho container tạm này. Không dùng `JWT_SECRET`, `GEMINI_API_KEY` hay khóa thật nào.
 
+## Job thứ tư: test giao diện Playwright (FE-027, 17/11/2026)
+
+`frontend-e2e` ("Frontend (Playwright giao diện)") chạy `frontend/e2e/*.e2e.ts` bằng Chromium thật trên bản build, 2 cỡ màn hình (desktop 1440 và Pixel 7). Không cần backend: mọi `/api` bị chặn trong test. Kiểm: h1 và không cuộn ngang ở trang công khai, chặn /app khi chưa đăng nhập, nhãn ô nhập, nút sáng/tối, nhận diện Sân khấu, font Fraunces không vỡ dấu, giảm chuyển động, GSAP tải muộn, kéo nút AI Tutor. Job này **chưa** nằm trong ruleset `bao-ve-main`; muốn bắt buộc thì thêm tên job vào ruleset.
+
+Trên máy: `cd frontend && npm run build && npx playwright install chromium && npm run e2e`.
+
 ## Khi thêm hoặc xóa test
 
 Mức tối thiểu (`--min-passed 330` và `--min-passed 21` trong `ci.yml`) là số test đạt sau HM-001 ngày 28/10/2026 (PR-3 là 325, trước PR-3 là 281 và 9). Khi thêm test thì nâng mức này trong cùng PR, để sau đó lỡ xóa test thì CI đỏ. Mức này không bao giờ được hạ để CI xanh.
