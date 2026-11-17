@@ -141,6 +141,14 @@ Sau sửa: axe 0 lỗi ở cả 20 tổ hợp, 0 tràn ngang. Không sửa `AiDr
 
 **6. Test giao diện (FE-027).** `frontend/e2e/`, 12 ca × 2 cỡ màn hình = 24 (23 chạy, kéo chuột bỏ qua trên điện thoại), job CI riêng `frontend-e2e` (xem `docs/CI.md`). Thêm thư viện `@playwright/test` 1.63.0 (dev) theo đồng ý của Phúc.
 
+## 1i. Đợt 9 (17/11/2026, chiều): hai việc cuối (FE-028)
+
+**Bộ logo Giấy nhạc.** `docs/thuong-hieu/logo/giay-nhac/` (18 SVG + PNG), favicon SVG/ICO và icon app `*-giay-nhac.png`, dựng bằng `san_khau.py giay-nhac` và `xuat_png_ban_mau.mjs giay-nhac` (lỗ nốt giữ màu gốc, script tự kiểm). `index.html` đổi favicon, `theme-color` và icon iPhone theo `?brand=`; `brands.css` thêm biến logo cho Giấy nhạc nên logo trong app cũng đổi màu theo.
+
+**Test giao diện với backend thật.** `frontend/e2e-live/` (7 ca), chạy bằng `npm run e2e:live`; job CI `frontend-e2e-live`. Backend SQLite mới tự dựng, AI tắt. Đáp án lấy từ `curriculum_specs` của chính backend (`scripts/e2e/dap_an_giao_dien.py`). Ca kiểm: đăng ký → đăng xuất → đăng nhập lại; sai mật khẩu; trùng email; tải lại trang giữ phiên; trả lời câu trắc nghiệm sai rồi đúng, tiến độ lưu qua tải lại; hoàn thành Bài 1 (12 câu) rồi ôn thẻ đúng (lên hộp 2) và sai (về hộp 1).
+
+Ghi chú khi viết test: sau lần trả lời sai nút "Kiểm tra" đổi thành "Kiểm tra lại" (test đã tính); Bài 1 phải đúng cả 12 câu mới tạo được thẻ ôn, nên ca ôn thẻ đi qua "Xem cả bài" chứ không thể bắt đầu từ trang Tiến độ.
+
 ## 2. Mẫu tham chiếu
 
 Từ cloud, trình duyệt Playwright bị proxy chặn mọi site ngoài (`ERR_TUNNEL_CONNECTION_FAILED`), nên các link dưới được mở qua Firecrawl (HTTP 200, đọc văn bản/tóm tắt), **không xem ảnh trực tiếp**. Phần "học được gì" về chữ/màu/chuyển động là hiểu biết sẵn có của người soi về các sản phẩm này, chưa đối chiếu ảnh chụp mới: coi là phỏng đoán có cơ sở.
