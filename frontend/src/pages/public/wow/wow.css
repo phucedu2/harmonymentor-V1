@@ -42,12 +42,13 @@
 .wow-hero :focus-visible, .wow-prog :focus-visible, .wow-final :focus-visible { outline-color: var(--w-verdigris); }
 
 /* ---------- Hero ---------- */
+/* Màu quầng sáng lấy từ biến --w-* (không ghi cứng rgba) để phương án nhận diện trong theme/brands.css đổi theo. */
 .wow-hero {
   position: relative;
   min-height: calc(100svh - 64px);
   background:
-    radial-gradient(60% 50% at 75% 30%, rgba(69, 194, 171, 0.22), transparent 70%),
-    radial-gradient(40% 40% at 15% 85%, rgba(224, 165, 62, 0.16), transparent 70%),
+    radial-gradient(60% 50% at 75% 30%, color-mix(in srgb, var(--w-verdigris) 22%, transparent), transparent 70%),
+    radial-gradient(40% 40% at 15% 85%, color-mix(in srgb, var(--w-brass) 16%, transparent), transparent 70%),
     var(--w-night);
   color: var(--w-cream);
   display: grid;
@@ -119,11 +120,11 @@
 .wow-prog { background: var(--w-lacquer); color: var(--w-cream); }
 .wow-card {
   flex: 0 0 auto; width: min(78vw, 420px); border-radius: 28px; padding: 2rem;
-  background: linear-gradient(160deg, rgba(69, 194, 171, 0.14), rgba(8, 22, 19, 0.2));
-  border: 1px solid rgba(69, 194, 171, 0.3);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--w-verdigris) 14%, transparent), color-mix(in srgb, var(--w-night) 20%, transparent));
+  border: 1px solid color-mix(in srgb, var(--w-verdigris) 30%, transparent);
   transition: border-color 0.3s, transform 0.3s, background 0.3s;
 }
-.wow-card[data-active="true"] { border-color: var(--w-brass); background: linear-gradient(160deg, rgba(224, 165, 62, 0.22), rgba(8, 22, 19, 0.2)); transform: translateY(-8px); }
+.wow-card[data-active="true"] { border-color: var(--w-brass); background: linear-gradient(160deg, color-mix(in srgb, var(--w-brass) 22%, transparent), color-mix(in srgb, var(--w-night) 20%, transparent)); transform: translateY(-8px); }
 .wow-card .roman { font-family: "Fraunces", serif; font-style: italic; color: var(--w-brass); }
 .wow-card .piano { --key-white: #f2f3ea; --key-black: #0c231f; --accent: #45c2ab; --line: #0c231f; }
 
