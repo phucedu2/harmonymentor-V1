@@ -83,7 +83,16 @@ Lighthouse đợt 3 (`audit-dot3.json`, mobile, một lần chạy; trang chủ 
 
 Đo lại cuối đợt 5 (`audit-cuoi.json`): 11 trang, axe 0 lỗi sáng và tối; Lighthouse desktop 100/100/100 (Perf/A11y/BP) cả 11 trang; điện thoại Perf 98–100, A11y 100, BP 100. Bộ ảnh "sau" cuối: 12 trang × 5 cỡ × sáng/tối = 120 ảnh ở `/mnt/project-files/soi-loi-frontend/sau-cuoi/`, 0 trang cuộn ngang; console chỉ còn 2 cảnh báo AudioContext ở Harmony Lab (FE-015 đã biết).
 
-Logo không đổi (đề: "không xóa logo cũ"); ở hai phương án mới logo vẫn xanh Đồng & Gỉ. Nếu nhóm chọn một phương án, bước tiếp là làm logo theo màu đó.
+Logo cũ không bị xóa (đề: "không xóa logo cũ"). Bản logo Sân khấu ở mục 1f.
+
+## 1f. Đợt 6 (17/11/2026): nhóm chọn "Sân khấu" làm nhận diện mặc định
+
+- `VITE_BRAND` mặc định đổi thành `san-khau` (`frontend/vite.config.ts`). Đồng & Gỉ không bị xóa: build với `VITE_BRAND=dong-gi`, hoặc mở `?brand=dong-gi` một lần (trình duyệt nhớ lựa chọn trong `hm-brand`).
+- Logo "Cuộn I–IV–V–I" theo màu Sân khấu: file logo sinh tự động (ADR-007) không sửa; `brands.css` đổi biến `--hm-logo-*` (ô nền tím đêm #17142B, viền và chữ bản tối theo spotlight #F2B33D) và 2 màu thanh cuộn (#3CC3AB → hổ phách #F2B33D, #28BFD2 → đỏ rèm #E06A7A). [So sánh logo](soi-loi-frontend/theme/logo-dong-gi-vs-san-khau.png) (trái Đồng & Gỉ, phải Sân khấu; trên: header sáng, giữa: header tối, dưới: thanh bên khu học).
+- `favicon-san-khau.svg`, `theme-color` #17142B, `site.webmanifest` theo Sân khấu. Nút "Bật âm thanh" trang chủ hết `rgba` ghi cứng.
+- Ảnh mặc định mới: [Tổng quan](soi-loi-frontend/theme/mac-dinh_tong-quan.jpg), [Trang chủ](soi-loi-frontend/theme/mac-dinh_trang-chu.jpg). Đo lại 11 trang với Sân khấu mặc định (`audit-san-khau.json`): axe 0 lỗi sáng và tối; Lighthouse desktop 100/100/100 cả 11 trang, điện thoại Perf 98–100, A11y 100, BP 100. 120 ảnh (12 trang × 5 cỡ × sáng/tối) ở `/mnt/project-files/soi-loi-frontend/sau-san-khau/`, 0 trang cuộn ngang; console chỉ còn cảnh báo AudioContext ở Harmony Lab (đã biết).
+
+**Cần nhóm biết:** đây là đổi nhận diện thấy được ở mọi trang. Ảnh trong slide/báo cáo cũ (màu xanh Đồng & Gỉ) sẽ khác app. `docs/thuong-hieu/` và ADR-007 chưa sửa; nếu nhóm muốn ghi chính thức thì cần một ADR mới (đề xuất ADR "Đổi nhận diện sang Sân khấu").
 
 ## 2. Mẫu tham chiếu
 
@@ -157,7 +166,7 @@ Cột "Ảnh" trỏ tới file trong `docs/soi-loi-frontend/`. "Đã sửa" ghi 
 ## 5. Chưa sửa và vì sao
 
 - FE-021 (hai bàn phím piano): không gộp component, chỉ dùng chung bộ đọc tên nốt (mục 1d). FE-018: bundle chính 484 kB giữ nguyên, tách trang chủ đã thử và hoàn lại.
-- Theme mới: đã làm ở đợt 5 dưới dạng token (mục 1e); logo theo màu mới chưa làm, chờ nhóm chọn phương án.
+- Theme mới: đã làm ở đợt 5 (mục 1e); nhóm chọn Sân khấu, đợt 6 đặt làm mặc định và làm logo theo màu (mục 1f).
 - FE-019 (tên bài/kỹ năng tiếng Anh) là nội dung bài, thuộc Đạt. FE-020 là backend AI, thuộc luồng T1–T6.
 - FE-012 chỉ giúp khi người dùng ở trang vài giây trước khi bấm Phát; muốn nhanh hơn nữa cần gộp/nén mẫu phía máy chủ (Thắng).
 - Âm thanh chưa ai nghe bằng tai.

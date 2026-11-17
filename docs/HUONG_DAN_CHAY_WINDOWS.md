@@ -71,7 +71,7 @@ Mở DevTools (F12) → Toggle device toolbar (Ctrl+Shift+M) → chọn kích th
 | FE-002 | Điện thoại (hoặc F12 chế độ điện thoại 390 px), vào một bài, cuộn xuống rồi cuộn lên | Cuộn xuống: nút AI tròn trượt ra khỏi mép phải; cuộn lên hoặc tới cuối trang: nút hiện lại |
 | FE-022 | Bật chế độ tối (☾), về Trang chủ, xem bàn phím piano | Phím trắng vẫn trắng, phím đen vẫn đen (trước đây bị lật ngược) |
 | FE-023 | Vào khu học, kéo nút AI tròn sang trái rồi thả; mở khung chat, kéo thanh tiêu đề (máy tính); tải lại trang | Nút dạt vào mép trái; khung chat mở bên trái và đi theo chuột; tải lại vẫn giữ chỗ; nút ↺ trong khung đưa về góc phải dưới |
-| Theme mới | Thêm `?brand=san-khau` hoặc `?brand=giay-nhac` vào cuối địa chỉ (vd `http://localhost:5173/app?brand=san-khau`); `?brand=dong-gi` để về mặc định | Đổi màu toàn app, cả sáng và tối. Muốn đặt cố định khi build: PowerShell `$env:VITE_BRAND="san-khau"; npm run build` |
+| Theme | Mở app bình thường | Màu Sân khấu (tím đêm, nút tím; tối thì nút vàng hổ phách), logo thanh cuộn vàng/đỏ, biểu tượng tab tím. Xem bảng cũ: thêm `?brand=dong-gi` vào cuối địa chỉ (trình duyệt nhớ); `?brand=giay-nhac` xem phương án còn lại; `?brand=san-khau` để quay lại. Đặt cố định khi build: PowerShell `$env:VITE_BRAND="dong-gi"; npm run build` |
 | Âm thanh | Harmony Lab, bấm **Phát** ngay khi vừa mở trang | Ghi lại số giây (chưa kịp tải trước nên vẫn chờ như cũ) |
 | Âm thanh | Trang chủ, bật âm thanh rồi cuộn qua cảnh khuông nhạc và vòng C–G–Am–F | Không rè, không chồng tiếng khi cuộn nhanh |
 
