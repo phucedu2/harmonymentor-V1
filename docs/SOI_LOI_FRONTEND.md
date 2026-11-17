@@ -108,6 +108,39 @@ Phúc nhờ rà animation. Skill "review-animations" không có trong phiên nê
 
 Kiểm bằng Playwright: bật giảm chuyển động thì trang chủ 0 hoạt ảnh CSS đang chạy (trước có `wow-drip`, `wow-eq`); bình thường cột sóng chạy bằng transform. Vitest 280 đạt, build đạt. Giữ nguyên: logo cuộn 2,4 s lúc mở (đã tắt khi giảm chuyển động), vòng xoay nút đang tải (là tín hiệu chờ, cần thấy).
 
+## 1h. Đợt 8 (17/11/2026, chiều): việc mở rộng 1–6 (FE-025..027)
+
+Phúc giao 6 việc ngoài thỏa thuận ban đầu, làm với vai kiểm duyệt frontend. Skill đã dùng: `design:accessibility-review` (WCAG 2.2 AA) cho trang Quản trị. Skill `figma-design-to-code` cần link file Figma, nhóm chưa có nên chưa áp dụng được.
+
+**1. Trang Quản trị (FE-025).** Đo bằng `script/admin.mjs`: 5 màn × sáng/tối × desktop/điện thoại; ảnh ở `admin/`.
+
+| # | Lỗi | WCAG / loại | Mức | Sửa |
+|---|---|---|---|---|
+| a | Mọi tiêu đề thẻ dùng Fraunces 600 vỡ dấu: "Ky˜ năng", "môĩ", "bô´" (cả web, không riêng Admin). `wow.css` nạp `latin-600.css` không có `unicode-range` nên đè bộ chữ tiếng Việt | Hiển thị | 🔴 | Chỉ nạp `600-italic.css` (có unicode-range); test e2e chặn tái phát |
+| b | Điện thoại: trang Quản trị tràn ngang 195 px (Thống kê), 29 px (sửa bài), 51 px (AI soạn bài) | 1.4.10 Reflow | 🔴 | Lưới một cột mặc định `minmax(0,1fr)` ở `index.css` (tầng base) |
+| c | Chú thích biểu đồ cam `#d97706` trên trắng 3,18:1; màu biểu đồ cứng, không theo theme | 1.4.3 | 🟡 | Dùng token `--color-primary/success/warning/danger` |
+| d | "Lượt làm bài" và "Lượt đúng" cùng nét liền, chỉ khác màu | 1.4.1 | 🟡 | Ba nét khác nhau: liền, chấm, gạch |
+| e | Chữ trục biểu đồ trong SVG còn ~6 px trên điện thoại | 1.4.4 | 🟡 | Nhãn trục viết bằng HTML |
+| f | Mở hai khối cùng lúc sinh hai `id="f-title"` trùng, nhãn trỏ nhầm ô | 4.1.1/1.3.1 | 🟡 | id theo khối |
+| g | Nút "Khóa", "Sửa nội dung" lặp lại, trình đọc màn hình không biết của ai | 2.4.6 | 🟡 | `aria-label` có email / số bài |
+| h | Mở bài để sửa: nút vừa bấm biến mất, focus rơi về đầu trang | 2.4.3 | 🟡 | Focus tiêu đề bài |
+| i | Tên trường hiện mã code ("prompt", "callout") | Chữ giao diện | 🟢 | Tên tiếng Việt (giữ mã trong `BLOCK_VI`/`FIELD_VI`) |
+| j | "Đang tải…" không được đọc | 4.1.3 | 🟢 | `role="status"` |
+
+Sau sửa: axe 0 lỗi ở cả 20 tổ hợp, 0 tràn ngang. Không sửa `AiDraftTab.tsx` (luồng T1–T6 đang sửa, quyết định 9A); còn ô tick 13×13 px ở đó (đạt nhờ nhãn bọc ngoài, nên để luồng T1–T6 tăng cỡ).
+
+**Phát hiện cho Thắng (backend, không sửa ở đây):** tải lại trang khi `/auth/refresh` đang chạy (bấm F5 hai lần nhanh) làm mất phiên: máy chủ đã xoay token nhưng trình duyệt hủy yêu cầu nên không nhận cookie mới, lần sau gửi token cũ bị từ chối. Có thể đây là gốc của "lỗi 401 lúc đăng nhập" ghi từ 05/11. Gợi ý: cho token cũ còn dùng được vài giây sau khi xoay.
+
+**2. Ảnh cho slide.** Chụp lại toàn bộ trang bằng Sân khấu với tài khoản có tiến độ thật trong dữ liệu mẫu, 5 cỡ × sáng/tối, độ nét 2x: `/mnt/project-files/soi-loi-frontend/slide-san-khau/`.
+
+**3. Thư viện chuyển động (FE-026).** GSAP + ScrollTrigger + Lenis chỉ tải ở trang chủ khi máy cho phép chuyển động (`wow/motion.ts`). Gói chung mọi trang 165 → 114 KB gzip (−31%). Hoạt ảnh mở trang (chữ trồi, nốt bung) chuyển sang CSS để chạy từ khung hình đầu, không nháy khi thư viện về muộn. Bỏ `@gsap/react`.
+
+Đo lại 11 trang sau đợt 8 (`audit-dot8.json`): axe 0 lỗi cả sáng lẫn tối; Lighthouse desktop 100/100/100 cả 11 trang; mobile hiệu năng 97–100, A11y 100. Trang chủ mobile LCP 1,82 → 1,91–1,96 s (+5–8%, trong ngưỡng 10% của đề; hoạt ảnh chữ CSS bắt đầu ngay nhưng LCP chỉ tính khi chữ hết trong suốt). Chụp thêm 5 cỡ × sáng/tối: 0 trang cuộn ngang sau khi đổi lưới mặc định.
+
+**4.** Giấy nhạc giữ làm phương án dự phòng (Phúc chọn), ghi trong ADR-026. **5.** `favicon-san-khau.ico` 16/32/48 px.
+
+**6. Test giao diện (FE-027).** `frontend/e2e/`, 12 ca × 2 cỡ màn hình = 24 (23 chạy, kéo chuột bỏ qua trên điện thoại), job CI riêng `frontend-e2e` (xem `docs/CI.md`). Thêm thư viện `@playwright/test` 1.63.0 (dev) theo đồng ý của Phúc.
+
 ## 2. Mẫu tham chiếu
 
 Từ cloud, trình duyệt Playwright bị proxy chặn mọi site ngoài (`ERR_TUNNEL_CONNECTION_FAILED`), nên các link dưới được mở qua Firecrawl (HTTP 200, đọc văn bản/tóm tắt), **không xem ảnh trực tiếp**. Phần "học được gì" về chữ/màu/chuyển động là hiểu biết sẵn có của người soi về các sản phẩm này, chưa đối chiếu ảnh chụp mới: coi là phỏng đoán có cơ sở.

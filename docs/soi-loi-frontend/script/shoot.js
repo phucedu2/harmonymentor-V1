@@ -3,7 +3,7 @@ const { chromium } = require('playwright');
 const fs = require('fs'); const path = require('path');
 const BASE = process.env.BASE || 'http://localhost:4173';
 const OUT = process.argv[2]; fs.mkdirSync(OUT, { recursive: true });
-const SIZES = [[1920,1080],[1440,900],[1280,800],[768,1024],[390,844]];
+const SIZES = process.env.SIZES ? process.env.SIZES.split(',').map((s) => s.split('x').map(Number)) : [[1920,1080],[1440,900],[1280,800],[768,1024],[390,844]];
 const PAGES = [
   ['trang-chu','/',false],['dang-nhap','/dang-nhap',false],['dang-ky','/dang-ky',false],['404','/khong-co',false],
   ['tong-quan','/app',true],['hoc','/app/hoc',true],['luyen-tap','/app/luyen-tap',true],['quiz','/app/quiz',true],
