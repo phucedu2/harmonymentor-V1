@@ -76,9 +76,8 @@
   --w-ink-soft: #a9a5c2; --w-brass-deep: #f2b33d; --w-deep-text: #b9a7ff; --w-ivory: #221d3d;
 }
 
-/* Logo "Cuộn I–IV–V–I" bản Sân khấu: không sửa file logo (ADR-007, sinh tự động), chỉ đổi biến màu và
-   2 màu thanh cuộn nhận diện (#3CC3AB xanh gỉ → hổ phách spotlight, #28BFD2 → đỏ rèm sân khấu).
-   Logo Đồng & Gỉ giữ nguyên khi VITE_BRAND=dong-gi. */
+/* Logo "Cuộn I–IV–V–I" bản Sân khấu (ADR-026): không sửa file logo sinh tự động (ADR-007), chỉ đổi biến màu
+   của ô cuộn giấy, viền và chữ. Màu các lỗ (màu nốt) GIỮ NGUYÊN theo luật số 2 của BRAND_NOTE: mỗi lỗ là một nốt. */
 :root[data-brand="san-khau"] {
   --hm-logo-ink: #17142b; --hm-logo-deep: #4b33b8; --hm-logo-sig: #f2b33d;
   --hm-logo-lacquer: #17142b; --hm-logo-edge: #17142b; --hm-logo-text: #17142b; --hm-logo-hole: #17142b;
@@ -88,8 +87,6 @@
   --hm-logo-ink: #ecebf5; --hm-logo-deep: #f2b33d; --hm-logo-sig: #f7c96b;
   --hm-logo-lacquer: #1a1630; --hm-logo-edge: #f2b33d; --hm-logo-text: #ecebf5; --hm-logo-hole: #0e0c1b;
 }
-:root[data-brand="san-khau"] .hm-logo rect[fill="#3CC3AB"] { fill: #f2b33d; }
-:root[data-brand="san-khau"] .hm-logo rect[fill="#28BFD2"] { fill: #e06a7a; }
 
 /* ---------- B. "Giấy nhạc": giấy kem + mực khắc bản + bút chì đỏ của thầy ---------- */
 /* Sáng: ink/bg 16,2 · muted/bg 6,9 · primary/bg 7,0 · trắng/primary 7,4 · success/bg 6,1 */

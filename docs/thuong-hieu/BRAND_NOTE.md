@@ -2,6 +2,8 @@
 
 Logo chính thức: **Cuộn I–IV–V–I**. Nhóm chốt ngày 30/10/2026 (ADR-007), chọn trong 12 phương án đề xuất ngày 27/10/2026.
 
+> **Cập nhật 17/11/2026 (ADR-026):** app đổi sang bảng màu **Sân khấu**. Hình logo và màu các lỗ giữ nguyên; chỉ ô cuộn giấy, viền và chữ đổi màu (mục 3b). Phần dưới đây mô tả bản Đồng & Gỉ, vẫn dùng khi build với `VITE_BRAND=dong-gi`.
+
 ## 1. Câu chuyện
 
 Logo là một ô **cuộn giấy pianola**. Pianola là cây đàn piano tự chơi theo cuộn giấy đục lỗ: mỗi cột là một phím, mỗi lỗ là một nốt, lỗ càng dài thì nốt giữ càng lâu.
@@ -57,6 +59,16 @@ Trong app: `frontend/src/components/brand/HarmonyMentorLogo.tsx` (+ `logo.css`) 
 | Ô tối `#101F1C` trên nền `#081613` | 1,09 : 1 | Không đủ, nên bản tối có viền `#45C2AB` (8,42 : 1) |
 | Ba lỗ màu trong wordmark trên nền `#F2F3EA` | khoảng 2 : 1 | Chỉ trang trí; chữ vẫn đọc đủ khi bỏ ba lỗ này |
 
+## 3b. Màu bản Sân khấu (mặc định từ 17/11/2026, ADR-026)
+
+- Ô cuộn giấy: tím đêm `#17142B` trên nền sáng; trên nền tối dùng `#1A1630` kèm viền hổ phách `#F2B33D` (10,1 : 1 trên thanh bên `#120F24`).
+- Lỗ: **không đổi**, vẫn 12 màu nốt. Lỗ thấp nhất `#D48FD1` trên ô `#17142B` = 7,4 : 1.
+- Chữ: `#17142B` trên nền sáng `#F4F2F8` (16,1 : 1); `#ECEBF5` trên nền tối `#0E0C1B` (16,3 : 1).
+- Trong app màu lấy từ `frontend/src/theme/brands.css` (biến `--hm-logo-*`). Favicon: `frontend/public/favicon-san-khau.svg`.
+- File SVG/PNG trong `docs/thuong-hieu/logo/` chưa có bản Sân khấu (cần thêm bảng màu vào `_nguon/` rồi dựng lại).
+
+So sánh hai bản: `docs/soi-loi-frontend/theme/logo-dong-gi-vs-san-khau.png`.
+
 ## 4. Quy tắc dùng
 
 **Khoảng trống tối thiểu.** Chừa quanh logo một khoảng bằng 1/4 chiều cao biểu tượng.
@@ -74,7 +86,7 @@ Trong app, logo ngang đang dùng cao 36 px (`h-9`).
 
 **Chuyển động.** Cuộn giấy chạy qua trong 2,4 giây, chạy một lần. Bật bằng prop `animate`. Tự tắt khi người dùng bật "giảm chuyển động". Chỉ dùng ở màn hình chào, lúc tải, hoặc lúc AI Tutor đang trả lời.
 
-**Chế độ tối.** App hiện chưa có chế độ tối, nên logo chỉ đổi sang bản tối khi `<html data-theme="dark">`. Nó không tự đổi theo cài đặt hệ điều hành, vì như thế chữ ngà sẽ chìm trên nền sáng của app.
+**Chế độ tối.** Từ 17/11/2026 app có chế độ tối (nút ☾/☀, lưu trong trình duyệt). Logo đổi sang bản tối khi `<html data-theme="dark">` hoặc trong vùng nền tối (thanh bên khu học). Nó vẫn không tự đổi theo cài đặt hệ điều hành, vì app chỉ tối khi người dùng bấm nút.
 
 ## 5. Không được làm
 
@@ -91,4 +103,4 @@ Trong app, logo ngang đang dùng cao 36 px (`h-9`).
 
 - Bản này được chấm 2/5 ở tiêu chí "nhận ra ở 16px" và 2/5 ở "hợp người mới học" trong vòng đề xuất: ở favicon chỉ còn thấy một ô tối có vạch màu, và người mới cần được kể câu chuyện một lần mới hiểu các lỗ là hợp âm. Nên có một câu giới thiệu ngắn trên trang chủ hoặc trong slide.
 - Điểm số là đánh giá của người thiết kế, chưa thử với người dùng thật.
-- Màu chủ đạo của app vẫn là bảng màu cũ (xanh lam). Logo đã theo bảng Đồng & Gỉ, nên khi nhóm chốt bảng màu mới cho cả app thì hai bên mới khớp hẳn.
+- Từ 17/11/2026 app và logo cùng theo bảng Sân khấu (ADR-026); file logo xuất sẵn trong `logo/` vẫn là bản Đồng & Gỉ.

@@ -88,11 +88,11 @@ Logo cũ không bị xóa (đề: "không xóa logo cũ"). Bản logo Sân khấ
 ## 1f. Đợt 6 (17/11/2026): nhóm chọn "Sân khấu" làm nhận diện mặc định
 
 - `VITE_BRAND` mặc định đổi thành `san-khau` (`frontend/vite.config.ts`). Đồng & Gỉ không bị xóa: build với `VITE_BRAND=dong-gi`, hoặc mở `?brand=dong-gi` một lần (trình duyệt nhớ lựa chọn trong `hm-brand`).
-- Logo "Cuộn I–IV–V–I" theo màu Sân khấu: file logo sinh tự động (ADR-007) không sửa; `brands.css` đổi biến `--hm-logo-*` (ô nền tím đêm #17142B, viền và chữ bản tối theo spotlight #F2B33D) và 2 màu thanh cuộn (#3CC3AB → hổ phách #F2B33D, #28BFD2 → đỏ rèm #E06A7A). [So sánh logo](soi-loi-frontend/theme/logo-dong-gi-vs-san-khau.png) (trái Đồng & Gỉ, phải Sân khấu; trên: header sáng, giữa: header tối, dưới: thanh bên khu học).
+- Logo "Cuộn I–IV–V–I" theo màu Sân khấu: file logo sinh tự động (ADR-007) không sửa; `brands.css` đổi biến `--hm-logo-*` (ô nền tím đêm #17142B, bản tối có viền spotlight #F2B33D). Màu các lỗ giữ nguyên vì mỗi lỗ là một nốt (luật số 2 của BRAND_NOTE). Bản đầu tiên của đợt 6 có đổi 2 màu lỗ; đã hoàn lại khi viết ADR-026. [So sánh logo](soi-loi-frontend/theme/logo-dong-gi-vs-san-khau.png) (trái Đồng & Gỉ, phải Sân khấu; trên: header sáng, giữa: header tối, dưới: thanh bên khu học).
 - `favicon-san-khau.svg`, `theme-color` #17142B, `site.webmanifest` theo Sân khấu. Nút "Bật âm thanh" trang chủ hết `rgba` ghi cứng.
 - Ảnh mặc định mới: [Tổng quan](soi-loi-frontend/theme/mac-dinh_tong-quan.jpg), [Trang chủ](soi-loi-frontend/theme/mac-dinh_trang-chu.jpg). Đo lại 11 trang với Sân khấu mặc định (`audit-san-khau.json`): axe 0 lỗi sáng và tối; Lighthouse desktop 100/100/100 cả 11 trang, điện thoại Perf 98–100, A11y 100, BP 100. 120 ảnh (12 trang × 5 cỡ × sáng/tối) ở `/mnt/project-files/soi-loi-frontend/sau-san-khau/`, 0 trang cuộn ngang; console chỉ còn cảnh báo AudioContext ở Harmony Lab (đã biết).
 
-**Cần nhóm biết:** đây là đổi nhận diện thấy được ở mọi trang. Ảnh trong slide/báo cáo cũ (màu xanh Đồng & Gỉ) sẽ khác app. `docs/thuong-hieu/` và ADR-007 chưa sửa; nếu nhóm muốn ghi chính thức thì cần một ADR mới (đề xuất ADR "Đổi nhận diện sang Sân khấu").
+**Ghi chính thức:** `docs/decisions/ADR-026-nhan-dien-san-khau.md`; `docs/thuong-hieu/BRAND_NOTE.md` thêm mục 3b. Ảnh trong slide/báo cáo cũ (màu xanh Đồng & Gỉ) sẽ khác app.
 
 ## 2. Mẫu tham chiếu
 
