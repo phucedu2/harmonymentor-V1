@@ -29,3 +29,8 @@ Thumbs.db
 .cache/
 docs/backing-track/nghe-thu/artifact.html
 backend/models/
+
+# Playwright (FE-027)
+frontend/test-results/
+frontend/playwright-report/
+frontend/playwright-report-live/

@@ -1,0 +1,290 @@
+{
+ "trang-chu": {
+  "axe_light": [
+   {
+    "id": "color-contrast",
+    "impact": "serious",
+    "n": 2,
+    "help": "Elements must meet minimum color contrast ratio thresholds",
+    "targets": [
+     "#thu-title > em:nth-child(1)",
+     "em:nth-child(2)"
+    ],
+    "summary": "Fix any of the following:\n  Element has insufficient color contrast of 1.95 (foreground color: #e0a53e, background color: #f2f3ea, font size: 36.0pt (48px), font weight: normal). Expected contrast rat"
+   }
+  ],
+  "axe_dark": [
+   {
+    "id": "color-contrast",
+    "impact": "serious",
+    "n": 2,
+    "help": "Elements must meet minimum color contrast ratio thresholds",
+    "targets": [
+     "#thu-title > em:nth-child(1)",
+     "em:nth-child(2)"
+    ],
+    "summary": "Fix any of the following:\n  Element has insufficient color contrast of 1.95 (foreground color: #e0a53e, background color: #f2f3ea, font size: 36.0pt (48px), font weight: normal). Expected contrast rat"
+   }
+  ],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 96,
+   "bp": 100,
+   "LCP": 443,
+   "CLS": 0.012,
+   "TBT": 0,
+   "FCP": 429,
+   "finalUrl": "http://localhost:4174/"
+  },
+  "lh_mobile": {
+   "perf": 94,
+   "a11y": 96,
+   "bp": 100,
+   "LCP": 1875,
+   "CLS": 0.004,
+   "TBT": 248,
+   "FCP": 1397,
+   "finalUrl": "http://localhost:4174/"
+  }
+ },
+ "dang-nhap": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 326,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 326,
+   "finalUrl": "http://localhost:4174/dang-nhap"
+  },
+  "lh_mobile": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1284,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 1096,
+   "finalUrl": "http://localhost:4174/dang-nhap"
+  }
+ },
+ "dang-ky": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 325,
+   "CLS": 0.001,
+   "TBT": 0,
+   "FCP": 324,
+   "finalUrl": "http://localhost:4174/dang-ky"
+  },
+  "lh_mobile": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1204,
+   "CLS": 0.013,
+   "TBT": 1,
+   "FCP": 1204,
+   "finalUrl": "http://localhost:4174/dang-ky"
+  }
+ },
+ "tong-quan": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 97,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 459,
+   "CLS": 0.112,
+   "TBT": 0,
+   "FCP": 306,
+   "finalUrl": "http://localhost:4174/app"
+  },
+  "lh_mobile": {
+   "perf": 90,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1528,
+   "CLS": 0.214,
+   "TBT": 0,
+   "FCP": 921,
+   "finalUrl": "http://localhost:4174/app"
+  }
+ },
+ "hoc": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 375,
+   "CLS": 0,
+   "TBT": 10,
+   "FCP": 287,
+   "finalUrl": "http://localhost:4174/app/hoc"
+  },
+  "lh_mobile": {
+   "perf": 98,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1360,
+   "CLS": 0,
+   "TBT": 161,
+   "FCP": 1055,
+   "finalUrl": "http://localhost:4174/app/hoc"
+  }
+ },
+ "luyen-tap": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 421,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 289,
+   "finalUrl": "http://localhost:4174/app/luyen-tap"
+  },
+  "lh_mobile": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1540,
+   "CLS": 0,
+   "TBT": 2,
+   "FCP": 933,
+   "finalUrl": "http://localhost:4174/app/luyen-tap"
+  }
+ },
+ "quiz": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 408,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 284,
+   "finalUrl": "http://localhost:4174/app/quiz"
+  },
+  "lh_mobile": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1510,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 923,
+   "finalUrl": "http://localhost:4174/app/quiz"
+  }
+ },
+ "tien-do": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 416,
+   "CLS": 0,
+   "TBT": 12,
+   "FCP": 285,
+   "finalUrl": "http://localhost:4174/app/tien-do"
+  },
+  "lh_mobile": {
+   "perf": 97,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1507,
+   "CLS": 0,
+   "TBT": 206,
+   "FCP": 1053,
+   "finalUrl": "http://localhost:4174/app/tien-do"
+  }
+ },
+ "composition": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 458,
+   "CLS": 0,
+   "TBT": 29,
+   "FCP": 286,
+   "finalUrl": "http://localhost:4174/app/composition"
+  },
+  "lh_mobile": {
+   "perf": 96,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1679,
+   "CLS": 0,
+   "TBT": 213,
+   "FCP": 929,
+   "finalUrl": "http://localhost:4174/app/composition"
+  }
+ },
+ "ho-so": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 373,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 287,
+   "finalUrl": "http://localhost:4174/app/ho-so"
+  },
+  "lh_mobile": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1356,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 1054,
+   "finalUrl": "http://localhost:4174/app/ho-so"
+  }
+ },
+ "kiem-tra-dau-vao": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 418,
+   "CLS": 0.003,
+   "TBT": 0,
+   "FCP": 289,
+   "finalUrl": "http://localhost:4174/app/kiem-tra-dau-vao"
+  },
+  "lh_mobile": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1509,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 1054,
+   "finalUrl": "http://localhost:4174/app/kiem-tra-dau-vao"
+  }
+ }
+}

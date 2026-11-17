@@ -1,5 +1,6 @@
 // Khối giao diện dùng chung cho khu học (phuc-music Bước 3), thay các class CSS cũ trong styles.css.
-import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
+import { useEffect, useRef, type ButtonHTMLAttributes, type HTMLAttributes, type ReactNode } from "react";
+import { scrollBehavior } from "./motion";
 
 export function PageHeading({ eyebrow, title, children }: { eyebrow: string; title: ReactNode; children?: ReactNode }) {
   return (
@@ -74,17 +75,40 @@ export function ChipButton({ pressed, className = "", ...rest }: ButtonHTMLAttri
     <button
       type="button"
       aria-pressed={pressed}
-      className={`min-h-11 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${pressed ? "border-primary bg-primary text-white" : "border-line bg-surface text-ink hover:border-primary hover:text-primary"} ${className}`}
+      className={`min-h-11 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${pressed ? "border-primary bg-primary text-on-primary" : "border-line bg-surface text-ink hover:border-primary hover:text-primary"} ${className}`}
       {...rest}
     />
   );
 }
 
 // Kết quả chấm: luôn có biểu tượng + chữ "Chính xác"/"Chưa đúng", không chỉ đổi màu.
-export function ResultBox({ correct, title, children }: { correct: boolean; title?: ReactNode; children?: ReactNode }) {
+// FE-005: trên điện thoại kết quả chấm hay rơi xuống dưới mép màn hình hoặc nằm sau thanh nút dính đáy,
+// người học bấm "Kiểm tra" mà không thấy gì. Khi hiện, tự cuộn vừa đủ để thấy (scroll-mb chừa chỗ thanh đáy).
+// FE-016: trả lời đúng có "khoảnh khắc thưởng" nhỏ: vài nốt nhạc bay lên rồi tan (CSS, 0 byte thư viện);
+// hoàn thành bài dùng bản "big" nhiều nốt hơn. Chỉ trang trí (aria-hidden), tắt hẳn khi giảm chuyển động, không có âm.
+const REWARD_NOTES = ["♪", "♫", "♩", "♬", "♪", "♫", "♩"];
+function RewardBurst({ big }: { big: boolean }) {
+  const notes = big ? REWARD_NOTES : REWARD_NOTES.slice(0, 4);
   return (
-    <div role="status" className={`mt-3 rounded-xl border px-4 py-3 text-sm leading-relaxed ${correct ? "border-success/40 bg-success-soft text-ink" : "border-danger/40 bg-danger-soft text-ink"}`}>
-      <p className={`font-semibold ${correct ? "text-success" : "text-danger"}`}><span aria-hidden="true">{correct ? "✓ " : "✗ "}</span>{title ?? (correct ? "Chính xác!" : "Chưa đúng.")}</p>
+    <span aria-hidden="true" className="hm-reward">
+      {notes.map((n, i) => <i key={i} style={{ ["--i" as string]: i, ["--n" as string]: notes.length }}>{n}</i>)}
+    </span>
+  );
+}
+
+export function ResultBox({ correct, title, children, celebrate = "small" }: {
+  correct: boolean; title?: ReactNode; children?: ReactNode; celebrate?: "small" | "big" | "none";
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof el.scrollIntoView !== "function") return;
+    el.scrollIntoView({ block: "nearest", behavior: scrollBehavior() });
+  }, [correct]);
+  return (
+    <div ref={ref} role="status" className={`relative mt-3 scroll-mt-4 scroll-mb-28 rounded-xl border px-4 py-3 text-sm leading-relaxed ${correct ? "border-success/40 bg-success-soft text-ink" : "border-danger/40 bg-danger-soft text-ink"}`}>
+      {correct && celebrate !== "none" && <RewardBurst big={celebrate === "big"} />}
+      <p className={`font-semibold ${correct ? "text-success" : "text-danger"}`}><span aria-hidden="true" className={correct && celebrate !== "none" ? "hm-reward-pop" : undefined}>{correct ? "✓ " : "✗ "}</span>{title ?? (correct ? "Chính xác!" : "Chưa đúng.")}</p>
       {children && <div className="mt-1 space-y-1">{children}</div>}
     </div>
   );

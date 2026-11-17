@@ -12,6 +12,7 @@ import "@fontsource/ibm-plex-mono/600.css";
 import App from "./App";
 import { AuthProvider } from "./auth/AuthProvider";
 import "./index.css";
+import "./theme/brands.css";
 
 // Lỗi 4xx (sai quyền, không tồn tại) thử lại cũng vô ích; chỉ thử lại lỗi mạng/5xx một lần.
 const queryClient = new QueryClient({

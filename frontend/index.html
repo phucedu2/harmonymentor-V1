@@ -10,6 +10,10 @@
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#0C231F" />
     <meta name="description" content="Học nhạc lý bằng cách chơi nó: học, luyện tập có chẩn đoán, ôn tập và sáng tác." />
+    <!-- FE-014: đặt theme trước khi vẽ để không nháy sáng khi người dùng đã chọn tối. -->
+    <script>try{if(localStorage.getItem("hm-theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
+    <!-- Phương án nhận diện (src/theme/brands.css): VITE_BRAND khi build (mặc định san-khau, nhóm chọn 17/11/2026), hoặc ?brand=dong-gi|san-khau|giay-nhac để đổi trên máy này. -->
+    <script>try{var q=new URLSearchParams(location.search).get("brand");if(q==="dong-gi"||q==="san-khau"||q==="giay-nhac")localStorage.setItem("hm-brand",q);var b=localStorage.getItem("hm-brand")||"%VITE_BRAND%";if(b==="san-khau"||b==="giay-nhac")document.documentElement.dataset.brand=b;var ic={"san-khau":"#17142B","giay-nhac":"#1D1B18"}[b];if(ic){document.querySelector('link[rel=icon][type="image/svg+xml"]').href="/favicon-"+b+".svg";document.querySelector("meta[name=theme-color]").content=ic;document.querySelector("link[rel=apple-touch-icon]").href="/apple-touch-icon-"+b+".png";document.querySelector('link[rel=icon][sizes="48x48"]').href="/favicon-"+b+".ico"}}catch(e){}</script>
   </head>
   <body>
     <div id="root"></div>

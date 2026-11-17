@@ -11,6 +11,7 @@ import {
 } from "../../api";
 import { audioEngine } from "../../audio/AudioEngine";
 import { bandPlayer } from "../../audio/band/player";
+import { instrumentsFor, loadInstruments, preferLite, prefetchInstruments } from "../../audio/band/samples";
 import {
   DEFAULT_MIX, GUITAR_TONE_LABELS, type Arrangement, type BandChannel, type BandMix, type FormSection, type GuitarTone, type ProgressionSlot, type SongForm,
   type SongLength,
@@ -41,6 +42,9 @@ type Draft = {
   mode: "loop" | "song";
   form: FullForm | null;
 };
+
+// FE-006: nút trong thanh dính đáy điện thoại (xem chỗ dùng).
+const mobileBarButton = "flex-1 whitespace-nowrap max-sm:min-h-11 max-sm:!px-2 max-sm:!text-sm sm:flex-none";
 
 export default function CompositionLabPage() {
   const [options, setOptions] = useState<ComposeOptions | null>(null);
@@ -124,6 +128,28 @@ export default function CompositionLabPage() {
   }, [chordKey]);
 
   const style = options?.styles.find((s) => s.id === draft?.style) ?? options?.styles[0];
+
+  // FE-012: khi trang rảnh, tải trước mẫu của phong cách đang chọn để lần bấm Phát đầu tiên không chờ tải mạng.
+  const styleInstruments = style ? `${style.instruments.keys}|${style.instruments.bass}` : "";
+  useEffect(() => {
+    if (!styleInstruments) return;
+    const [keys, bass] = styleInstruments.split("|");
+    const abort = new AbortController();
+    const list = instrumentsFor({ keys, bass }, true);
+    const lite = preferLite();
+    // Máy mạnh: tải xong thì giải nén luôn (giải nén 222 mẫu mất ~2,6 s, phần lớn thời gian chờ còn lại).
+    // Điện thoại/máy ≤ 4 GB RAM: chỉ tải file nén, không giữ bản giải nén trong RAM khi người dùng chưa bấm Phát.
+    const run = () => void prefetchInstruments(list, lite, abort.signal)
+      .then(() => (lite || abort.signal.aborted ? undefined : loadInstruments(list, false)))
+      .catch(() => undefined);
+    const idle = window.requestIdleCallback?.(run, { timeout: 3000 });
+    const timer = idle === undefined ? window.setTimeout(run, 1500) : undefined;
+    return () => {
+      abort.abort();
+      if (idle !== undefined) window.cancelIdleCallback(idle);
+      if (timer !== undefined) window.clearTimeout(timer);
+    };
+  }, [styleInstruments]);
 
   // Bản bài hát dựng ở backend mỗi khi form/vòng/phong cách đổi, để dòng thời gian, ghi chú và thời lượng luôn đúng.
   const songBody = draft?.mode === "song" && draft.form
@@ -377,15 +403,17 @@ export default function CompositionLabPage() {
         </div>
       </div>
       {/* Nút chính: dính đáy màn hình điện thoại để luôn thấy, nằm trong thẻ trên màn rộng. */}
-      <div className="fixed inset-x-0 bottom-0 z-20 flex gap-3 border-t border-line bg-bg/95 p-3 backdrop-blur sm:static sm:border-0 sm:bg-transparent sm:p-0">
+      {/* FE-006: ở 390px ba nút lg chia đều bị xuống 2–3 dòng, thanh cao ~100px và nút AI đè lên "Lưu vòng này".
+          Điện thoại: chữ nhỏ hơn, không xuống dòng, bỏ biểu tượng xúc xắc; chừa 64px bên phải cho nút AI. */}
+      <div className="fixed inset-x-0 bottom-0 z-20 flex gap-2 border-t border-line bg-bg/95 py-3 pr-[4.25rem] pl-3 backdrop-blur sm:static sm:gap-3 sm:border-0 sm:bg-transparent sm:p-0">
         {playing
-          ? <Button size="lg" className="flex-1 sm:flex-none" onClick={stopPlayback}><span aria-hidden="true">■</span> Dừng</Button>
-          : <Button size="lg" className="flex-1 sm:flex-none" onClick={() => void startPlayback()}><span aria-hidden="true">▶</span> {isSongMode ? (loopSection ? "Lặp đoạn" : "Phát cả bài") : "Phát"}</Button>}
-        <Button size="lg" variant="secondary" className="flex-1 sm:flex-none" onClick={() => update({ seed: newSeed() })}
+          ? <Button size="lg" className={mobileBarButton} onClick={stopPlayback}><span aria-hidden="true">■</span> Dừng</Button>
+          : <Button size="lg" className={mobileBarButton} onClick={() => void startPlayback()}><span aria-hidden="true">▶</span> {isSongMode ? (loopSection ? "Lặp đoạn" : "Phát cả bài") : "Phát"}</Button>}
+        <Button size="lg" variant="secondary" className={mobileBarButton} onClick={() => update({ seed: newSeed() })}
           aria-label={isSongMode ? "Tạo bản phối khác cho cả bài" : "Tạo bản phối khác cho cùng vòng hợp âm"}>
-          <span aria-hidden="true">🎲</span> Tạo bản khác
+          <span aria-hidden="true" className="max-sm:hidden">🎲</span> Tạo bản khác
         </Button>
-        <Button size="lg" variant="secondary" className="flex-1 sm:flex-none" loading={saving} onClick={() => void save()}>
+        <Button size="lg" variant="secondary" className={mobileBarButton} loading={saving} onClick={() => void save()}>
           {draft.id ? "Lưu thay đổi" : isSongMode ? "Lưu bài này" : "Lưu vòng này"}
         </Button>
         <span className="hidden self-center text-sm text-muted sm:inline" aria-live="polite">{dirty ? "Có thay đổi chưa lưu" : draft.id ? "Đã lưu" : ""}</span>
@@ -589,7 +617,7 @@ function BarEditor({ index, chord, voicing, keyName, keyChords, chords, levels, 
     </div>
 
     {voicing && chord && <div>
-      <NotationStaff groups={[{ label: `${chord}: ${voicing.notes.join(" – ")}`, notes: voicing.pitches.map((p) => p.name) }]} />
+      <NotationStaff large groups={[{ label: `${chord}: ${voicing.notes.join(" – ")}`, notes: voicing.pitches.map((p) => p.name) }]} />
       <Button variant="secondary" className="mt-2" onClick={() => playVoicing(voicing)}><span aria-hidden="true">▶</span> Nghe {chord}</Button>
     </div>}
 
