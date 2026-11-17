@@ -26,6 +26,12 @@ Test PostgreSQL tự bỏ qua khi thiếu `TEST_DATABASE_URL` hoặc khi URL kh�
 
 Trên máy: `cd frontend && npm run build && npx playwright install chromium && npm run e2e`.
 
+## Job thứ năm: test giao diện với backend thật (FE-028, 17/11/2026)
+
+`frontend-e2e-live` ("Frontend (Playwright + backend thật)") chạy `frontend/e2e-live/*.live.ts` (7 ca): đăng ký, đăng xuất, đăng nhập lại, sai mật khẩu, trùng email, tải lại trang vẫn giữ phiên, làm câu trắc nghiệm sai rồi đúng và tiến độ được lưu, hoàn thành Bài 1 (12 câu) rồi ôn thẻ đúng/sai. `playwright.live.config.ts` tự dựng backend (SQLite mới trong thư mục tạm, tự seed nội dung, AI tắt) và bản build qua vite preview có proxy `/api`. Đáp án đúng lấy từ `curriculum_specs` của chính backend đó (`scripts/e2e/dap_an_giao_dien.py`), nên đổi nội dung bài (tăng `version`) mà test không theo thì sẽ đỏ đúng chỗ. Cũng chưa nằm trong ruleset bắt buộc.
+
+Trên máy (Python 3.11 và `pip install -r backend/requirements.txt` trước): `cd frontend && npm run build && npm run e2e:live`. Trên Windows đặt `PYTHON=python` nếu cần.
+
 ## Khi thêm hoặc xóa test
 
 Mức tối thiểu (`--min-passed 330` và `--min-passed 21` trong `ci.yml`) là số test đạt sau HM-001 ngày 28/10/2026 (PR-3 là 325, trước PR-3 là 281 và 9). Khi thêm test thì nâng mức này trong cùng PR, để sau đó lỡ xóa test thì CI đỏ. Mức này không bao giờ được hạ để CI xanh.
