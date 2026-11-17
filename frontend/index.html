@@ -12,8 +12,8 @@
     <meta name="description" content="Học nhạc lý bằng cách chơi nó: học, luyện tập có chẩn đoán, ôn tập và sáng tác." />
     <!-- FE-014: đặt theme trước khi vẽ để không nháy sáng khi người dùng đã chọn tối. -->
     <script>try{if(localStorage.getItem("hm-theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
-    <!-- Phương án nhận diện (src/theme/brands.css): VITE_BRAND khi build, hoặc ?brand=... để thử; mặc định Đồng & Gỉ. -->
-    <script>try{var q=new URLSearchParams(location.search).get("brand");if(q)q==="dong-gi"?localStorage.removeItem("hm-brand"):localStorage.setItem("hm-brand",q);var b=localStorage.getItem("hm-brand")||"%VITE_BRAND%";if(b==="san-khau"||b==="giay-nhac")document.documentElement.dataset.brand=b}catch(e){}</script>
+    <!-- Phương án nhận diện (src/theme/brands.css): VITE_BRAND khi build (mặc định san-khau, nhóm chọn 17/11/2026), hoặc ?brand=dong-gi|san-khau|giay-nhac để đổi trên máy này. -->
+    <script>try{var q=new URLSearchParams(location.search).get("brand");if(q==="dong-gi"||q==="san-khau"||q==="giay-nhac")localStorage.setItem("hm-brand",q);var b=localStorage.getItem("hm-brand")||"%VITE_BRAND%";if(b==="san-khau"||b==="giay-nhac")document.documentElement.dataset.brand=b;if(b==="san-khau"){document.querySelector('link[rel=icon][type="image/svg+xml"]').href="/favicon-san-khau.svg";document.querySelector("meta[name=theme-color]").content="#17142B"}}catch(e){}</script>
   </head>
   <body>
     <div id="root"></div>

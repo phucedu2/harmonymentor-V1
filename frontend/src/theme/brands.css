@@ -1,7 +1,7 @@
 /* Hai phương án nhận diện đề xuất (đề soi lỗi: "1–2 phương án theme token, bật/tắt bằng 1 biến,
-   giữ Đồng & Gỉ làm mặc định"). Chỉ đổi token màu; bố cục, font, logo giữ nguyên.
-   Bật: biến VITE_BRAND=san-khau | giay-nhac khi build (index.html đọc), hoặc thử nhanh bằng
-   ?brand=san-khau trên URL (nhớ trong localStorage hm-brand; ?brand=dong-gi để về mặc định).
+   giữ Đồng & Gỉ làm mặc định"). 17/11/2026 nhóm chọn Sân khấu làm mặc định (vite.config.ts). Chỉ đổi token màu; bố cục, font giữ nguyên; logo chỉ đổi màu qua biến --hm-logo-*.
+   Chọn: biến VITE_BRAND=san-khau (mặc định) | dong-gi | giay-nhac khi build (index.html đọc), hoặc đổi trên
+   một máy bằng ?brand=... trên URL (nhớ trong localStorage hm-brand).
    Tương phản đo theo WCAG 2.1 (script trong docs/soi-loi-frontend): mọi cặp chữ/nền ≥ 5,8:1. */
 
 /* ---------- A. "Sân khấu": tím đêm + đèn spotlight hổ phách ---------- */
@@ -75,6 +75,21 @@
   --w-paper: #0e0c1b; --w-on-paper: #ecebf5; --w-panel: #18152b; --w-line: #34304f;
   --w-ink-soft: #a9a5c2; --w-brass-deep: #f2b33d; --w-deep-text: #b9a7ff; --w-ivory: #221d3d;
 }
+
+/* Logo "Cuộn I–IV–V–I" bản Sân khấu: không sửa file logo (ADR-007, sinh tự động), chỉ đổi biến màu và
+   2 màu thanh cuộn nhận diện (#3CC3AB xanh gỉ → hổ phách spotlight, #28BFD2 → đỏ rèm sân khấu).
+   Logo Đồng & Gỉ giữ nguyên khi VITE_BRAND=dong-gi. */
+:root[data-brand="san-khau"] {
+  --hm-logo-ink: #17142b; --hm-logo-deep: #4b33b8; --hm-logo-sig: #f2b33d;
+  --hm-logo-lacquer: #17142b; --hm-logo-edge: #17142b; --hm-logo-text: #17142b; --hm-logo-hole: #17142b;
+}
+:root[data-brand="san-khau"] [data-theme="dark"],
+:root[data-brand="san-khau"][data-theme="dark"] {
+  --hm-logo-ink: #ecebf5; --hm-logo-deep: #f2b33d; --hm-logo-sig: #f7c96b;
+  --hm-logo-lacquer: #1a1630; --hm-logo-edge: #f2b33d; --hm-logo-text: #ecebf5; --hm-logo-hole: #0e0c1b;
+}
+:root[data-brand="san-khau"] .hm-logo rect[fill="#3CC3AB"] { fill: #f2b33d; }
+:root[data-brand="san-khau"] .hm-logo rect[fill="#28BFD2"] { fill: #e06a7a; }
 
 /* ---------- B. "Giấy nhạc": giấy kem + mực khắc bản + bút chì đỏ của thầy ---------- */
 /* Sáng: ink/bg 16,2 · muted/bg 6,9 · primary/bg 7,0 · trắng/primary 7,4 · success/bg 6,1 */

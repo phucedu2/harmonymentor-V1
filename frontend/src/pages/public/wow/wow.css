@@ -93,7 +93,7 @@
 }
 .wow-ghost:hover { border-color: var(--w-verdigris); color: var(--w-verdigris); }
 
-.wow-sound { border: 1px solid rgba(242, 243, 234, 0.3); color: var(--w-cream); background: rgba(8, 22, 19, 0.6); backdrop-filter: blur(6px); }
+.wow-sound { border: 1px solid rgba(242, 243, 234, 0.3); color: var(--w-cream); background: color-mix(in srgb, var(--w-night) 60%, transparent); backdrop-filter: blur(6px); }
 .wow-sound[aria-pressed="true"] { border-color: var(--w-verdigris); color: var(--w-verdigris); }
 .wow-sound.on-light { color: var(--w-on-paper); border-color: var(--w-line); background: color-mix(in srgb, var(--w-paper) 85%, transparent); }
 .wow-eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; }
