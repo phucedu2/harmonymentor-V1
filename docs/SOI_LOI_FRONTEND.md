@@ -187,6 +187,14 @@ Cột "Ảnh" trỏ tới file trong `docs/soi-loi-frontend/`. "Đã sửa" ghi 
 | Thẻ tiến độ trong bài | "0%" | "0% đúng" |
 | Tổng quan, mục "Bài nên học tiếp" khi bài gợi ý đã nằm ở thẻ "Bắt đầu học" | (hiện lại bài đó) | "Bài gợi ý nằm ở thẻ "Bắt đầu học" phía trên. Học xong bài đó, mình sẽ gợi ý bài kế tiếp." |
 
+Đợt 5 thêm chữ ở AI Tutor (FE-023):
+
+| Chỗ | Chữ mới |
+|---|---|
+| Rê chuột lên nút AI tròn | "Bấm để hỏi AI Tutor. Kéo để đổi chỗ (hoặc phím mũi tên)." |
+| Nút ⠿ đầu khung chat (máy tính) | aria-label "Di chuyển khung AI Tutor bằng phím mũi tên"; rê chuột: "Kéo thanh này để di chuyển khung; hoặc bấm vào đây rồi dùng phím mũi tên" |
+| Nút ↺ (chỉ hiện khi đã kéo) | aria-label "Đưa AI Tutor về góc phải dưới"; rê chuột: "Đưa về góc phải dưới" |
+
 ## 8. Lệnh đã chạy
 
 Chạy 16/11/2026 trên cloud:
