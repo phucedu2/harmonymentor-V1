@@ -101,7 +101,8 @@ def test_ai_off_answers_from_lesson_with_engine_facts():
     assert body["retrieval_method"] == "bm25"
 
 
-def test_out_of_scope_refused_without_llm():
+def test_out_of_scope_refused_without_llm(monkeypatch):
+    monkeypatch.setenv("OFFTOPIC_MODE", "refuse")        # chế độ cũ (ADR-020): chỉ từ chối, không gọi AI
     fake = use(FakeProvider([GOOD]))
     body = ask(make_user(), "Cách nấu phở bò ngon")
     assert body["intent"] == "out_of_scope" and body["citations"] == [] and fake.calls == []

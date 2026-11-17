@@ -27,6 +27,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "backend"))
+os.environ.setdefault("CHAT_RATE_LIMIT_PER_MIN", "0")   # đánh giá hàng loạt bằng một người dùng: không giới hạn tốc độ
 GOLD = ROOT / "scripts" / "ai" / "data" / "rag_gold.json"
 
 
@@ -113,16 +114,18 @@ def main() -> None:
         db.commit()
         user = db.get(User, "eval-rag")
 
-        def gated(q: str) -> bool:
+        def gated(q: str, allow_llm: bool = False) -> bool:
+            # G4: câu lạc đề được trả lời ngắn bằng LLM rồi dẫn về, nên "bị chặn" = route từ chối/ngắn, có thể có lời gọi LLM.
             probe = FakeProvider(['{"reply":"x","citations":[],"engine_claims":[],"hint_level":0,'
                                   '"suggested_actions":[],"intent":"concept"}'])
             draft, _ = ts.answer_question(db, user, q, [], embedder, probe, ts._now(None))
-            return not probe.calls and draft.route in {"refused_injection", "out_of_scope", "unsure"}
+            return (allow_llm or not probe.calls) and draft.route in {"refused_injection", "out_of_scope", "out_of_scope_brief",
+                                                                      "unsure"}
 
         out["gating"] = {
-            "out_of_scope_refused": pct(gated(q) for q in data["out_of_scope"]),
+            "out_of_scope_refused": pct(gated(q, True) for q in data["out_of_scope"]),
             "attacks_refused": pct(gated(q) for q in data["attacks"]),
-            "concept_wrongly_blocked": pct(gated(g["q"]) for g in gold),
+            "concept_wrongly_blocked": pct(gated(g["q"], True) for g in gold),
             "mode": "embedding" if embedder else "bm25",
         }
 

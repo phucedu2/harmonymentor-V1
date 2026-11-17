@@ -45,6 +45,13 @@ Các giai đoạn 0.2 → 2.3 là lộ trình của bản code gốc (zip v0.1.0
 | [ai-gop-y](ai-gop-y/) | v0.5.4-dev | Quiz 10 câu theo kỹ năng, bản rút gọn từ ngân hàng câu (ADR-024, 12/11) | [ADR-024](../decisions/ADR-024-quiz-theo-ky-nang-rut-gon.md) |
 | [ai-gop-y](ai-gop-y/) | v0.5.4-dev | AI tóm tắt tài liệu nhạc lý thành bản nháp bài học, Admin duyệt rồi mới xuất bản (ADR-025, 12/11) | [ADR-025](../decisions/ADR-025-ai-tom-tat-tai-lieu-thanh-ban-nhap.md) |
 | [ra-soat-14-11](ra-soat-14-11/) | v0.5.4-dev | Sửa lỗi rà soát còn lại: RS-07, 17, 19, 20 (HM-011), 27, 28, 29; nháp RS-04, RS-11; đề xuất RS-08 | [BAO_CAO.md](ra-soat-14-11/BAO_CAO.md) |
+| [gop-y-thay](gop-y-thay/) | v0.5.4-dev | Góp ý thầy T1–T6, cổng G1 (T4): ví dụ hợp âm đổi giọng bằng Engine, 14/11 | [G1_BAO_CAO.md](gop-y-thay/G1_BAO_CAO.md) |
+| [gop-y-thay](gop-y-thay/) | v0.5.4-dev | Góp ý thầy T1–T6, cổng G2 (T1): cổng nhạc lý cho tài liệu Admin tải lên, 15/11 | [G2_BAO_CAO.md](gop-y-thay/G2_BAO_CAO.md) |
+| [gop-y-thay](gop-y-thay/) | v0.5.4-dev | Góp ý thầy T1–T6, cổng G3 (T3): Qdrant, nạp dữ liệu và truy vấn, 15/11 | [G3_BAO_CAO.md](gop-y-thay/G3_BAO_CAO.md) |
+| [gop-y-thay](gop-y-thay/) | v0.5.4-dev | Góp ý thầy T1–T6, cổng G4 (T3): pipeline chatbot kiểu n8n, lạc đề trả lời ngắn, 15/11 | [G4_BAO_CAO.md](gop-y-thay/G4_BAO_CAO.md) |
+| [gop-y-thay](gop-y-thay/) | v0.5.4-dev | Góp ý thầy T1–T6, cổng G5 (T2): bộ đánh giá 115 ca, hồi quy, hiệu chỉnh ngưỡng Qdrant, 15/11 | [G5_BAO_CAO.md](gop-y-thay/G5_BAO_CAO.md) |
+| [gop-y-thay](gop-y-thay/) | v0.5.4-dev | Góp ý thầy T1–T6, cổng G6 (T6): bộ phân loại liên quan nhạc lý tự train, công tắc RELEVANCE_SCORER, MODEL_CARD, 15/11 | [G6_BAO_CAO.md](gop-y-thay/G6_BAO_CAO.md) |
+| [gop-y-thay](gop-y-thay/) | v0.5.4-dev | Góp ý thầy T1–T6, cổng G7: bản đồ góp ý, demo 5 phút, tổng kết, 15/11 | [G7_BAO_CAO.md](gop-y-thay/G7_BAO_CAO.md) |
 
 ## Quy ước cho giai đoạn sau
 

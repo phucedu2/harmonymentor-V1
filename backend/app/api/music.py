@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query
 
 from ..contracts.music import (
     ChordContextOut,
@@ -10,6 +10,7 @@ from ..contracts.music import (
     Lesson1TriadOut,
     PitchOut,
 )
+from ..content.progression import KEYS, UnknownNumeral, resolve_progression
 from ..music_engine import parse_chord_symbol, parse_interval, parse_note, roman_numeral, transpose
 from ..music_engine.errors import InvalidPitch, MusicEngineError
 
@@ -55,6 +56,18 @@ def inspect_chord_query(
     key: str | None = Query(default=None, description="Optional major-key context for MVP."),
 ):
     return _inspect(symbol, key)
+
+
+@router.get("/progression")
+def progression_in_key(key: str = Query(...), numerals: str = Query(..., description="Số La Mã ngăn cách bằng dấu phẩy, ví dụ ii7,V7,Imaj7")):
+    """Vòng hợp âm của bài đổi theo giọng. Sai giọng/số La Mã thì 422, không lặng lẽ quay về giọng C."""
+    items = [n.strip() for n in numerals.split(",") if n.strip()]
+    if not items or len(items) > 16:
+        raise HTTPException(422, {"error": {"code": "BAD_NUMERALS", "message": "Cần 1–16 số La Mã, ngăn cách bằng dấu phẩy."}})
+    try:
+        return {"key": key, "keys": list(KEYS), "numerals": items, "symbols": resolve_progression(key, items)}
+    except UnknownNumeral as exc:
+        raise HTTPException(422, {"error": {"code": "BAD_NUMERALS", "message": str(exc)}}) from exc
 
 
 @router.get("/chords/{symbol}", response_model=ChordInspectOut)

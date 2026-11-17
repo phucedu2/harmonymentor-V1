@@ -7,6 +7,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
+# OCR cho cổng nhạc lý (G2/T1): tesseract + tiếng Việt/Anh, khoảng 100 MB. Thiếu thì chỉ ảnh/PDF quét báo "chưa cài OCR".
+RUN apt-get update && apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-vie tesseract-ocr-eng \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 

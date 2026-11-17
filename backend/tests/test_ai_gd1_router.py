@@ -358,8 +358,12 @@ def test_api_flow_d_help_page(fake):
 
 def test_api_flow_g_and_c(fake):
     assert ask("Chào bạn")["flow"] == "G"
+    # G4 (Phúc chốt 14/11): câu lạc đề được trả lời tối đa 2 câu rồi dẫn về nhạc lý; trước đó chỉ từ chối và không gọi AI.
+    fake.script = [general_reply("Phở bò cần xương ninh lâu. Gia vị gồm hồi, quế. Ăn kèm hành, chanh. Món này nhiều bước.", intent="out_of_scope")]
     body = ask("Cách nấu phở bò ngon")
-    assert body["flow"] == "C" and body["intent"] == "out_of_scope" and fake.calls == []
+    assert body["flow"] == "C" and body["intent"] == "out_of_scope" and len(fake.calls) == 1
+    assert body["reply"].startswith("Phở bò cần xương ninh lâu. Gia vị gồm hồi, quế.") and "Ăn kèm" not in body["reply"]
+    assert "trợ lý âm nhạc" in body["reply"] and body["source_label"] == "Ngoài phạm vi, trả lời ngắn"
 
 
 # --- ADR-020: phạm vi âm nhạc rộng ---------------------------------------------------------------------------

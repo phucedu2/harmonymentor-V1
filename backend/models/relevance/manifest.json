@@ -1,0 +1,92 @@
+{
+ "name": "hm-relevance",
+ "version": "1.0.0",
+ "trained_at": "2026-11-15T05:15:04Z",
+ "recommended": "e5",
+ "labels": {
+  "1": "liên quan nhạc lý/hòa âm",
+  "0": "không liên quan"
+ },
+ "data": {
+  "n": 333,
+  "positives": 204,
+  "negatives": 129,
+  "sha256": "85c804a7deff037eae9607b26db05bec657511d234eae91fbd067aec72ae7c8e",
+  "groups": 31,
+  "handwritten_file": "data/relevance/handwritten.jsonl",
+  "max_overlap_with_gate_docs": 0.416
+ },
+ "files": {
+  "tfidf-logreg.json": {
+   "sha256": "187273f552726aee7ff10bdacb3bc275d16867b547201793f9e9c5234457faa2",
+   "bytes": 96133
+  },
+  "e5-logreg.json": {
+   "sha256": "9a7d0dcb959a9451b0f1c6588577267bc5b5da4805a847052b2464219daaa509",
+   "bytes": 3738
+  }
+ },
+ "cv_group_5fold": {
+  "tfidf": {
+   "n": 333,
+   "auc": 0.99,
+   "accuracy": 0.9309,
+   "precision": 0.9788,
+   "recall": 0.9069,
+   "gate": {
+    "neg_rejected": 0.9302,
+    "neg_accepted": 0.0155,
+    "pos_accepted": 0.8627,
+    "pos_rejected": 0.0343
+   }
+  },
+  "e5": {
+   "n": 333,
+   "auc": 0.9968,
+   "accuracy": 0.973,
+   "precision": 0.9756,
+   "recall": 0.9804,
+   "gate": {
+    "neg_rejected": 0.8915,
+    "neg_accepted": 0.0155,
+    "pos_accepted": 0.9461,
+    "pos_rejected": 0.0
+   }
+  },
+  "hybrid_g2": {
+   "n": 333,
+   "auc": 0.9953,
+   "accuracy": 0.961,
+   "precision": 1.0,
+   "recall": 0.9363,
+   "gate": {
+    "neg_rejected": 0.9767,
+    "neg_accepted": 0.0,
+    "pos_accepted": 0.902,
+    "pos_rejected": 0.0441
+   }
+  }
+ },
+ "gate_16_docs": {
+  "tfidf": {
+   "precision_accepted": 100.0,
+   "recall_not_rejected": 100.0,
+   "offtopic_rejected": 100.0
+  },
+  "e5": {
+   "precision_accepted": 100.0,
+   "recall_not_rejected": 100.0,
+   "offtopic_rejected": 87.5
+  },
+  "hybrid_g2": {
+   "precision_accepted": 100.0,
+   "recall_not_rejected": 100.0,
+   "offtopic_rejected": 100.0
+  }
+ },
+ "thresholds": {
+  "low": 0.35,
+  "high": 0.6
+ },
+ "trainer": "scikit-learn LogisticRegression, random_state=0"
+}

@@ -299,7 +299,8 @@ export type AdminStats = {
 };
 export type AdminAudit = { id: number; actor_id: string | null; action: string; target_type: string; target_id: string; created_at: string };
 
-export type AiDocument = { id: string; filename: string; kind: string; page_count: number; source_title: string; source_note: string | null; created_at: string };
+export type AiDocument = { id: string; filename: string; kind: string; page_count: number; source_title: string; source_note: string | null; created_at: string;
+  relevance_status: "accepted" | "pending" | "rejected"; relevance_score: number | null; relevance_reason: string | null; dropped_pages: number[]; dropped_chunks: number };
 export type AiQuestion = { kind: "mcq" | "build_chord" | "build_scale"; prompt: string; skill_id: string; explanation: string; page: number;
   options?: string[]; answer?: string; symbol?: string; tonic?: string; scale_type?: string; engine_answer?: string[] | null };
 export type AiDraftContent = { title: string; objectives: string[]; blocks: { title: string; paragraphs: string[]; page: number }[];
@@ -316,6 +317,11 @@ export const api = {
     form.append("file", file); form.append("source_title", sourceTitle); form.append("source_note", sourceNote); form.append("consent", String(consent));
     return apiCall<AiDocument>("/admin/ai/documents", { method: "POST", body: form });
   },
+  aiPasteText: (text: string, sourceTitle: string, sourceNote: string, consent: boolean) =>
+    apiPost<AiDocument>("/admin/ai/documents/text", { text, source_title: sourceTitle, source_note: sourceNote || null, consent }),
+  aiPendingDocuments: () => apiCall<AiDocument[]>("/admin/ai/documents?status=pending"),
+  aiReviewDocument: (id: string, decision: "approve" | "reject", note?: string) =>
+    apiPost<AiDocument>(`/admin/ai/documents/${encodeURIComponent(id)}/review`, { decision, note: note || null }),
   aiMakeDraft: (docId: string, pageFrom: number, pageTo: number, topic: string) =>
     apiPost<AiDraft>(`/admin/ai/documents/${encodeURIComponent(docId)}/draft`, { page_from: pageFrom, page_to: pageTo, topic: topic || null }),
   aiDrafts: () => apiCall<AiDraftRow[]>("/admin/ai/drafts"),
@@ -390,6 +396,9 @@ export const api = {
   lesson1Theory: (root: string) => apiCall<Lesson1Theory>(`/music/lesson1/${encodeURIComponent(root)}`),
   inspectChord: (symbol: string, key?: string) =>
     apiCall<ChordInspection>(`/music/chords/inspect?symbol=${encodeURIComponent(symbol)}${key ? `&key=${encodeURIComponent(key)}` : ""}`),
+  /** Vòng hợp âm của bài ở giọng bất kỳ: số La Mã -> ký hiệu, do Music Engine tính. */
+  progressionInKey: (key: string, numerals: string[]) =>
+    apiCall<{ key: string; keys: string[]; numerals: string[]; symbols: string[] }>(`/music/progression?key=${encodeURIComponent(key)}&numerals=${encodeURIComponent(numerals.join(","))}`),
   submitAttempt: (exerciseVersionId: string, answer: unknown, inputMethod?: InputMethod) =>
     apiPost<AttemptResult>("/attempts", { exercise_version_id: exerciseVersionId, answer, input_method: inputMethod }),
   completeLesson: (lessonId: string) =>

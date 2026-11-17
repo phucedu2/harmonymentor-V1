@@ -30,6 +30,7 @@ from typing import Any
 
 from ...music_engine.chord import parse_chord_symbol
 from ..embedder import Embedder
+from . import fact_anchor
 from .engine_query import EngineAnswer, engine_answer
 from .general import about_app, broad_music
 from .retriever import Hit, Retrieval, help_base, knowledge_base, retrieve
@@ -338,7 +339,8 @@ def _route(sig: Signals, th: dict[str, float]) -> Decision:
     if label.label == "chao_hoi" and label.confidence >= th["greet_conf"] and len(question.split()) <= 8:
         return d("G", "greeting", "label_greeting")
 
-    if label.label == "huong_dan" and label.confidence >= th["help_conf"]:
+    # G8: "Đảo quãng P4 thì được quãng gì?" bị tầng 1 đoán là hướng dẫn dùng web; Engine đã có đáp án thì là câu nhạc lý.
+    if label.label == "huong_dan" and label.confidence >= th["help_conf"] and not (eng.facts and fact_anchor.direct(question)):
         hits = [h for h in sig.help.hits if h.score >= th["help_accept"]]
         # Câu nhạc lý hỏi kiểu "… làm thế nào" hay bị tầng 1 đoán là hướng dẫn. Kho bài trả lời được (điểm đạt ngưỡng
         # nhận) và xác suất nhạc lý không thấp thì ưu tiên bài học.

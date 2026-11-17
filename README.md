@@ -238,6 +238,20 @@ Nếu không cài được `music21`, bộ đối chiếu music21 bị bỏ qua 
 
 Frontend: `cd frontend && npm ci && npm run build` **đạt** (Node 22, 20/10/2026, sau khi gộp v0.5.3 với Giai đoạn B; đã có `package-lock.json` mới gồm Tone.js và VexFlow).
 
+## AI theo góp ý thầy T1–T6 (15/11/2026)
+
+Bản đồ góp ý → việc đã làm: [`docs/AI_TEACHER_FEEDBACK_MAP.md`](docs/AI_TEACHER_FEEDBACK_MAP.md). Kịch bản demo 5 phút: [`docs/DEMO_5_PHUT.md`](docs/DEMO_5_PHUT.md). Sơ đồ pipeline chatbot: [`docs/AI_PIPELINE.md`](docs/AI_PIPELINE.md). Mô hình tự train: [`docs/MODEL_CARD.md`](docs/MODEL_CARD.md). Báo cáo từng cổng: `docs/giai-doan/gop-y-thay/`.
+
+```powershell
+docker compose up --build                                   # gồm dịch vụ Qdrant (nội bộ, không mở cổng)
+docker compose exec api python -m app.rag.ingest --source all   # nạp bài học + tài liệu ở data/corpus/raw/
+cd backend
+python -m app.eval.run                                      # đo, ghi eval/report.md, lỗi nếu tụt so với baseline
+python -m app.ml.relevance_train                            # train lại bộ phân loại liên quan nhạc lý
+```
+
+Mọi ngưỡng, tên mô hình, cấu hình Qdrant nằm ở `backend/app/core/ai_config.py`, ghi đè bằng biến môi trường (xem `.env.example`).
+
 ## Tài liệu phase
 
 Báo cáo và nhật ký kiểm chứng của từng giai đoạn nằm trong [`docs/giai-doan/`](docs/giai-doan/), mỗi giai đoạn một thư mục con; mục lục ở [`docs/giai-doan/README.md`](docs/giai-doan/README.md). Kế hoạch và truy vết FR của Giai đoạn A: `docs/giai-doan/phase-A/PHASE_A_PLAN.md`, `docs/giai-doan/phase-A/PHASE_A_TRUY_VET_FR.md`.

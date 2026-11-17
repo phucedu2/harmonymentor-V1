@@ -12,7 +12,6 @@ Ranh giới an toàn (nguyên tắc 5: AI chỉ gợi ý):
 from __future__ import annotations
 
 import hashlib
-import io
 import json
 import re
 from datetime import datetime, timedelta, timezone
@@ -23,6 +22,9 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from ..ai.tutor.guardrail import scan_reply
+from .relevance.errors import RelevanceError
+from .relevance.extract import extract
+from .relevance.gate import GateResult, evaluate_file, evaluate_pasted_text
 from ..ai.tutor.llm import LLMProvider, LLMUnavailable
 from ..content.versioning import content_hash, snapshot_from_spec
 from ..db.models import (AiLessonDraft, Exercise, ExerciseVersion, Lesson, LessonBlock, LessonSource, Skill, SourceDocument,
@@ -30,10 +32,7 @@ from ..db.models import (AiLessonDraft, Exercise, ExerciseVersion, Lesson, Lesso
 from ..music_engine import tools as engine
 from .content_service import AdminContentError, audit
 
-MAX_BYTES = 10 * 1024 * 1024
-ALLOWED = {"pdf", "docx", "md", "txt"}
-MAX_PAGES_STORED = 600
-CHARS_PER_TEXT_PAGE = 3000          # docx/md/txt không có trang thật: chia theo độ dài để vẫn trích "trang" được
+MAX_BYTES = 10 * 1024 * 1024         # giữ tên cũ cho test; giá trị thật đọc từ core/ai_config.RelevanceConfig.max_bytes
 MAX_PROMPT_CHARS = 14000            # chặn lượng chữ gửi Gemini mỗi lần
 DAILY_DRAFT_LIMIT = 20
 MAX_QUESTIONS = 10
@@ -42,68 +41,84 @@ SCALE_TYPES = {"major", "natural_minor"}
 
 # --- trích chữ -----------------------------------------------------------------------------------
 
-def _split_text(text: str) -> list[str]:
-    paragraphs = [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()]
-    pages, cur = [], ""
-    for p in paragraphs:
-        if cur and len(cur) + len(p) > CHARS_PER_TEXT_PAGE:
-            pages.append(cur)
-            cur = ""
-        cur = f"{cur}\n\n{p}" if cur else p
-    if cur:
-        pages.append(cur)
-    return pages
-
-
 def extract_pages(filename: str, data: bytes) -> tuple[str, list[str]]:
-    ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
-    if ext not in ALLOWED:
-        raise AdminContentError("FILE_TYPE", "Chỉ nhận PDF, DOCX, MD hoặc TXT.", 415)
-    if len(data) > MAX_BYTES:
-        raise AdminContentError("FILE_TOO_BIG", "Tệp lớn hơn 10 MB.", 413)
-    if not data:
-        raise AdminContentError("FILE_EMPTY", "Tệp rỗng.")
+    """Chỉ trích chữ (không chấm điểm). Giữ lại cho test và nơi cần chữ thô; cổng nhạc lý nằm ở add_document."""
     try:
-        if ext == "pdf":
-            from pypdf import PdfReader
-            reader = PdfReader(io.BytesIO(data))
-            if reader.is_encrypted:
-                raise AdminContentError("FILE_ENCRYPTED", "PDF bị khóa mật khẩu, không đọc được.")
-            pages = [(page.extract_text() or "").strip() for page in reader.pages[:MAX_PAGES_STORED]]
-        elif ext == "docx":
-            from docx import Document
-            doc = Document(io.BytesIO(data))
-            pages = _split_text("\n\n".join(p.text for p in doc.paragraphs))
-        else:
-            pages = _split_text(data.decode("utf-8", errors="replace"))
-    except AdminContentError:
-        raise
-    except Exception as exc:  # thư viện đọc tệp ném nhiều loại lỗi với tệp hỏng
-        raise AdminContentError("FILE_UNREADABLE", "Không đọc được nội dung tệp (có thể bị hỏng).") from exc
-    if not any(pages):
-        raise AdminContentError("FILE_NO_TEXT", "Không trích được chữ (PDF dạng ảnh quét cần OCR, chưa hỗ trợ).")
-    return ext, pages
+        ex = extract(filename, data)
+    except RelevanceError as exc:
+        raise AdminContentError(exc.code, exc.message, exc.status) from exc
+    return ex.kind, ex.pages
 
 
-def add_document(db: Session, admin: User, filename: str, data: bytes, source_title: str, source_note: str | None,
-                 consent: bool) -> SourceDocument:
+def _store(db: Session, admin: User, *, filename: str, data: bytes, source_title: str, source_note: str | None,
+           result: GateResult, kind: str) -> SourceDocument:
+    status_audit = {"accepted": "ai.document.upload", "pending": "ai.document.pending"}[result.status]
+    doc = SourceDocument(id=str(uuid4()), uploaded_by=admin.id, filename=filename[:240], kind=kind[:8], size_bytes=len(data),
+                         sha256=hashlib.sha256(data).hexdigest(), source_title=source_title.strip()[:300],
+                         source_note=(source_note or "").strip()[:300] or None, consent=True, pages=result.pages,
+                         relevance_status=result.status, relevance_score=result.score, relevance_reason=result.reason_vi,
+                         relevance_detail=result.detail)
+    db.add(doc)
+    audit(db, admin, status_audit, "source_document", doc.id,
+          {"kind": kind, "pages": len(result.pages), "size": len(data), "score": result.score})
+    db.commit()
+    return doc
+
+
+def _gate(db: Session, admin: User, filename: str, data: bytes, source_title: str, source_note: str | None, consent: bool,
+          evaluate_fn) -> SourceDocument:
     if not consent:
         raise AdminContentError("CONSENT_REQUIRED", "Cần tick xác nhận bạn có quyền dùng tài liệu này.")
     if not source_title.strip():
         raise AdminContentError("SOURCE_REQUIRED", "Cần ghi tên nguồn (sách, tác giả, năm) của tài liệu.")
-    kind, pages = extract_pages(filename, data)
-    doc = SourceDocument(id=str(uuid4()), uploaded_by=admin.id, filename=filename[:240], kind=kind, size_bytes=len(data),
-                         sha256=hashlib.sha256(data).hexdigest(), source_title=source_title.strip()[:300],
-                         source_note=(source_note or "").strip()[:300] or None, consent=True, pages=pages)
-    db.add(doc)
-    audit(db, admin, "ai.document.upload", "source_document", doc.id, {"kind": kind, "pages": len(pages), "size": len(data)})
+    try:
+        result = evaluate_fn()
+    except RelevanceError as exc:
+        audit(db, admin, "ai.document.refused", "source_document", "-", {"filename": filename[:240], "code": exc.code})
+        db.commit()
+        raise AdminContentError(exc.code, exc.message, exc.status) from exc
+    if result.status == "rejected":
+        # Không lưu chữ của tài liệu lạc đề; chỉ ghi nhật ký để biết ai đã thử tải gì.
+        audit(db, admin, "ai.document.rejected", "source_document", "-",
+              {"filename": filename[:240], "score": result.score, "sha256": hashlib.sha256(data).hexdigest()})
+        db.commit()
+        raise AdminContentError("OFF_TOPIC", result.reason_vi, 422)
+    return _store(db, admin, filename=filename, data=data, source_title=source_title, source_note=source_note, result=result, kind=result.kind)
+
+
+def add_document(db: Session, admin: User, filename: str, data: bytes, source_title: str, source_note: str | None,
+                 consent: bool) -> SourceDocument:
+    return _gate(db, admin, filename, data, source_title, source_note, consent, lambda: evaluate_file(filename, data))
+
+
+def add_pasted_text(db: Session, admin: User, text: str, source_title: str, source_note: str | None, consent: bool) -> SourceDocument:
+    data = text.encode("utf-8")
+    return _gate(db, admin, "chu-dan-vao.txt", data, source_title, source_note, consent, lambda: evaluate_pasted_text(text))
+
+
+def review_document(db: Session, admin: User, doc_id: str, decision: str, note: str | None) -> SourceDocument:
+    """Quản trị viên duyệt hoặc từ chối tài liệu đang chờ. Từ chối thì xóa mềm và bỏ chữ đã lưu."""
+    doc = _doc(db, doc_id)
+    if doc.relevance_status != "pending":
+        raise AdminContentError("DOC_NOT_PENDING", "Tài liệu này không ở hàng chờ duyệt.", 409)
+    if decision not in ("approve", "reject"):
+        raise AdminContentError("BAD_DECISION", "Quyết định phải là approve hoặc reject.")
+    now = datetime.now(timezone.utc)
+    doc.reviewed_by, doc.reviewed_at = admin.id, now
+    if decision == "approve":
+        doc.relevance_status = "accepted"
+    else:
+        doc.relevance_status, doc.deleted_at, doc.pages = "rejected", now, []
+    audit(db, admin, f"ai.document.{decision}", "source_document", doc.id, {"note": (note or "")[:300], "score": doc.relevance_score})
     db.commit()
     return doc
 
 
 def document_info(doc: SourceDocument) -> dict[str, Any]:
     return {"id": doc.id, "filename": doc.filename, "kind": doc.kind, "page_count": len(doc.pages), "source_title": doc.source_title,
-            "source_note": doc.source_note, "created_at": doc.created_at}
+            "source_note": doc.source_note, "created_at": doc.created_at, "relevance_status": doc.relevance_status,
+            "relevance_score": doc.relevance_score, "relevance_reason": doc.relevance_reason,
+            "dropped_pages": (doc.relevance_detail or {}).get("dropped_pages", []), "dropped_chunks": (doc.relevance_detail or {}).get("dropped_chunks", 0)}
 
 
 # --- gọi AI ---------------------------------------------------------------------------------------
@@ -161,6 +176,8 @@ def generate_draft(db: Session, admin: User, provider: LLMProvider | None, doc_i
     if provider is None:
         raise AdminContentError("AI_DISABLED", "Tính năng AI đang tắt (AI_ENABLED=false hoặc chưa có khóa).", 503)
     doc = _doc(db, doc_id)
+    if doc.relevance_status != "accepted":
+        raise AdminContentError("DOC_NOT_APPROVED", "Tài liệu này đang chờ Quản trị viên duyệt nội dung nhạc lý nên chưa dùng để soạn bài được.", 409)
     if page_from < 1 or page_to < page_from or page_to > len(doc.pages):
         raise AdminContentError("PAGE_RANGE", f"Khoảng trang phải nằm trong 1–{len(doc.pages)}.")
     if page_to - page_from > 14:
@@ -173,6 +190,9 @@ def generate_draft(db: Session, admin: User, provider: LLMProvider | None, doc_i
     parts = [f"[Trang {n}]\n{doc.pages[n - 1]}" for n in range(page_from, page_to + 1) if doc.pages[n - 1]]
     text = "\n\n".join(parts)[:MAX_PROMPT_CHARS]
     if not text.strip():
+        dropped = set((doc.relevance_detail or {}).get("dropped_pages", []))
+        if dropped & set(range(page_from, page_to + 1)):
+            raise AdminContentError("PAGE_OFF_TOPIC", "Các trang đã chọn bị bỏ vì không liên quan nhạc lý. Hãy chọn trang khác.")
         raise AdminContentError("PAGE_EMPTY", "Các trang đã chọn không có chữ.")
     user = (f"Nguồn: {doc.source_title}\nKỹ năng được phép dùng: {', '.join(_skill_ids(db))}\n"
             f"Chủ đề muốn tập trung: {(topic or 'tự chọn theo nội dung').strip()[:200]}\n"

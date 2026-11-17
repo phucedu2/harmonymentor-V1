@@ -547,8 +547,17 @@ class SourceDocument(Base):
     source_note: Mapped[Optional[str]] = mapped_column(String(300), nullable=True)
     consent: Mapped[bool] = mapped_column(Boolean, default=False)
     pages: Mapped[list[str]] = mapped_column(JSON, default=list)
+    # Cổng nhạc lý (T1): chỉ tài liệu "accepted" mới được dùng để sinh bài; "pending" chờ Quản trị viên duyệt.
+    relevance_status: Mapped[str] = mapped_column(String(10), default="accepted", server_default="accepted")
+    relevance_score: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    relevance_reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    relevance_detail: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
+    reviewed_by: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    reviewed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    __table_args__ = (CheckConstraint("relevance_status IN ('accepted', 'pending', 'rejected')", name="ck_source_documents_relevance_status"),)
 
 
 class AiLessonDraft(Base):

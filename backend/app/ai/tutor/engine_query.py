@@ -20,6 +20,7 @@ from typing import Any
 
 from .guardrail import run_tool
 from .notes import NOTE, norm_accidentals, solfege_to_letters
+from ...music_engine import interval as _iv, key as _key
 
 _SOLF1 = {"đô": "C", "do": "C", "rê": "D", "re": "D", "mi": "E", "fa": "F", "pha": "F", "sol": "G", "son": "G",
           "la": "A", "si": "B"}
@@ -50,7 +51,7 @@ _CHORD_KIND_FIRST = re.compile(
     rf"(?i:hợp âm|hop am|chord)\s+(?P<kind>(?i:{_KIND_WORDS}))\s+(?i:của|cua|of|trên|tren|từ|tu)\s+(?P<root>{NOTE})(?![A-Za-z0-9#])")
 _INTERVAL_WORDS = re.compile(r"quãng|quang|interval", re.IGNORECASE)
 _INTERVAL = re.compile(
-    rf"(?:từ|tu|from)?\s*(?<![A-Za-z0-9#])(?P<lo>{NOTE})(?![A-Za-z0-9#])\s*(?:–|—|-|→|lên|len|đến|den|tới|toi|to)\s*"
+    rf"(?:từ|tu|from)?\s*(?<![A-Za-z0-9#])(?P<lo>{NOTE})(?![A-Za-z0-9#])\s*(?:–|—|-|→|lên|len|đến|den|tới|toi|up to|to)\s*"
     rf"(?P<hi>{NOTE})(?![A-Za-z0-9#])")
 _SCALE_KIND = [("thứ hòa âm", "harmonic_minor"), ("thu hoa am", "harmonic_minor"), ("harmonic minor", "harmonic_minor"),
                ("thứ giai điệu", "melodic_minor"), ("thu giai dieu", "melodic_minor"),
@@ -68,9 +69,114 @@ _ROMAN_TO_CHORD = re.compile(
     rf"(?<![A-Za-z])(?P<rn>{_ROMAN_TOKEN})(?![A-Za-z0-9])\s+(?i:trong|của|cua|of|in)\s+(?i:giọng\s+|giong\s+)?"
     rf"(?P<key>{NOTE})(?![A-Za-z0-9#])\s*(?i:trưởng|truong|major)")
 _ROMAN_Q = re.compile(
-    rf"(?<![A-Za-z0-9#])(?P<chord>[A-G](?:#|b)?{_SUFFIX}?)(?![A-Za-z0-9#])\s+(?:trong|của|o|ở)\s+(?:giọng\s+|giong\s+)?"
+    rf"(?<![A-Za-z0-9#])(?P<chord>[A-G](?:#|b)?{_SUFFIX}?)(?![A-Za-z0-9#])\s+(?:trong|của|o|ở|in)\s+(?:giọng\s+|giong\s+|key\s+)?"
     rf"(?P<key>{NOTE})(?![A-Za-z0-9#])\s*(?:trưởng|truong|major)?[^.?!]{{0,30}}(?:bậc|bac|số la mã|so la ma|roman)",
     re.IGNORECASE)
+
+
+# --- G8 (chấm nhạc lý Gemini, 16/11/2026): các dạng câu Engine tính được nhưng trước đây rơi sang LLM, và LLM tự tính sai
+# (Em7 trong G bị nói là bậc 3, B thứ bị nói là 2 dấu giáng, đảo quãng A4 bị nói là P5...). Chỉ NHẬN DIỆN rồi gọi Engine.
+_MODE_TYPE = {"natural minor": "natural_minor", "harmonic minor": "harmonic_minor", "melodic minor": "melodic_minor",
+              "dorian": "dorian", "mixolydian": "mixolydian", "major": "major", "minor": "natural_minor"}
+# "E natural minor scale", "D Mixolydian", "Eb major scale": tên nốt viết hoa, loại đứng sau. "C major" trơ trọi thì bỏ
+# qua (có thể là hợp âm).
+_SCALE_POST = re.compile(
+    rf"(?<![A-Za-z0-9#])(?P<tonic>(?-i:{NOTE}))\s+(?:(?P<kind>natural minor|harmonic minor|melodic minor|dorian|mixolydian)"
+    rf"|(?P<kind2>major|minor)\s+(?:scale|mode))(?![A-Za-z])", re.IGNORECASE)
+_INTERVAL_AND = re.compile(
+    rf"(?:nốt|not)\s+(?P<lo>{NOTE})(?![A-Za-z0-9#])\s+(?:và|va|and)\s+(?:nốt|not)\s+(?P<hi>{NOTE})(?![A-Za-z0-9#])"
+    rf"\s+(?:phía trên|phia tren|ở trên|o tren|above)", re.IGNORECASE)
+_IV_NAME = r"(?-i:(?:AA|dd|[PMmAd])\d{1,2})"
+_INTERVAL_SIZE = re.compile(rf"(?:quãng|quang|interval)\s+(?P<iv>{_IV_NAME})(?![A-Za-z0-9])", re.IGNORECASE)
+_SIZE_WORDS = re.compile(r"nửa cung|nua cung|semitone|bao nhiêu cung|bao nhieu cung", re.IGNORECASE)
+_INVERT = re.compile(rf"(?:đảo|dao|invert)\s+(?:quãng|quang|interval)?\s*(?P<iv>{_IV_NAME})(?![A-Za-z0-9])", re.IGNORECASE)
+_KEY_KIND = r"(?:trưởng|truong|major|thứ|thu|minor)"
+_SIG_WORDS = re.compile(r"dấu hóa|dau hoa|dấu hoá|hóa biểu|hoa bieu|hoá biểu|dấu thăng|dau thang|dấu giáng|dau giang|"
+                        r"key signature|sharps|flats", re.IGNORECASE)
+_KEY_OF = re.compile(rf"(?<![A-Za-z0-9#])(?P<tonic>(?-i:{NOTE})|(?-i:[a-g](?:#|b)?)(?=\s+{_KEY_KIND}))\s*(?P<kind>{_KEY_KIND})(?![a-zà-ỹ])",
+                     re.IGNORECASE)
+_RELATIVE = re.compile(r"tương quan|tuong quan|relative", re.IGNORECASE)
+_SIG_TO_KEY = re.compile(r"(?:có|co|với|voi|hóa biểu|hoa bieu)\s+(?P<n>\d)\s+dấu\s+(?P<kind>thăng|thang|giáng|giang)"
+                         r"(?:.{0,30}?(?P<mode>trưởng|truong|thứ|thu))?", re.IGNORECASE)
+_SIG_ORDER = re.compile(r"thứ tự\s+(?:của\s+)?(?:các\s+)?dấu\s+(?P<kind>thăng|thang|giáng|giang)", re.IGNORECASE)
+# "trong giọng G trưởng, Em7 là bậc mấy" (hợp âm đứng SAU giọng), "trong key A major".
+_ROMAN_Q2 = re.compile(
+    rf"(?:trong|ở|in)\s+(?:giọng\s+|giong\s+|key\s+)(?P<key>{NOTE})(?![A-Za-z0-9#])\s*(?:trưởng|truong|major)?\s*[,:]?\s*"
+    rf"(?P<chord>(?-i:[A-G](?:#|b)?){_SUFFIX}?)(?![A-Za-z0-9#])[^.?!]{{0,30}}(?:bậc|bac|số la mã|so la ma|roman)",
+    re.IGNORECASE)
+
+
+# --- G8 lượt 3: hòa âm chức năng và jazz mà lượt 2 cho thấy AI từ chối hoặc đoán (V7/x, ii–V–I, guide tone, shell
+# voicing, hợp âm mượn). Engine tính được bằng diatonic_chords + transpose + get_chord_tones, nên chỉ nhận diện ở đây.
+_SEC_DOM = re.compile(rf"V7?/(?P<rn>(?-i:[ivIV]{{1,3}}))\s+(?:trong|ở|in)\s+(?:giọng\s+|giong\s+|key\s+)?"
+                      rf"(?P<key>{NOTE})(?![A-Za-z0-9#])\s*(?i:trưởng|truong|major)?", re.IGNORECASE)
+_TWO_FIVE = re.compile(r"\bii\s*[-–—]?\s*V\s*[-–—]?\s*I\b", re.IGNORECASE)
+_GUIDE = re.compile(r"guide\s*tone", re.IGNORECASE)
+_SHELL = re.compile(r"shell\s+voicing", re.IGNORECASE)
+_BORROWED = re.compile(r"\biv\b.{0,10}(?:♭|b)VI\b.{0,10}(?:♭|b)VII\b", re.IGNORECASE)
+# "What notes are in the Bb chord?": tên nốt đứng TRƯỚC chữ chord.
+_CHORD_AFTER = re.compile(rf"(?<![A-Za-z0-9#])(?P<root>(?-i:{NOTE}))(?![A-Za-z0-9#])\s+(?i:chord)\b")
+
+
+def _key_after(text: str) -> str | None:
+    m = re.search(rf"(?:trong|ở|in)\s+(?:giọng\s+|giong\s+|key\s+)?(?P<k>{NOTE})(?![A-Za-z0-9#])\s*(?i:trưởng|truong|major)",
+                  text, re.IGNORECASE)
+    if m:
+        return norm_accidentals(m["k"])
+    m = re.search(rf"(?:giọng|giong)\s+(?P<k>{NOTE})(?![A-Za-z0-9#])\s*(?i:trưởng|truong)", text, re.IGNORECASE)
+    return norm_accidentals(m["k"]) if m else None
+
+
+def _tones(symbol: str) -> list[str]:
+    value, _ = run_tool("get_chord_tones", {"symbol": symbol})
+    return value.split() if value else []
+
+
+def _functional_facts(text: str, out: EngineAnswer, seen: set) -> None:
+    from ...music_engine.errors import MusicEngineError
+    from ...music_engine.roman import diatonic_chords
+
+    for m in _SEC_DOM.finditer(text):
+        key, rn = norm_accidentals(m["key"]), m["rn"]
+        target = _chord_for_numeral(key, rn)
+        if target is None:
+            out.unknown.append(f"V7/{rn} trong {key}")      # vd V7/vii° không có (hợp âm giảm không làm chủ tạm thời)
+            continue
+
+        def sec(key=key, target=target):
+            root = _iv.transpose(re.match(r"[A-G](?:#|b)?", target)[0], "P5").name
+            return f"{root}7: {' '.join(_tones(root + '7'))}"
+        _local(out, seen, "secondary_dominant", {"key": key, "numeral": rn}, sec)
+
+    if _TWO_FIVE.search(text) and (key := _key_after(text)):
+        def ii_v_i(key=key):
+            try:
+                ch = {r.numeral: str(r.chord) for r in diatonic_chords(key, sevenths=True)}
+            except MusicEngineError:
+                raise
+            return " – ".join([ch["ii7"], ch["V7"], ch["IM7"]]).replace("M7", "maj7").replace("maj7maj7", "maj7")
+        _local(out, seen, "two_five_one", {"key": key}, ii_v_i)
+
+    if _BORROWED.search(text) and (key := _key_after(text)):
+        def borrowed(key=key):
+            from ...music_engine.scale import build_scale
+            n = build_scale(key, "natural_minor")
+            return " ".join([n[3].name + "m", n[5].name, n[6].name])
+        _local(out, seen, "borrowed_chords", {"key": key}, borrowed)
+
+    if _GUIDE.search(text) or _SHELL.search(text):
+        for m in _SYM.finditer(text):
+            sym = norm_accidentals(m["sym"])
+            tones = _tones(sym)
+            if len(tones) < 4:
+                continue
+            if _SHELL.search(text):
+                _local(out, seen, "shell_voicing", {"chord": sym}, lambda t=tones: " ".join([t[0], t[1], t[3]]))
+            else:
+                _local(out, seen, "guide_tones", {"chord": sym}, lambda t=tones: f"{t[1]} {t[3]}")
+
+
+_FUNCTIONAL = {"secondary_dominant", "two_five_one", "borrowed_chords", "guide_tones", "shell_voicing"}
 
 
 @dataclass
@@ -124,11 +230,80 @@ def _add(out: EngineAnswer, seen: set, tool: str, args: dict[str, str]) -> None:
     out.facts.append({"tool": tool, "args": args, "result": value, "sourced": sourced})
 
 
+def _local(out: EngineAnswer, seen: set, tool: str, args: dict[str, str], compute) -> None:
+    """Dữ kiện lấy trực tiếp từ hàm của Music Engine (key.py, interval.py) cho các công cụ chưa có trong tools.py."""
+    from ...music_engine.errors import MusicEngineError
+
+    key = (tool, tuple(sorted(args.items())))
+    if key in seen:
+        return
+    seen.add(key)
+    try:
+        value = compute()
+    except MusicEngineError:
+        out.unknown.append(" ".join(args.values()))
+        return
+    out.facts.append({"tool": tool, "args": args, "result": value, "sourced": True})
+
+
+def _tonic(raw: str) -> str:
+    t = norm_accidentals(raw)
+    return t[0].upper() + t[1:]
+
+
+def _is_minor(kind: str) -> bool:
+    return kind.lower() in {"thứ", "thu", "minor"}
+
+
+def _sig_text(tonic: str, mode: str) -> str:
+    ks = _key.key_signature(tonic, mode)
+    if ks.count == 0:
+        return "không có dấu hóa"
+    return f"{ks.count} dấu {'thăng' if ks.kind == 'sharp' else 'giáng'}: {' '.join(n.name for n in ks.accidentals)}"
+
+
+def _local_facts(text: str, out: EngineAnswer, seen: set) -> None:
+    """G8: hóa biểu, giọng tương quan, thứ tự dấu hóa, kích thước và đảo quãng (xem chú thích _SCALE_POST)."""
+    if _SIZE_WORDS.search(text):
+        for m in _INTERVAL_SIZE.finditer(text):
+            _local(out, seen, "interval_size", {"interval": m["iv"]}, lambda m=m: str(_iv.parse_interval(m["iv"]).semitones))
+    for m in _INVERT.finditer(text):
+        _local(out, seen, "invert_interval", {"interval": m["iv"]}, lambda m=m: _iv.invert(m["iv"]).name)
+
+    keys = [(_tonic(m["tonic"]), "minor" if _is_minor(m["kind"]) else "major") for m in _KEY_OF.finditer(text)]
+    if _RELATIVE.search(text):
+        for tonic, mode in keys:
+            def rel(tonic=tonic, mode=mode):
+                return f"{_key.relative_minor(tonic).name} thứ" if mode == "major" else f"{_key.relative_major(tonic).name} trưởng"
+            _local(out, seen, "relative_key", {"key": tonic, "mode": mode}, rel)
+    elif _SIG_WORDS.search(text) and keys:
+        for tonic, mode in keys:
+            _local(out, seen, "key_signature", {"key": tonic, "mode": mode}, lambda tonic=tonic, mode=mode: _sig_text(tonic, mode))
+        # "Giọng B thứ có mấy dấu hóa" cũng khớp mẫu "giọng X thứ" của âm giai; người học hỏi hóa biểu, không hỏi nốt.
+        out.facts = [f for f in out.facts if not (f["tool"] == "get_scale" and f["args"]["tonic"] in {k[0] for k in keys})]
+    elif (m := _SIG_ORDER.search(text)):
+        sharp = m["kind"].lower() in {"thăng", "thang"}
+        order = _key.ORDER_OF_SHARPS if sharp else _key.ORDER_OF_FLATS
+        _local(out, seen, "signature_order", {"kind": "thăng" if sharp else "giáng"},
+               lambda: " ".join(l + ("#" if sharp else "b") for l in order))
+    elif (m := _SIG_TO_KEY.search(text)):
+        sharp = m["kind"].lower() in {"thăng", "thang"}
+        mode = "minor" if m["mode"] and _is_minor(m["mode"]) else "major"
+        n = int(m["n"])
+
+        def from_sig():
+            tonic = _key.key_from_signature(n, "sharp" if sharp else "flat", mode).name
+            return f"{tonic} {'thứ' if mode == 'minor' else 'trưởng'}"
+        _local(out, seen, "key_from_signature", {"count": str(n), "kind": "thăng" if sharp else "giáng", "mode": mode}, from_sig)
+
+
 def engine_answer(question: str, limit: int = 4) -> EngineAnswer:
     text = _vn_names(question)
     out, seen = EngineAnswer(), set()
 
     for m in _ROMAN_Q.finditer(text):
+        _add(out, seen, "get_roman_numeral", {"key": norm_accidentals(m["key"]), "chord": norm_accidentals(m["chord"])})
+    for m in _ROMAN_Q2.finditer(text):
         _add(out, seen, "get_roman_numeral", {"key": norm_accidentals(m["key"]), "chord": norm_accidentals(m["chord"])})
     for m in _ROMAN_TO_CHORD.finditer(text):
         chord = _chord_for_numeral(norm_accidentals(m["key"]), m["rn"])
@@ -145,6 +320,9 @@ def engine_answer(question: str, limit: int = 4) -> EngineAnswer:
             continue  # "Am trong giọng C trưởng": chữ giọng chỉ để nói giọng, không hỏi âm giai
         kind = next(v for k, v in _SCALE_KIND if k == m["kind"].lower())
         _add(out, seen, "get_scale", {"tonic": norm_accidentals(m["tonic"]), "scale_type": kind})
+    for m in _SCALE_POST.finditer(text):
+        kind = _MODE_TYPE[(m["kind"] or ("major" if m["kind2"].lower() == "major" else "minor")).lower()]
+        _add(out, seen, "get_scale", {"tonic": norm_accidentals(m["tonic"]), "scale_type": kind})
     if not any(f["tool"] == "get_scale" for f in out.facts):
         for m in _SCALE_UNKNOWN.finditer(text):
             if not re.match(_KIND_ALT, m["kind"], re.IGNORECASE):
@@ -152,6 +330,8 @@ def engine_answer(question: str, limit: int = 4) -> EngineAnswer:
 
     if _INTERVAL_WORDS.search(text):
         for m in _INTERVAL.finditer(text):
+            _add(out, seen, "identify_interval", {"lower": norm_accidentals(m["lo"]), "upper": norm_accidentals(m["hi"])})
+        for m in _INTERVAL_AND.finditer(text):
             _add(out, seen, "identify_interval", {"lower": norm_accidentals(m["lo"]), "upper": norm_accidentals(m["hi"])})
 
     for m in _SYM.finditer(text):
@@ -168,6 +348,15 @@ def engine_answer(question: str, limit: int = 4) -> EngineAnswer:
                                                f["args"].get("symbol") != sym for f in out.facts):
             _add(out, seen, "get_chord_tones", {"symbol": sym})
 
+    for m in _CHORD_AFTER.finditer(text):
+        if not any(f["tool"] == "get_chord_tones" for f in out.facts):
+            _add(out, seen, "get_chord_tones", {"symbol": norm_accidentals(m["root"])})
+
+    _local_facts(text, out, seen)
+    _functional_facts(text, out, seen)
+    if any(f["tool"] in _FUNCTIONAL for f in out.facts):
+        # Câu hỏi chức năng/jazz: chỉ giữ dữ kiện tính cho chính nó, bỏ hợp âm/âm giai bắt nhầm từ chữ trong câu.
+        out.facts = [f for f in out.facts if f["tool"] in _FUNCTIONAL]
     out.facts = out.facts[:limit]
     return out
 
@@ -185,5 +374,30 @@ def fact_text(f: dict[str, Any]) -> str:
         return f"Âm giai {a['tonic']} {names.get(a['scale_type'], a['scale_type'])}: {' '.join(r.split())}."
     if f["tool"] == "get_roman_numeral":
         return f"Trong giọng {a['key']} trưởng, {a['chord']} là {r}."
+    mode_vi = {"major": "trưởng", "minor": "thứ"}
+    if f["tool"] == "key_signature":
+        return f"Giọng {a['key']} {mode_vi[a['mode']]} {r}." if r.startswith("không") else f"Giọng {a['key']} {mode_vi[a['mode']]} có {r}."
+    if f["tool"] == "relative_key":
+        return f"Giọng tương quan của {a['key']} {mode_vi[a['mode']]} là {r}."
+    if f["tool"] == "key_from_signature":
+        return f"Hóa biểu {a['count']} dấu {a['kind']} là giọng {r}."
+    if f["tool"] == "signature_order":
+        return f"Thứ tự các dấu {a['kind']} trong hóa biểu: {r}."
+    if f["tool"] == "interval_size":
+        return f"Quãng {a['interval']} rộng {r} nửa cung."
+    if f["tool"] == "invert_interval":
+        return f"Đảo quãng {a['interval']} được quãng {r}."
+    if f["tool"] == "secondary_dominant":
+        sym, notes = r.split(": ")
+        return f"V7/{a['numeral']} trong giọng {a['key']} trưởng là {sym} ({notes})."
+    if f["tool"] == "two_five_one":
+        return f"Vòng ii–V–I trong giọng {a['key']} trưởng: {r}."
+    if f["tool"] == "borrowed_chords":
+        return f"Ba hợp âm mượn iv, ♭VI, ♭VII trong {a['key']} trưởng (từ {a['key']} thứ): {', '.join(r.split())}."
+    if f["tool"] == "guide_tones":
+        third, seventh = r.split()
+        return f"Guide tone của {a['chord']}: nốt 3 là {third}, nốt 7 là {seventh}."
+    if f["tool"] == "shell_voicing":
+        return f"Shell voicing root–3–7 của {a['chord']}: {', '.join(r.split())}."
     return f"{f['tool']}: {r}."
 

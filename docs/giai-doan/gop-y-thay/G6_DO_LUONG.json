@@ -1,0 +1,312 @@
+{
+ "cv": {
+  "tfidf": {
+   "n": 333,
+   "auc": 0.99,
+   "accuracy": 0.9309,
+   "precision": 0.9788,
+   "recall": 0.9069,
+   "gate": {
+    "neg_rejected": 0.9302,
+    "neg_accepted": 0.0155,
+    "pos_accepted": 0.8627,
+    "pos_rejected": 0.0343
+   }
+  },
+  "e5": {
+   "n": 333,
+   "auc": 0.9968,
+   "accuracy": 0.973,
+   "precision": 0.9756,
+   "recall": 0.9804,
+   "gate": {
+    "neg_rejected": 0.8915,
+    "neg_accepted": 0.0155,
+    "pos_accepted": 0.9461,
+    "pos_rejected": 0.0
+   }
+  },
+  "hybrid_g2": {
+   "n": 333,
+   "auc": 0.9953,
+   "accuracy": 0.961,
+   "precision": 1.0,
+   "recall": 0.9363,
+   "gate": {
+    "neg_rejected": 0.9767,
+    "neg_accepted": 0.0,
+    "pos_accepted": 0.902,
+    "pos_rejected": 0.0441
+   }
+  }
+ },
+ "per_group_mean_prob": {
+  "neg:cong_nghe": {
+   "n": 8,
+   "label": 0,
+   "tfidf_mean": 0.15,
+   "e5_mean": 0.143
+  },
+  "neg:doi_song": {
+   "n": 7,
+   "label": 0,
+   "tfidf_mean": 0.151,
+   "e5_mean": 0.11
+  },
+  "neg:du_lich": {
+   "n": 8,
+   "label": 0,
+   "tfidf_mean": 0.185,
+   "e5_mean": 0.105
+  },
+  "neg:game": {
+   "n": 7,
+   "label": 0,
+   "tfidf_mean": 0.119,
+   "e5_mean": 0.198
+  },
+  "neg:hoc_thuat": {
+   "n": 9,
+   "label": 0,
+   "tfidf_mean": 0.311,
+   "e5_mean": 0.419
+  },
+  "neg:lam_dep_thoi_trang": {
+   "n": 7,
+   "label": 0,
+   "tfidf_mean": 0.166,
+   "e5_mean": 0.123
+  },
+  "neg:lap_trinh": {
+   "n": 9,
+   "label": 0,
+   "tfidf_mean": 0.201,
+   "e5_mean": 0.344
+  },
+  "neg:mua_sam": {
+   "n": 8,
+   "label": 0,
+   "tfidf_mean": 0.129,
+   "e5_mean": 0.101
+  },
+  "neg:nau_an": {
+   "n": 9,
+   "label": 0,
+   "tfidf_mean": 0.13,
+   "e5_mean": 0.131
+  },
+  "neg:nhac_khong_ly_thuyet": {
+   "n": 16,
+   "label": 0,
+   "tfidf_mean": 0.205,
+   "e5_mean": 0.196
+  },
+  "neg:phap_luat": {
+   "n": 8,
+   "label": 0,
+   "tfidf_mean": 0.177,
+   "e5_mean": 0.151
+  },
+  "neg:suc_khoe": {
+   "n": 8,
+   "label": 0,
+   "tfidf_mean": 0.16,
+   "e5_mean": 0.129
+  },
+  "neg:tai_chinh": {
+   "n": 8,
+   "label": 0,
+   "tfidf_mean": 0.117,
+   "e5_mean": 0.122
+  },
+  "neg:the_thao": {
+   "n": 9,
+   "label": 0,
+   "tfidf_mean": 0.224,
+   "e5_mean": 0.187
+  },
+  "neg:tin_tuc": {
+   "n": 8,
+   "label": 0,
+   "tfidf_mean": 0.125,
+   "e5_mean": 0.073
+  },
+  "pos:L01": {
+   "n": 35,
+   "label": 1,
+   "tfidf_mean": 0.747,
+   "e5_mean": 0.824
+  },
+  "pos:L02": {
+   "n": 18,
+   "label": 1,
+   "tfidf_mean": 0.902,
+   "e5_mean": 0.879
+  },
+  "pos:L03": {
+   "n": 14,
+   "label": 1,
+   "tfidf_mean": 0.74,
+   "e5_mean": 0.783
+  },
+  "pos:L04": {
+   "n": 19,
+   "label": 1,
+   "tfidf_mean": 0.841,
+   "e5_mean": 0.856
+  },
+  "pos:L05": {
+   "n": 27,
+   "label": 1,
+   "tfidf_mean": 0.905,
+   "e5_mean": 0.863
+  },
+  "pos:L06": {
+   "n": 17,
+   "label": 1,
+   "tfidf_mean": 0.878,
+   "e5_mean": 0.896
+  },
+  "pos:L07": {
+   "n": 14,
+   "label": 1,
+   "tfidf_mean": 0.916,
+   "e5_mean": 0.874
+  },
+  "pos:L08": {
+   "n": 12,
+   "label": 1,
+   "tfidf_mean": 0.913,
+   "e5_mean": 0.851
+  },
+  "pos:am_giai_dieu_thuc": {
+   "n": 6,
+   "label": 1,
+   "tfidf_mean": 0.781,
+   "e5_mean": 0.826
+  },
+  "pos:hoa_am_chuc_nang": {
+   "n": 7,
+   "label": 1,
+   "tfidf_mean": 0.766,
+   "e5_mean": 0.836
+  },
+  "pos:hop_am": {
+   "n": 8,
+   "label": 1,
+   "tfidf_mean": 0.849,
+   "e5_mean": 0.862
+  },
+  "pos:khuong_nhac": {
+   "n": 6,
+   "label": 1,
+   "tfidf_mean": 0.476,
+   "e5_mean": 0.782
+  },
+  "pos:ky_thuat_hoa_am_nang_cao": {
+   "n": 4,
+   "label": 1,
+   "tfidf_mean": 0.646,
+   "e5_mean": 0.835
+  },
+  "pos:luyen_tai_thuc_hanh": {
+   "n": 5,
+   "label": 1,
+   "tfidf_mean": 0.573,
+   "e5_mean": 0.758
+  },
+  "pos:nhip_phach": {
+   "n": 6,
+   "label": 1,
+   "tfidf_mean": 0.516,
+   "e5_mean": 0.644
+  },
+  "pos:quang": {
+   "n": 6,
+   "label": 1,
+   "tfidf_mean": 0.73,
+   "e5_mean": 0.76
+  }
+ },
+ "gate": {
+  "tfidf": {
+   "precision_accepted": 100.0,
+   "recall_not_rejected": 100.0,
+   "offtopic_rejected": 100.0,
+   "scores": {
+    "D01": "relevant→accepted (0.996)",
+    "D02": "relevant→accepted (0.888)",
+    "D03": "relevant→accepted (0.985)",
+    "D04": "relevant→accepted (0.988)",
+    "D05": "relevant→accepted (0.973)",
+    "D06": "irrelevant→rejected (0.032)",
+    "D07": "irrelevant→rejected (0.072)",
+    "D08": "irrelevant→rejected (0.139)",
+    "D09": "irrelevant→rejected (0.033)",
+    "D10": "irrelevant→rejected (0.165)",
+    "D11": "irrelevant→rejected (0.089)",
+    "D12": "irrelevant→rejected (0.0)",
+    "D13": "borderline→rejected (0.029)",
+    "D14": "borderline→rejected (0.096)",
+    "D15": "relevant→accepted (0.972)",
+    "D16": "irrelevant→rejected (0.0)"
+   }
+  },
+  "e5": {
+   "precision_accepted": 100.0,
+   "recall_not_rejected": 100.0,
+   "offtopic_rejected": 87.5,
+   "scores": {
+    "D01": "relevant→accepted (0.969)",
+    "D02": "relevant→accepted (0.946)",
+    "D03": "relevant→accepted (0.93)",
+    "D04": "relevant→accepted (0.952)",
+    "D05": "relevant→accepted (0.952)",
+    "D06": "irrelevant→rejected (0.101)",
+    "D07": "irrelevant→rejected (0.117)",
+    "D08": "irrelevant→pending (0.534)",
+    "D09": "irrelevant→rejected (0.114)",
+    "D10": "irrelevant→rejected (0.304)",
+    "D11": "irrelevant→rejected (0.155)",
+    "D12": "irrelevant→rejected (0.0)",
+    "D13": "borderline→rejected (0.208)",
+    "D14": "borderline→pending (0.527)",
+    "D15": "relevant→accepted (0.917)",
+    "D16": "irrelevant→rejected (0.0)"
+   }
+  },
+  "hybrid_g2": {
+   "precision_accepted": 100.0,
+   "recall_not_rejected": 100.0,
+   "offtopic_rejected": 100.0,
+   "scores": {
+    "D01": "relevant→accepted (1.0)",
+    "D02": "relevant→accepted (1.0)",
+    "D03": "relevant→accepted (1.0)",
+    "D04": "relevant→accepted (0.914)",
+    "D05": "relevant→accepted (0.899)",
+    "D06": "irrelevant→rejected (0.086)",
+    "D07": "irrelevant→rejected (0.01)",
+    "D08": "irrelevant→rejected (0.157)",
+    "D09": "irrelevant→rejected (0.162)",
+    "D10": "irrelevant→rejected (0.206)",
+    "D11": "irrelevant→rejected (0.023)",
+    "D12": "irrelevant→rejected (0.0)",
+    "D13": "borderline→pending (0.467)",
+    "D14": "borderline→rejected (0.228)",
+    "D15": "relevant→accepted (0.883)",
+    "D16": "irrelevant→rejected (0.0)"
+   }
+  }
+ },
+ "dataset": {
+  "n": 333,
+  "positives": 204,
+  "negatives": 129,
+  "sha256": "85c804a7deff037eae9607b26db05bec657511d234eae91fbd067aec72ae7c8e",
+  "groups": 31,
+  "handwritten_file": "data/relevance/handwritten.jsonl",
+  "max_overlap_with_gate_docs": 0.416
+ },
+ "recommended": "e5"
+}

@@ -9,6 +9,11 @@ from .retriever import Hit
 # ADR-020 (12/11/2026): mình là trợ lý âm nhạc; ngoài âm nhạc thì nói không biết và gợi ý hỏi nhạc lý.
 OUT_OF_SCOPE = ("Mình chỉ là trợ lý âm nhạc nên câu này mình không biết. Bạn thử hỏi mình về nhạc lý, hòa âm, "
                 "nhạc cụ hay cách luyện tập, ví dụ \"Cmaj7 gồm những nốt nào?\" nhé.")
+# G4 (Phúc chốt 14/11/2026): câu lạc đề được trả lời tối đa 2 câu rồi dẫn về nhạc lý. Máy chủ tự cắt và tự nối câu dẫn
+# này, không để mô hình quyết. OUT_OF_SCOPE ở trên là câu dùng khi không gọi được AI hoặc câu thuộc nhóm cấm.
+STEER_BACK = ("Mình là trợ lý âm nhạc nên mình dừng ở đây nhé. Bạn thử hỏi mình về nhạc lý, hòa âm, nhạc cụ hay cách "
+              "luyện tập, ví dụ \"Cmaj7 gồm những nốt nào?\"")
+LABEL_OFFTOPIC = "Ngoài phạm vi, trả lời ngắn"
 INJECTION = "Mình không làm theo yêu cầu đó được. Mình ở đây để giúp bạn học nhạc lý trong khóa."
 UNSURE = "Mình chưa chắc về câu này vì bài học hiện có chưa nói rõ."
 # Luồng B, C, D, G (ADR-017). Viết sẵn, không qua LLM, để chắc chắn không có kiến thức "tự nghĩ ra".

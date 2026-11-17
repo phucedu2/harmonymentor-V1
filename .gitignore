@@ -28,7 +28,12 @@ Thumbs.db
 .vscode/
 .cache/
 docs/backing-track/nghe-thu/artifact.html
-backend/models/
+backend/models/*
+!backend/models/relevance/
+
+# Kho tài liệu thô cho RAG (T3): không đưa sách có bản quyền vào git
+data/corpus/raw/
+eval/report.json
 
 # Playwright (FE-027)
 frontend/test-results/

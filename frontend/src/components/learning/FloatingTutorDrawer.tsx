@@ -152,8 +152,10 @@ export default function FloatingTutorDrawer() {
       const err = e as ApiError;
       const text = err.code === "AI_QUOTA_EXCEEDED"
         ? err.message ?? "Bạn đã dùng hết lượt hỏi AI hôm nay."
+        : err.code === "AI_RATE_LIMITED"
+        ? err.message ?? "Bạn hỏi nhanh quá, đợi một lát rồi hỏi tiếp nhé."
         : `Chưa gửi được: ${err.message ?? err.code}.`;
-      push({ kind: "error", id: nextId(), text, retry: err.code === "AI_QUOTA_EXCEEDED" ? undefined : () => void run(call, explainFor) });
+      push({ kind: "error", id: nextId(), text, retry: err.code === "AI_QUOTA_EXCEEDED" || err.code === "AI_RATE_LIMITED" ? undefined : () => void run(call, explainFor) });
     } finally { setBusy(false); }
   };
 

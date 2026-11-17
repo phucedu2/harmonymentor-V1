@@ -234,7 +234,7 @@ LESSON_SPECS: list[dict[str, Any]] = [
             ]}),
             ("L02-B06", "piano", {"title": "5. Nghe bốn màu seventh chord", "prompt": "Bấm các nốt của Cmaj7, Dm7, G7 và Bm7b5. Chưa cần phân biệt hoàn toàn bằng tai; mục tiêu là nối chord symbol với tập nốt.", "highlight": ["C", "D", "E", "F", "G", "A", "B"], "selection_mode": True}),
             ("L02-BCP2", "checkpoint", {"title": "Gọi tên bậc bằng số La Mã", "exercise_id": "L02-Q03", "note": "Trong C major, hãy tìm bậc của Dm7 trước rồi mới chọn ký hiệu."}),
-            ("L02-B07", "audio", {"title": "6. Nghe Cmaj7 và G7", "prompt": "Nghe từng chord rồi chú ý: Cmaj7 ổn định hơn trong C major, còn G7 có xu hướng muốn đi về C.", "chords": ["Cmaj7", "G7"], "key": "C"}),
+            ("L02-B07", "audio", {"title": "6. Nghe Cmaj7 và G7", "prompt": "Nghe từng chord rồi chú ý: Cmaj7 ổn định hơn trong C major, còn G7 có xu hướng muốn đi về C.", "chords": ["Cmaj7", "G7"], "key": "C", "numerals": ["Imaj7", "V7"]}),
             ("L02-B08", "summary", {"title": "Ghi nhớ", "items": ["Major scale dùng 7 bậc và giữ đúng thứ tự chữ cái.", "Seventh chord mở rộng triad thành 1–3–5–7.", "Trong major key: Imaj7, ii7, iii7, IVmaj7, V7, vi7, viiø7.", "Trong C major: Dm7 = ii7, G7 = V7, Bm7♭5 = viiø7.", "Đổi giọng thì đổi hợp âm: trong G major, bậc V là D nên V7 = D7 (D–F#–A–C)."]}),
         ],
         "exercises": [
@@ -283,8 +283,8 @@ LESSON_SPECS: list[dict[str, Any]] = [
             ]}),
             ("L03-B03", "theory", {"title": "2. Luồng T → PD → D → T", "paragraphs": ["Một mô hình rất cơ bản là tonic tạo điểm bắt đầu, predominant đưa câu nhạc ra khỏi tonic, dominant tăng lực hướng về tonic, rồi tonic trở lại.", "Đây là một mô hình để học và phân tích, không phải luật cấm mọi progression khác. Trong Pop và Jazz có nhiều cách tổ chức hòa âm không đi theo một đường duy nhất."]}),
             ("L03-BCP1", "checkpoint", {"title": "Nhận ra chức năng Tonic", "exercise_id": "L03-Q01", "note": "Hãy trả lời theo ngữ cảnh C major, không chỉ nhìn chữ 'maj7'."}),
-            ("L03-B04", "progression", {"title": "3. Ví dụ chức năng", "prompt": "Cmaj7 → Dm7 → G7 → Cmaj7  =  T → PD → D → T", "key": "C"}),
-            ("L03-B05", "audio", {"title": "4. Nghe lực đi–về", "prompt": "Phát progression ở tempo chậm. Chú ý G7 tạo cảm giác chưa kết thúc cho tới khi Cmaj7 trở lại.", "progression": ["Cmaj7", "Dm7", "G7", "Cmaj7"], "key": "C", "bpm": 72}),
+            ("L03-B04", "progression", {"title": "3. Ví dụ chức năng", "prompt": "Cmaj7 → Dm7 → G7 → Cmaj7  =  T → PD → D → T", "key": "C", "numerals": ["Imaj7", "ii7", "V7", "Imaj7"]}),
+            ("L03-B05", "audio", {"title": "4. Nghe lực đi–về", "prompt": "Phát progression ở tempo chậm. Chú ý G7 tạo cảm giác chưa kết thúc cho tới khi Cmaj7 trở lại.", "progression": ["Cmaj7", "Dm7", "G7", "Cmaj7"], "key": "C", "numerals": ["Imaj7", "ii7", "V7", "Imaj7"], "bpm": 72}),
             ("L03-BCP2", "checkpoint", {"title": "Dominant trong ngữ cảnh", "exercise_id": "L03-Q03", "note": "Dùng progression vừa nhìn và vừa nghe để trả lời."}),
             ("L03-B06", "interactive", {"title": "5. Tự phân tích trước khi xem đáp án", "prompt": "Đọc Cmaj7 → Dm7 → G7 → Cmaj7 và nói thành lời: 'ổn định → chuẩn bị → căng hướng về → trở về'. Sau đó đối chiếu T → PD → D → T."}),
             ("L03-B07", "summary", {"title": "Ghi nhớ", "items": ["Chord structure và harmonic function là hai lớp thông tin khác nhau.", "Tonic = điểm quy chiếu; Predominant/Subdominant = chuẩn bị; Dominant = lực hướng về tonic.", "Trong C major, Dm7 thường làm PD và G7 thường làm D trong ii–V–I.", "Function phải đọc theo key, vị trí và progression xung quanh."]}),
@@ -336,7 +336,7 @@ LESSON_SPECS: list[dict[str, Any]] = [
                 {"symbol": "Voicing", "term": "Cách xếp nốt của hợp âm", "definition": "Một chord symbol có thể được chơi bằng nhiều cách xếp nốt khác nhau theo quãng tám, bass và thứ tự bè. Voicing không đồng nghĩa với danh sách chord tones đầy đủ.", "example": "G7 có chord tones G–B–D–F nhưng một shell voicing có thể chỉ nhấn mạnh G–B–F"},
             ]}),
             ("L04-B03", "theory", {"title": "2. Xây ii–V–I trong C major", "paragraphs": ["C major có các bậc C(1), D(2), E(3), F(4), G(5), A(6), B(7). Seventh chord trên bậc 2 là Dm7, trên bậc 5 là G7, và trên bậc 1 là Cmaj7.", "Vì vậy ii7–V7–Imaj7 trong C major được viết Dm7 → G7 → Cmaj7."]}),
-            ("L04-B04", "progression", {"title": "3. ii–V–I in C", "prompt": "Dm7 → G7 → Cmaj7", "key": "C"}),
+            ("L04-B04", "progression", {"title": "3. ii–V–I in C", "prompt": "Dm7 → G7 → Cmaj7", "key": "C", "numerals": ["ii7", "V7", "Imaj7"]}),
             ("L04-BCP1", "checkpoint", {"title": "Nhận diện ii–V–I", "exercise_id": "L04-Q01", "note": "Hãy đọc ii = bậc 2, V = bậc 5, I = bậc 1 trước khi chọn."}),
             ("L04-B05", "notation", {"title": "4. Guide tones của G7 giải về Cmaj7", "groups": [
                 {"label": "G7 guide tones · B–F", "notes": ["B3", "F4"]},
@@ -345,7 +345,7 @@ LESSON_SPECS: list[dict[str, Any]] = [
             ("L04-B06", "theory", {"title": "5. Vì sao 3rd và 7th quan trọng?", "paragraphs": ["Trong G7, B là 3rd và F là ♭7. Hai nốt này giúp tai nhận ra màu dominant seventh rất rõ.", "Khi sang Cmaj7, B có thể giữ nguyên vì Cmaj7 cũng chứa B; F đi xuống E bằng một nửa cung. Đây là ví dụ cụ thể của common tone + stepwise motion.", "Đây là một voicing/voice-leading choice phục vụ lesson, không phải cách duy nhất phải dùng trong mọi phong cách."]}),
             ("L04-BCP2", "checkpoint", {"title": "Guide tones", "exercise_id": "L04-Q04", "note": "Tự gọi tên 3rd và ♭7 của G7."}),
             ("L04-B07", "piano", {"title": "6. Piano task · từ chord inventory tới guide tones", "prompt": "Trước hết chọn G–B–D–F trên piano và gửi kiểm tra để chứng minh bạn nhận ra đầy đủ chord tones của G7. Sau đó phát Dm7 → G7 → Cmaj7, tự bấm B và F của G7, rồi giữ B và chuyển F xuống E.", "highlight": [], "selection_mode": True, "progression": ["Dm7", "G7", "Cmaj7"], "key": "C", "bpm": 68, "exercise_id": "L04-Q03", "evidence_mode": "pitch_class", "submit_label": "Kiểm tra G7 bằng piano"}),
-            ("L04-B08", "audio", {"title": "7. Nghe ii–V–I trước và sau khi tăng tempo", "prompt": "Bắt đầu chậm để nghe hướng đi. Khi đã theo được guide tones, tăng BPM từng bước thay vì cố chơi nhanh ngay.", "progression": ["Dm7", "G7", "Cmaj7"], "key": "C", "bpm": 68}),
+            ("L04-B08", "audio", {"title": "7. Nghe ii–V–I trước và sau khi tăng tempo", "prompt": "Bắt đầu chậm để nghe hướng đi. Khi đã theo được guide tones, tăng BPM từng bước thay vì cố chơi nhanh ngay.", "progression": ["Dm7", "G7", "Cmaj7"], "key": "C", "numerals": ["ii7", "V7", "Imaj7"], "bpm": 68}),
             ("L04-B09", "summary", {"title": "Ghi nhớ", "items": ["ii–V–I major = ii7 → V7 → Imaj7.", "Guide tones trong lesson tập trung vào 3rd và 7th của seventh chord.", "G7 → Cmaj7: B có thể giữ; F → E là chuyển động nửa cung.", "Smooth voice leading ưu tiên common tone/chuyển động gần nhưng vẫn phụ thuộc context và voicing.", "Sau khi nắm một key, mới mở rộng dần sang F, Bb, D… thay vì ép 12 keys ngay lập tức."]}),
         ],
         "exercises": [

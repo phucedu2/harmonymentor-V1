@@ -17,7 +17,9 @@ NOTE = r"[A-G](?:##|#|bb|b|x|♯|♭)?"
 # Hậu tố theo Music Engine (04 Bảng 16) và các cách viết hay gặp. Thứ tự dài trước ngắn.
 _QUAL = r"(?:maj7|M7|m7b5|ø7|ø|dim7|°7|dim|°|aug|\+|m7|min7|mM7|m|min|7|6|9|sus2|sus4)?"
 CHORD = rf"{NOTE}{_QUAL}"
-_SEP = r"\s*(?:[,–\-]|\s)\s*"
+# G8: "Eb, Gb, Bbb và Db" là cách viết tiếng Việt rất hay gặp; thiếu "và" thì chỉ bắt được 3 nốt đầu và
+# Engine báo sai nhầm (câu trả lời đúng bị soạn lại hoặc thay bằng dự phòng).
+_SEP = r"\s*(?:,?\s*(?:và|and)\s+|[,–\-]|\s)\s*"
 NOTE_SEQ = rf"{NOTE}(?:{_SEP}{NOTE}){{2,}}"
 
 # "G7 = G B D F", "Cmaj7 gồm C, E, G, B", "C7 (C – E – G – Bb)", "Cmaj7: C E G B"
@@ -49,11 +51,12 @@ INTERVAL_PAIR_WITH_NAME = re.compile(
 ROMAN = r"(?:vii|VII|iii|III|iv|IV|vi|VI|ii|II|v|V|i|I)(?:maj7|M7|ø7|°7|7|°|ø)?"
 _KEY = rf"(?:giọng\s+)?(?P<key>{NOTE})(?![A-Za-z0-9#♯♭])(?!\s*(?:thứ|minor))(?:\s*(?:trưởng|major))?"
 ROMAN_IN_KEY_IS_CHORD = re.compile(
-    rf"(?<![A-Za-z])(?P<rn>{ROMAN})(?![A-Za-z0-9])\s+(?:trong|của)\s+{_KEY}\s*(?:là|=|:)\s*(?:hợp âm\s+)?"
+    # "V7/ii" (át phụ) không phải bậc V7 của giọng: bỏ khớp có dấu "/" ngay sau số La Mã (G8 lượt 3).
+    rf"(?<![A-Za-z/])(?P<rn>{ROMAN})(?![A-Za-z0-9/])\s+(?:trong|của)\s+{_KEY}\s*(?:là|=|:)\s*(?:hợp âm\s+)?"
     rf"(?P<chord>{CHORD})(?![A-Za-z0-9#])")
 CHORD_IS_ROMAN_IN_KEY = re.compile(
     rf"(?<![A-Za-z0-9#])(?P<chord>{CHORD})(?![A-Za-z0-9#])\s*(?:là|=)\s*(?:hợp âm\s+)?(?P<rn>{ROMAN})"
-    rf"(?![A-Za-z0-9])\s+(?:trong|của)\s+{_KEY}")
+    rf"(?![A-Za-z0-9/])\s+(?:trong|của)\s+{_KEY}")
 
 
 def interval_name(match: re.Match) -> str:
