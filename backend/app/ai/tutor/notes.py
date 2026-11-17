@@ -51,11 +51,12 @@ INTERVAL_PAIR_WITH_NAME = re.compile(
 ROMAN = r"(?:vii|VII|iii|III|iv|IV|vi|VI|ii|II|v|V|i|I)(?:maj7|M7|ø7|°7|7|°|ø)?"
 _KEY = rf"(?:giọng\s+)?(?P<key>{NOTE})(?![A-Za-z0-9#♯♭])(?!\s*(?:thứ|minor))(?:\s*(?:trưởng|major))?"
 ROMAN_IN_KEY_IS_CHORD = re.compile(
-    rf"(?<![A-Za-z])(?P<rn>{ROMAN})(?![A-Za-z0-9])\s+(?:trong|của)\s+{_KEY}\s*(?:là|=|:)\s*(?:hợp âm\s+)?"
+    # "V7/ii" (át phụ) không phải bậc V7 của giọng: bỏ khớp có dấu "/" ngay sau số La Mã (G8 lượt 3).
+    rf"(?<![A-Za-z/])(?P<rn>{ROMAN})(?![A-Za-z0-9/])\s+(?:trong|của)\s+{_KEY}\s*(?:là|=|:)\s*(?:hợp âm\s+)?"
     rf"(?P<chord>{CHORD})(?![A-Za-z0-9#])")
 CHORD_IS_ROMAN_IN_KEY = re.compile(
     rf"(?<![A-Za-z0-9#])(?P<chord>{CHORD})(?![A-Za-z0-9#])\s*(?:là|=)\s*(?:hợp âm\s+)?(?P<rn>{ROMAN})"
-    rf"(?![A-Za-z0-9])\s+(?:trong|của)\s+{_KEY}")
+    rf"(?![A-Za-z0-9/])\s+(?:trong|của)\s+{_KEY}")
 
 
 def interval_name(match: re.Match) -> str:

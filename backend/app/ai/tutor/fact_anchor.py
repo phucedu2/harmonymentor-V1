@@ -18,7 +18,8 @@ from .notes import norm_accidentals, solfege_to_letters
 _DIRECT = re.compile(
     r"gồm|nốt nào|nốt gì|not nao|not gi|liệt kê|liet ke|các nốt|cac not|cấu tạo|cau tao|quãng gì|quang gi|quãng mấy|"
     r"quang may|là quãng|bậc mấy|bac may|số la mã|so la ma|dấu hóa|dau hoa|hóa biểu|hoa bieu|tương quan|tuong quan|"
-    r"đảo quãng|dao quang|nửa cung|nua cung|giọng .{0,20} nào|notes? (?:are|in)|what interval|which key|how many",
+    r"đảo quãng|dao quang|nửa cung|nua cung|giọng .{0,20} nào|notes? (?:are|in)|what interval|which key|how many|"
+    r"guide tone|shell voicing|hợp âm gì|hợp âm nào|những hợp âm|hợp âm mượn.{0,40}(?:là gì|nào)|ii.?v.?i in ",
     re.IGNORECASE)
 _NOTE = re.compile(r"(?<![\w#])([A-G](?:bb|b|##|#)?)(?![\w#])")
 _NUM_WORD = {"1": ("1", "một", "nhất"), "2": ("2", "hai", "nhì"), "3": ("3", "ba"), "4": ("4", "bốn", "tư"),
@@ -65,6 +66,15 @@ def honoured(reply: str, f: dict[str, Any]) -> bool:
             return "không" in reply.lower() or "khong" in _fold(reply)
         names = set(norm_accidentals(result.split(":", 1)[1]).split())
         return names <= _notes(reply)
+    if tool == "secondary_dominant":
+        return set(norm_accidentals(result.split(": ")[1]).split()) <= _notes(reply)
+    if tool in ("guide_tones", "shell_voicing"):
+        return set(norm_accidentals(result).split()) <= _notes(reply)
+    if tool in ("two_five_one", "borrowed_chords"):
+        syms = [c.strip() for c in re.split(r"[–\s]+", result) if c.strip()]
+        seven = lambda c: c.replace("maj7", "(?:maj7|M7|Δ7|∆7)")
+        return all(re.search(rf"(?<![A-Za-z0-9#]){seven(re.escape(c)) if 'maj7' not in c else seven(c)}(?![A-Za-z0-9#])", reply)
+                   for c in syms)
     if tool in ("relative_key", "key_from_signature"):
         return result.split()[0] in _notes(reply)
     return True
@@ -75,8 +85,21 @@ def direct(question: str) -> bool:
     return bool(_DIRECT.search(question))
 
 
+# Từ chối vô cớ hoặc lộ chữ nội bộ khi Engine ĐÃ có đáp án: sai cả với câu hỏi "vì sao" có tiền đề sai (lượt 3 G8: "Dựa trên ENGINE_FACTS" lộ ra cho người học).
+_REFUSED = re.compile(r"không (?:thể )?tự tính|khong (?:the )?tu tinh|engine_facts|"
+                      r"chưa trả lời được|dữ liệu (?:chính xác )?từ hệ thống|quy tắc không cho phép",
+                      re.IGNORECASE)
+
+
+def refused(reply: str) -> bool:
+    return bool(_REFUSED.search(reply))
+
+
 def missing(question: str, reply: str, facts: Sequence[dict[str, Any]]) -> list[dict[str, Any]]:
-    """Dữ kiện Engine mà câu trả lời đáng ra phải nêu nhưng không nêu. Rỗng nếu câu hỏi không đòi dữ kiện trực tiếp."""
-    if not facts or len(facts) > 2 or not direct(question):
+    """Dữ kiện Engine mà câu trả lời đáng ra phải nêu nhưng không nêu. Câu hỏi đòi dữ kiện trực tiếp thì kiểm kết quả;
+    câu khác chỉ bị coi là thiếu khi AI từ chối hoặc lộ chữ nội bộ dù Engine đã có đáp án."""
+    if not facts or len(facts) > 2:
         return []
-    return [f for f in facts if not honoured(reply, f)]
+    if direct(question):
+        return [f for f in facts if not honoured(reply, f)]
+    return list(facts) if refused(reply) else []

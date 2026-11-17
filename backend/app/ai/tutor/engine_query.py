@@ -106,6 +106,79 @@ _ROMAN_Q2 = re.compile(
     re.IGNORECASE)
 
 
+# --- G8 lượt 3: hòa âm chức năng và jazz mà lượt 2 cho thấy AI từ chối hoặc đoán (V7/x, ii–V–I, guide tone, shell
+# voicing, hợp âm mượn). Engine tính được bằng diatonic_chords + transpose + get_chord_tones, nên chỉ nhận diện ở đây.
+_SEC_DOM = re.compile(rf"V7?/(?P<rn>(?-i:[ivIV]{{1,3}}))\s+(?:trong|ở|in)\s+(?:giọng\s+|giong\s+|key\s+)?"
+                      rf"(?P<key>{NOTE})(?![A-Za-z0-9#])\s*(?i:trưởng|truong|major)?", re.IGNORECASE)
+_TWO_FIVE = re.compile(r"\bii\s*[-–—]?\s*V\s*[-–—]?\s*I\b", re.IGNORECASE)
+_GUIDE = re.compile(r"guide\s*tone", re.IGNORECASE)
+_SHELL = re.compile(r"shell\s+voicing", re.IGNORECASE)
+_BORROWED = re.compile(r"\biv\b.{0,10}(?:♭|b)VI\b.{0,10}(?:♭|b)VII\b", re.IGNORECASE)
+# "What notes are in the Bb chord?": tên nốt đứng TRƯỚC chữ chord.
+_CHORD_AFTER = re.compile(rf"(?<![A-Za-z0-9#])(?P<root>(?-i:{NOTE}))(?![A-Za-z0-9#])\s+(?i:chord)\b")
+
+
+def _key_after(text: str) -> str | None:
+    m = re.search(rf"(?:trong|ở|in)\s+(?:giọng\s+|giong\s+|key\s+)?(?P<k>{NOTE})(?![A-Za-z0-9#])\s*(?i:trưởng|truong|major)",
+                  text, re.IGNORECASE)
+    if m:
+        return norm_accidentals(m["k"])
+    m = re.search(rf"(?:giọng|giong)\s+(?P<k>{NOTE})(?![A-Za-z0-9#])\s*(?i:trưởng|truong)", text, re.IGNORECASE)
+    return norm_accidentals(m["k"]) if m else None
+
+
+def _tones(symbol: str) -> list[str]:
+    value, _ = run_tool("get_chord_tones", {"symbol": symbol})
+    return value.split() if value else []
+
+
+def _functional_facts(text: str, out: EngineAnswer, seen: set) -> None:
+    from ...music_engine.errors import MusicEngineError
+    from ...music_engine.roman import diatonic_chords
+
+    for m in _SEC_DOM.finditer(text):
+        key, rn = norm_accidentals(m["key"]), m["rn"]
+        target = _chord_for_numeral(key, rn)
+        if target is None:
+            out.unknown.append(f"V7/{rn} trong {key}")      # vd V7/vii° không có (hợp âm giảm không làm chủ tạm thời)
+            continue
+
+        def sec(key=key, target=target):
+            root = _iv.transpose(re.match(r"[A-G](?:#|b)?", target)[0], "P5").name
+            return f"{root}7: {' '.join(_tones(root + '7'))}"
+        _local(out, seen, "secondary_dominant", {"key": key, "numeral": rn}, sec)
+
+    if _TWO_FIVE.search(text) and (key := _key_after(text)):
+        def ii_v_i(key=key):
+            try:
+                ch = {r.numeral: str(r.chord) for r in diatonic_chords(key, sevenths=True)}
+            except MusicEngineError:
+                raise
+            return " – ".join([ch["ii7"], ch["V7"], ch["IM7"]]).replace("M7", "maj7").replace("maj7maj7", "maj7")
+        _local(out, seen, "two_five_one", {"key": key}, ii_v_i)
+
+    if _BORROWED.search(text) and (key := _key_after(text)):
+        def borrowed(key=key):
+            from ...music_engine.scale import build_scale
+            n = build_scale(key, "natural_minor")
+            return " ".join([n[3].name + "m", n[5].name, n[6].name])
+        _local(out, seen, "borrowed_chords", {"key": key}, borrowed)
+
+    if _GUIDE.search(text) or _SHELL.search(text):
+        for m in _SYM.finditer(text):
+            sym = norm_accidentals(m["sym"])
+            tones = _tones(sym)
+            if len(tones) < 4:
+                continue
+            if _SHELL.search(text):
+                _local(out, seen, "shell_voicing", {"chord": sym}, lambda t=tones: " ".join([t[0], t[1], t[3]]))
+            else:
+                _local(out, seen, "guide_tones", {"chord": sym}, lambda t=tones: f"{t[1]} {t[3]}")
+
+
+_FUNCTIONAL = {"secondary_dominant", "two_five_one", "borrowed_chords", "guide_tones", "shell_voicing"}
+
+
 @dataclass
 class EngineAnswer:
     facts: list[dict[str, Any]] = field(default_factory=list)     # {tool, args, result, sourced}
@@ -275,7 +348,15 @@ def engine_answer(question: str, limit: int = 4) -> EngineAnswer:
                                                f["args"].get("symbol") != sym for f in out.facts):
             _add(out, seen, "get_chord_tones", {"symbol": sym})
 
+    for m in _CHORD_AFTER.finditer(text):
+        if not any(f["tool"] == "get_chord_tones" for f in out.facts):
+            _add(out, seen, "get_chord_tones", {"symbol": norm_accidentals(m["root"])})
+
     _local_facts(text, out, seen)
+    _functional_facts(text, out, seen)
+    if any(f["tool"] in _FUNCTIONAL for f in out.facts):
+        # Câu hỏi chức năng/jazz: chỉ giữ dữ kiện tính cho chính nó, bỏ hợp âm/âm giai bắt nhầm từ chữ trong câu.
+        out.facts = [f for f in out.facts if f["tool"] in _FUNCTIONAL]
     out.facts = out.facts[:limit]
     return out
 
@@ -306,5 +387,17 @@ def fact_text(f: dict[str, Any]) -> str:
         return f"Quãng {a['interval']} rộng {r} nửa cung."
     if f["tool"] == "invert_interval":
         return f"Đảo quãng {a['interval']} được quãng {r}."
+    if f["tool"] == "secondary_dominant":
+        sym, notes = r.split(": ")
+        return f"V7/{a['numeral']} trong giọng {a['key']} trưởng là {sym} ({notes})."
+    if f["tool"] == "two_five_one":
+        return f"Vòng ii–V–I trong giọng {a['key']} trưởng: {r}."
+    if f["tool"] == "borrowed_chords":
+        return f"Ba hợp âm mượn iv, ♭VI, ♭VII trong {a['key']} trưởng (từ {a['key']} thứ): {', '.join(r.split())}."
+    if f["tool"] == "guide_tones":
+        third, seventh = r.split()
+        return f"Guide tone của {a['chord']}: nốt 3 là {third}, nốt 7 là {seventh}."
+    if f["tool"] == "shell_voicing":
+        return f"Shell voicing root–3–7 của {a['chord']}: {', '.join(r.split())}."
     return f"{f['tool']}: {r}."
 

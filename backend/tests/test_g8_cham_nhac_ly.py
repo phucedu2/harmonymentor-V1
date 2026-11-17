@@ -87,6 +87,16 @@ from app.ai.tutor.engine_query import engine_answer, fact_text
     ("Giọng thứ tương quan của Db trưởng là gì?", "Bb thứ"),
     ("Hóa biểu có 2 dấu giáng là giọng trưởng nào?", "Bb trưởng"),
     ("Thứ tự các dấu giáng trong hóa biểu là gì?", "Bb Eb Ab Db Gb Cb Fb"),
+    # lượt 3: hòa âm chức năng và jazz
+    ("What notes are in the Bb chord?", "Bb gồm các nốt Bb, D, F"),
+    ("V7/ii trong giọng C trưởng là hợp âm gì?", "A7 (A C# E G)"),
+    ("V7/iii trong giọng C trưởng là hợp âm gì?", "B7 (B D# F# A)"),
+    ("V7/vi trong giọng Eb trưởng là hợp âm gì?", "G7 (G B D F)"),
+    ("ii-V-I in Ab major là gì?", "Bbm7 – Eb7 – Abmaj7"),
+    ("vong ii V I giong Db truong", "Ebm7 – Ab7 – Dbmaj7"),
+    ("Guide tone (nốt 3 và nốt 7) của Bb7 là những nốt nào?", "nốt 3 là D, nốt 7 là Ab"),
+    ("Shell voicing root–3–7 của Ebmaj7 gồm những nốt nào?", "Eb, G, D"),
+    ("Ba hợp âm mượn phổ biến iv, ♭VI, ♭VII trong Bb trưởng là gì?", "Ebm, Gb, Ab"),
 ])
 def test_engine_query_g8_nhan_dien_cau_engine_tinh_duoc(q, want):
     text = " ".join(fact_text(f) for f in engine_answer(q).facts)
@@ -181,3 +191,36 @@ def test_cau_dao_quang_khong_bi_dinh_tuyen_sang_huong_dan_web():
         d, _ = ts.answer_question(db, db.get(User, "eval-user"), "Đảo quãng P4 thì được quãng gì?", [], None, Ok(),
                                   datetime.now(timezone.utc))
     assert d.route != "help" and "P5" in d.reply, (d.route, d.reply)
+
+
+def test_v7_cua_hop_am_giam_khong_co_dap_an_engine():
+    # vii° là hợp âm giảm, không làm chủ tạm thời: không được bịa dữ kiện.
+    assert not [f for f in engine_answer("V7/vii° trong giọng C trưởng là hợp âm gì?").facts if f["tool"] == "secondary_dominant"]
+
+
+def test_ai_tu_choi_hay_lo_chu_noi_bo_khi_engine_da_co_dap_an_thi_bi_coi_la_thieu():
+    q = "Vì sao hợp âm Dm7b5 lại có nốt A?"
+    facts = _facts(q)
+    assert fact_anchor.missing(q, "Mình không tự tính nốt hợp âm mà không có dữ liệu từ hệ thống.", facts)
+    assert fact_anchor.missing(q, "Dựa trên ENGINE_FACTS, Dm7b5 gồm D F Ab C.", facts)
+    assert not fact_anchor.missing(q, "Dm7b5 gồm D, F, Ab, C nên không có nốt A.", facts)
+
+
+@pytest.mark.parametrize("q,reply,ok", [
+    ("ii-V-I in Ab major là gì?", "Gồm Bbm7, Eb7 và Ab.", False),                            # thiếu Abmaj7
+    ("ii-V-I in Ab major là gì?", "Gồm Bbm7, Eb7 và Abmaj7.", True),
+    ("V7/ii trong giọng C trưởng là hợp âm gì?", "Trong giọng C, V7/ii là E7.", False),
+    ("V7/ii trong giọng C trưởng là hợp âm gì?", "Là A7: A C# E G.", True),
+    ("Guide tone của G7 là nốt nào?", "Nốt 3 là B và nốt 7 là F.", True),
+    ("Guide tone của G7 là nốt nào?", "Nốt 3 là B và nốt 7 là F#.", False),
+])
+def test_fact_anchor_cau_hoi_chuc_nang(q, reply, ok):
+    assert (not fact_anchor.missing(q, reply, _facts(q))) is ok, (q, reply)
+
+
+def test_guardrail_khong_hieu_nham_at_phu_thanh_bac_cua_giong():
+    from app.ai.tutor.guardrail import scan_reply
+
+    # V7/ii trong C là A7 (đúng); trước đây bị đọc thành "V7 trong C là A7" nên bị báo mâu thuẫn.
+    assert not [c for c in scan_reply("V7/ii trong giọng C trưởng là A7 (A C# E G).") if c.status == "contradicted"]
+    assert [c.status for c in scan_reply("G7 là V7 trong giọng C trưởng.")] == ["verified"]
