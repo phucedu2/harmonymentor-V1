@@ -1,9 +1,10 @@
-import { Suspense, useState } from "react";
-import { NavLink, Outlet, useNavigate } from "react-router";
+import { Suspense, useEffect, useRef, useState } from "react";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router";
 import { useAuth } from "../../auth/AuthProvider";
 import { PageLoader } from "../ui/PageLoader";
 import { Logo } from "./Logo";
 import FloatingTutorDrawer from "../learning/FloatingTutorDrawer";
+import { ThemeToggle } from "../../theme/ThemeToggle";
 
 // Bố cục khung lấy từ v0.5.3-dev (thanh bên tối, mục đang mở nổi khối), logic giữ của main:
 // NavLink theo route, RequireAuth ở App.tsx, đăng xuất về trang chủ.
@@ -21,18 +22,31 @@ const NAV = [
 // Phiên bản hiện ở chân thanh bên, giống v0.5.3 ghi "v0.5.3-dev" dưới logo.
 const APP_VERSION = `v${__APP_VERSION__}`;
 
+// FE-009: dưới lg menu là một dòng cuộn ngang dính đầu màn hình (không xuống dòng như "Quiz kỹ năng" 3 dòng trước đây).
+// Không dùng thanh tab đáy vì đáy đã dành cho thanh "Bước tiếp" của bài học và thanh Phát của Harmony Lab.
 const linkClass = ({ isActive }: { isActive: boolean }) =>
-  `flex h-full items-center justify-center rounded-lg px-2 py-2 text-center text-xs font-medium leading-tight transition-colors lg:justify-start lg:px-3 lg:py-2.5 lg:text-left lg:text-sm ${
+  `flex min-h-11 items-center whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium leading-tight transition-colors lg:min-h-0 lg:px-3 lg:py-2.5 ${
     isActive ? "bg-shell-raised text-shell-ink" : "text-shell-text hover:bg-shell-raised/60 hover:text-shell-ink"
   }`;
 
 const signOutClass =
   "inline-flex items-center justify-center gap-2 rounded-lg border border-shell-line px-3 py-2 text-sm font-semibold text-shell-text transition-colors hover:border-shell-muted hover:text-shell-ink disabled:opacity-50";
 
+const toggleClass = "lg:size-9 border-shell-line text-shell-text hover:border-shell-muted hover:text-shell-ink";
+
 export default function AppLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [leaving, setLeaving] = useState(false);
+  const { pathname } = useLocation();
+  const navRef = useRef<HTMLUListElement>(null);
+
+  // Mục đang mở có thể nằm ngoài khung cuộn ngang trên điện thoại (vd Hồ sơ): kéo nó vào tầm nhìn.
+  useEffect(() => {
+    const active = navRef.current?.querySelector<HTMLElement>('[aria-current="page"]');
+    if (!active || window.matchMedia("(min-width: 1024px)").matches) return;
+    active.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }, [pathname]);
 
   // Rời /app trước rồi mới xóa phiên; làm ngược lại thì RequireAuth kịp chuyển sang /dang-nhap?next=…
   const signOut = async () => {
@@ -48,15 +62,18 @@ export default function AppLayout() {
       <a href="#noi-dung" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-surface focus:px-3 focus:py-2">
         Bỏ qua, tới nội dung chính
       </a>
-      <aside className="bg-shell text-shell-text lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:gap-7 lg:px-4 lg:py-6">
-        <div className="flex items-center justify-between gap-3 px-4 pb-2 pt-3 lg:p-0">
+      <aside data-surface="dark" className="text-shell-text max-lg:contents lg:sticky lg:bg-shell lg:top-0 lg:flex lg:h-screen lg:flex-col lg:gap-7 lg:px-4 lg:py-6">
+        <div className="flex items-center justify-between gap-3 bg-shell px-4 pb-2 pt-3 lg:bg-transparent lg:p-0">
           <Logo to="/app" inverted />
-          <button type="button" className={`${signOutClass} lg:hidden`} onClick={signOut} disabled={leaving} aria-busy={leaving}>Đăng xuất</button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle className={toggleClass} />
+            <button type="button" className={`${signOutClass} lg:hidden`} onClick={signOut} disabled={leaving} aria-busy={leaving}>Đăng xuất</button>
+          </div>
         </div>
-        <nav aria-label="Điều hướng chính" className="px-3 pb-3 lg:p-0">
-          <ul className="grid grid-flow-col auto-cols-fr gap-1 lg:grid-flow-row lg:auto-cols-auto lg:gap-1.5">
+        <nav aria-label="Điều hướng chính" className="sticky top-0 z-30 border-b border-shell-line bg-shell px-2 py-1.5 lg:static lg:border-0 lg:bg-transparent lg:p-0">
+          <ul ref={navRef} className="flex gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:grid lg:gap-1.5 lg:overflow-visible">
             {nav.map((item) => (
-              <li key={item.to}><NavLink to={item.to} end={item.end} className={linkClass}>{item.label}</NavLink></li>
+              <li key={item.to} className="shrink-0 lg:shrink"><NavLink to={item.to} end={item.end} className={linkClass}>{item.label}</NavLink></li>
             ))}
           </ul>
         </nav>
@@ -67,7 +84,7 @@ export default function AppLayout() {
           <p className="mt-3 text-xs text-shell-muted">HarmonyMentor {APP_VERSION}</p>
         </div>
       </aside>
-      <main id="noi-dung" className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+      <main id="noi-dung" className="mx-auto w-full max-w-5xl px-4 py-6 max-md:pb-28 sm:px-6 lg:px-8 lg:py-8">
         <Suspense fallback={<PageLoader />}><Outlet /></Suspense>
       </main>
       <FloatingTutorDrawer />

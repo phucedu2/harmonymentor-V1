@@ -1,0 +1,110 @@
+{
+ "desktop_light_thong-ke": {
+  "overflow": 0,
+  "small": [],
+  "axe": []
+ },
+ "desktop_light_bai-hoc": {
+  "overflow": 0,
+  "small": [],
+  "axe": []
+ },
+ "desktop_light_bai-hoc-sua": {
+  "overflow": 0,
+  "small": [],
+  "axe": []
+ },
+ "desktop_light_ai-soan-bai": {
+  "overflow": 0,
+  "small": [
+   "INPUT 13x13"
+  ],
+  "axe": []
+ },
+ "desktop_light_nguoi-dung": {
+  "overflow": 0,
+  "small": [],
+  "axe": []
+ },
+ "desktop_dark_thong-ke": {
+  "overflow": 0,
+  "small": [],
+  "axe": []
+ },
+ "desktop_dark_bai-hoc": {
+  "overflow": 0,
+  "small": [],
+  "axe": []
+ },
+ "desktop_dark_bai-hoc-sua": {
+  "overflow": 0,
+  "small": [],
+  "axe": []
+ },
+ "desktop_dark_ai-soan-bai": {
+  "overflow": 0,
+  "small": [
+   "INPUT 13x13"
+  ],
+  "axe": []
+ },
+ "desktop_dark_nguoi-dung": {
+  "overflow": 0,
+  "small": [],
+  "axe": []
+ },
+ "mobile_light_thong-ke": {
+  "overflow": 0,
+  "small": [],
+  "axe": []
+ },
+ "mobile_light_bai-hoc": {
+  "overflow": 0,
+  "small": [],
+  "axe": []
+ },
+ "mobile_light_bai-hoc-sua": {
+  "overflow": 0,
+  "small": [],
+  "axe": []
+ },
+ "mobile_light_ai-soan-bai": {
+  "overflow": 0,
+  "small": [
+   "INPUT 13x13"
+  ],
+  "axe": []
+ },
+ "mobile_light_nguoi-dung": {
+  "overflow": 0,
+  "small": [],
+  "axe": []
+ },
+ "mobile_dark_thong-ke": {
+  "overflow": 0,
+  "small": [],
+  "axe": []
+ },
+ "mobile_dark_bai-hoc": {
+  "overflow": 0,
+  "small": [],
+  "axe": []
+ },
+ "mobile_dark_bai-hoc-sua": {
+  "overflow": 0,
+  "small": [],
+  "axe": []
+ },
+ "mobile_dark_ai-soan-bai": {
+  "overflow": 0,
+  "small": [
+   "INPUT 13x13"
+  ],
+  "axe": []
+ },
+ "mobile_dark_nguoi-dung": {
+  "overflow": 0,
+  "small": [],
+  "axe": []
+ }
+}

@@ -1,0 +1,98 @@
+{
+ "trang-chu": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 379,
+   "CLS": 0.012,
+   "TBT": 0,
+   "FCP": 376,
+   "finalUrl": "http://localhost:4173/",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0.012366693517788869,\"newEngineResult\":{\"cumulativeLayoutShift\":0.012366693517788869,\"cumulativeLayoutShiftMainFrame\":0.012366693517788869},\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  },
+  "lh_mobile": {
+   "perf": 99,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1847,
+   "CLS": 0.004,
+   "TBT": 101,
+   "FCP": 1379,
+   "finalUrl": "http://localhost:4173/",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0.0037605504534309105,\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  }
+ },
+ "tong-quan": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 412,
+   "CLS": 0.013,
+   "TBT": 0,
+   "FCP": 284,
+   "finalUrl": "http://localhost:4173/app",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0.013003161281849224,\"newEngineResult\":{\"cumulativeLayoutShift\":0.013003161281849224,\"cumulativeLayoutShiftMainFrame\":0.013003161281849224},\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  },
+  "lh_mobile": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1530,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 1053,
+   "finalUrl": "http://localhost:4173/app",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0.00032395236302754993,\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  }
+ },
+ "hoc": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 371,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 285,
+   "finalUrl": "http://localhost:4173/app/hoc",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0,\"newEngineResult\":{\"cumulativeLayoutShift\":0,\"cumulativeLayoutShiftMainFrame\":0},\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  },
+  "lh_mobile": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1358,
+   "CLS": 0,
+   "TBT": 49,
+   "FCP": 1054,
+   "finalUrl": "http://localhost:4173/app/hoc",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0.0004182655667456324,\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  }
+ }
+}

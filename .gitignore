@@ -34,3 +34,8 @@ backend/models/*
 # Kho tài liệu thô cho RAG (T3): không đưa sách có bản quyền vào git
 data/corpus/raw/
 eval/report.json
+
+# Playwright (FE-027)
+frontend/test-results/
+frontend/playwright-report/
+frontend/playwright-report-live/

@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router";
 import { api, type ApiError, type ChatReply } from "../../api";
 import { TUTOR_EXPLAIN_EVENT, type TutorExplainDetail } from "../../lib/tutorBus";
 import { Button, Spinner } from "../ui/Button";
+import { useDraggable } from "./useDraggable";
 
 // Khung AI Tutor nổi ở góc phải dưới trên mọi trang /app/* (04 Bảng 25, đề GĐ3 mục 11).
 // Mọi phán đoán nhạc lý, trích dẫn và nhãn "Đã kiểm bằng Music Engine" đều do máy chủ quyết; ở đây chỉ hiển thị.
@@ -100,6 +101,36 @@ export default function FloatingTutorDrawer() {
   const [busy, setBusy] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [remaining, setRemaining] = useState<number | null>(null);
+  // FE-002: trên điện thoại (< md) nút tròn thu vào mép phải khi đang cuộn xuống đọc bài, hiện lại khi cuộn lên
+  // hoặc tới cuối trang, để không che chữ/đáp án. Máy tính không đổi.
+  const [tucked, setTucked] = useState(false);
+  useEffect(() => {
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      const atEnd = window.innerHeight + y >= document.documentElement.scrollHeight - 24;
+      if (atEnd || y < 80 || y < last - 4) setTucked(false);
+      else if (y > last + 4) setTucked(true);
+      last = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  // Kéo được nút tròn (mọi cỡ màn hình, thả ra dạt vào mép gần nhất) và khung chat (từ 640 px, kéo ở thanh tiêu đề).
+  // Vị trí nhớ theo máy; nút ↺ trong khung đưa cả hai về góc phải dưới.
+  const [wide, setWide] = useState(() => typeof window !== "undefined" && window.matchMedia?.("(min-width: 640px)").matches === true);
+  useEffect(() => {
+    const mq = window.matchMedia?.("(min-width: 640px)");
+    if (!mq) return;
+    const on = () => setWide(mq.matches);
+    mq.addEventListener?.("change", on);
+    return () => mq.removeEventListener?.("change", on);
+  }, []);
+  const fab = useDraggable<HTMLButtonElement>({ key: "hm-ai-nut", snapX: true });
+  const panel = useDraggable<HTMLElement>({ key: "hm-ai-khung", enabled: wide });
+  const fabLeft = fab.pos !== null && fab.pos.x < window.innerWidth / 2;
+  const moved = fab.pos !== null || panel.pos !== null;
+  const resetPlace = () => { fab.reset(); panel.reset(); };
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const navigate = useNavigate();
@@ -162,21 +193,25 @@ export default function FloatingTutorDrawer() {
   const cite = (lesson: string, block: string) => navigate(`/app/hoc?bai=${encodeURIComponent(lesson)}&khoi=${encodeURIComponent(block)}`);
 
   return <>
-    {open && <section role="dialog" aria-label="AI Tutor" aria-modal="false"
-      className="fixed inset-x-2 bottom-20 z-40 flex max-h-[75vh] flex-col overflow-hidden rounded-2xl border border-line bg-bg shadow-2xl sm:inset-x-auto sm:right-5 sm:w-[380px]">
-      <header className="flex items-center justify-between gap-2 border-b border-line bg-surface px-4 py-3">
-        <div>
+    {open && <section ref={panel.ref} role="dialog" aria-label="AI Tutor" aria-modal="false" style={panel.style}
+      className={`fixed inset-x-2 bottom-2 z-50 flex max-h-[85vh] md:bottom-24 md:max-h-[75vh] flex-col overflow-hidden rounded-2xl border border-line bg-bg shadow-2xl sm:inset-x-auto sm:w-[380px] ${fabLeft && !panel.pos ? "sm:left-5" : "sm:right-5"} ${panel.dragging ? "select-none opacity-95" : ""}`}>
+      <header {...panel.handlers} className={`flex items-center justify-between gap-2 border-b border-line bg-surface px-4 py-3 ${wide ? (panel.dragging ? "cursor-grabbing" : "cursor-grab") : ""}`}>
+        {wide && <button type="button" onKeyDown={panel.onKeyDown} title="Kéo thanh này để di chuyển khung; hoặc bấm vào đây rồi dùng phím mũi tên"
+          aria-label="Di chuyển khung AI Tutor bằng phím mũi tên" className="-ml-2 grid size-9 shrink-0 place-items-center rounded-md text-lg leading-none text-muted hover:bg-bg hover:text-ink">⠿</button>}
+        <div className="min-w-0 flex-1">
           <h2 className="font-display text-base font-semibold text-ink">AI Tutor</h2>
           <p className="text-xs text-muted">Trả lời dựa trên bài học, nốt nhạc kiểm bằng Music Engine{remaining !== null ? ` · còn ${remaining} lượt hôm nay` : ""}</p>
         </div>
-        <button type="button" className="rounded-md px-2 py-1 text-lg leading-none text-muted hover:text-ink" aria-label="Đóng AI Tutor" onClick={() => setOpen(false)}>×</button>
+        {moved && <button type="button" className="grid size-11 shrink-0 place-items-center rounded-full text-xl leading-none text-muted hover:bg-bg hover:text-ink"
+          aria-label="Đưa AI Tutor về góc phải dưới" title="Đưa về góc phải dưới" onClick={resetPlace}>↺</button>}
+        <button type="button" className="grid size-11 shrink-0 place-items-center rounded-full text-2xl leading-none text-muted hover:bg-bg hover:text-ink" aria-label="Đóng AI Tutor" onClick={() => setOpen(false)}>×</button>
       </header>
       <div ref={listRef} className="flex flex-1 flex-col gap-2 overflow-y-auto px-3 py-3" aria-live="polite">
         {items.length === 0 && <p className="rounded-lg bg-primary-soft px-3 py-2 text-sm text-ink">
           Hỏi mình về nốt, quãng, hợp âm, âm giai hay vòng hòa âm trong các bài, ví dụ “C7 khác Cmaj7 thế nào?”, hoặc cách dùng trang web. Câu ngoài bài học mình sẽ ghi rõ nguồn, không biết thì nói không biết. Sau khi làm sai một câu, bấm “Giải thích lỗi này” để nhận gợi ý từng bước.
         </p>}
         {items.map((item) => item.kind === "user"
-          ? <p key={item.id} className="ml-auto max-w-[85%] rounded-2xl rounded-br-sm bg-primary px-3 py-2 text-sm text-white">{item.text}</p>
+          ? <p key={item.id} className="ml-auto max-w-[85%] rounded-2xl rounded-br-sm bg-primary px-3 py-2 text-sm text-on-primary">{item.text}</p>
           : item.kind === "error"
             ? <div key={item.id} role="alert" className="rounded-lg bg-danger-soft px-3 py-2 text-sm text-danger">
                 {item.text}{item.retry && <button type="button" className="ml-2 font-semibold underline" onClick={item.retry}>Thử lại</button>}
@@ -198,8 +233,14 @@ export default function FloatingTutorDrawer() {
         </div>
       </form>
     </section>}
-    <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-label={open ? "Đóng AI Tutor" : "Mở AI Tutor"}
-      className="fixed right-4 bottom-24 z-40 flex size-14 md:right-5 md:bottom-5 items-center justify-center rounded-full bg-primary text-sm font-bold text-white shadow-xl hover:bg-primary-strong">
+    {/* FE-001: trên điện thoại khung chat phủ gần hết màn hình và có nút × riêng, nên ẩn nút tròn khi khung mở;
+        trước đây nút tròn nằm đè lên nút "Gửi". FE-002: nút nhỏ hơn (48px), thu vào mép khi cuộn xuống; FE-023: kéo được;
+        khi nhận focus bàn phím thì luôn hiện đủ (focus-visible:translate-x-0). */}
+    <button ref={fab.ref} type="button" {...fab.handlers} onKeyDown={fab.onKeyDown} style={fab.style}
+      onClick={() => { if (!fab.consumeDrag()) setOpen((v) => !v); }} aria-expanded={open} aria-label={open ? "Đóng AI Tutor" : "Mở AI Tutor"}
+      title="Bấm để hỏi AI Tutor. Kéo để đổi chỗ (hoặc phím mũi tên)."
+      data-tucked={(tucked && !fab.dragging) || undefined}
+      className={`fixed right-3 bottom-24 z-40 size-12 touch-none items-center justify-center rounded-full bg-primary text-sm font-bold text-on-primary shadow-xl ring-2 ring-bg hover:bg-primary-strong focus-visible:translate-x-0 motion-reduce:transition-none md:right-5 md:bottom-5 md:flex md:size-14 md:translate-x-0 ${fab.dragging ? "cursor-grabbing scale-110" : "cursor-grab transition-transform duration-200"} ${tucked && !fab.dragging ? (fabLeft ? "max-md:-translate-x-[calc(100%+0.5rem)]" : "max-md:translate-x-[calc(100%+0.5rem)]") : ""} ${open ? "hidden" : "flex"}`}>
       {open ? "×" : "AI"}
     </button>
   </>;

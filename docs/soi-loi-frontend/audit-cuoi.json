@@ -1,0 +1,354 @@
+{
+ "trang-chu": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 429,
+   "CLS": 0.012,
+   "TBT": 0,
+   "FCP": 384,
+   "finalUrl": "http://localhost:4173/",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0.01237996402825205,\"newEngineResult\":{\"cumulativeLayoutShift\":0.01237996402825205,\"cumulativeLayoutShiftMainFrame\":0.01237996402825205},\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  },
+  "lh_mobile": {
+   "perf": 98,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1818,
+   "CLS": 0.004,
+   "TBT": 134,
+   "FCP": 1361,
+   "finalUrl": "http://localhost:4173/",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0.0037237023242795474,\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  }
+ },
+ "dang-nhap": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 364,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 344,
+   "finalUrl": "http://localhost:4173/dang-nhap",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0.0002511760499664361,\"newEngineResult\":{\"cumulativeLayoutShift\":0.0002511760499664361,\"cumulativeLayoutShiftMainFrame\":0.0002511760499664361},\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  },
+  "lh_mobile": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1206,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 1130,
+   "finalUrl": "http://localhost:4173/dang-nhap",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0.0000589591903158963,\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  }
+ },
+ "dang-ky": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 329,
+   "CLS": 0.001,
+   "TBT": 0,
+   "FCP": 327,
+   "finalUrl": "http://localhost:4173/dang-ky",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0.0005444378046289,\"newEngineResult\":{\"cumulativeLayoutShift\":0.0005444378046289,\"cumulativeLayoutShiftMainFrame\":0.0005444378046289},\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  },
+  "lh_mobile": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1205,
+   "CLS": 0.014,
+   "TBT": 0,
+   "FCP": 1130,
+   "finalUrl": "http://localhost:4173/dang-ky",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0.01401967439580315,\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  }
+ },
+ "tong-quan": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 415,
+   "CLS": 0.019,
+   "TBT": 0,
+   "FCP": 285,
+   "finalUrl": "http://localhost:4173/app",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0.018891750758836066,\"newEngineResult\":{\"cumulativeLayoutShift\":0.018891750758836066,\"cumulativeLayoutShiftMainFrame\":0.018891750758836066},\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  },
+  "lh_mobile": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1516,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 1053,
+   "finalUrl": "http://localhost:4173/app",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0.00026138910323183064,\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  }
+ },
+ "hoc": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 367,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 283,
+   "finalUrl": "http://localhost:4173/app/hoc",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0,\"newEngineResult\":{\"cumulativeLayoutShift\":0,\"cumulativeLayoutShiftMainFrame\":0},\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  },
+  "lh_mobile": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1371,
+   "CLS": 0,
+   "TBT": 43,
+   "FCP": 915,
+   "finalUrl": "http://localhost:4173/app/hoc",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0.0004182655667456324,\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  }
+ },
+ "luyen-tap": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 410,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 283,
+   "finalUrl": "http://localhost:4173/app/luyen-tap",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0.00004501182033096926,\"newEngineResult\":{\"cumulativeLayoutShift\":0.00004501182033096926,\"cumulativeLayoutShiftMainFrame\":0.00004501182033096926},\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  },
+  "lh_mobile": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1511,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 915,
+   "finalUrl": "http://localhost:4173/app/luyen-tap",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0.0004182655667456324,\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  }
+ },
+ "quiz": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 412,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 286,
+   "finalUrl": "http://localhost:4173/app/quiz",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0.00037401227271400634,\"newEngineResult\":{\"cumulativeLayoutShift\":0.00037401227271400634,\"cumulativeLayoutShiftMainFrame\":0.00037401227271400634},\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  },
+  "lh_mobile": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1502,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 1051,
+   "finalUrl": "http://localhost:4173/app/quiz",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0.0004182655667456324,\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  }
+ },
+ "tien-do": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 408,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 282,
+   "finalUrl": "http://localhost:4173/app/tien-do",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0,\"newEngineResult\":{\"cumulativeLayoutShift\":0,\"cumulativeLayoutShiftMainFrame\":0},\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  },
+  "lh_mobile": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1530,
+   "CLS": 0,
+   "TBT": 43,
+   "FCP": 1053,
+   "finalUrl": "http://localhost:4173/app/tien-do",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0.0003011937796158116,\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  }
+ },
+ "composition": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 451,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 283,
+   "finalUrl": "http://localhost:4173/app/composition",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0,\"newEngineResult\":{\"cumulativeLayoutShift\":0,\"cumulativeLayoutShiftMainFrame\":0},\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  },
+  "lh_mobile": {
+   "perf": 99,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1676,
+   "CLS": 0.001,
+   "TBT": 120,
+   "FCP": 1054,
+   "finalUrl": "http://localhost:4173/app/composition",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0.0006700142544486599,\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  }
+ },
+ "ho-so": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 366,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 283,
+   "finalUrl": "http://localhost:4173/app/ho-so",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0,\"newEngineResult\":{\"cumulativeLayoutShift\":0,\"cumulativeLayoutShiftMainFrame\":0},\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  },
+  "lh_mobile": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1505,
+   "CLS": 0.006,
+   "TBT": 0,
+   "FCP": 1052,
+   "finalUrl": "http://localhost:4173/app/ho-so",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0.005624660171097245,\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  }
+ },
+ "kiem-tra-dau-vao": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 406,
+   "CLS": 0.003,
+   "TBT": 0,
+   "FCP": 283,
+   "finalUrl": "http://localhost:4173/app/kiem-tra-dau-vao",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0.002660362490149724,\"newEngineResult\":{\"cumulativeLayoutShift\":0.002660362490149724,\"cumulativeLayoutShiftMainFrame\":0.002660362490149724},\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  },
+  "lh_mobile": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1506,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 1053,
+   "finalUrl": "http://localhost:4173/app/kiem-tra-dau-vao",
+   "shifts": [
+    "cumulative-layout-shift:[{\"cumulativeLayoutShiftMainFrame\":0.0004182655667456324,\"newEngineResultDiffered\":false}]",
+    "layout-shifts:null"
+   ]
+  }
+ }
+}

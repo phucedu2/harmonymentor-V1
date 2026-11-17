@@ -39,7 +39,12 @@ export function zonesFor(inst: InstrumentManifest, lite: boolean): Record<string
   return Object.fromEntries(Object.entries(inst.pieces).map(([k, zones]) => [k, zones.filter((z) => keep.has(z.layer))]));
 }
 
+// FE-012: tải trước (chỉ tải file nén vào Cache Storage, chưa giải nén) khi trình duyệt rảnh. Bấm Phát lần đầu
+// trước đây chờ ~4 s chỉ để tải 221 file; tải trước xong thì Phát chỉ còn bước giải nén.
+const warming = new Map<string, Promise<void>>();
+
 async function fetchCached(url: string): Promise<ArrayBuffer> {
+  await warming.get(url)?.catch(() => undefined); // đang tải trước thì chờ nó, khỏi tải trùng
   let cache: Cache | null = null;
   try {
     cache = typeof caches !== "undefined" ? await caches.open(CACHE) : null;
@@ -91,4 +96,45 @@ export function instrumentsFor(tracks: { keys: string; bass: string }, withGuita
   const list = new Set<string>([tracks.keys, tracks.bass, "drums", "perc"]);
   if (withGuitar) { list.add("guitar"); list.add("guitar_mute"); }
   return [...list];
+}
+
+/** Mạng tiết kiệm dữ liệu hoặc 2G: không tự tải ~10 MB khi người dùng chưa bấm Phát. */
+function shouldSkipPrefetch(): boolean {
+  const conn = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+  return Boolean(conn?.saveData) || /(^|-)2g$/.test(conn?.effectiveType ?? "");
+}
+
+async function warmOne(url: string): Promise<void> {
+  if (typeof caches === "undefined") return;
+  const cache = await caches.open(CACHE);
+  if (await cache.match(url)) return;
+  const res = await fetch(url);
+  if (res.ok) await cache.put(url, res);
+}
+
+/**
+ * Tải trước file mẫu của các nhạc cụ vào Cache Storage, 2 luồng (nhường mạng cho trang).
+ * Không tạo AudioContext, không giải nén; lỗi thì bỏ qua vì lúc bấm Phát vẫn tải lại như cũ.
+ */
+export async function prefetchInstruments(keys: string[], lite: boolean, signal?: AbortSignal): Promise<number> {
+  if (shouldSkipPrefetch()) return 0;
+  const manifest = await loadManifest();
+  const files = new Set<string>();
+  for (const key of keys) {
+    const inst = manifest.instruments[key];
+    if (inst) for (const zones of Object.values(zonesFor(inst, lite))) for (const z of zones) files.add(z.file);
+  }
+  const queue = [...files].filter((f) => !decoded.has(f) && !warming.has(BASE + f));
+  let done = 0;
+  const worker = async () => {
+    for (let f = queue.shift(); f && !signal?.aborted; f = queue.shift()) {
+      const url = BASE + f;
+      const job = warmOne(url).catch(() => undefined);
+      warming.set(url, job);
+      await job;
+      done += 1;
+    }
+  };
+  await Promise.all([worker(), worker()]);
+  return done;
 }

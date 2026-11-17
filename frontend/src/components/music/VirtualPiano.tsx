@@ -75,7 +75,7 @@ export default function VirtualPiano({
     [active && "đang chọn", target && "nốt cần tìm", wrong && "nốt sai"].filter(Boolean).join(", ");
 
   return <div className="mt-4">
-    <div className="relative h-36 max-w-[900px] select-none sm:h-48" role="group" aria-label="Bàn phím piano ảo. Bấm phím để nghe nốt.">
+    <div data-force-light className="relative h-36 max-w-[900px] select-none sm:h-48" role="group" aria-label="Bàn phím piano ảo. Bấm phím để nghe nốt.">
       <div className="flex h-full">
         {whiteKeys.map((key) => {
           const active = selected.includes(key.note);

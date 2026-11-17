@@ -1,23 +1,31 @@
 /* Trang chủ "wow": bảng màu Đồng & Gỉ chỉ áp trong .wow để không đổi giao diện các trang khác.
    Khi nhóm chốt đổi màu toàn web thì chuyển các biến này vào @theme trong index.css. */
-@import "@fontsource/fraunces/vietnamese-600.css";
-@import "@fontsource/fraunces/vietnamese-600-italic.css";
-@import "@fontsource/fraunces/latin-600.css";
-@import "@fontsource/fraunces/latin-600-italic.css";
+/* FE-025: chỉ nạp bản nghiêng; bản đứng 600 đã có ở main.tsx. Trước đây nạp file theo từng bộ chữ
+   (latin-600.css…) vốn KHÔNG có unicode-range, nên bản latin đè mọi chữ Fraunces 600 trên toàn web:
+   "Kỹ năng", "mỗi", "bố" vỡ dấu (dấu ngã/sắc rời khỏi chữ) ở mọi tiêu đề thẻ. 600-italic.css có unicode-range. */
+@import "@fontsource/fraunces/600-italic.css";
 
 .wow {
   --w-verdigris: #45c2ab;
   --w-deep: #006d61;
   --w-mid: #1f9683;
   --w-brass: #e0a53e;
+  --w-brass-deep: #9a6400;
   --w-felt: #b4343b;
   --w-ivory: #f2f3ea;
   --w-lacquer: #0c231f;
   --w-night: #081613;
   --w-ink-soft: #3d5550;
   --w-line: #d6dbcc;
-  color: var(--w-lacquer);
-  background: var(--w-ivory);
+  /* FE-014: tách màu "giấy" (nền phần sáng) khỏi ngà/sơn mài cố định để chế độ tối chỉ lật phần sáng;
+     hero, dải vòng hợp âm và dải cuối vốn tối nên giữ nguyên. */
+  --w-cream: #f2f3ea;
+  --w-paper: var(--w-ivory);
+  --w-on-paper: var(--w-lacquer);
+  --w-panel: #fff;
+  --w-deep-text: var(--w-deep);
+  color: var(--w-on-paper);
+  background: var(--w-paper);
   overflow-x: clip;
   /* Bàn phím Piano dùng các biến này (styles.css); đổi sang màu Đồng & Gỉ trong trang chủ. */
   --accent: var(--w-verdigris);
@@ -26,16 +34,23 @@
 }
 .wow .display { font-family: "Fraunces", Georgia, serif; font-weight: 600; letter-spacing: -0.02em; }
 .wow .display em { font-style: italic; color: var(--w-brass); }
+/* FE-003: đồng #E0A53E trên nền ngà chỉ 1,95:1 (axe color-contrast), kể cả chữ 48px cần ≥ 3:1.
+   Ở phần nền sáng dùng đồng sẫm #9A6400 (4,48:1); nền tối (hero, dải vòng hợp âm) giữ đồng sáng. */
+.wow section:not(.wow-hero):not(.wow-prog):not(.wow-final) .display em { color: var(--w-brass-deep); }
+
+/* FE-007: vòng focus mặc định #006D61 trên nền tối chỉ 2,6–3:1 (WCAG 1.4.11 cần ≥ 3:1); nền tối dùng verdigris (7,5–8,4:1). */
+.wow-hero :focus-visible, .wow-prog :focus-visible, .wow-final :focus-visible { outline-color: var(--w-verdigris); }
 
 /* ---------- Hero ---------- */
+/* Màu quầng sáng lấy từ biến --w-* (không ghi cứng rgba) để phương án nhận diện trong theme/brands.css đổi theo. */
 .wow-hero {
   position: relative;
   min-height: calc(100svh - 64px);
   background:
-    radial-gradient(60% 50% at 75% 30%, rgba(69, 194, 171, 0.22), transparent 70%),
-    radial-gradient(40% 40% at 15% 85%, rgba(224, 165, 62, 0.16), transparent 70%),
+    radial-gradient(60% 50% at 75% 30%, color-mix(in srgb, var(--w-verdigris) 22%, transparent), transparent 70%),
+    radial-gradient(40% 40% at 15% 85%, color-mix(in srgb, var(--w-brass) 16%, transparent), transparent 70%),
     var(--w-night);
-  color: var(--w-ivory);
+  color: var(--w-cream);
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -43,7 +58,8 @@
 }
 .wow-hero h1 { font-size: clamp(2.8rem, 9vw, 8.5rem); line-height: 0.95; }
 .wow-hero .lead { color: rgba(242, 243, 234, 0.78); }
-.wow-char { display: inline-block; will-change: transform; cursor: default; transition: color 0.2s; }
+/* Không đặt will-change cố định: GSAP chỉ động vào chữ lúc mở trang, giữ ~30 lớp GPU mãi là phí bộ nhớ. */
+.wow-char { display: inline-block; cursor: default; transition: color 0.2s; }
 .wow-char:hover { color: var(--w-verdigris); }
 .wow-word { display: inline-block; white-space: nowrap; }
 
@@ -74,54 +90,80 @@
 .wow-cta:hover { transform: translateY(-2px) scale(1.02); }
 .wow-ghost {
   display: inline-flex; align-items: center; border-radius: 999px; padding: 0.95rem 1.6rem; font-weight: 600;
-  border: 1px solid rgba(242, 243, 234, 0.3); color: var(--w-ivory);
+  border: 1px solid rgba(242, 243, 234, 0.3); color: var(--w-cream);
 }
 .wow-ghost:hover { border-color: var(--w-verdigris); color: var(--w-verdigris); }
 
-.wow-sound { border: 1px solid rgba(242, 243, 234, 0.3); color: var(--w-ivory); background: rgba(8, 22, 19, 0.6); backdrop-filter: blur(6px); }
+.wow-sound { border: 1px solid rgba(242, 243, 234, 0.3); color: var(--w-cream); background: color-mix(in srgb, var(--w-night) 60%, transparent); backdrop-filter: blur(6px); }
 .wow-sound[aria-pressed="true"] { border-color: var(--w-verdigris); color: var(--w-verdigris); }
-.wow-sound.on-light { color: var(--w-lacquer); border-color: var(--w-line); background: rgba(242, 243, 234, 0.85); }
+.wow-sound.on-light { color: var(--w-on-paper); border-color: var(--w-line); background: color-mix(in srgb, var(--w-paper) 85%, transparent); }
 .wow-eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; }
-.wow-eq i { width: 3px; height: 4px; background: currentColor; border-radius: 1px; }
+/* Nhảy bằng scaleY (chỉ compositor) thay vì đổi height, vì height bắt trình duyệt dựng lại bố cục mỗi khung hình. */
+.wow-eq i { width: 3px; height: 14px; background: currentColor; border-radius: 1px; transform: scaleY(0.29); transform-origin: bottom; }
 .wow-eq[data-on="true"] i { animation: wow-eq 0.9s ease-in-out infinite; }
 .wow-eq[data-on="true"] i:nth-child(2) { animation-delay: 0.15s; }
 .wow-eq[data-on="true"] i:nth-child(3) { animation-delay: 0.3s; }
 .wow-eq[data-on="true"] i:nth-child(4) { animation-delay: 0.45s; }
-@keyframes wow-eq { 0%, 100% { height: 4px; } 50% { height: 14px; } }
+@keyframes wow-eq { 0%, 100% { transform: scaleY(0.29); } 50% { transform: scaleY(1); } }
 
 .wow-scrollhint { color: rgba(242, 243, 234, 0.6); }
 .wow-scrollhint i { display: block; width: 1px; height: 40px; margin: 8px auto 0; background: linear-gradient(var(--w-verdigris), transparent); animation: wow-drip 1.8s ease-in-out infinite; transform-origin: top; }
 @keyframes wow-drip { 0% { transform: scaleY(0); } 60% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
 
 /* ---------- Cảnh khuông nhạc ---------- */
-.wow-staff-scene { background: var(--w-ivory); }
-.wow-staff svg line.staff { stroke: var(--w-lacquer); stroke-width: 2; }
+.wow-staff-scene { background: var(--w-paper); }
+.wow-staff svg line.staff { stroke: var(--w-on-paper); stroke-width: 2; }
 .wow-staff .note ellipse { fill: var(--c); }
 .wow-staff .note text { fill: var(--w-lacquer); font-family: "Fraunces", serif; font-weight: 600; }
 .wow-step { position: absolute; inset: 0; }
-.wow-kicker { font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--w-deep); }
+.wow-kicker { font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--w-deep-text); }
 
 /* ---------- Dải vòng hợp âm ---------- */
-.wow-prog { background: var(--w-lacquer); color: var(--w-ivory); }
+.wow-prog { background: var(--w-lacquer); color: var(--w-cream); }
 .wow-card {
   flex: 0 0 auto; width: min(78vw, 420px); border-radius: 28px; padding: 2rem;
-  background: linear-gradient(160deg, rgba(69, 194, 171, 0.14), rgba(8, 22, 19, 0.2));
-  border: 1px solid rgba(69, 194, 171, 0.3);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--w-verdigris) 14%, transparent), color-mix(in srgb, var(--w-night) 20%, transparent));
+  border: 1px solid color-mix(in srgb, var(--w-verdigris) 30%, transparent);
   transition: border-color 0.3s, transform 0.3s, background 0.3s;
 }
-.wow-card[data-active="true"] { border-color: var(--w-brass); background: linear-gradient(160deg, rgba(224, 165, 62, 0.22), rgba(8, 22, 19, 0.2)); transform: translateY(-8px); }
+.wow-card[data-active="true"] { border-color: var(--w-brass); background: linear-gradient(160deg, color-mix(in srgb, var(--w-brass) 22%, transparent), color-mix(in srgb, var(--w-night) 20%, transparent)); transform: translateY(-8px); }
 .wow-card .roman { font-family: "Fraunces", serif; font-style: italic; color: var(--w-brass); }
 .wow-card .piano { --key-white: #f2f3ea; --key-black: #0c231f; --accent: #45c2ab; --line: #0c231f; }
 
 /* ---------- Phần dưới (giữ nội dung cũ, đổi màu) ---------- */
-.wow .wow-panel { background: #fff; border: 1px solid var(--w-line); border-radius: 22px; }
-.wow .reveal { will-change: transform, opacity; }
-.wow-final { background: var(--w-deep); color: var(--w-ivory); }
+.wow .wow-panel { background: var(--w-panel); border: 1px solid var(--w-line); border-radius: 22px; }
+.wow-final { background: var(--w-deep); color: var(--w-cream); }
 
-/* Giảm chuyển động: tắt hiệu ứng CSS lặp; GSAP tự chuyển sang bản nhẹ trong WowHome. */
+/* FE-014: chế độ tối của trang chủ. Chỉ phần "giấy" đổi; tương phản: chữ #E7EFEA/#10201C 14,6:1,
+   chữ phụ #A9BBB5 8,6:1, kicker #4CC2AD 8:1, đồng #E0A53E 8,4:1. */
+:root[data-theme="dark"] .wow {
+  --w-paper: #10201c;
+  --w-on-paper: #e7efea;
+  --w-panel: #172b26;
+  --w-line: #2f4a43;
+  --w-ink-soft: #a9bbb5;
+  --w-brass-deep: var(--w-brass);
+  --w-deep-text: #4cc2ad;
+  --w-ivory: #1d3631;
+}
+
+/* FE-026: hoạt ảnh mở trang bằng CSS (trước là gsap.from). Chạy ngay từ khung hình đầu, không chờ thư viện.
+   fill-mode "backwards": hết hoạt ảnh thì trả transform cho GSAP (thị sai khi cuộn) điều khiển. */
+@media (prefers-reduced-motion: no-preference) {
+  .wow-char { animation: wow-rise 0.9s cubic-bezier(.16, 1, .3, 1) calc(var(--i, 0) * 25ms) backwards; }
+  .hero-fade { animation: wow-fade-up 0.8s cubic-bezier(.22, .61, .36, 1) calc(500ms + var(--i, 0) * 120ms) backwards; }
+  .wow-float span { animation: wow-pop 1.2s cubic-bezier(.34, 1.8, .64, 1) calc(200ms + var(--i, 0) * 80ms) backwards; }
+}
+@keyframes wow-rise { from { transform: translateY(110%) rotate(8deg); opacity: 0; } }
+@keyframes wow-fade-up { from { transform: translateY(24px); opacity: 0; } }
+@keyframes wow-pop { from { transform: rotate(-20deg) scale(0); opacity: 0; } }
+
+/* Giảm chuyển động: tắt hiệu ứng CSS lặp; GSAP không tải (useMotion(false)). */
 @media (prefers-reduced-motion: reduce) {
   .wow-eq[data-on="true"] i, .wow-scrollhint i { animation: none; }
   .wow-cta:hover { transform: none; }
+  /* Thẻ hợp âm vẫn nhấc lên để báo thẻ đang chọn, nhưng nhảy ngay không trượt. */
+  .wow-card { transition: border-color 0.3s, background 0.3s; }
 }
 
 /* Màn hình hẹp: nốt trang trí mờ đi để không che chữ. */

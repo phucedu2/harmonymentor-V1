@@ -1,0 +1,627 @@
+{
+ "email": "soi1794853889185@vd.vn",
+ "report": [
+  {
+   "name": "trang-chu",
+   "w": 1920,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "button \"Bật âm thanh\" 153x38",
+    "button \"C\" 42x34",
+    "button \"Am\" 51x34",
+    "button \"G7\" 51x34",
+    "button \"E♭m7♭5\" 84x34"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-nhap",
+   "w": 1920,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng ký\" 57x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-ky",
+   "w": 1920,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng nhập\" 75x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "404",
+   "w": 1920,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "trang-chu",
+   "w": 1440,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "button \"Bật âm thanh\" 153x38",
+    "button \"C\" 42x34",
+    "button \"Am\" 51x34",
+    "button \"G7\" 51x34",
+    "button \"E♭m7♭5\" 84x34"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-nhap",
+   "w": 1440,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng ký\" 57x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-ky",
+   "w": 1440,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng nhập\" 75x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "404",
+   "w": 1440,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "trang-chu",
+   "w": 1280,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "button \"Bật âm thanh\" 153x38",
+    "button \"C\" 42x34",
+    "button \"Am\" 51x34",
+    "button \"G7\" 51x34",
+    "button \"E♭m7♭5\" 84x34"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-nhap",
+   "w": 1280,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng ký\" 57x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-ky",
+   "w": 1280,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng nhập\" 75x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "404",
+   "w": 1280,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "trang-chu",
+   "w": 768,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "button \"Bật âm thanh\" 153x38",
+    "button \"C\" 42x34",
+    "button \"Am\" 51x34",
+    "button \"G7\" 51x34",
+    "button \"E♭m7♭5\" 84x34"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-nhap",
+   "w": 768,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng ký\" 57x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-ky",
+   "w": 768,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng nhập\" 75x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "404",
+   "w": 768,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "trang-chu",
+   "w": 390,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Đăng nhập\" 91x36",
+    "button \"☾\" 40x40",
+    "button \"Bật âm thanh\" 153x38",
+    "button \"C\" 42x34",
+    "button \"Am\" 51x34",
+    "button \"G7\" 51x34",
+    "button \"E♭m7♭5\" 84x34"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-nhap",
+   "w": 390,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Đăng nhập\" 91x36",
+    "button \"☾\" 40x40",
+    "a \"Đăng ký\" 57x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-ky",
+   "w": 390,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Đăng nhập\" 91x36",
+    "button \"☾\" 40x40",
+    "a \"Đăng nhập\" 75x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "404",
+   "w": 390,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Đăng nhập\" 91x36",
+    "button \"☾\" 40x40"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "trang-chu",
+   "w": 1920,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "button \"Bật âm thanh\" 153x38",
+    "button \"C\" 42x34",
+    "button \"Am\" 51x34",
+    "button \"G7\" 51x34",
+    "button \"E♭m7♭5\" 84x34"
+   ],
+   "bg": "rgb(13, 27, 24)",
+   "logs": []
+  },
+  {
+   "name": "dang-nhap",
+   "w": 1920,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng ký\" 57x18"
+   ],
+   "bg": "rgb(13, 27, 24)",
+   "logs": []
+  },
+  {
+   "name": "dang-ky",
+   "w": 1920,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng nhập\" 75x18"
+   ],
+   "bg": "rgb(13, 27, 24)",
+   "logs": []
+  },
+  {
+   "name": "404",
+   "w": 1920,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36"
+   ],
+   "bg": "rgb(13, 27, 24)",
+   "logs": []
+  },
+  {
+   "name": "trang-chu",
+   "w": 1440,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "button \"Bật âm thanh\" 153x38",
+    "button \"C\" 42x34",
+    "button \"Am\" 51x34",
+    "button \"G7\" 51x34",
+    "button \"E♭m7♭5\" 84x34"
+   ],
+   "bg": "rgb(13, 27, 24)",
+   "logs": []
+  },
+  {
+   "name": "dang-nhap",
+   "w": 1440,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng ký\" 57x18"
+   ],
+   "bg": "rgb(13, 27, 24)",
+   "logs": []
+  },
+  {
+   "name": "dang-ky",
+   "w": 1440,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng nhập\" 75x18"
+   ],
+   "bg": "rgb(13, 27, 24)",
+   "logs": []
+  },
+  {
+   "name": "404",
+   "w": 1440,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36"
+   ],
+   "bg": "rgb(13, 27, 24)",
+   "logs": []
+  },
+  {
+   "name": "trang-chu",
+   "w": 1280,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "button \"Bật âm thanh\" 153x38",
+    "button \"C\" 42x34",
+    "button \"Am\" 51x34",
+    "button \"G7\" 51x34",
+    "button \"E♭m7♭5\" 84x34"
+   ],
+   "bg": "rgb(13, 27, 24)",
+   "logs": []
+  },
+  {
+   "name": "dang-nhap",
+   "w": 1280,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng ký\" 57x18"
+   ],
+   "bg": "rgb(13, 27, 24)",
+   "logs": []
+  },
+  {
+   "name": "dang-ky",
+   "w": 1280,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng nhập\" 75x18"
+   ],
+   "bg": "rgb(13, 27, 24)",
+   "logs": []
+  },
+  {
+   "name": "404",
+   "w": 1280,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36"
+   ],
+   "bg": "rgb(13, 27, 24)",
+   "logs": []
+  },
+  {
+   "name": "trang-chu",
+   "w": 768,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "button \"Bật âm thanh\" 153x38",
+    "button \"C\" 42x34",
+    "button \"Am\" 51x34",
+    "button \"G7\" 51x34",
+    "button \"E♭m7♭5\" 84x34"
+   ],
+   "bg": "rgb(13, 27, 24)",
+   "logs": []
+  },
+  {
+   "name": "dang-nhap",
+   "w": 768,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng ký\" 57x18"
+   ],
+   "bg": "rgb(13, 27, 24)",
+   "logs": []
+  },
+  {
+   "name": "dang-ky",
+   "w": 768,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng nhập\" 75x18"
+   ],
+   "bg": "rgb(13, 27, 24)",
+   "logs": []
+  },
+  {
+   "name": "404",
+   "w": 768,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36"
+   ],
+   "bg": "rgb(13, 27, 24)",
+   "logs": []
+  },
+  {
+   "name": "trang-chu",
+   "w": 390,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Đăng nhập\" 91x36",
+    "button \"☀\" 40x40",
+    "button \"Bật âm thanh\" 153x38",
+    "button \"C\" 42x34",
+    "button \"Am\" 51x34",
+    "button \"G7\" 51x34",
+    "button \"E♭m7♭5\" 84x34"
+   ],
+   "bg": "rgb(13, 27, 24)",
+   "logs": []
+  },
+  {
+   "name": "dang-nhap",
+   "w": 390,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Đăng nhập\" 91x36",
+    "button \"☀\" 40x40",
+    "a \"Đăng ký\" 57x18"
+   ],
+   "bg": "rgb(13, 27, 24)",
+   "logs": []
+  },
+  {
+   "name": "dang-ky",
+   "w": 390,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Đăng nhập\" 91x36",
+    "button \"☀\" 40x40",
+    "a \"Đăng nhập\" 75x18"
+   ],
+   "bg": "rgb(13, 27, 24)",
+   "logs": []
+  },
+  {
+   "name": "404",
+   "w": 390,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Đăng nhập\" 91x36",
+    "button \"☀\" 40x40"
+   ],
+   "bg": "rgb(13, 27, 24)",
+   "logs": []
+  }
+ ]
+}
