@@ -33,13 +33,13 @@ Trạng thái: **Chấp nhận 17/11/2026**. Phúc báo nhóm chọn phương á
    - Chữ: `#17142B` trên nền sáng, `#ECEBF5` trên nền tối.
    - **Màu các lỗ giữ nguyên** (luật số 2 của `BRAND_NOTE.md`: mỗi lỗ là một nốt, màu nốt không đổi theo chế độ). Lỗ thấp nhất `#D48FD1` trên ô `#17142B` = 7,4:1.
    - Favicon `frontend/public/favicon-san-khau.svg` (cùng hình, chỉ đổi biến ô và viền), `theme-color` `#17142B`, `site.webmanifest` theo Sân khấu.
-5. **Đồng & Gỉ được giữ lại**, không xóa: build với `VITE_BRAND=dong-gi`, hoặc mở `?brand=dong-gi` một lần (trình duyệt nhớ trong `localStorage` `hm-brand`). Giấy nhạc cũng giữ để so sánh (`?brand=giay-nhac`).
+5. **Đồng & Gỉ được giữ lại**, không xóa: build với `VITE_BRAND=dong-gi`, hoặc mở `?brand=dong-gi` một lần (trình duyệt nhớ trong `localStorage` `hm-brand`). Giấy nhạc cũng giữ làm **phương án dự phòng** (Phúc chọn 17/11/2026: giữ, không xóa): bật bằng `?brand=giay-nhac` hoặc `VITE_BRAND=giay-nhac`; chỉ tốn khoảng 3 KB CSS và là minh chứng nhóm đã cân nhắc hai phương án. Giấy nhạc chưa có bộ file logo và favicon riêng.
 6. **Màu 12 nốt** (`--color-note-*`) và phím đàn, khuông nhạc không đổi: chúng là ký hiệu học, không phải nhận diện.
 
 ## Hệ quả
 
 - Ảnh chụp, slide, báo cáo cũ (màu xanh Đồng & Gỉ) sẽ khác app. Cần chụp lại cho slide bảo vệ.
 - Bộ file logo Sân khấu (17 SVG + PNG cho slide) ở `docs/thuong-hieu/logo/san-khau/`, dựng bằng `docs/thuong-hieu/_nguon/san_khau.py` (chỉ thay màu vỏ/chữ/viền, script tự kiểm màu nốt không đổi). Bộ Đồng & Gỉ trong `logo/*.svg` giữ nguyên.
-- Icon PNG cho app (`icon-192/512-san-khau.png`, `apple-touch-icon-san-khau.png`) đã có; manifest trỏ bản Sân khấu kể cả khi chạy `?brand=dong-gi` (manifest là file tĩnh). `favicon.ico` 48px vẫn là Đồng & Gỉ (trình duyệt dùng favicon SVG trước).
+- Icon PNG cho app (`icon-192/512-san-khau.png`, `apple-touch-icon-san-khau.png`) đã có; manifest trỏ bản Sân khấu kể cả khi chạy `?brand=dong-gi` (manifest là file tĩnh). `favicon-san-khau.ico` (16/32/48 px) cho trình duyệt không đọc favicon SVG; `favicon.ico` cũ giữ cho bản Đồng & Gỉ.
 - Nếu `VITE_BRAND=dong-gi` thì `site.webmanifest` vẫn mang màu Sân khấu (file tĩnh); chỉ ảnh hưởng màu thanh tiêu đề khi cài app lên màn hình chính.
 - Đổi lại về Đồng & Gỉ cho cả nhóm chỉ cần sửa một dòng trong `vite.config.ts`.
