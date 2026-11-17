@@ -1,9 +1,9 @@
 /* Trang chủ "wow": bảng màu Đồng & Gỉ chỉ áp trong .wow để không đổi giao diện các trang khác.
    Khi nhóm chốt đổi màu toàn web thì chuyển các biến này vào @theme trong index.css. */
-@import "@fontsource/fraunces/vietnamese-600.css";
-@import "@fontsource/fraunces/vietnamese-600-italic.css";
-@import "@fontsource/fraunces/latin-600.css";
-@import "@fontsource/fraunces/latin-600-italic.css";
+/* FE-025: chỉ nạp bản nghiêng; bản đứng 600 đã có ở main.tsx. Trước đây nạp file theo từng bộ chữ
+   (latin-600.css…) vốn KHÔNG có unicode-range, nên bản latin đè mọi chữ Fraunces 600 trên toàn web:
+   "Kỹ năng", "mỗi", "bố" vỡ dấu (dấu ngã/sắc rời khỏi chữ) ở mọi tiêu đề thẻ. 600-italic.css có unicode-range. */
+@import "@fontsource/fraunces/600-italic.css";
 
 .wow {
   --w-verdigris: #45c2ab;

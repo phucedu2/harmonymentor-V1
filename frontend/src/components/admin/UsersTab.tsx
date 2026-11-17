@@ -24,13 +24,13 @@ export default function UsersTab() {
       <Button type="submit" variant="secondary">Tìm</Button>
     </form>
     {error && <p role="alert" className="text-danger">{error}</p>}
-    {!rows ? <p className="text-muted">Đang tải…</p> : rows.length === 0 ? <p className="text-muted">Không có tài khoản nào.</p>
+    {!rows ? <p role="status" className="text-muted">Đang tải…</p> : rows.length === 0 ? <p className="text-muted">Không có tài khoản nào.</p>
       : <ul className="grid gap-2">{rows.map((u) => <li key={u.id}><Card className="flex flex-wrap items-center justify-between gap-2 p-3">
         <div>
           <p className="font-semibold">{u.display_name || u.email} {u.role === "admin" && <Badge>Quản trị</Badge>} {!u.is_active && <Badge tone="warning">Đã khóa</Badge>}</p>
           <p className="text-sm text-muted">{u.email} · {u.lessons_completed} bài xong · {u.attempts} lượt làm · {u.last_activity ? `gần nhất ${u.last_activity.slice(0, 10)}` : "chưa hoạt động"}</p>
         </div>
-        {u.id !== me?.id && <Button variant="secondary" onClick={() => toggle(u)}>{u.is_active ? "Khóa" : "Mở khóa"}</Button>}
+        {u.id !== me?.id && <Button variant="secondary" aria-label={`${u.is_active ? "Khóa" : "Mở khóa"} tài khoản ${u.email}`} onClick={() => toggle(u)}>{u.is_active ? "Khóa" : "Mở khóa"}</Button>}
       </Card></li>)}</ul>}
   </div>;
 }

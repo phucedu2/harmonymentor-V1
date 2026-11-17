@@ -11,7 +11,7 @@ export default function StatsTab() {
   const [failed, setFailed] = useState(false);
   useEffect(() => { setData(null); setFailed(false); api.adminStats(Number(days)).then(setData).catch(() => setFailed(true)); }, [days]);
   if (failed) return <p role="alert" className="text-danger">Chưa tải được thống kê.</p>;
-  if (!data) return <p className="text-muted">Đang tải…</p>;
+  if (!data) return <p role="status" className="text-muted">Đang tải…</p>;
   const t = data.totals;
   const maxMastery = Math.max(1, ...data.mastery.map((m) => m.count));
   return <div className="grid gap-4">
@@ -28,12 +28,12 @@ export default function StatsTab() {
       <BarList label="Phễu bài học" rows={data.funnel.map((f) => ({ label: f.title, value: f.completed, max: Math.max(1, f.started),
         note: `${f.completed}/${f.started} (${pct(f.completion_rate)})` }))} /></div></Card>
     <Card className="p-4"><CardTitle>Kỹ năng khó nhất (đúng ngay lần đầu)</CardTitle><div className="mt-2">
-      <BarList label="Kỹ năng" color="#d97706" rows={data.skills.slice(0, 8).map((s) => ({ label: s.name, value: s.first_try_correct_rate, max: 1,
+      <BarList label="Kỹ năng" color="var(--color-warning)" rows={data.skills.slice(0, 8).map((s) => ({ label: s.name, value: s.first_try_correct_rate, max: 1,
         note: `${pct(s.first_try_correct_rate)} · ${s.first_try_total} lượt` }))} /></div></Card>
     <Card className="p-4"><CardTitle>Phân bố mức thành thạo</CardTitle><div className="mt-2">
-      <BarList label="Mastery" color="#16a34a" rows={data.mastery.map((m) => ({ label: m.label, value: m.count, max: maxMastery, note: String(m.count) }))} /></div></Card>
+      <BarList label="Mastery" color="var(--color-success)" rows={data.mastery.map((m) => ({ label: m.label, value: m.count, max: maxMastery, note: String(m.count) }))} /></div></Card>
     {data.hardest_exercises.length > 0 && <Card className="p-4"><CardTitle>Câu hỏi khó nhất</CardTitle><div className="mt-2">
-      <BarList label="Câu khó" color="#dc2626" rows={data.hardest_exercises.map((h) => ({ label: h.exercise_id, value: h.first_try_correct_rate, max: 1,
+      <BarList label="Câu khó" color="var(--color-danger)" rows={data.hardest_exercises.map((h) => ({ label: h.exercise_id, value: h.first_try_correct_rate, max: 1,
         note: `${pct(h.first_try_correct_rate)} · ${h.first_try_total} người` }))} /></div></Card>}
   </div>;
 }

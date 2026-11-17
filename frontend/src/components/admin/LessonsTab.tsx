@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api, type AdminBlock, type AdminLessonDetail, type AdminLessonRow, type AdminRevision } from "../../api";
 import { Button } from "../ui/Button";
 import { Badge, Card } from "../ui/Page";
@@ -9,6 +9,15 @@ const LIST_KEYS = ["paragraphs", "items"];
 const TERM_FIELDS = ["symbol", "term", "definition", "example"] as const;
 type Payload = Record<string, unknown>;
 type Term = Partial<Record<(typeof TERM_FIELDS)[number], string>>;
+// FE-025: tên trường và loại khối hiện bằng tiếng Việt (trước hiện mã code "prompt", "callout"…); mã vẫn giữ trong ngoặc
+// để đối chiếu với nội dung YAML khi cần.
+const FIELD_VI: Record<string, string> = { title: "Tiêu đề", prompt: "Đề bài", note: "Ghi chú", intro: "Mở đầu", kicker: "Dòng nhỏ phía trên tiêu đề",
+  paragraphs: "Các đoạn văn", items: "Các ý", symbol: "Ký hiệu", term: "Thuật ngữ", definition: "Định nghĩa", example: "Ví dụ" };
+const BLOCK_VI: Record<string, string> = { theory: "Lý thuyết", callout: "Ô lưu ý", piano: "Đàn piano", glossary: "Thuật ngữ", summary: "Tóm tắt",
+  audio: "Nghe ví dụ", checkpoint: "Câu hỏi kiểm tra", compose_link: "Liên kết Sáng tác", interactive: "Tương tác", notation: "Khuông nhạc",
+  progression: "Vòng hợp âm", key_overview: "Tổng quan giọng", interval_explorer: "Khám phá quãng", triad_explorer: "Khám phá hợp âm ba",
+  triad_audio_explorer: "Nghe hợp âm ba", triad_notation_explorer: "Hợp âm ba trên khuông" };
+const fieldName = (k: string) => FIELD_VI[k] ?? k;
 const errMsg = (e: unknown) => (e as { message?: string }).message ?? "Có lỗi xảy ra, thử lại sau.";
 
 function EngineBox({ report }: { report: AdminBlock["engine"] }) {
@@ -20,26 +29,27 @@ function EngineBox({ report }: { report: AdminBlock["engine"] }) {
   </div>;
 }
 
-function Field({ k, value, onChange }: { k: string; value: unknown; onChange: (v: unknown) => void }) {
-  const id = `f-${k}`;
+// idPrefix theo khối: mở hai khối cùng lúc trước đây sinh hai id "f-title" trùng nhau, nhãn trỏ nhầm ô.
+function Field({ k, value, onChange, idPrefix }: { k: string; value: unknown; onChange: (v: unknown) => void; idPrefix: string }) {
+  const id = `${idPrefix}-${k}`;
   if (typeof value === "string" && TEXT_KEYS.includes(k)) {
-    return <div><label htmlFor={id} className="text-sm font-semibold">{k}</label>
+    return <div><label htmlFor={id} className="text-sm font-semibold">{fieldName(k)}</label>
       <textarea id={id} rows={value.length > 90 ? 3 : 1} value={value} onChange={(e) => onChange(e.target.value)} className="mt-1 w-full rounded-lg border border-line bg-surface p-2" /></div>;
   }
   if (Array.isArray(value) && LIST_KEYS.includes(k) && value.every((x) => typeof x === "string")) {
-    return <div><label htmlFor={id} className="text-sm font-semibold">{k} (mỗi dòng một mục)</label>
+    return <div><label htmlFor={id} className="text-sm font-semibold">{fieldName(k)} (mỗi dòng một mục)</label>
       <textarea id={id} rows={Math.min(10, value.length + 1)} value={(value as string[]).join("\n")} onChange={(e) => onChange(e.target.value.split("\n").filter((l) => l.trim() !== ""))}
         className="mt-1 w-full rounded-lg border border-line bg-surface p-2" /></div>;
   }
   if (k === "terms" && Array.isArray(value)) {
     return <fieldset className="grid gap-2"><legend className="text-sm font-semibold">Thuật ngữ</legend>
       {(value as Term[]).map((t, i) => <div key={i} className="grid gap-1 rounded-lg border border-line p-2 sm:grid-cols-2">
-        {TERM_FIELDS.filter((f) => f in t).map((f) => <label key={f} className="text-xs">{f}
+        {TERM_FIELDS.filter((f) => f in t).map((f) => <label key={f} className="text-xs">{fieldName(f)}
           <input value={t[f] ?? ""} onChange={(e) => onChange((value as Term[]).map((x, j) => (j === i ? { ...x, [f]: e.target.value } : x)))}
             className="mt-0.5 min-h-9 w-full rounded border border-line bg-surface px-2 text-sm" /></label>)}
       </div>)}</fieldset>;
   }
-  return <p className="text-xs text-muted">Trường “{k}” bị khóa (không sửa ở đây).</p>;
+  return <p className="text-xs text-muted">Trường “{fieldName(k)}” bị khóa (không sửa ở đây).</p>;
 }
 
 function BlockEditor({ lessonId, block, onChanged }: { lessonId: string; block: AdminBlock; onChanged: () => void }) {
@@ -65,13 +75,13 @@ function BlockEditor({ lessonId, block, onChanged }: { lessonId: string; block: 
 
   return <li className="rounded-lg border border-line p-3">
     <button type="button" className="flex w-full flex-wrap items-center gap-2 text-left" aria-expanded={open} onClick={() => setOpen(!open)}>
-      <span className="font-semibold">#{block.position} · {block.block_type}</span>
+      <span className="font-semibold">#{block.position} · {BLOCK_VI[block.block_type] ?? block.block_type}</span>
       {block.edited && <Badge tone="warning">Đã sửa</Badge>}{block.draft_revision_id && <Badge tone="muted">Có bản nháp</Badge>}
       {block.engine.contradicted.length > 0 && <Badge tone="warning">Engine nghi sai</Badge>}
       <span className="truncate text-sm text-muted">{String(block.payload.title ?? block.payload.prompt ?? "")}</span>
     </button>
     {open && <div className="mt-3 grid gap-3">
-      {Object.entries(payload).map(([k, v]) => <Field key={k} k={k} value={v} onChange={(nv) => setPayload({ ...payload, [k]: nv })} />)}
+      {Object.entries(payload).map(([k, v]) => <Field key={k} k={k} idPrefix={`f-${block.id}`} value={v} onChange={(nv) => setPayload({ ...payload, [k]: nv })} />)}
       <div><label htmlFor={`note-${block.id}`} className="text-sm font-semibold">Ghi chú thay đổi (không bắt buộc)</label>
         <input id={`note-${block.id}`} value={note} maxLength={500} onChange={(e) => setNote(e.target.value)} className="mt-1 min-h-10 w-full rounded-lg border border-line bg-surface px-3" /></div>
       <div className="flex flex-wrap gap-2">
@@ -104,18 +114,22 @@ function BlockEditor({ lessonId, block, onChanged }: { lessonId: string; block: 
 function LessonEditor({ id, onBack, onChanged }: { id: string; onBack: () => void; onChanged: () => void }) {
   const [detail, setDetail] = useState<AdminLessonDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
   const load = () => api.adminLesson(id).then(setDetail).catch(() => setError("Chưa tải được bài."));
   useEffect(() => { load(); }, [id]);
+  // Nút "Sửa nội dung" vừa bấm đã biến mất: đưa focus tới tiêu đề bài để bàn phím/trình đọc màn hình không rơi về đầu trang.
+  const loaded = detail !== null;
+  useEffect(() => { if (loaded) headingRef.current?.focus(); }, [loaded]);
   const toggleHidden = async () => {
     if (!detail) return;
     try { await api.adminVisibility(id, !detail.lesson.hidden); await load(); onChanged(); } catch (e) { setError(errMsg(e)); }
   };
   if (error) return <p role="alert" className="text-danger">{error}</p>;
-  if (!detail) return <p className="text-muted">Đang tải…</p>;
+  if (!detail) return <p role="status" className="text-muted">Đang tải…</p>;
   return <div className="grid gap-3">
     <div className="flex flex-wrap items-center gap-2">
       <Button variant="ghost" onClick={onBack}>← Danh sách bài</Button>
-      <h2 className="text-lg font-bold">Bài {detail.lesson.order}. {detail.lesson.title}</h2>
+      <h2 ref={headingRef} tabIndex={-1} className="text-lg font-bold outline-none">Bài {detail.lesson.order}. {detail.lesson.title}</h2>
       {detail.lesson.hidden && <Badge tone="warning">Đang ẩn</Badge>}
       <Button variant="secondary" className="ml-auto" onClick={toggleHidden}>{detail.lesson.hidden ? "Hiện lại cho học sinh" : "Ẩn khỏi học sinh"}</Button>
     </div>
@@ -132,9 +146,9 @@ export default function LessonsTab() {
   useEffect(() => { load(); }, []);
   if (openId) return <LessonEditor id={openId} onBack={() => setOpenId(null)} onChanged={load} />;
   if (failed) return <p role="alert" className="text-danger">Chưa tải được danh sách bài.</p>;
-  if (!rows) return <p className="text-muted">Đang tải…</p>;
+  if (!rows) return <p role="status" className="text-muted">Đang tải…</p>;
   return <ul className="grid gap-2">{rows.map((l) => <li key={l.id}><Card className="flex flex-wrap items-center justify-between gap-2 p-3">
     <div><p className="font-semibold">Bài {l.order}. {l.title} {l.hidden && <Badge tone="warning">Ẩn</Badge>}</p>
       <p className="text-sm text-muted">{l.block_count} khối · {l.exercise_count} câu hỏi · {l.edited_blocks} khối đã sửa · {l.draft_blocks} bản nháp</p></div>
-    <Button variant="secondary" onClick={() => setOpenId(l.id)}>Sửa nội dung</Button></Card></li>)}</ul>;
+    <Button variant="secondary" aria-label={`Sửa nội dung bài ${l.order}`} onClick={() => setOpenId(l.id)}>Sửa nội dung</Button></Card></li>)}</ul>;
 }

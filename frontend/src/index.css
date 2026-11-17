@@ -107,6 +107,10 @@
 }
 
 @layer base {
+  /* FE-025: lưới một cột mặc định co được (minmax(0,1fr)) thay vì "auto". Với "auto", một dòng chữ dài
+     không xuống dòng (truncate, email, ô nhập file) đẩy cả lưới rộng hơn màn hình: trang Quản trị trên
+     điện thoại tràn ngang 195 px. Ở tầng base nên mọi lớp grid-cols-* (tầng utilities) vẫn thắng. */
+  .grid { grid-template-columns: minmax(0, 1fr); }
   body {
     @apply bg-bg font-sans text-ink antialiased;
   }
