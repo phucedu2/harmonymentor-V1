@@ -1,0 +1,79 @@
+digraph G {
+  graph [fontname="Liberation Serif", bgcolor=white, pad=0.2 , nodesep=0.35, ranksep=0.35];
+  node [fontname="Liberation Serif", fontsize=11, color=black];
+  edge [fontname="Liberation Serif", fontsize=9, color=black];
+  node [fontsize=10];
+  s [shape=ellipse, label="Bắt đầu"];
+  i [shape=parallelogram, label="Nhập exercise_version_id,
+đáp án, cách nhập"];
+  d0 [shape=diamond, label="Phiên bản là bản
+đang phát hành?", margin=0.02];
+  o0 [shape=parallelogram, label="Trả 409
+EXERCISE_VERSION_SUPERSEDED"];
+  d1 [shape=diamond, label="Cách nhập được phép
+cho câu này?", margin=0.02];
+  o1 [shape=parallelogram, label="Trả 422 (không lưu lượt làm)"];
+  g [shape=box, label="Music Engine chấm theo answer_key
++ grader_config của phiên bản"];
+  a [shape=box, label="Lưu attempt + attempt_errors
+(is_test = true nếu là Admin)"];
+  d2 [shape=diamond, label="Lượt làm thử
+của Admin?", margin=0.02];
+  d3 [shape=diamond, label="Đúng?", margin=0.02];
+  d4 [shape=diamond, label="Lượt đầu tiên
+của câu này?", margin=0.02];
+  d5 [shape=diamond, label="Lượt trước
+bị sai?", margin=0.02];
+  r1 [shape=box, label="kết quả = 1"];
+  r05 [shape=box, label="kết quả = 0,5"];
+  r0 [shape=box, label="kết quả = 0"];
+  rn [shape=box, label="đúng lặp lại:
+chỉ đếm, điểm giữ nguyên"];
+  m [shape=box, label="mastery = cũ + 0,3 × (kết quả − cũ)
+mức: yếu < 0,60 (≥ 5 lượt), sẵn sàng ≥ 0,60, thành thạo ≥ 0,80"];
+  o2 [shape=parallelogram, label="Trả đúng?, mã lỗi, phản hồi;
+lời giải khi đúng hoặc sai ≥ 2 lần"];
+  d6 [shape=diamond, label="Người học bấm
+Hoàn thành bài?", margin=0.02];
+  d7 [shape=diamond, label="Mọi câu đã đúng
+ít nhất một lần?", margin=0.02];
+  o3 [shape=parallelogram, label="Trả 409
+LESSON_NOT_MASTERED"];
+  l [shape=box, label="Đánh dấu hoàn thành; tạo review_states
+hộp 1, due_at = bây giờ"];
+  rv [shape=box, label="Ôn thẻ: đúng khi đến hạn → hộp+1
+(1-2-4-8-16 ngày); sai → hộp 1, +1 ngày;
+đúng trước hạn → giữ hộp"];
+  e [shape=ellipse, label="Kết thúc"];
+  s -> i;
+  i -> d0;
+  d0 -> o0 [label="Không"];
+  d0 -> d1 [label="Có"];
+  d1 -> o1 [label="Không"];
+  d1 -> g [label="Có"];
+  g -> a;
+  a -> d2;
+  d2 -> o2 [label="Có"];
+  d2 -> d3 [label="Không"];
+  d3 -> r0 [label="Không"];
+  d3 -> d4 [label="Có"];
+  d4 -> r1 [label="Có"];
+  d4 -> d5 [label="Không"];
+  d5 -> r05 [label="Có"];
+  d5 -> rn [label="Không"];
+  r1 -> m;
+  r05 -> m;
+  r0 -> m;
+  rn -> o2;
+  m -> o2;
+  o2 -> d6;
+  d6 -> e [label="Không"];
+  d6 -> d7 [label="Có"];
+  d7 -> o3 [label="Không"];
+  d7 -> l [label="Có"];
+  l -> rv;
+  rv -> e;
+  o0 -> e;
+  o1 -> e;
+  o3 -> e;
+}

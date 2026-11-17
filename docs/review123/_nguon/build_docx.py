@@ -5,6 +5,7 @@ noi_dung.py (chữ của từng mục, kèm nguồn). Chạy lại được bấ
 
     python docs/review123/_nguon/build_docx.py            # dựng .docx
     python docs/review123/_nguon/build_docx.py --pdf      # dựng, render PDF bằng LibreOffice để soát, điền số trang Mục lục
+    python docs/review123/_nguon/build_docx.py --vi --pdf # bản thuần tiếng Việt (cần gen_diagrams.py --vi trước)
 
 PDF chỉ để tự kiểm (ghi vào thư mục tạm), không nộp.
 """
@@ -30,22 +31,43 @@ from PIL import Image
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
+import dich_vi  # noqa: E402
 import mo_ta_bang  # noqa: E402
 import noi_dung as ND  # noqa: E402
 
-OUT = HERE.parent / "eProject_Sem-II_HarmonyMentor_Review01_02_03.docx"
-PNG = HERE / "so_do" / "png"
+# --vi: bản thuần tiếng Việt (chữ thường, không in nghiêng xám), dùng phần vi của mọi cặp (en, vi) và dich_vi.py
+VI = "--vi" in sys.argv
+OUT = HERE.parent / ("eProject_Sem-II_HarmonyMentor_Review01_02_03_TiengViet.docx" if VI
+                     else "eProject_Sem-II_HarmonyMentor_Review01_02_03.docx")
+PNG = HERE / "so_do" / ("png_vi" if VI else "png")
 ANH = HERE / "anh"
 MAU = HERE / "mau"
 SCHEMA = json.loads((HERE / "du_lieu" / "schema.json").read_text(encoding="utf-8"))
 TABLES = {t["name"]: t for t in SCHEMA}
-TOC_CACHE = HERE / "du_lieu" / "toc_pages.json"
+TOC_CACHE = HERE / "du_lieu" / ("toc_pages_vi.json" if VI else "toc_pages.json")
 
 BODY_FONT, SMALL_FONT = "Times New Roman", "Arial"
 GREY = RGBColor(0x59, 0x59, 0x59)
 FILL_YELLOW = "FFF2CC"
 TEXT_W = 17.0  # cm, A4 21 cm trừ lề 2 + 2
 BLANK = "________"
+
+
+def L(en, vi=None):
+    """Chữ theo ngôn ngữ đang dựng: bản tiếng Việt lấy vi, thiếu vi thì tra dich_vi.T."""
+    if not VI:
+        return en
+    return vi if vi else dich_vi.T(en)
+
+
+BOLD_LEAD_VI = {"Solution:": "Giải pháp:", "Future scope.": "Hướng phát triển."}
+
+DOCNAME_VI = {
+    "Problem Definition": "Định nghĩa vấn đề", "Customer Requirements Specifications": "Đặc tả yêu cầu khách hàng",
+    "Data Flow Diagram": "Sơ đồ luồng dữ liệu", "Entity Relationship Diagram": "Sơ đồ thực thể – quan hệ",
+    "Table Design": "Thiết kế bảng", "Site Map": "Sơ đồ trang", "Algorithms": "Thuật toán", "Screen Design": "Thiết kế màn hình",
+    "Testing Document": "Tài liệu kiểm thử", "Final Checklist": "Danh mục kiểm tra cuối", "Task Sheet": "Bảng phân công công việc",
+}
 
 
 # =============================================================================================== helpers XML
@@ -266,7 +288,7 @@ class Doc:
         run_font(p.add_run(label), size=8, bold=True, font=SMALL_FONT)
         if field_page:
             add_field(p, "PAGE", size=8, bold=True, font=SMALL_FONT)
-            run_font(p.add_run(" of "), size=8, font=SMALL_FONT)
+            run_font(p.add_run(L(" of ", " / ")), size=8, font=SMALL_FONT)
             add_field(p, "NUMPAGES", "120", size=8, bold=True, font=SMALL_FONT)
         elif blank:
             r = blank_run(p, size=8)
@@ -281,12 +303,12 @@ class Doc:
         t = hdr.add_table(2, 3, Cm(TEXT_W))
         t.style = self.d.styles["Table Grid"]
         set_widths(t, [4.2, 7.3, 5.5])
-        self._small(t.cell(0, 0), "Design Plan:", "HarmonyMentor")
-        self._small(t.cell(0, 1), "Document Name:", docname)
-        self._small(t.cell(0, 2), f"SWD/Form No.{form}/Ver1.0")
-        self._small(t.cell(1, 0), "Effective Date:", eff)
-        self._small(t.cell(1, 1), "Version 1.0")
-        self._small(t.cell(1, 2), "Page No: ", field_page=True)
+        self._small(t.cell(0, 0), L("Design Plan:", "Kế hoạch thiết kế:"), "HarmonyMentor")
+        self._small(t.cell(0, 1), L("Document Name:", "Tên tài liệu:"), DOCNAME_VI.get(docname, docname) if VI else docname)
+        self._small(t.cell(0, 2), L(f"SWD/Form No.{form}/Ver1.0", f"SWD/Mẫu số {form}/Phiên bản 1.0"))
+        self._small(t.cell(1, 0), L("Effective Date:", "Ngày hiệu lực:"), eff)
+        self._small(t.cell(1, 1), L("Version 1.0", "Phiên bản 1.0"))
+        self._small(t.cell(1, 2), L("Page No: ", "Trang: "), field_page=True)
         hdr.paragraphs[0].paragraph_format.space_after = Pt(0)
         # đoạn trống của header nằm trước bảng: dời xuống sau để bảng sát lề trên
         p0 = hdr.paragraphs[0]._p
@@ -307,12 +329,12 @@ class Doc:
                 run_font(p.add_run(text), size=8, bold=bold, font=SMALL_FONT)
             if blank:
                 run_font(blank_run(p, size=8), font=SMALL_FONT)
-        put(0, 1, "Prepared by (Student)")
-        put(0, 2, "Approved by (Faculty)")
-        put(1, 1, "Project Group No: ", blank=True)
+        put(0, 1, L("Prepared by (Student)", "Người lập (Sinh viên)"))
+        put(0, 2, L("Approved by (Faculty)", "Người duyệt (Giảng viên)"))
+        put(1, 1, L("Project Group No: ", "Nhóm đồ án số: "), blank=True)
         put(1, 2, "", blank=True)
-        put(2, 0, "Signature", center=False)
-        put(3, 0, "Date", center=False)
+        put(2, 0, L("Signature", "Chữ ký"), center=False)
+        put(3, 0, L("Date", "Ngày"), center=False)
         row_height(t.rows[2], 0.9)
         p0 = f.paragraphs[0]._p
         p0.getparent().remove(p0)
@@ -320,7 +342,10 @@ class Doc:
 
     # ---------------------------------------------------------------- text
     def h(self, level, en, vi=None, toc=True):
-        text = f"{en} ({vi})" if vi else en
+        if VI:
+            text = vi or dich_vi.T(en)
+        else:
+            text = f"{en} ({vi})" if vi else en
         p = self.d.add_paragraph(text, style=f"Heading {level}")
         if toc and level <= 2:
             self.headings.append((level, text))
@@ -331,6 +356,11 @@ class Doc:
         q.alignment = align
         if indent:
             q.paragraph_format.left_indent = Cm(indent)
+        if VI:
+            if bold_lead:
+                run_font(q.add_run(BOLD_LEAD_VI.get(bold_lead, bold_lead) + " "), bold=True, size=size)
+            run_font(q.add_run(vi or dich_vi.T(en)), size=size)
+            return q
         if bold_lead:
             run_font(q.add_run(bold_lead + " "), bold=True, size=size)
         run_font(q.add_run(en), size=size)
@@ -349,9 +379,14 @@ class Doc:
         q.alignment = WD_ALIGN_PARAGRAPH.LEFT
         pf = q.paragraph_format
         pf.left_indent, pf.first_line_indent = Cm(1.2), Cm(-0.6)
-        pf.space_after = Pt(0 if vi else 2)
+        pf.space_after = Pt(0 if vi and not VI else 2)
         run_font(q.add_run("✓\t"), font="Segoe UI Symbol", size=10)
         pf.tab_stops.add_tab_stop(Cm(1.2))
+        if VI:
+            if lead or lead_vi:
+                run_font(q.add_run((lead_vi or dich_vi.T(lead)) + " "), bold=True)
+            q.add_run(vi or dich_vi.T(en))
+            return
         if lead:
             run_font(q.add_run(lead + " "), bold=True)
         q.add_run(en)
@@ -408,11 +443,14 @@ class Doc:
                     p = cell.add_paragraph()
                     p.paragraph_format.space_after = Pt(0)
                     p.paragraph_format.line_spacing = 1.0
-                run_font(p.add_run(txt), size=opts.get("size", size), bold=opts.get("bold", bold),
+                run_font(p.add_run(dich_vi.T(txt) if VI else txt), size=opts.get("size", size), bold=opts.get("bold", bold),
                          italic=opts.get("italic"), color=opts.get("color"))
             return
         if isinstance(val, tuple):
             en, vi = val
+            if VI:
+                run_font(p.add_run(vi or dich_vi.T(en)), size=size, bold=bold)
+                return
             run_font(p.add_run(en), size=size, bold=bold)
             if vi:
                 q = cell.add_paragraph()
@@ -420,7 +458,7 @@ class Doc:
                 q.paragraph_format.line_spacing = 1.0
                 run_font(q.add_run(vi), size=size - 0.5, italic=True, color=GREY, bold=False if not bold else True)
             return
-        run_font(p.add_run(str(val)), size=size, bold=bold)
+        run_font(p.add_run(dich_vi.T(str(val)) if VI else str(val)), size=size, bold=bold)
 
     # ---------------------------------------------------------------- images
     def image(self, path: Path, max_w=16.5, max_h=21.5, caption=None, center=True, upscale=1.2):
@@ -441,8 +479,11 @@ class Doc:
             c = self.d.add_paragraph()
             c.alignment = WD_ALIGN_PARAGRAPH.CENTER
             c.paragraph_format.space_after = Pt(6)
-            run_font(c.add_run(f"Figure {self.fig}. {en}"), bold=True, size=10)
-            run_font(c.add_run(f"  (Hình {self.fig}. {vi})"), italic=True, color=GREY, size=10)
+            if VI:
+                run_font(c.add_run(f"Hình {self.fig}. {vi}"), bold=True, size=10)
+            else:
+                run_font(c.add_run(f"Figure {self.fig}. {en}"), bold=True, size=10)
+                run_font(c.add_run(f"  (Hình {self.fig}. {vi})"), italic=True, color=GREY, size=10)
         return q
 
     def anchor_behind(self, p, path, x_cm, y_cm, w_cm, h_cm):
@@ -518,22 +559,24 @@ def cover(D: Doc):
                     "Nền tảng học nhạc lý và hòa âm thích ứng")]:
         q = D.d.add_paragraph()
         q.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        run_font(q.add_run(en), size=14, bold=True)
-        v = D.d.add_paragraph()
-        v.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        run_font(v.add_run(vi), size=12, italic=True, color=GREY)
+        run_font(q.add_run(L(en, vi)), size=14, bold=True)
+        if not VI:
+            v = D.d.add_paragraph()
+            v.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            run_font(v.add_run(vi), size=12, italic=True, color=GREY)
     q = D.d.add_paragraph()
     q.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run_font(q.add_run("eProject Semester II – Review 01, 02, 03"), size=12)
-    for _ in range(4):
+    run_font(q.add_run(L("eProject Semester II – Review 01, 02, 03", "eProject Học kỳ II – Đánh giá lần 01, 02, 03")), size=12)
+    for _ in range(4 if not VI else 5):
         D.d.add_paragraph()
-    info = [("Supervisor:", None), ("Semester:", "II"), ("Batch No:", "T3.2511.M0"), ("Group No:", None)]
+    info = [(L("Supervisor:", "Giảng viên hướng dẫn:"), None), (L("Semester:", "Học kỳ:"), "II"),
+            (L("Batch No:", "Khóa (Batch):"), "T3.2511.M0"), (L("Group No:", "Nhóm số:"), None)]
     for lab, val in info:
         q = D.d.add_paragraph()
         q.paragraph_format.left_indent = Cm(1.5)
         q.paragraph_format.space_after = Pt(2)
         run_font(q.add_run(lab + "\t"), bold=True, size=11)
-        q.paragraph_format.tab_stops.add_tab_stop(Cm(5.0))
+        q.paragraph_format.tab_stops.add_tab_stop(Cm(6.2 if VI else 5.0))
         if val:
             run_font(q.add_run(val), italic=True, size=11)
         else:
@@ -541,7 +584,7 @@ def cover(D: Doc):
     t = D.d.add_table(rows=4, cols=3)
     t.style = D.d.styles["Table Grid"]
     t.alignment = WD_TABLE_ALIGNMENT.CENTER
-    for i, hd in enumerate(["Order:", "Full name", "Roll No."]):
+    for i, hd in enumerate([L("Order:", "STT"), L("Full name", "Họ và tên"), L("Roll No.", "Mã sinh viên")]):
         D._cell(t.cell(0, i), hd, size=11, bold=True)
     for r in range(1, 4):
         D._cell(t.cell(r, 0), f"{r}.", size=11)
@@ -552,6 +595,12 @@ def cover(D: Doc):
         D.d.add_paragraph()
     q = D.d.add_paragraph()
     q.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    if VI:
+        run_font(q.add_run("Tháng"), bold=True, italic=True, size=11)
+        run_font(q.add_run(": 11   "), italic=True, size=11)
+        run_font(q.add_run("Năm"), bold=True, italic=True, size=11)
+        run_font(q.add_run(": 2026"), italic=True, size=11)
+        return
     run_font(q.add_run("Month"), bold=True, italic=True, size=11)
     run_font(q.add_run(": November   "), italic=True, size=11)
     run_font(q.add_run("Year"), bold=True, italic=True, size=11)
@@ -562,39 +611,42 @@ def certificate(D: Doc):
     D.section(header=False, margins=(4.2, 3.0, 3.4, 3.4))
     p = D.d.add_paragraph()
     D.anchor_behind(p, MAU / "khung_hoa_van.png", 1.2, 1.2, 18.6, 25.7)
-    run_font(p.add_run("This is to certify that"), size=17)
-    run_font(D.d.add_paragraph().add_run("(Chứng nhận rằng)"), size=10, italic=True, color=GREY)
+    run_font(p.add_run(L("This is to certify that", "Chứng nhận rằng")), size=17)
+    if not VI:
+        run_font(D.d.add_paragraph().add_run("(Chứng nhận rằng)"), size=10, italic=True, color=GREY)
     for _ in range(3):
         q = D.d.add_paragraph()
         q.paragraph_format.left_indent = Cm(0.4)
         q.paragraph_format.space_after = Pt(9)
-        run_font(q.add_run("Mr./Ms.  "), size=13, bold=True)
+        run_font(q.add_run(L("Mr./Ms.  ", "Ông/Bà  ")), size=13, bold=True)
         blank_run(q, "_" * 42, size=13)
     D.d.add_paragraph()
-    run_font(D.d.add_paragraph().add_run("Have successfully Designed & Developed"), size=15)
-    run_font(D.d.add_paragraph().add_run("(Đã thiết kế và xây dựng thành công)"), size=10, italic=True, color=GREY)
+    run_font(D.d.add_paragraph().add_run(L("Have successfully Designed & Developed", "Đã thiết kế và xây dựng thành công")), size=15)
+    if not VI:
+        run_font(D.d.add_paragraph().add_run("(Đã thiết kế và xây dựng thành công)"), size=10, italic=True, color=GREY)
     q = D.d.add_paragraph()
     q.alignment = WD_ALIGN_PARAGRAPH.CENTER
     run_font(q.add_run("HARMONYMENTOR AI"), size=16, bold=True)
     q = D.d.add_paragraph()
     q.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run_font(q.add_run("Adaptive Music Theory and Harmony Learning Platform"), size=11.5, italic=True)
+    run_font(q.add_run(L("Adaptive Music Theory and Harmony Learning Platform", "Nền tảng học nhạc lý và hòa âm thích ứng")), size=11.5, italic=True)
     for _ in range(3):
         D.d.add_paragraph()
-    run_font(D.d.add_paragraph().add_run("Submitted by:"), size=15)
-    run_font(D.d.add_paragraph().add_run("(Giảng viên hướng dẫn)"), size=10, italic=True, color=GREY)
+    run_font(D.d.add_paragraph().add_run(L("Submitted by:", "Giảng viên hướng dẫn:")), size=15)
+    if not VI:
+        run_font(D.d.add_paragraph().add_run("(Giảng viên hướng dẫn)"), size=10, italic=True, color=GREY)
     q = D.d.add_paragraph()
     q.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run_font(q.add_run("Mr./Ms.  "), size=15, bold=True)
+    run_font(q.add_run(L("Mr./Ms.  ", "Ông/Bà  ")), size=15, bold=True)
     blank_run(q, "_" * 30, size=15)
     for _ in range(2):
         D.d.add_paragraph()
-    run_font(D.d.add_paragraph().add_run("Date Of Issue:"), size=15)
+    run_font(D.d.add_paragraph().add_run(L("Date Of Issue:", "Ngày cấp:")), size=15)
     q = D.d.add_paragraph()
     q.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     blank_run(q, "_" * 28, size=13)
     D.d.add_paragraph()
-    run_font(D.d.add_paragraph().add_run("Authorized Signature:"), size=15)
+    run_font(D.d.add_paragraph().add_run(L("Authorized Signature:", "Chữ ký xác nhận:")), size=15)
     q = D.d.add_paragraph()
     q.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     blank_run(q, "_" * 28, size=13)
@@ -602,7 +654,7 @@ def certificate(D: Doc):
 
 def front_matter(D: Doc):
     D.section(header=False, margins=(2.5, 2.5, 2.2, 2.2))
-    p = D.d.add_paragraph("Content (Mục lục)", style="Heading 1")
+    p = D.d.add_paragraph(L("Content (Mục lục)", "Mục lục"), style="Heading 1")
     D.toc()
     D.section(header=False, margins=(2.5, 2.5, 2.2, 2.2))
     D.h(1, "Acknowledge", "Lời cảm ơn")
@@ -610,17 +662,22 @@ def front_matter(D: Doc):
         D.p(en, vi)
     q = D.d.add_paragraph()
     q.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-    run_font(q.add_run("We especially thank our supervisor, "), size=11.5)
-    blank_run(q, "____________________", size=11.5)
-    run_font(q.add_run(", for the guidance and the honest feedback at every review."), size=11.5)
-    v = D.d.add_paragraph()
-    run_font(v.add_run("Nhóm đặc biệt cảm ơn thầy/cô hướng dẫn "), italic=True, color=GREY, size=11)
-    blank_run(v, "____________________", size=11)
-    run_font(v.add_run(" đã hướng dẫn và góp ý thẳng thắn ở mỗi lần review."), italic=True, color=GREY, size=11)
+    if VI:
+        run_font(q.add_run("Nhóm đặc biệt cảm ơn thầy/cô hướng dẫn "), size=11.5)
+        blank_run(q, "____________________", size=11.5)
+        run_font(q.add_run(" đã hướng dẫn và góp ý thẳng thắn ở mỗi lần đánh giá."), size=11.5)
+    else:
+        run_font(q.add_run("We especially thank our supervisor, "), size=11.5)
+        blank_run(q, "____________________", size=11.5)
+        run_font(q.add_run(", for the guidance and the honest feedback at every review."), size=11.5)
+        v = D.d.add_paragraph()
+        run_font(v.add_run("Nhóm đặc biệt cảm ơn thầy/cô hướng dẫn "), italic=True, color=GREY, size=11)
+        blank_run(v, "____________________", size=11)
+        run_font(v.add_run(" đã hướng dẫn và góp ý thẳng thắn ở mỗi lần review."), italic=True, color=GREY, size=11)
     D.d.add_paragraph()
     q = D.d.add_paragraph()
     q.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-    run_font(q.add_run("Project Group "), italic=True)
+    run_font(q.add_run(L("Project Group ", "Nhóm đồ án ")), italic=True)
     blank_run(q, "____")
     D.section(header=False, margins=(2.5, 2.5, 2.2, 2.2))
     D.h(1, "Synopsis", "Tóm tắt")
@@ -641,13 +698,19 @@ def divider(D: Doc, title, vi, forms):
     shd.set(qn("w:val"), "clear")
     shd.set(qn("w:fill"), "FFFFFF")
     pPr.append(shd)
+    if VI:
+        title = vi
     run_font(q.add_run(title), size=26, bold=True, color=RGBColor(0, 0, 0))
     D.headings.append((1, title))
     v = D.d.add_paragraph()
     v.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run_font(v.add_run(vi), size=13, italic=True, color=GREY)
+    if not VI:
+        run_font(v.add_run(vi), size=13, italic=True, color=GREY)
     D.d.add_paragraph()
     for f in forms:
+        if VI:
+            so, ten = f.split("  ", 1)
+            f = f"Mẫu {so.split()[1]}  {DOCNAME_VI.get(ten, DOCNAME_VI.get(ten + ' Document', ten))}"
         c = D.d.add_paragraph()
         c.alignment = WD_ALIGN_PARAGRAPH.CENTER
         c.paragraph_format.space_after = Pt(1)
@@ -701,6 +764,10 @@ def crs(D: Doc):
     D.p(*ND.AC_INTRO)
     rows = []
     for i, (given, when, then, g_vi, w_vi, t_vi, ev) in enumerate(ND.ACCEPTANCE, 1):
+        if VI:
+            rows.append([str(i), {"rich": [(f"Cho {g_vi},", {"bold": True}),
+                                            (f"khi {w_vi} thì {t_vi}.", {"newpara": True})]}, dich_vi.T(ev)])
+            continue
         rows.append([str(i), {"rich": [
             (f"Given {given}", {"bold": True}),
             (f"when {when} then {then}", {"newpara": True}),
@@ -864,9 +931,13 @@ def screen_design(D: Doc):
         q = D.d.add_paragraph()
         keep_next(q)
         q.paragraph_format.space_before = Pt(4)
-        run_font(q.add_run(f"S{i:02d}. {title} "), bold=True, size=11.5)
-        run_font(q.add_run(f"({vi})"), italic=True, color=GREY, size=11)
-        run_font(q.add_run(f"   Route: {route}"), size=9.5, font=SMALL_FONT)
+        if VI:
+            run_font(q.add_run(f"S{i:02d}. {vi}"), bold=True, size=11.5)
+            run_font(q.add_run(f"   Đường dẫn: {dich_vi.T(route)}"), size=9.5, font=SMALL_FONT)
+        else:
+            run_font(q.add_run(f"S{i:02d}. {title} "), bold=True, size=11.5)
+            run_font(q.add_run(f"({vi})"), italic=True, color=GREY, size=11)
+            run_font(q.add_run(f"   Route: {route}"), size=9.5, font=SMALL_FONT)
         p2 = D.p(en_d, vi_d, size=10)
         keep_next(p2)
         keep_next(D.d.paragraphs[-1])
@@ -890,11 +961,12 @@ def testing(D: Doc):
     D.h(2, "9.3 Manual Test Cases", "Ca kiểm thử thủ công")
     D.p(*ND.MT_INTRO)
     q = D.d.add_paragraph()
-    run_font(q.add_run("Executed by: Claude (AI) on 17/11/2026, 12:26–12:28 UTC. Team re-run by: "), size=10, bold=True)
+    run_font(q.add_run(L("Executed by: Claude (AI) on 17/11/2026, 12:26–12:28 UTC. Team re-run by: ",
+                         "Người chạy: Claude (AI) ngày 17/11/2026, 12:26–12:28 UTC. Nhóm chạy lại: ")), size=10, bold=True)
     blank_run(q, size=10)
-    run_font(q.add_run("  Date: "), size=10, bold=True)
+    run_font(q.add_run(L("  Date: ", "  Ngày: ")), size=10, bold=True)
     blank_run(q, size=10)
-    run_font(q.add_run("  Signature: "), size=10, bold=True)
+    run_font(q.add_run(L("  Signature: ", "  Chữ ký: ")), size=10, bold=True)
     blank_run(q, size=10)
     log = {x["id"]: x for x in json.loads((HERE / "kiem_thu" / "ket_qua_test_thu_cong.json").read_text(encoding="utf-8"))}
     rows = []
@@ -905,11 +977,11 @@ def testing(D: Doc):
         if len(actual) > 230:
             actual = actual[:227].rstrip() + "…"
         if rec.get("note"):
-            actual += f" [Note: {rec['note']}]"
+            actual += f" [{L('Note', 'Ghi chú')}: {rec['note']}]"
         rows.append([{"rich": [(f"MT-{i:02d}", {"bold": True}), (f"({tc})", {"newpara": True, "size": 6.5, "color": GREY})]},
-                     module, desc, steps, data, exp, actual, "Pass" if rec["ok"] else "Fail"])
+                     module, desc, steps, data, exp, actual, L("Pass", "Đạt") if rec["ok"] else L("Fail", "Lỗi")])
     D.table(["ID", "Module", ("Description", "Mô tả"), ("Steps", "Các bước"), ("Test data", "Dữ liệu"),
-             ("Expected", "Kỳ vọng"), ("Actual (app text, verbatim)", "Thực tế"), ("P/F", "")],
+             ("Expected", "Kỳ vọng"), ("Actual (app text, verbatim)", "Thực tế (chữ trong app)"), ("P/F", "KQ")],
             rows, [1.3, 1.6, 2.4, 2.8, 2.0, 2.6, 3.3, 1.0], size=7.5)
     D.p(*ND.MT_SUMMARY)
 
@@ -962,10 +1034,10 @@ def build(toc_pages=None) -> Doc:
     task_sheet(D)
     D.fill_toc()
     cp = D.d.core_properties
-    cp.title = "HarmonyMentor AI – eProject Semester II Review 01, 02, 03"
-    cp.subject = "Design documentation (bilingual EN/VI)"
-    cp.author = "HarmonyMentor project group"
-    cp.comments = f"Built from branch phuc-music, commit {ND.COMMIT}"
+    cp.title = L("HarmonyMentor AI – eProject Semester II Review 01, 02, 03", "HarmonyMentor AI – eProject Học kỳ II, Đánh giá lần 01, 02, 03")
+    cp.subject = L("Design documentation (bilingual EN/VI)", "Tài liệu thiết kế (tiếng Việt)")
+    cp.author = L("HarmonyMentor project group", "Nhóm đồ án HarmonyMentor")
+    cp.comments = L(f"Built from branch phuc-music, commit {ND.COMMIT}", f"Dựng từ nhánh phuc-music, commit {ND.COMMIT}")
     D.d.save(OUT)
     return D
 

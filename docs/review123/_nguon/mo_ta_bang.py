@@ -28,7 +28,7 @@ GENERIC: dict[str, tuple[str, str]] = {
     "provenance": ("Source of the question or card (book, page, author); kept unchanged (rule 11).",
                    "Nguồn của câu hỏi hoặc thẻ (sách, trang, người soạn); giữ nguyên (nguyên tắc 11)."),
     "answer": ("Answer the learner sent (JSON).", "Đáp án người học gửi (JSON)."),
-    "correct": ("True when the Music Engine graded the answer as correct.", "True khi Music Engine chấm đúng."),
+    "correct": ("True when the Music Engine graded the answer as correct.", "True khi Music Engine chấm đáp án là đúng."),
     "primary_error": ("Main error code from the Music Engine, e.g. THIRD_QUALITY.",
                       "Mã lỗi chính từ Music Engine, ví dụ THIRD_QUALITY."),
     "is_test": ("True for admin test attempts; excluded from mastery and statistics (rule 8).",
@@ -73,7 +73,7 @@ SPECIFIC: dict[str, tuple[str, str]] = {
     "skills.srs_code": ("Matching code in the SRS skill list.", "Mã tương ứng trong danh sách kỹ năng của SRS."),
     "skills.group_code": ("One of the 14 skill groups; one dimension of the KNN vector.",
                           "Một trong 14 nhóm kỹ năng; là một chiều của vector KNN."),
-    "skills.ready_threshold": ("Score that unlocks the next lesson (0.60).", "Ngưỡng mở bài sau (0,60)."),
+    "skills.ready_threshold": ("Score that unlocks the next lesson (0.60).", "Điểm để mở khóa bài tiếp theo (0,60)."),
     "skills.mastery_threshold": ("Score counted as mastered (0.80).", "Ngưỡng thành thạo (0,80)."),
     # skill_prerequisites
     "skill_prerequisites.skill_id": ("Skill that needs a prerequisite.", "Kỹ năng cần tiên quyết."),
@@ -152,7 +152,7 @@ SPECIFIC: dict[str, tuple[str, str]] = {
                                    "Hạn trước lần ôn này; để phân biệt ôn sớm và ôn đúng hạn."),
     # practice_attempts
     "practice_attempts.kind": ("Practice type: chord, interval, scale or roman.", "Loại luyện tập: chord, interval, scale hoặc roman."),
-    "practice_attempts.level": ("Difficulty level of the generated question.", "Mức khó của câu sinh tự động."),
+    "practice_attempts.level": ("Difficulty level of the generated question.", "Mức độ khó của câu hỏi được sinh tự động."),
     "practice_attempts.question": ("Generated question (JSON).", "Câu hỏi sinh tự động (JSON)."),
     # mastery_states
     "mastery_states.score": ("EMA mastery score 0..1 (alpha = 0.3).", "Điểm thành thạo EMA 0..1 (alpha = 0,3)."),
@@ -291,7 +291,7 @@ TABLE_DESC: dict[str, tuple[str, str]] = {
     "content_revisions": ("Draft / published edits of lesson text and visibility.", "Bản sửa nháp / đã phát hành của chữ bài học và trạng thái ẩn hiện."),
     "admin_audit_log": ("Log of admin actions.", "Nhật ký thao tác của Admin."),
     "source_documents": ("Documents uploaded by admins for AI lesson drafts.", "Tài liệu Admin tải lên để AI soạn bài nháp."),
-    "ai_lesson_drafts": ("Lesson drafts written by Gemini, checked by the Music Engine.", "Bài nháp do Gemini soạn, Music Engine kiểm."),
+    "ai_lesson_drafts": ("Lesson drafts written by Gemini, checked by the Music Engine.", "Bài học nháp do Gemini soạn, đã được Music Engine kiểm tra."),
 }
 
 

@@ -1,4 +1,4 @@
-# Bàn giao: tài liệu eProject Review 01–03 (song ngữ Anh–Việt)
+# Bàn giao: tài liệu eProject Review 01–03 (bản song ngữ Anh–Việt và bản thuần tiếng Việt)
 
 Ngày 17/11/2026. Nhánh `docs-review123` tách từ `phuc-music` commit **1ab6a15** (merge PR #62).
 
@@ -6,9 +6,11 @@ Ngày 17/11/2026. Nhánh `docs-review123` tách từ `phuc-music` commit **1ab6a
 
 | File | Nội dung |
 |---|---|
-| `eProject_Sem-II_HarmonyMentor_Review01_02_03.docx` | 108 trang A4 khi render bằng LibreOffice 24.2: bìa, chứng nhận, mục lục (trường TOC thật, đã điền số trang), lời cảm ơn, tóm tắt, Review 01 (Form 01 PD, 02 CRS-B), Review 02 (03 DFD, 04 ERD, 05 TAB, 06 SM, 07 ALG), Review 03 (08 SD, 09 TD, 10 FC, 11 TS) |
+| `eProject_Sem-II_HarmonyMentor_Review01_02_03_TiengViet.docx` | **Bản thuần tiếng Việt** (thêm 17/11/2026 theo yêu cầu của Phúc), 89 trang A4, cùng nội dung và bố cục với bản song ngữ. Mọi tiêu đề, tên mục theo mẫu Aptech, header/footer, bìa, chứng nhận, bảng và nhãn sơ đồ đều bằng tiếng Việt. Giữ nguyên như trong code: tên bảng, tên cột, endpoint, mã lỗi, đường dẫn file, thuật ngữ kỹ thuật (DFD, ERD, API, JWT, mastery, embedding…) |
+| `eProject_Sem-II_HarmonyMentor_Review01_02_03.docx` | Bản song ngữ, 109 trang A4 khi render bằng LibreOffice 24.2: bìa, chứng nhận, mục lục (trường TOC thật, đã điền số trang), lời cảm ơn, tóm tắt, Review 01 (Form 01 PD, 02 CRS-B), Review 02 (03 DFD, 04 ERD, 05 TAB, 06 SM, 07 ALG), Review 03 (08 SD, 09 TD, 10 FC, 11 TS) |
 | `_nguon/build_docx.py` | Dựng lại .docx (python-docx 1.2.0). `--pdf` render thử bằng LibreOffice, đo số trang cho mục lục; PDF ghi ra thư mục tạm, **không nộp** |
-| `_nguon/noi_dung.py`, `_nguon/mo_ta_bang.py` | Toàn bộ chữ song ngữ; mô tả 31 bảng / 268 cột |
+| `_nguon/noi_dung.py`, `_nguon/mo_ta_bang.py` | Toàn bộ chữ song ngữ; mô tả 31 bảng / 268 cột. 17/11: viết đầy đủ lại 27 câu tiếng Việt trước đây tóm tắt ngắn hơn bản tiếng Anh |
+| `_nguon/dich_vi.py` | Bản dịch cho chữ chỉ có tiếng Anh (ca kiểm thử, Task Sheet, số liệu) và toàn bộ nhãn sơ đồ; thiếu nhãn sơ đồ thì `gen_diagrams.py --vi` báo lỗi |
 | `_nguon/du_lieu/` | `dump_schema.py` → `schema.json` (đọc models.py), `openapi.json`, `endpoints.txt` (85 route), `pip_versions.txt`, `toc_pages.json` |
 | `_nguon/so_do/` | `gen_diagrams.py` + `dot/*.dot` (52 sơ đồ Graphviz đen trắng). `png/` sinh lại bằng script, không commit |
 | `_nguon/anh/` | 23 ảnh chụp thật 1440 × 900, scale 2, giao diện sáng |
@@ -124,6 +126,9 @@ python docs/review123/_nguon/so_do/gen_diagrams.py
 # 2. Dựng .docx; --pdf render thử bằng LibreOffice và cập nhật số trang mục lục
 pip install python-docx==1.2.0 pillow
 python docs/review123/_nguon/build_docx.py --pdf
+# Bản thuần tiếng Việt: sơ đồ nhãn Việt (so_do/png_vi/) rồi dựng file _TiengViet.docx
+python docs/review123/_nguon/so_do/gen_diagrams.py --vi
+python docs/review123/_nguon/build_docx.py --vi --pdf
 # 3. Chụp màn hình + test thủ công (CSDL mới, app ở :5173, cần Playwright)
 docker compose down -v && docker compose up -d --build
 docker compose exec -e ADMIN_PASSWORD='<mật khẩu admin demo>' api python -m app.seed_admin --email admin@harmony.demo

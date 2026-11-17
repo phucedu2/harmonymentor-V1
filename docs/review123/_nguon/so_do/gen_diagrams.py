@@ -7,16 +7,29 @@ nên đổi models thì chạy lại hai script là sơ đồ khớp code. DFD, 
 
 Chạy:  python docs/review123/_nguon/so_do/gen_diagrams.py   (cần lệnh `dot` của Graphviz)
 Kết quả: so_do/dot/*.dot (nguồn để sửa) và so_do/png/*.png (300 dpi, chèn vào .docx).
+Thêm --vi: nhãn tiếng Việt (bản dịch ở ../dich_vi.py), ghi vào so_do/dot_vi/ và so_do/png_vi/.
 """
 
 from __future__ import annotations
 
 import json
 import subprocess
+import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-DOT_DIR, PNG_DIR = HERE / "dot", HERE / "png"
+sys.path.insert(0, str(HERE.parent))
+import dich_vi  # noqa: E402
+
+VI = "--vi" in sys.argv
+DOT_DIR, PNG_DIR = (HERE / "dot_vi", HERE / "png_vi") if VI else (HERE / "dot", HERE / "png")
+
+
+def tv(s: str, strict: bool = True) -> str:
+    """Nhãn theo ngôn ngữ đang dựng; tên bảng / cột (không có trong bảng dịch) giữ nguyên khi strict=False."""
+    if not VI or not s:
+        return s
+    return dich_vi.nhan(s) if strict else dich_vi.SO_DO.get(s, s)
 SCHEMA = json.loads((HERE.parent / "du_lieu" / "schema.json").read_text(encoding="utf-8"))
 TABLES = {t["name"]: t for t in SCHEMA}
 FONT = "Liberation Serif"
@@ -63,9 +76,9 @@ def q(s: str) -> str:
 # ---------------------------------------------------------------------------------------------- DFD
 def dfd_context() -> None:
     s = head(extra=", layout=dot, rankdir=LR, nodesep=0.35, ranksep=1.6")
-    s += '  P0 [shape=circle, width=2.1, fixedsize=true, label="0\\nHarmonyMentor AI\\nSystem"];\n'
+    s += '  P0 [shape=circle, width=2.1, fixedsize=true, label="' + tv("0\\nHarmonyMentor AI\\nSystem") + '"];\n'
     for n, lab in [("G", "Guest"), ("L", "Learner"), ("A", "Admin"), ("GM", "Google Gemini API\\n(external AI service)")]:
-        s += f'  {n} [shape=box, width=1.6, label="{lab}"];\n'
+        s += f'  {n} [shape=box, width=1.6, label="{tv(lab)}"];\n'
     flows = [
         ("G", "P0", "Register / login data"), ("P0", "G", "Home page, curriculum,\\nJWT + refresh cookie"),
         ("L", "P0", "Answers, piano input, flashcard answers,\\ngoal text, chat questions, chord grids"),
@@ -77,7 +90,7 @@ def dfd_context() -> None:
     ]
     s += "  {rank=same; G; L; A;}\n"
     for a, b, lab in flows:
-        s += f'  {a} -> {b} [label={q(lab)}];\n'
+        s += f'  {a} -> {b} [label={q(tv(lab))}];\n'
     render("dfd_level0", s + "}\n")
 
 
@@ -85,14 +98,14 @@ def dfd(name: str, procs: list[tuple[str, str]], ents: list[tuple[str, str]], st
         flows: list[tuple[str, str, str]], rankdir: str = "TB") -> None:
     s = head(extra=f", rankdir={rankdir}, nodesep=0.3, ranksep=0.9")
     for n, lab in procs:
-        s += f'  {n} [shape=circle, width=1.25, fixedsize=true, fontsize=10, label={q(lab)}];\n'
+        s += f'  {n} [shape=circle, width=1.25, fixedsize=true, fontsize=10, label={q(tv(lab))}];\n'
     for n, lab in ents:
-        s += f'  {n} [shape=box, label={q(lab)}];\n'
+        s += f'  {n} [shape=box, label={q(tv(lab))}];\n'
     for n, lab in stores:
         # Kho dữ liệu kiểu mẫu: ô mã Dx | tên bảng.
-        s += f'  {n} [shape=record, fontsize=10, label="{{{n}|{lab}}}"];\n'
+        s += f'  {n} [shape=record, fontsize=10, label="{{{n}|{tv(lab, strict=False)}}}"];\n'
     for a, b, lab in flows:
-        s += f'  {a} -> {b} [label={q(lab)}];\n'
+        s += f'  {a} -> {b} [label={q(tv(lab))}];\n'
     render(name, s + "}\n")
 
 
@@ -195,7 +208,7 @@ def chen(name: str, tables: list[str], skip_users_fk: set[str] | None = None, si
         k = (child, parent)
         seen[k] = seen.get(k, 0) + 1
         rid = f"R_{child}_{parent}_{col}"
-        lab = REL_NAMES.get(k, "has")
+        lab = tv(REL_NAMES.get(k, "has"))
         if seen[k] > 1:
             lab = col.replace("_", " ")
         s += f'  {q(rid)} [shape=diamond, fontsize=9, width=0.9, height=0.5, label={q(lab)}];\n'
@@ -266,7 +279,7 @@ def sitemap() -> None:
     for k, v in nodes.items():
         extra = ", style=\"rounded,bold\"" if k in ("root", "app", "adm") else ""
         extra += ", style=\"rounded,dashed\"" if k == "ai" else ""
-        s += f'  {k} [label="{v}"{extra}];\n'
+        s += f'  {k} [label="{tv(v)}"{extra}];\n'
     for a, b in [("root", "login"), ("root", "reg"), ("root", "prog"), ("root", "feat"), ("root", "nf"), ("login", "app"),
                  ("reg", "kt"), ("root", "app"), ("app", "hoc"), ("hoc", "bai"), ("app", "lt"), ("app", "td"), ("app", "quiz"),
                  ("app", "comp"), ("app", "hs"), ("app", "kt"), ("app", "ai"), ("login", "adm"), ("adm", "t1"), ("adm", "t2"),
@@ -281,9 +294,9 @@ def flow(name: str, nodes: list[tuple[str, str, str]], edges: list[tuple[str, st
     s = head(extra=", nodesep=0.35, ranksep=0.35")
     s += '  node [fontsize=10];\n'
     for n, kind, lab in nodes:
-        s += f'  {n} [shape={shapes[kind]}, label={q(lab)}{", margin=0.02" if kind == "dec" else ""}];\n'
+        s += f'  {n} [shape={shapes[kind]}, label={q(tv(lab))}{", margin=0.02" if kind == "dec" else ""}];\n'
     for a, b, lab in edges:
-        s += f'  {a} -> {b}{" [label=" + q(lab) + "]" if lab else ""};\n'
+        s += f'  {a} -> {b}{" [label=" + q(tv(lab)) + "]" if lab else ""};\n'
     render(name, s + "}\n")
 
 

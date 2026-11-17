@@ -82,7 +82,7 @@ PD_INTRO = [
 PD_PROBLEMS = [
     ("They do not show where the mistake is. A learner who builds G7 as G B D F# only learns that the answer is wrong, "
      "not that the 7th is the wrong interval.",
-     "Không chỉ ra chỗ sai. Người học dựng G7 thành G B D F# chỉ biết mình sai, không biết lỗi nằm ở quãng 7."),
+     "Không chỉ ra chỗ sai. Người học dựng G7 thành G B D F# chỉ biết đáp án sai, chứ không biết lỗi nằm ở quãng 7 bị dựng sai."),
     ("Theory is separated from practice. Passing a quiz does not mean the learner can use the idea to accompany a "
      "chord loop.", "Lý thuyết tách rời thực hành. Làm đúng trắc nghiệm chưa có nghĩa là biết dùng để đệm một vòng hợp âm."),
     ("General chatbots can state wrong music theory, for example list the wrong notes of a chord, and beginners "
@@ -143,7 +143,7 @@ ROLES = [
       "Admin lưu is_test = true, không tính mastery và thống kê.")],
     [("Google Gemini (external AI service)", "Google Gemini (dịch vụ AI bên ngoài)"),
      ("Called only by the backend AI pipeline when AI_ENABLED = true and a key is set.",
-      "Chỉ backend gọi khi AI_ENABLED = true và có khóa."),
+      "Chỉ pipeline AI của backend gọi tới, khi AI_ENABLED = true và đã cấu hình khóa."),
      ("Receives the question, the last 6 messages, lesson chunks, weak skill names and the error code; never e-mail, "
       "name, password or user id. Returns JSON that is parsed, citation-checked and Music-Engine-checked before display. "
       "Default models: gemini-3.5-flash-lite (fallback gemini-3.6-flash) and gemini-embedding-001.",
@@ -205,12 +205,12 @@ FUTURE = [
     [("Harmony assistant chat mode", "Chế độ trợ lý hòa âm"),
      ("Only the value 'harmony_assistant' exists in the chat_sessions.mode CHECK; no behaviour.",
       "Chỉ có giá trị 'harmony_assistant' trong CHECK của chat_sessions.mode; chưa có hành vi.")],
-    [("Proactive coaching (FR-16: review reminders, congratulations)", "Kèm cặp chủ động (FR-16)"),
+    [("Proactive coaching (FR-16: review reminders, congratulations)", "Kèm cặp chủ động (FR-16: nhắc ôn tập, lời chúc mừng)"),
      ("Not built.", "Chưa làm.")],
     [("AI-generated quiz of 10 questions (FR-14)", "Quiz 10 câu do AI sinh (FR-14)"),
      ("Quiz draws questions from the existing bank (/practice/quiz); no AI generation; endpoint /quiz/generate absent.",
       "Quiz lấy câu từ ngân hàng có sẵn (/practice/quiz); chưa có AI sinh; không có endpoint /quiz/generate.")],
-    [("AI ranking and explanation of chord suggestions (FR-18)", "AI xếp hạng gợi ý hợp âm (FR-18)"),
+    [("AI ranking and explanation of chord suggestions (FR-18)", "AI xếp hạng và giải thích gợi ý hợp âm (FR-18)"),
      ("Rule-based suggestions exist; AI ranking not built.", "Đã có gợi ý theo luật; chưa có AI xếp hạng.")],
     [("Melody, MIDI / audio export, sharing in Harmony Lab", "Giai điệu, xuất MIDI / âm thanh, chia sẻ"),
      ("Not built.", "Chưa làm.")],
@@ -309,13 +309,13 @@ SW = [
      "Dockerfile, pip freeze"],
     [("Security", "Bảo mật"), ("bcrypt 5.0.0, PyJWT 2.15.1, redis-py 8.1.0", "bcrypt 5.0.0, PyJWT 2.15.1, redis-py 8.1.0"), "pip freeze"],
     [("AI / NLP", "AI / NLP"), ("numpy 2.4.6, scikit-learn 1.9.1, onnxruntime 1.32.0, tokenizers 0.23.3 (local e5-small), "
-      "google-genai 3.4.0, qdrant-client 1.12.2, pypdf 7.1.0, python-docx 1.2.0", "như bên trái"), "pip freeze"],
+      "google-genai 3.4.0, qdrant-client 1.12.2, pypdf 7.1.0, python-docx 1.2.0", "numpy 2.4.6, scikit-learn 1.9.1, onnxruntime 1.32.0, tokenizers 0.23.3 (e5-small cục bộ), google-genai 3.4.0, qdrant-client 1.12.2, pypdf 7.1.0, python-docx 1.2.0"), "pip freeze"],
     [("Music", "Âm nhạc"), ("Own Music Engine (pure Python); music21 10.5.2 used in tests / tools", "Music Engine tự viết (Python thuần); music21 10.5.2 dùng trong test / công cụ"), "backend/app/music_engine/"],
     [("Frontend", "Giao diện"), ("Node 22, React 18.3.1, react-router 7.18.4, @tanstack/react-query 5.104.4, Vite 6.0.7, "
-      "TypeScript 5.6.3, Tailwind CSS 4.3.3, Tone.js 15.1.22, VexFlow 5.0.0, GSAP 3.13.0, Lenis 1.3.4", "như bên trái"),
+      "TypeScript 5.6.3, Tailwind CSS 4.3.3, Tone.js 15.1.22, VexFlow 5.0.0, GSAP 3.13.0, Lenis 1.3.4", "Node 22, React 18.3.1, react-router 7.18.4, @tanstack/react-query 5.104.4, Vite 6.0.7, TypeScript 5.6.3, Tailwind CSS 4.3.3, Tone.js 15.1.22, VexFlow 5.0.0, GSAP 3.13.0, Lenis 1.3.4"),
      "frontend/package.json"],
     [("Data services", "Dịch vụ dữ liệu"), ("PostgreSQL 16 (pgvector/pgvector:pg16), Redis 7 (redis:7-alpine), Qdrant v1.12.4",
-      "PostgreSQL 16, Redis 7, Qdrant v1.12.4"), "docker-compose.yml"],
+      "PostgreSQL 16 (pgvector/pgvector:pg16), Redis 7 (redis:7-alpine), Qdrant v1.12.4"), "docker-compose.yml"],
     [("Web server", "Máy chủ web"), ("nginx 1.27-alpine serving the Vite build on port 5173, proxy /api → api:8000",
       "nginx 1.27-alpine phục vụ bản build Vite cổng 5173, chuyển /api → api:8000"), "Dockerfile (web)"],
     [("Testing", "Kiểm thử"), ("pytest 9.2.0, Vitest 3.2.4, Playwright 1.63.0 (manual journey script), GitHub Actions CI",
@@ -383,7 +383,7 @@ TEAM = [
              "Biên soạn 9 bài học và nguồn tham chiếu, bộ câu hỏi kiểm thử nhạc lý, kiểm thử chất lượng, biên tập báo cáo.")],
 ]
 PLAN = [
-    ["1", ("Analysis and design documents (SRS 2.1, functional spec, overview and detailed design)", "Tài liệu phân tích, thiết kế (bộ 2.1)"),
+    ["1", ("Analysis and design documents (SRS 2.1, functional spec, overview and detailed design)", "Tài liệu phân tích và thiết kế (SRS 2.1, đặc tả chức năng, thiết kế tổng quan và thiết kế chi tiết)"),
      "Thắng, Đạt", "19/10 – 26/10/2026", ("Done (PR #1, #7)", "Xong")],
     ["2", ("Music Engine, grading, exercise taxonomy, lesson 1 (CP1)", "Music Engine, chấm bài, phân loại bài tập, bài 1 (CP1)"),
      "Thắng", "19/10 – 20/10/2026 (CP1)", ("Done (PR #2–#6)", "Xong")],
@@ -401,7 +401,7 @@ MILESTONES = [
     ["CP1", "20/10/2026", ("Music Engine spec, exercise taxonomy, tests passing", "Đặc tả Music Engine, phân loại bài tập, test đạt"),
      ("PR #5, #6 merged 20/10/2026", "PR #5, #6 gộp 20/10/2026")],
     ["CP2", "03/11/2026", ("Recommender running with HitRate@5 and Precision@5 table", "Hệ gợi ý chạy, có bảng HitRate@5, Precision@5"),
-     ("docs/giai-doan/ai-gd4/BAO_CAO_THUC_NGHIEM.md (04/11/2026)", "Báo cáo GĐ4 (04/11/2026)")],
+     ("docs/giai-doan/ai-gd4/BAO_CAO_THUC_NGHIEM.md (04/11/2026)", "docs/giai-doan/ai-gd4/BAO_CAO_THUC_NGHIEM.md (04/11/2026)")],
     ["CP3", "10/11/2026", ("AI Tutor answers with lesson citations", "AI Tutor trả lời có trích dẫn bài học"),
      ("PR #36 CP3 evidence, merged 09/11/2026", "PR #36 minh chứng CP3, gộp 09/11/2026")],
     ["Submission", "04/12/2026", ("Source code, Docker, documents, report, demo video", "Mã nguồn, Docker, tài liệu, báo cáo, video demo"),
@@ -426,19 +426,18 @@ DFD1_PARTS = [
     ("dfd_l1_auth", "Part 1: Accounts and access", "Phần 1: Tài khoản và truy cập",
      ("Register, login with temporary lock in Redis, refresh / logout, profile and role check, admin user management "
       "(auth/router.py, auth/service.py, auth/login_limiter.py).",
-      "Đăng ký, đăng nhập có khóa tạm trong Redis, làm mới / đăng xuất, hồ sơ và kiểm vai trò, Admin quản lý người dùng.")),
+      "Đăng ký, đăng nhập có khóa tạm trong Redis, làm mới token / đăng xuất, hồ sơ và kiểm tra vai trò, Admin quản lý người dùng (auth/router.py, auth/service.py, auth/login_limiter.py).")),
     ("dfd_l1_learning", "Part 2: Learning, grading, mastery and review", "Phần 2: Học, chấm bài, mastery và ôn tập",
      ("Lessons, answer submission graded by the Music Engine, EMA update, lesson completion that creates Leitner cards, "
       "flashcard review, practice / placement / quiz (services/learning_service.py, review_scheduler.py).",
-      "Bài học, nộp đáp án do Music Engine chấm, cập nhật EMA, hoàn thành bài tạo thẻ Leitner, ôn thẻ, luyện tập / "
-      "đầu vào / quiz.")),
+      "Bài học, nộp đáp án do Music Engine chấm, cập nhật mastery EMA, hoàn thành bài tạo thẻ Leitner, ôn thẻ, luyện tập / kiểm tra đầu vào / quiz (services/learning_service.py, review_scheduler.py).")),
     ("dfd_l1_ai", "Part 3: Recommendation and AI Tutor", "Phần 3: Gợi ý và AI Tutor",
      ("Goal embedding, hybrid recommendation, AI Tutor chat with retrieval from Qdrant, 'Explain this error' and "
       "answer rating (ai/recommender/, services/ai_pipeline.py).",
-      "Nhúng mục tiêu, gợi ý lai, chat AI Tutor truy xuất từ Qdrant, 'Giải thích lỗi này' và chấm sao.")),
+      "Nhúng (embedding) mục tiêu học, gợi ý lai, chat AI Tutor có truy xuất từ Qdrant, 'Giải thích lỗi này' và chấm sao câu trả lời (ai/recommender/, services/ai_pipeline.py).")),
     ("dfd_l1_lab_admin", "Part 4: Harmony Lab and administration", "Phần 4: Harmony Lab và quản trị",
      ("Chord suggestions and backing tracks, project save / open, lesson text revisions, statistics and AI lesson drafts "
-      "(composition/, admin/).", "Gợi ý hợp âm và bản đệm, lưu / mở dự án, sửa chữ bài học, thống kê và AI soạn bài nháp.")),
+      "(composition/, admin/).", "Gợi ý hợp âm và bản đệm, lưu / mở dự án, sửa nội dung bài học, thống kê và AI soạn bài nháp (composition/, admin/).")),
 ]
 STORES_INTRO = ("Data stores used in the level-1 diagrams.", "Các kho dữ liệu dùng trong DFD mức 1.")
 STORES = [
@@ -504,9 +503,7 @@ TAB_INTRO = ("Generated from the SQLAlchemy models (script _nguon/du_lieu/dump_s
              "keys and constraints match the code exactly. Types are PostgreSQL types (TIMESTAMPTZ = TIMESTAMP WITH TIME "
              "ZONE). PK = primary key, FK = foreign key, UQ = unique. Published question versions are additionally "
              "protected by PostgreSQL triggers created in the Alembic migrations.",
-             "Sinh từ models SQLAlchemy (script dump_schema.py → schema.json), nên tên, kiểu, khóa, ràng buộc khớp code. "
-             "Kiểu là kiểu PostgreSQL. PK = khóa chính, FK = khóa ngoại, UQ = duy nhất. Phiên bản câu hỏi đã phát hành "
-             "còn được trigger PostgreSQL trong migration Alembic bảo vệ.")
+             "Sinh tự động từ các model SQLAlchemy (script _nguon/du_lieu/dump_schema.py → schema.json), nên tên, kiểu, khóa và ràng buộc khớp đúng code. Kiểu dữ liệu là kiểu của PostgreSQL (TIMESTAMPTZ = TIMESTAMP WITH TIME ZONE). PK = khóa chính, FK = khóa ngoại, UQ = duy nhất. Phiên bản câu hỏi đã phát hành còn được bảo vệ thêm bằng trigger PostgreSQL tạo trong migration Alembic.")
 REL_INTRO = ("Relationship diagrams show each table with its columns; lines go from the referenced key to the foreign "
              "key (crow's foot = many).", "Sơ đồ quan hệ hiện từng bảng với các cột; đường nối từ khóa được tham chiếu "
              "tới khóa ngoại (chân chim = nhiều).")
@@ -523,7 +520,7 @@ SM_INTRO = ("Routes come from frontend/src/App.tsx. Rounded boxes are pages; das
             "page (AI Tutor drawer, admin tabs).", "Route lấy từ frontend/src/App.tsx. Ô bo góc là trang; ô nét đứt là "
             "khung mở trong trang (ngăn AI Tutor, tab quản trị).")
 ROUTES = [
-    ["/", ("Home", "Trang chủ"), ("Public", "Công khai"), ("Introduction, curriculum, features, call to action", "Giới thiệu, chương trình, tính năng")],
+    ["/", ("Home", "Trang chủ"), ("Public", "Công khai"), ("Introduction, curriculum, features, call to action", "Giới thiệu, chương trình học, tính năng, lời mời bắt đầu")],
     ["/dang-nhap", ("Login", "Đăng nhập"), ("Public", "Công khai"), ("E-mail + password; lock message after 5 failures", "Email + mật khẩu; báo khóa sau 5 lần sai")],
     ["/dang-ky", ("Register", "Đăng ký"), ("Public", "Công khai"), ("Name, e-mail, password with strength rules", "Tên, email, mật khẩu có điều kiện độ mạnh")],
     ["/app", ("Dashboard", "Tổng quan"), ("Login required", "Cần đăng nhập"), ("Goal, recommendations, due cards, AI button", "Mục tiêu, gợi ý, thẻ đến hạn, nút AI")],
@@ -661,7 +658,7 @@ TD_INTRO = ("All numbers below were produced by real runs on 17/11/2026 in a clo
             "tóm tắt ở BAO_CAO_BAN_GIAO.md mục 4. Lỗi ghi đúng như đã xảy ra; không sửa code để test đạt.")
 AUTO_TESTS = [
     [("Backend, CI selection", "Backend, giống CI"), "cd backend && pytest -q -m \"not postgres and not live\"", "1,449", "1,448", "0", "1", "125.75 s", "17/11 12:09–12:11"],
-    [("Backend, full run before the e5 model was downloaded", "Backend, chạy đủ khi chưa tải e5"), "cd backend && pytest -q", "1,492", "1,445", "1", "46", "102.19 s", "17/11 12:06–12:08"],
+    [("Backend, full run before the e5 model was downloaded", "Backend, chạy toàn bộ trước khi tải mô hình e5"), "cd backend && pytest -q", "1,492", "1,445", "1", "46", "102.19 s", "17/11 12:06–12:08"],
     [("Backend on PostgreSQL 16 + pgvector", "Backend trên PostgreSQL 16"), "TEST_DATABASE_URL=… pytest -m postgres", "25", "25", "0", "0", "20.92 s", "17/11 12:12"],
     [("Frontend unit tests", "Test giao diện"), "cd frontend && npm test", "282 (16 files)", "282", "0", "0", "3.18 s", "17/11 12:06"],
     [("Frontend build", "Build giao diện"), "npm run build", "1 build", "OK", "0", "–", "6.92 s", "17/11"],
@@ -674,8 +671,7 @@ AUTO_NOTES = [
     ("The one failure in the full run (test_g5_eval::test_chatbot_va_cong_nhac_ly_khong_hoi_quy_so_voi_baseline: "
      "groundedness 94.5 < baseline 100) happened because the local e5 model was not downloaded yet; after "
      "'python -m app.ai.local_embedder download' (as CI does) the CI-selection run passed it.",
-     "Lỗi duy nhất ở lần chạy đủ (bám nguồn 94,5 < baseline 100) là do chưa tải mô hình e5; sau khi tải (như CI làm), lần "
-     "chạy giống CI đã đạt test này."),
+     "Lỗi duy nhất ở lần chạy đủ (test_g5_eval::test_chatbot_va_cong_nhac_ly_khong_hoi_quy_so_voi_baseline: độ bám nguồn 94,5 < mốc gốc 100) là do mô hình e5 cục bộ chưa được tải; sau khi chạy 'python -m app.ai.local_embedder download' (giống CI), lần chạy giống CI đã đạt test này."),
     ("Total 1,492 = 1,449 SQLite-selection tests + 25 PostgreSQL tests + 18 live / other deselected tests; live Gemini tests "
      "are not run without a key.", "Tổng 1.492 = 1.449 test SQLite + 25 test PostgreSQL + 18 test live / khác bị loại; test "
      "Gemini thật không chạy khi không có khóa."),
@@ -704,8 +700,7 @@ MT_INTRO = ("Manual cases were executed through the real user interface with a P
             "(_nguon/kiem_thu/journey.js) against the Docker build, with a freshly registered demo learner "
             "(minhan@harmony.demo) and the demo admin. 'Actual' is the text the app showed, copied from the run log "
             "(kiem_thu/ket_qua_test_thu_cong.json).",
-            "Ca thủ công chạy qua giao diện thật bằng kịch bản Playwright (journey.js) trên bản Docker, với người học demo "
-            "vừa đăng ký (minhan@harmony.demo) và Admin demo. Cột 'Thực tế' là chữ app hiện ra, chép từ log chạy.")
+            "Các ca thủ công chạy qua giao diện thật bằng kịch bản Playwright (_nguon/kiem_thu/journey.js) trên bản build Docker, với một người học demo vừa đăng ký (minhan@harmony.demo) và tài khoản Admin demo. Cột 'Thực tế' là chữ ứng dụng hiện ra, chép nguyên văn từ log chạy (kiem_thu/ket_qua_test_thu_cong.json).")
 MANUAL = [
     ("TC-01", "Visitor", ("Home page loads", "Trang chủ tải được"), "Open /", "–", ("CTA and login / register menu visible", "Có nút bắt đầu và menu đăng nhập / đăng ký")),
     ("TC-02", "Auth", ("Register with valid data", "Đăng ký hợp lệ"), "Open /dang-ky, fill form, submit", "minhan@harmony.demo (demo learner)",
@@ -749,15 +744,13 @@ MT_SUMMARY = ("Result: 27 of 27 manual cases passed (17/11/2026). One check in t
               "TC-24 looked for the words 'quá nhiều lần' but the app says 'sai quá 5 lần'); the app behaviour was "
               "correct and no application code was changed. Script id TC-10 (complete a lesson before all answers are "
               "correct) was not run through the UI; it is covered by pytest (tests/test_audit_nguoi_moi.py).",
-              "Kết quả: 27/27 ca thủ công đạt (17/11/2026). Một điều kiện dò trong kịch bản đã sửa (MT-23, TC-24 dò 'quá "
-              "nhiều lần' nhưng app hiện 'sai quá 5 lần'); app chạy đúng, không sửa code ứng dụng. Ca TC-10 (hoàn thành "
-              "bài khi chưa đúng hết) không chạy qua giao diện; pytest đã phủ.")
+              "Kết quả: 27/27 ca thủ công đạt (17/11/2026). Một điều kiện dò trong kịch bản đã được sửa (MT-23, kịch bản TC-24 dò chữ 'quá nhiều lần' nhưng ứng dụng hiện 'sai quá 5 lần'); ứng dụng chạy đúng và không sửa dòng code ứng dụng nào. Ca TC-10 (hoàn thành bài khi chưa đúng hết các câu) không chạy qua giao diện; pytest đã phủ ca này (tests/test_audit_nguoi_moi.py).")
 
 # ------------------------------------------------------------------------------------------------ Final checklist
 FC_INTRO = ("Status as of 17/11/2026. 'Not yet' items are the team's remaining work before 04/12/2026.",
             "Trạng thái tại 17/11/2026. Mục 'Not yet' là việc nhóm còn phải làm trước 04/12/2026.")
 FINAL = [
-    (("Design documents bản 2.1 (SRS, functional spec, overview, detailed design)", "Bộ tài liệu thiết kế bản 2.1"), "Done", "docs/SRS/ (.docx + .md)"),
+    (("Design documents bản 2.1 (SRS, functional spec, overview, detailed design)", "Bộ tài liệu thiết kế bản 2.1 (SRS, đặc tả chức năng, thiết kế tổng quan, thiết kế chi tiết)"), "Done", "docs/SRS/ (.docx + .md)"),
     (("Source code on branch phuc-music", "Mã nguồn nhánh phuc-music"), "Done", "commit 1ab6a15"),
     (("Merge phuc-music into main", "Gộp phuc-music vào main"), "Not yet", ("main has not received the phase-2 work", "main chưa nhận phần giai đoạn 2")),
     (("Docker Compose: 5 services start with one command", "Docker Compose: 5 dịch vụ chạy một lệnh"), "Done",
@@ -772,9 +765,9 @@ FINAL = [
     (("End-to-end check with a real Gemini key", "Kiểm trọn luồng với khóa Gemini thật"), "Not yet",
      ("Not in this run; 300-question probe stopped at 72/300 (quota 429)", "Chưa trong lần chạy này; probe 300 câu dừng ở 72/300 (429)")),
     (("Recommender validated with real learners", "Kiểm hệ gợi ý với người học thật"), "Not yet",
-     ("Only simulated data: chưa chứng minh chất lượng với người học thật", "Chỉ dữ liệu mô phỏng")),
+     ("Only simulated data: chưa chứng minh chất lượng với người học thật", "Chỉ có dữ liệu mô phỏng: chưa chứng minh chất lượng với người học thật")),
     (("Proactive coaching FR-16, AI quiz generation FR-14", "Kèm cặp chủ động FR-16, AI sinh quiz FR-14"), "Not yet", ("Future scope", "Hướng phát triển")),
-    (("Group number, member names, roll numbers, supervisor name", "Số nhóm, tên thành viên, mã SV, tên GVHD"), "Not yet", ("Yellow fields in this document", "Các ô vàng trong tài liệu")),
+    (("Group number, member names, roll numbers, supervisor name", "Số nhóm, tên thành viên, mã sinh viên, tên giảng viên hướng dẫn"), "Not yet", ("Yellow fields in this document", "Các ô vàng trong tài liệu")),
     (("Signatures on every form and the certificate", "Chữ ký trên mọi form và trang chứng nhận"), "Not yet", ("Team and faculty", "Nhóm và giảng viên")),
     (("Demo video", "Video demo"), "Not yet", ("Required for submission 04/12/2026", "Bắt buộc khi nộp 04/12/2026")),
     (("Update SRS .docx where it differs from code", "Cập nhật SRS .docx chỗ lệch code"), "Not yet", ("List in BAO_CAO_BAN_GIAO.md §5", "Danh sách ở báo cáo bàn giao mục 5")),

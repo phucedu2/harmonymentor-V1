@@ -1,0 +1,71 @@
+digraph G {
+  graph [fontname="Liberation Serif", bgcolor=white, pad=0.2 , nodesep=0.35, ranksep=0.35];
+  node [fontname="Liberation Serif", fontsize=11, color=black];
+  edge [fontname="Liberation Serif", fontsize=9, color=black];
+  node [fontsize=10];
+  s [shape=ellipse, label="Bắt đầu"];
+  i [shape=parallelogram, label="Nhập câu hỏi, session_id"];
+  d0 [shape=diamond, label="> 20 câu
+trong 60 s?", margin=0.02];
+  o0 [shape=parallelogram, label="Trả 429 AI_RATE_LIMITED"];
+  d1 [shape=diamond, label="Phát hiện
+tiêm lệnh?", margin=0.02];
+  o1 [shape=parallelogram, label="Câu từ chối cố định"];
+  r [shape=box, label="Ý định + viết lại câu hỏi nối tiếp;
+truy xuất đoạn liên quan (Qdrant e5,
+dự phòng e5 trong bộ nhớ + BM25)"];
+  d2 [shape=diamond, label="Luồng?", margin=0.02];
+  g [shape=box, label="Chào hỏi / trợ giúp
+(câu cố định)"];
+  ot [shape=box, label="Ngoài chủ đề: ≤ 2 câu,
+rồi dẫn về bài học"];
+  gen [shape=box, label="Ngoài bài học: Gemini trả lời
+chung, Engine dò các nốt"];
+  d3 [shape=diamond, label="AI đang bật và còn
+hạn mức ngày (30)?", margin=0.02];
+  fb [shape=box, label="Trả lời từ bài học +
+Music Engine (không AI)"];
+  p [shape=box, label="Dựng prompt: câu hỏi, 6 tin gần nhất,
+đoạn bài, kỹ năng yếu (không dữ liệu cá nhân)"];
+  llm [shape=box, label="Gọi Gemini → JSON"];
+  c [shape=box, label="Chỉ giữ trích dẫn có id khối
+nằm trong ngữ cảnh đã truy xuất"];
+  d4 [shape=diamond, label="Music Engine xác nhận mọi
+nốt / hợp âm / quãng?", margin=0.02];
+  d5 [shape=diamond, label="Đã thử lại
+một lần?", margin=0.02];
+  rule [shape=box, label="Trả lời dự phòng theo luật"];
+  sv [shape=box, label="Lưu chat_messages (trích dẫn,
+khẳng định đã kiểm, độ trễ, token)"];
+  o [shape=parallelogram, label="Ra câu trả lời + trích dẫn + cờ đã kiểm"];
+  e [shape=ellipse, label="Kết thúc"];
+  s -> i;
+  i -> d0;
+  d0 -> o0 [label="Có"];
+  d0 -> d1 [label="Không"];
+  d1 -> o1 [label="Có"];
+  d1 -> r [label="Không"];
+  r -> d2;
+  d2 -> g [label="G / D"];
+  d2 -> ot [label="C"];
+  d2 -> gen [label="B"];
+  d2 -> d3 [label="A (trong bài học)"];
+  d3 -> fb [label="Không"];
+  d3 -> p [label="Có"];
+  p -> llm;
+  llm -> c;
+  c -> d4;
+  d4 -> sv [label="Có"];
+  d4 -> d5 [label="Không"];
+  d5 -> p [label="Không (thử lại)"];
+  d5 -> rule [label="Có"];
+  rule -> sv;
+  fb -> sv;
+  g -> sv;
+  ot -> sv;
+  gen -> sv;
+  o1 -> sv;
+  sv -> o;
+  o -> e;
+  o0 -> e;
+}

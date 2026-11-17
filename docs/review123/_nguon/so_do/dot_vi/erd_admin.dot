@@ -1,0 +1,32 @@
+graph G {
+  graph [fontname="Liberation Serif", bgcolor=white, pad=0.2 , layout=neato, overlap=false, sep="+14", splines=true, size="7.2,9.2"];
+  node [fontname="Liberation Serif", fontsize=11, color=black];
+  edge [fontname="Liberation Serif", fontsize=9, color=black];
+  "users" [shape=box, style=bold, fontsize=12];
+  "lessons" [shape=box, style=bold, fontsize=12];
+  "content_revisions" [shape=box, style=bold, fontsize=12];
+  "admin_audit_log" [shape=box, style=bold, fontsize=12];
+  "source_documents" [shape=box, style=bold, fontsize=12];
+  "ai_lesson_drafts" [shape=box, style=bold, fontsize=12];
+  "R_content_revisions_lessons_lesson_id" [shape=diamond, fontsize=9, width=0.9, height=0.5, label="sửa"];
+  "lessons" -- "R_content_revisions_lessons_lesson_id" [label="1"];
+  "R_content_revisions_lessons_lesson_id" -- "content_revisions" [label="n"];
+  "R_content_revisions_users_created_by" [shape=diamond, fontsize=9, width=0.9, height=0.5, label="có"];
+  "users" -- "R_content_revisions_users_created_by" [label="1"];
+  "R_content_revisions_users_created_by" -- "content_revisions" [label="n"];
+  "R_content_revisions_users_published_by" [shape=diamond, fontsize=9, width=0.9, height=0.5, label="published by"];
+  "users" -- "R_content_revisions_users_published_by" [label="1"];
+  "R_content_revisions_users_published_by" -- "content_revisions" [label="n"];
+  "R_admin_audit_log_users_actor_id" [shape=diamond, fontsize=9, width=0.9, height=0.5, label="thao tác"];
+  "users" -- "R_admin_audit_log_users_actor_id" [label="1"];
+  "R_admin_audit_log_users_actor_id" -- "admin_audit_log" [label="n"];
+  "R_source_documents_users_uploaded_by" [shape=diamond, fontsize=9, width=0.9, height=0.5, label="tải lên"];
+  "users" -- "R_source_documents_users_uploaded_by" [label="1"];
+  "R_source_documents_users_uploaded_by" -- "source_documents" [label="n"];
+  "R_ai_lesson_drafts_source_documents_document_id" [shape=diamond, fontsize=9, width=0.9, height=0.5, label="tóm tắt"];
+  "source_documents" -- "R_ai_lesson_drafts_source_documents_document_id" [label="1"];
+  "R_ai_lesson_drafts_source_documents_document_id" -- "ai_lesson_drafts" [label="n"];
+  "R_ai_lesson_drafts_users_created_by" [shape=diamond, fontsize=9, width=0.9, height=0.5, label="soạn"];
+  "users" -- "R_ai_lesson_drafts_users_created_by" [label="1"];
+  "R_ai_lesson_drafts_users_created_by" -- "ai_lesson_drafts" [label="n"];
+}

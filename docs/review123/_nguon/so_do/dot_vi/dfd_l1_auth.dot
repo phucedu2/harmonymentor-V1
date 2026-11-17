@@ -1,0 +1,44 @@
+digraph G {
+  graph [fontname="Liberation Serif", bgcolor=white, pad=0.2 , rankdir=TB, nodesep=0.3, ranksep=0.9];
+  node [fontname="Liberation Serif", fontsize=11, color=black];
+  edge [fontname="Liberation Serif", fontsize=9, color=black];
+  P1 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="1.0
+Đăng ký"];
+  P2 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="2.0
+Đăng nhập +
+khóa tạm"];
+  P3 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="3.0
+Làm mới /
+đăng xuất"];
+  P4 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="4.0
+Hồ sơ &
+kiểm vai trò"];
+  P5 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="5.0
+Quản lý
+người dùng
+(Admin)"];
+  U [shape=box, label="Khách / Người học"];
+  A [shape=box, label="Quản trị viên"];
+  D1 [shape=record, fontsize=10, label="{D1|users}"];
+  D2 [shape=record, fontsize=10, label="{D2|refresh_tokens}"];
+  R1 [shape=record, fontsize=10, label="{R1|Redis login_fail:ip|email}"];
+  D20 [shape=record, fontsize=10, label="{D20|admin_audit_log}"];
+  U -> P1 [label="tên, email, mật khẩu"];
+  P1 -> D1 [label="người dùng mới (băm bcrypt)"];
+  P1 -> U [label="JWT truy cập"];
+  U -> P2 [label="email, mật khẩu"];
+  P2 -> R1 [label="đếm lần sai"];
+  R1 -> P2 [label="số giây bị khóa"];
+  D1 -> P2 [label="hashed_password, role"];
+  P2 -> D2 [label="băm refresh token"];
+  P2 -> U [label="JWT / 401 / 429"];
+  U -> P3 [label="refresh cookie"];
+  D2 -> P3 [label="token hợp lệ"];
+  P3 -> U [label="JWT mới"];
+  U -> P4 [label="Bearer JWT"];
+  D1 -> P4 [label="dòng user"];
+  P4 -> U [label="hồ sơ / 403"];
+  A -> P5 [label="khóa / mở khóa"];
+  P5 -> D1 [label="is_active"];
+  P5 -> D20 [label="nhật ký thao tác"];
+}
