@@ -84,7 +84,7 @@ export default function AppLayout() {
           <p className="mt-3 text-xs text-shell-muted">HarmonyMentor {APP_VERSION}</p>
         </div>
       </aside>
-      <main id="noi-dung" className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+      <main id="noi-dung" className="mx-auto w-full max-w-5xl px-4 py-6 max-md:pb-28 sm:px-6 lg:px-8 lg:py-8">
         <Suspense fallback={<PageLoader />}><Outlet /></Suspense>
       </main>
       <FloatingTutorDrawer />

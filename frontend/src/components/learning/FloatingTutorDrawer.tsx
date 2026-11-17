@@ -100,6 +100,21 @@ export default function FloatingTutorDrawer() {
   const [busy, setBusy] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [remaining, setRemaining] = useState<number | null>(null);
+  // FE-002: trên điện thoại (< md) nút tròn thu vào mép phải khi đang cuộn xuống đọc bài, hiện lại khi cuộn lên
+  // hoặc tới cuối trang, để không che chữ/đáp án. Máy tính không đổi.
+  const [tucked, setTucked] = useState(false);
+  useEffect(() => {
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      const atEnd = window.innerHeight + y >= document.documentElement.scrollHeight - 24;
+      if (atEnd || y < 80 || y < last - 4) setTucked(false);
+      else if (y > last + 4) setTucked(true);
+      last = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const navigate = useNavigate();
@@ -197,9 +212,11 @@ export default function FloatingTutorDrawer() {
       </form>
     </section>}
     {/* FE-001: trên điện thoại khung chat phủ gần hết màn hình và có nút × riêng, nên ẩn nút tròn khi khung mở;
-        trước đây nút tròn nằm đè lên nút "Gửi". FE-002: nút nhỏ hơn (48px) để che ít chữ bài học hơn. */}
+        trước đây nút tròn nằm đè lên nút "Gửi". FE-002: nút nhỏ hơn (48px), thu vào mép khi cuộn xuống;
+        khi nhận focus bàn phím thì luôn hiện đủ (focus-visible:translate-x-0). */}
     <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-label={open ? "Đóng AI Tutor" : "Mở AI Tutor"}
-      className={`fixed right-3 bottom-24 z-40 size-12 items-center justify-center rounded-full bg-primary text-sm font-bold text-on-primary shadow-xl ring-2 ring-bg hover:bg-primary-strong md:right-5 md:bottom-5 md:flex md:size-14 ${open ? "hidden" : "flex"}`}>
+      data-tucked={tucked || undefined}
+      className={`fixed right-3 bottom-24 z-40 size-12 items-center justify-center rounded-full bg-primary text-sm font-bold text-on-primary shadow-xl ring-2 ring-bg transition-transform duration-200 hover:bg-primary-strong focus-visible:translate-x-0 motion-reduce:transition-none md:right-5 md:bottom-5 md:flex md:size-14 md:translate-x-0 ${tucked ? "max-md:translate-x-[calc(100%+0.5rem)]" : ""} ${open ? "hidden" : "flex"}`}>
       {open ? "×" : "AI"}
     </button>
   </>;

@@ -68,6 +68,8 @@ Mở DevTools (F12) → Toggle device toolbar (Ctrl+Shift+M) → chọn kích th
 | FE-011/017 | Tổng quan, tài khoản mới, tải lại vài lần ở 390 px | Nút "Làm bài kiểm tra đầu vào" nằm dưới thẻ "Bắt đầu học"; trang không giật khi dữ liệu về |
 | FE-010 | Bài 1, bấm "Bước tiếp" vài lần | Thanh tiến độ dài ra theo bước; chữ bên phải ghi "x% đúng" |
 | FE-015 | Mở F12 → Console, vào Học, Luyện tập | Không còn cảnh báo "AudioContext was not allowed to start" (Harmony Lab vẫn còn) |
+| FE-002 | Điện thoại (hoặc F12 chế độ điện thoại 390 px), vào một bài, cuộn xuống rồi cuộn lên | Cuộn xuống: nút AI tròn trượt ra khỏi mép phải; cuộn lên hoặc tới cuối trang: nút hiện lại |
+| FE-022 | Bật chế độ tối (☾), về Trang chủ, xem bàn phím piano | Phím trắng vẫn trắng, phím đen vẫn đen (trước đây bị lật ngược) |
 | Âm thanh | Harmony Lab, bấm **Phát** ngay khi vừa mở trang | Ghi lại số giây (chưa kịp tải trước nên vẫn chờ như cũ) |
 | Âm thanh | Trang chủ, bật âm thanh rồi cuộn qua cảnh khuông nhạc và vòng C–G–Am–F | Không rè, không chồng tiếng khi cuộn nhanh |
 
