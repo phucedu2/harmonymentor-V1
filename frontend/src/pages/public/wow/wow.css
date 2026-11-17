@@ -147,7 +147,18 @@
   --w-ivory: #1d3631;
 }
 
-/* Giảm chuyển động: tắt hiệu ứng CSS lặp; GSAP tự chuyển sang bản nhẹ trong WowHome. */
+/* FE-026: hoạt ảnh mở trang bằng CSS (trước là gsap.from). Chạy ngay từ khung hình đầu, không chờ thư viện.
+   fill-mode "backwards": hết hoạt ảnh thì trả transform cho GSAP (thị sai khi cuộn) điều khiển. */
+@media (prefers-reduced-motion: no-preference) {
+  .wow-char { animation: wow-rise 0.9s cubic-bezier(.16, 1, .3, 1) calc(var(--i, 0) * 25ms) backwards; }
+  .hero-fade { animation: wow-fade-up 0.8s cubic-bezier(.22, .61, .36, 1) calc(500ms + var(--i, 0) * 120ms) backwards; }
+  .wow-float span { animation: wow-pop 1.2s cubic-bezier(.34, 1.8, .64, 1) calc(200ms + var(--i, 0) * 80ms) backwards; }
+}
+@keyframes wow-rise { from { transform: translateY(110%) rotate(8deg); opacity: 0; } }
+@keyframes wow-fade-up { from { transform: translateY(24px); opacity: 0; } }
+@keyframes wow-pop { from { transform: rotate(-20deg) scale(0); opacity: 0; } }
+
+/* Giảm chuyển động: tắt hiệu ứng CSS lặp; GSAP không tải (useMotion(false)). */
 @media (prefers-reduced-motion: reduce) {
   .wow-eq[data-on="true"] i, .wow-scrollhint i { animation: none; }
   .wow-cta:hover { transform: none; }

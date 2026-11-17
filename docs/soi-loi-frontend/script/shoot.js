@@ -12,9 +12,12 @@ const PAGES = [
 const only = process.env.ONLY ? process.env.ONLY.split(',') : null;
 (async () => {
   const browser = await chromium.launch();
-  const email = `soi${Date.now()}@vd.vn`, password = 'matkhau123';
-  const reg = await (await browser.newContext()).request.post(BASE + '/api/v1/auth/register', { data: { email, password, display_name: 'Minh (vai 1)' } });
-  console.log('register', reg.status());
+  // EMAIL=… dùng tài khoản có sẵn tiến độ (ảnh slide); bỏ trống thì tạo tài khoản mới (soi lỗi trạng thái rỗng).
+  const email = process.env.EMAIL || `soi${Date.now()}@vd.vn`, password = process.env.PASSWORD || 'matkhau123';
+  if (!process.env.EMAIL) {
+    const reg = await (await browser.newContext()).request.post(BASE + '/api/v1/auth/register', { data: { email, password, display_name: 'Minh (vai 1)' } });
+    console.log('register', reg.status());
+  }
   const report = [];
   for (const scheme of ['light','dark']) for (const [w,h] of SIZES) {
     const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: Number(process.env.DSF||2), colorScheme: scheme, hasTouch: w < 800, isMobile: w < 800 && w < 500 });

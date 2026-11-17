@@ -1,9 +1,6 @@
 import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useQueries, useQuery } from "@tanstack/react-query";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
-import Lenis from "lenis";
+import type Lenis from "lenis";
 import "lenis/dist/lenis.css";
 import { api } from "../../../api";
 import { pitchClassesToAscendingNotes } from "../../../audio/musicUtils";
@@ -11,8 +8,8 @@ import { prettyNote } from "../../../lib/notation";
 import Piano from "../../../Piano";
 import { SoundToggle, useSound } from "./sound";
 import "./wow.css";
+import { useMotion, useMotionEffect } from "./motion";
 
-gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 // ---------- Tiện ích chung ----------
 
@@ -33,8 +30,10 @@ export function useReducedMotion() {
 /** Cuộn mượt bằng Lenis, đồng bộ với ScrollTrigger. Trả về hàm cuộn tới phần tử (dùng cho link #chuong-trinh). */
 export function useSmoothScroll(enabled: boolean) {
   const lenisRef = useRef<Lenis | null>(null);
+  const motion = useMotion(enabled);
   useEffect(() => {
-    if (!enabled) return;
+    if (!motion) return;
+    const { gsap, ScrollTrigger, Lenis } = motion;
     const lenis = new Lenis({ lerp: 0.11 });
     lenis.on("scroll", ScrollTrigger.update);
     const tick = (time: number) => lenis.raf(time * 1000);
@@ -49,7 +48,7 @@ export function useSmoothScroll(enabled: boolean) {
       lenis.destroy();
       lenisRef.current = null;
     };
-  }, [enabled]);
+  }, [motion]);
   return (el: HTMLElement) => {
     if (lenisRef.current) lenisRef.current.scrollTo(el, { offset: -16 });
     else el.scrollIntoView({ behavior: enabled ? "smooth" : "auto" });
@@ -72,7 +71,7 @@ const FLOATERS = [
   { x: "36%", y: "86%", s: 44, c: "var(--w-deep)", d: 1.6 },
 ];
 
-function SplitWords({ text, onChar }: { text: string; onChar: (i: number) => void }) {
+function SplitWords({ text, onChar, offset = 0 }: { text: string; onChar: (i: number) => void; offset?: number }) {
   let n = 0;
   return (
     <>
@@ -82,7 +81,7 @@ function SplitWords({ text, onChar }: { text: string; onChar: (i: number) => voi
           <span className="wow-word">
             {Array.from(word).map((ch) => {
               const i = n++;
-              return <span key={i} className="wow-char" onMouseEnter={() => onChar(i)}>{ch}</span>;
+              return <span key={i} className="wow-char" style={{ ["--i" as string]: i + offset }} onMouseEnter={() => onChar(i)}>{ch}</span>;
             })}
           </span>
         </span>
@@ -96,12 +95,12 @@ export function Hero({ cta, onExplore }: { cta: ReactNode; onExplore: () => void
   const { play } = useSound();
   const reduce = useReducedMotion();
 
-  useGSAP(() => {
+  const motion = useMotion(!reduce);
+  // Hoạt ảnh mở trang (chữ trồi lên, nốt bung ra) là CSS trong wow.css (.wow-char, .hero-fade, .wow-float span);
+  // ở đây chỉ còn hiệu ứng theo cuộn, gắn vào khi thư viện tải xong.
+  useMotionEffect(motion, root, ({ gsap }) => {
     const mm = gsap.matchMedia();
     mm.add("(prefers-reduced-motion: no-preference)", () => {
-      gsap.from(".wow-char", { yPercent: 110, rotate: 8, opacity: 0, duration: 0.9, ease: "expo.out", stagger: 0.025 });
-      gsap.from(".hero-fade", { y: 24, opacity: 0, duration: 0.8, ease: "power3.out", stagger: 0.12, delay: 0.5 });
-      gsap.from(".wow-float span", { scale: 0, opacity: 0, duration: 1.2, ease: "back.out(2)", stagger: 0.08, delay: 0.2 });
       // Cuộn xuống: các nốt bay lên theo độ sâu khác nhau (parallax), tiêu đề thu nhỏ và mờ dần.
       gsap.utils.toArray<HTMLElement>(".wow-float span").forEach((el) => {
         gsap.to(el, {
@@ -115,35 +114,35 @@ export function Hero({ cta, onExplore }: { cta: ReactNode; onExplore: () => void
       });
     });
     return () => mm.revert();
-  }, { scope: root });
+  }, []);
 
   return (
     <section ref={root} className="wow-hero" aria-labelledby="hero-title">
       <div className="wow-float" aria-hidden="true">
         {FLOATERS.map((f, i) => (
           <span key={i} data-depth={f.d} className={f.noStem ? "no-stem" : ""}
-            style={{ left: f.x, top: f.y, ["--s" as string]: `${f.s}px`, ["--c" as string]: f.c }} />
+            style={{ left: f.x, top: f.y, ["--s" as string]: `${f.s}px`, ["--c" as string]: f.c, ["--i" as string]: i }} />
         ))}
       </div>
       <div className="hero-inner mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
-        <div className="hero-fade mb-8 flex flex-wrap items-center justify-between gap-3">
+        <div style={{ ["--i" as string]: 0 }} className="hero-fade mb-8 flex flex-wrap items-center justify-between gap-3">
           <span className="wow-kicker" style={{ color: "var(--w-verdigris)" }}>Nền tảng học nhạc lý · tiếng Việt</span>
           <SoundToggle />
         </div>
         <h1 id="hero-title" className="display">
           <SplitWords text="Hiểu nhạc lý" onChar={(i) => play([SFX_NOTES[i % SFX_NOTES.length]], "16n")} />
           <br />
-          <em><SplitWords text="bằng cách chơi nó." onChar={(i) => play([SFX_NOTES[(i + 2) % SFX_NOTES.length]], "16n")} /></em>
+          <em><SplitWords text="bằng cách chơi nó." offset={10} onChar={(i) => play([SFX_NOTES[(i + 2) % SFX_NOTES.length]], "16n")} /></em>
         </h1>
-        <p className="lead hero-fade mt-8 max-w-xl text-lg sm:text-xl">
+        <p style={{ ["--i" as string]: 1 }} className="lead hero-fade mt-8 max-w-xl text-lg sm:text-xl">
           Bắt đầu từ con số 0. Cuộn xuống để nghe một nốt nhạc biến thành hợp âm, rồi thành cả một bài hát.
           {" "}<span className="text-base opacity-80">(Bật âm thanh ở góc trên để nghe.)</span>
         </p>
-        <div className="hero-fade mt-10 flex flex-wrap items-center gap-3">
+        <div style={{ ["--i" as string]: 2 }} className="hero-fade mt-10 flex flex-wrap items-center gap-3">
           {cta}
           <button type="button" className="wow-ghost" onClick={onExplore}>Xem chương trình</button>
         </div>
-        {!reduce && <div className="wow-scrollhint hero-fade mt-14 text-center text-xs tracking-[0.2em]">CUỘN ĐỂ CHƠI<i /></div>}
+        {!reduce && <div style={{ ["--i" as string]: 3 }} className="wow-scrollhint hero-fade mt-14 text-center text-xs tracking-[0.2em]">CUỘN ĐỂ CHƠI<i /></div>}
       </div>
     </section>
   );
@@ -203,8 +202,9 @@ export function StaffScene() {
     { kicker: "Ba nốt", title: <>Chồng <b>{prettyNote(names[2])}</b>: hợp âm {prettyNote(chord.data!.symbol)} {QUALITY_VI[chord.data!.quality] ?? chord.data!.quality}.</>, body: "Ba nốt xếp chồng cách quãng ba là một hợp âm. Bạn vừa dựng hợp âm đầu tiên." },
   ] : [];
 
-  useGSAP(() => {
-    if (reduce || steps.length === 0) return;
+  const motion = useMotion(!reduce);
+  useMotionEffect(motion, root, ({ gsap }) => {
+    if (steps.length === 0) return;
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: root.current, start: "top top", end: "+=220%", scrub: 0.6, pin: true,
@@ -225,7 +225,7 @@ export function StaffScene() {
       if (i < 2) tl.to(`.step-${i}`, { opacity: 0, y: -30, duration: 0.3 }, i + 0.8);
     });
     tl.to({}, { duration: 0.4 });
-  }, { scope: root, dependencies: [reduce, steps.length], revertOnUpdate: true });
+  }, [steps.length]);
 
   return (
     <section ref={root} className="wow-staff-scene wow-staff" aria-labelledby="staff-title">
@@ -272,8 +272,9 @@ export function ProgressionScene() {
   const playRef = useRef({ play, playables });
   playRef.current = { play, playables };
 
-  useGSAP(() => {
-    if (reduce || !ready || !track.current) return;
+  const motion = useMotion(!reduce);
+  useMotionEffect(motion, root, ({ gsap }) => {
+    if (!ready || !track.current) return;
     const distance = () => Math.max(0, track.current!.scrollWidth - window.innerWidth + 32);
     gsap.to(track.current, {
       x: () => -distance(), ease: "none",
@@ -290,7 +291,7 @@ export function ProgressionScene() {
         },
       },
     });
-  }, { scope: root, dependencies: [reduce, ready], revertOnUpdate: true });
+  }, [ready]);
 
   return (
     <section ref={root} className="wow-prog" aria-labelledby="prog-title">
@@ -330,7 +331,8 @@ export function ProgressionScene() {
 
 /** Các khối có class .reveal hiện dần khi cuộn tới (chỉ khi không bật giảm chuyển động). */
 export function useReveal(scope: React.RefObject<HTMLElement | null>, deps: unknown[]) {
-  useGSAP(() => {
+  const motion = useMotion(!useReducedMotion());
+  useMotionEffect(motion, scope, ({ gsap, ScrollTrigger }) => {
     const mm = gsap.matchMedia();
     mm.add("(prefers-reduced-motion: no-preference)", () => {
       ScrollTrigger.batch(".reveal", {
@@ -339,5 +341,5 @@ export function useReveal(scope: React.RefObject<HTMLElement | null>, deps: unkn
       });
     });
     return () => mm.revert();
-  }, { scope, dependencies: deps, revertOnUpdate: true });
+  }, deps);
 }
