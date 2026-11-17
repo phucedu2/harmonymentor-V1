@@ -43,6 +43,9 @@ export function useSmoothScroll(enabled: boolean) {
     lenisRef.current = lenis;
     return () => {
       gsap.ticker.remove(tick);
+      // Trả lại mặc định của GSAP (500 ms, 33 ms): lagSmoothing là cài đặt toàn cục, rời trang chủ mà không trả
+      // thì mọi hoạt ảnh GSAP khác sẽ nhảy cóc sau khi tab bị treo.
+      gsap.ticker.lagSmoothing(500, 33);
       lenis.destroy();
       lenisRef.current = null;
     };

@@ -84,7 +84,7 @@ function Curriculum() {
   if (lessons.isPending) {
     return (
       <div className="grid gap-4 md:grid-cols-2" aria-busy="true" aria-label="Đang tải chương trình học">
-        {[0, 1].map((i) => <div key={i} className="h-40 animate-pulse rounded-xl bg-line/60" />)}
+        {[0, 1].map((i) => <div key={i} className="h-40 animate-pulse rounded-xl motion-reduce:animate-none bg-line/60" />)}
       </div>
     );
   }

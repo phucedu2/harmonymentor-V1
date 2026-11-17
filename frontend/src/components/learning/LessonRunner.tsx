@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { scrollBehavior } from "../ui/motion";
 import {
   api,
   type ApiError,
@@ -283,7 +284,7 @@ export default function LessonRunner({
     const next = Math.min(Math.max(index, 0), steps.length - 1);
     if (viewAll) {
       // Trong chế độ xem cả bài, mọi bước đã nằm trên trang: chỉ cuộn tới bước đó.
-      document.getElementById(`buoc-${steps[next].id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      document.getElementById(`buoc-${steps[next].id}`)?.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
       return;
     }
     setStepIndex(next);
@@ -291,9 +292,8 @@ export default function LessonRunner({
     if (indexRef.current) indexRef.current.open = false;
     // FE-004: cuộn tới thẻ tiến độ chứ không về đầu trang; trên điện thoại tiêu đề bài 2 dòng + nút quay lại
     // chiếm gần nửa màn hình, mỗi lần bấm "Bước tiếp" người học lại phải tự cuộn xuống tìm nội dung.
-    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     const narrow = window.matchMedia?.("(max-width: 639px)").matches;
-    ((narrow ? progressRef.current : null) ?? topRef.current)?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    ((narrow ? progressRef.current : null) ?? topRef.current)?.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
   }
   const step = steps[current];
 
@@ -310,7 +310,7 @@ export default function LessonRunner({
     const index = steps.findIndex((item) => item.id === focusBlockId);
     if (index < 0) return;
     if (viewAll) {
-      requestAnimationFrame(() => document.getElementById(`buoc-${focusBlockId}`)?.scrollIntoView({ behavior: "smooth", block: "start" }));
+      requestAnimationFrame(() => document.getElementById(`buoc-${focusBlockId}`)?.scrollIntoView({ behavior: scrollBehavior(), block: "start" }));
     } else {
       setStepIndex(index);
     }

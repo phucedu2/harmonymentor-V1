@@ -94,6 +94,20 @@ Logo cũ không bị xóa (đề: "không xóa logo cũ"). Bản logo Sân khấ
 
 **Ghi chính thức:** `docs/decisions/ADR-026-nhan-dien-san-khau.md`; `docs/thuong-hieu/BRAND_NOTE.md` thêm mục 3b. Ảnh trong slide/báo cáo cũ (màu xanh Đồng & Gỉ) sẽ khác app.
 
+## 1g. Đợt 7 (17/11/2026, trưa): rà toàn bộ animation (FE-024)
+
+Phúc nhờ rà animation. Skill "review-animations" không có trong phiên nên rà tay theo các tiêu chí thường dùng: tôn trọng `prefers-reduced-motion`, chỉ động vào transform/opacity, không giữ `will-change` cố định, dọn hoạt ảnh khi rời trang. Đã kiểm 18 file có animation/transition.
+
+| Mã | Lỗi | Sửa |
+|---|---|---|
+| FE-024a | Bài học: 2 chỗ cuộn `smooth` (bấm mục lục ở chế độ "xem cả bài", mở bài từ liên kết tới một bước) bỏ qua cài đặt giảm chuyển động | Hàm chung `components/ui/motion.ts` `scrollBehavior()`, dùng cho cả 4 chỗ cuộn |
+| FE-024b | Cột sóng nút âm thanh trang chủ đổi `height` mỗi khung hình (bắt trình duyệt dựng lại bố cục) | Đổi sang `transform: scaleY` |
+| FE-024c | `will-change` cố định trên mọi chữ tiêu đề và mọi khối `.reveal` (giữ lớp GPU mãi sau khi hoạt ảnh xong) | Bỏ; GSAP tự xử lý lúc chạy. Đo lại: 0 phần tử còn `will-change` |
+| FE-024d | Rời trang chủ, `gsap.ticker.lagSmoothing(0)` (cài đặt toàn cục) không được trả lại | Trả về mặc định 500/33 khi dọn Lenis |
+| FE-024e | Giảm chuyển động: thẻ hợp âm vẫn trượt 0,3 s; khung chờ nhấp nháy `animate-pulse` | Thẻ nhảy ngay (vẫn nhấc lên để báo thẻ đang chọn); khung chờ đứng yên |
+
+Kiểm bằng Playwright: bật giảm chuyển động thì trang chủ 0 hoạt ảnh CSS đang chạy (trước có `wow-drip`, `wow-eq`); bình thường cột sóng chạy bằng transform. Vitest 280 đạt, build đạt. Giữ nguyên: logo cuộn 2,4 s lúc mở (đã tắt khi giảm chuyển động), vòng xoay nút đang tải (là tín hiệu chờ, cần thấy).
+
 ## 2. Mẫu tham chiếu
 
 Từ cloud, trình duyệt Playwright bị proxy chặn mọi site ngoài (`ERR_TUNNEL_CONNECTION_FAILED`), nên các link dưới được mở qua Firecrawl (HTTP 200, đọc văn bản/tóm tắt), **không xem ảnh trực tiếp**. Phần "học được gì" về chữ/màu/chuyển động là hiểu biết sẵn có của người soi về các sản phẩm này, chưa đối chiếu ảnh chụp mới: coi là phỏng đoán có cơ sở.

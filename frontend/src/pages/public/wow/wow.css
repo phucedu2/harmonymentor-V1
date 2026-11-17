@@ -58,7 +58,8 @@
 }
 .wow-hero h1 { font-size: clamp(2.8rem, 9vw, 8.5rem); line-height: 0.95; }
 .wow-hero .lead { color: rgba(242, 243, 234, 0.78); }
-.wow-char { display: inline-block; will-change: transform; cursor: default; transition: color 0.2s; }
+/* Không đặt will-change cố định: GSAP chỉ động vào chữ lúc mở trang, giữ ~30 lớp GPU mãi là phí bộ nhớ. */
+.wow-char { display: inline-block; cursor: default; transition: color 0.2s; }
 .wow-char:hover { color: var(--w-verdigris); }
 .wow-word { display: inline-block; white-space: nowrap; }
 
@@ -97,12 +98,13 @@
 .wow-sound[aria-pressed="true"] { border-color: var(--w-verdigris); color: var(--w-verdigris); }
 .wow-sound.on-light { color: var(--w-on-paper); border-color: var(--w-line); background: color-mix(in srgb, var(--w-paper) 85%, transparent); }
 .wow-eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; }
-.wow-eq i { width: 3px; height: 4px; background: currentColor; border-radius: 1px; }
+/* Nhảy bằng scaleY (chỉ compositor) thay vì đổi height, vì height bắt trình duyệt dựng lại bố cục mỗi khung hình. */
+.wow-eq i { width: 3px; height: 14px; background: currentColor; border-radius: 1px; transform: scaleY(0.29); transform-origin: bottom; }
 .wow-eq[data-on="true"] i { animation: wow-eq 0.9s ease-in-out infinite; }
 .wow-eq[data-on="true"] i:nth-child(2) { animation-delay: 0.15s; }
 .wow-eq[data-on="true"] i:nth-child(3) { animation-delay: 0.3s; }
 .wow-eq[data-on="true"] i:nth-child(4) { animation-delay: 0.45s; }
-@keyframes wow-eq { 0%, 100% { height: 4px; } 50% { height: 14px; } }
+@keyframes wow-eq { 0%, 100% { transform: scaleY(0.29); } 50% { transform: scaleY(1); } }
 
 .wow-scrollhint { color: rgba(242, 243, 234, 0.6); }
 .wow-scrollhint i { display: block; width: 1px; height: 40px; margin: 8px auto 0; background: linear-gradient(var(--w-verdigris), transparent); animation: wow-drip 1.8s ease-in-out infinite; transform-origin: top; }
@@ -130,7 +132,6 @@
 
 /* ---------- Phần dưới (giữ nội dung cũ, đổi màu) ---------- */
 .wow .wow-panel { background: var(--w-panel); border: 1px solid var(--w-line); border-radius: 22px; }
-.wow .reveal { will-change: transform, opacity; }
 .wow-final { background: var(--w-deep); color: var(--w-cream); }
 
 /* FE-014: chế độ tối của trang chủ. Chỉ phần "giấy" đổi; tương phản: chữ #E7EFEA/#10201C 14,6:1,
@@ -150,6 +151,8 @@
 @media (prefers-reduced-motion: reduce) {
   .wow-eq[data-on="true"] i, .wow-scrollhint i { animation: none; }
   .wow-cta:hover { transform: none; }
+  /* Thẻ hợp âm vẫn nhấc lên để báo thẻ đang chọn, nhưng nhảy ngay không trượt. */
+  .wow-card { transition: border-color 0.3s, background 0.3s; }
 }
 
 /* Màn hình hẹp: nốt trang trí mờ đi để không che chữ. */

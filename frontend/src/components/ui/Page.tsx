@@ -1,5 +1,6 @@
 // Khối giao diện dùng chung cho khu học (phuc-music Bước 3), thay các class CSS cũ trong styles.css.
 import { useEffect, useRef, type ButtonHTMLAttributes, type HTMLAttributes, type ReactNode } from "react";
+import { scrollBehavior } from "./motion";
 
 export function PageHeading({ eyebrow, title, children }: { eyebrow: string; title: ReactNode; children?: ReactNode }) {
   return (
@@ -102,8 +103,7 @@ export function ResultBox({ correct, title, children, celebrate = "small" }: {
   useEffect(() => {
     const el = ref.current;
     if (!el || typeof el.scrollIntoView !== "function") return;
-    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    el.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
+    el.scrollIntoView({ block: "nearest", behavior: scrollBehavior() });
   }, [correct]);
   return (
     <div ref={ref} role="status" className={`relative mt-3 scroll-mt-4 scroll-mb-28 rounded-xl border px-4 py-3 text-sm leading-relaxed ${correct ? "border-success/40 bg-success-soft text-ink" : "border-danger/40 bg-danger-soft text-ink"}`}>
