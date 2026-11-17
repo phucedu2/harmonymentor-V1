@@ -1,0 +1,78 @@
+digraph G {
+  graph [fontname="Liberation Serif", bgcolor=white, pad=0.2 , nodesep=0.35, ranksep=0.35];
+  node [fontname="Liberation Serif", fontsize=11, color=black];
+  edge [fontname="Liberation Serif", fontsize=9, color=black];
+  node [fontsize=10];
+  s [shape=ellipse, label="Start"];
+  i [shape=parallelogram, label="Input exercise_version_id,
+answer, input method"];
+  d0 [shape=diamond, label="Version is the current
+published one?", margin=0.02];
+  o0 [shape=parallelogram, label="Return 409
+EXERCISE_VERSION_SUPERSEDED"];
+  d1 [shape=diamond, label="Input method allowed
+for this question?", margin=0.02];
+  o1 [shape=parallelogram, label="Return 422 (no attempt saved)"];
+  g [shape=box, label="Music Engine grades with the version's
+answer_key + grader_config"];
+  a [shape=box, label="Save attempt + attempt_errors
+(is_test = true if admin)"];
+  d2 [shape=diamond, label="Admin test attempt?", margin=0.02];
+  d3 [shape=diamond, label="Correct?", margin=0.02];
+  d4 [shape=diamond, label="First attempt
+of this question?", margin=0.02];
+  d5 [shape=diamond, label="Previous attempt
+was wrong?", margin=0.02];
+  r1 [shape=box, label="result = 1"];
+  r05 [shape=box, label="result = 0.5"];
+  r0 [shape=box, label="result = 0"];
+  rn [shape=box, label="repeat correct:
+count only, score unchanged"];
+  m [shape=box, label="mastery = old + 0.3 × (result − old)
+level: weak < 0.60 (≥5 tries), ready ≥ 0.60, mastered ≥ 0.80"];
+  o2 [shape=parallelogram, label="Return correct?, error code, feedback;
+explanation if correct or wrong ≥ 2 times"];
+  d6 [shape=diamond, label="Learner presses
+Complete lesson?", margin=0.02];
+  d7 [shape=diamond, label="Every question correct
+at least once?", margin=0.02];
+  o3 [shape=parallelogram, label="Return 409
+LESSON_NOT_MASTERED"];
+  l [shape=box, label="Mark completed; create review_states
+box 1, due_at = now"];
+  rv [shape=box, label="Review card: correct when due → box+1
+(1-2-4-8-16 days); wrong → box 1, +1 day;
+correct before due → keep box"];
+  e [shape=ellipse, label="End"];
+  s -> i;
+  i -> d0;
+  d0 -> o0 [label="No"];
+  d0 -> d1 [label="Yes"];
+  d1 -> o1 [label="No"];
+  d1 -> g [label="Yes"];
+  g -> a;
+  a -> d2;
+  d2 -> o2 [label="Yes"];
+  d2 -> d3 [label="No"];
+  d3 -> r0 [label="No"];
+  d3 -> d4 [label="Yes"];
+  d4 -> r1 [label="Yes"];
+  d4 -> d5 [label="No"];
+  d5 -> r05 [label="Yes"];
+  d5 -> rn [label="No"];
+  r1 -> m;
+  r05 -> m;
+  r0 -> m;
+  rn -> o2;
+  m -> o2;
+  o2 -> d6;
+  d6 -> e [label="No"];
+  d6 -> d7 [label="Yes"];
+  d7 -> o3 [label="No"];
+  d7 -> l [label="Yes"];
+  l -> rv;
+  rv -> e;
+  o0 -> e;
+  o1 -> e;
+  o3 -> e;
+}

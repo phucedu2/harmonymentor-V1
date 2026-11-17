@@ -1,0 +1,40 @@
+digraph G {
+  graph [fontname="Liberation Serif", bgcolor=white, pad=0.2 , nodesep=0.35, ranksep=0.35];
+  node [fontname="Liberation Serif", fontsize=11, color=black];
+  edge [fontname="Liberation Serif", fontsize=9, color=black];
+  node [fontsize=10];
+  s [shape=ellipse, label="Start"];
+  i [shape=parallelogram, label="Input e-mail, password
+(client IP from proxy)"];
+  k [shape=box, label="key = ip | normalised e-mail"];
+  d1 [shape=diamond, label="failures(key) >= 5
+in 15 minutes?", margin=0.02];
+  o1 [shape=parallelogram, label="Return 429 LOGIN_LOCKED
++ Retry-After"];
+  f [shape=box, label="Find user by e-mail;
+bcrypt verify (dummy hash if none)"];
+  d2 [shape=diamond, label="Password OK and user
+active, not synthetic?", margin=0.02];
+  r [shape=box, label="Redis INCR login_fail:key
+(TTL 15 min on first failure)"];
+  o2 [shape=parallelogram, label="Return 401
+INVALID_CREDENTIALS"];
+  z [shape=box, label="Reset counter;
+create refresh token (SHA-256 stored)"];
+  o3 [shape=parallelogram, label="Return access JWT (30 min)
++ HttpOnly refresh cookie (7 days)"];
+  e [shape=ellipse, label="End"];
+  s -> i;
+  i -> k;
+  k -> d1;
+  d1 -> o1 [label="Yes"];
+  d1 -> f [label="No"];
+  f -> d2;
+  d2 -> r [label="No"];
+  r -> o2;
+  d2 -> z [label="Yes"];
+  z -> o3;
+  o1 -> e;
+  o2 -> e;
+  o3 -> e;
+}
