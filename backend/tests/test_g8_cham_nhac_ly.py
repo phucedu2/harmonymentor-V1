@@ -224,3 +224,26 @@ def test_guardrail_khong_hieu_nham_at_phu_thanh_bac_cua_giong():
     # V7/ii trong C là A7 (đúng); trước đây bị đọc thành "V7 trong C là A7" nên bị báo mâu thuẫn.
     assert not [c for c in scan_reply("V7/ii trong giọng C trưởng là A7 (A C# E G).") if c.status == "contradicted"]
     assert [c.status for c in scan_reply("G7 là V7 trong giọng C trưởng.")] == ["verified"]
+
+
+def test_probe_cho_va_hoi_lai_khi_gemini_qua_tai_va_bo_dong_du_phong_cu(tmp_path, monkeypatch):
+    from app.ai.tutor import llm
+    from app.eval.run import ScriptedProvider
+
+    monkeypatch.setattr(llm, "get_provider", lambda cfg: ScriptedProvider())
+    monkeypatch.setattr(probe.time, "sleep", lambda s: None)
+    real, calls = probe.ask, {"n": 0}
+
+    def flaky(db, user, q, embedder, provider, ts):
+        calls["n"] += 1
+        if calls["n"] <= 2:                              # hai lần đầu Gemini 503, lần ba mới trả lời
+            return {"id": q["id"], "q": q["q"], "reply": "dự phòng", "status": "fallback", "fallback_reason": "unavailable"}
+        return real(db, user, q, embedder, provider, ts)
+
+    monkeypatch.setattr(probe, "ask", flaky)
+    out = tmp_path / "a.jsonl"
+    out.write_text(json.dumps({"id": "T013", "q": "x", "reply": "dự phòng", "fallback_reason": "unavailable"}) + "\n",
+                   encoding="utf-8")                      # dòng dự phòng do 503 từ lượt trước phải bị bỏ để hỏi lại
+    assert probe.main(["--only", "T001,T013", "--pause", "0", "--out", str(out)]) == 0
+    rows = {r["id"]: r for r in probe.load(out)}
+    assert set(rows) == {"T001", "T013"} and rows["T001"].get("fallback_reason") != "unavailable"
