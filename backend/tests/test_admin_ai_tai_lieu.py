@@ -177,16 +177,29 @@ def test_engine_gan_co_noi_dung_sai_va_xuat_ban_can_xac_nhan(env):
     edited = client.put(f"/api/v1/admin/ai/drafts/{draft['id']}", headers=h, json={
         "title": draft["content"]["title"], "objectives": draft["content"]["objectives"],
         "blocks": [{"title": "Cmaj7", "paragraphs": ["Cmaj7 gồm các nốt C E G B."], "page": 1}],
-        "questions": [q for q in draft["content"]["questions"]]})
+        "questions": [{**q, "reviewed": True} for q in draft["content"]["questions"]]})
     assert edited.status_code == 200 and edited.json()["engine"]["contradicted"] == []
     ok = client.post(f"/api/v1/admin/ai/drafts/{draft['id']}/publish", headers=h, json={})
     assert ok.status_code == 200
+
+
+def approve_all(client, h, draft):
+    """ADR-028: câu Engine không kiểm được phải được Quản trị viên tick đã duyệt trước khi xuất bản."""
+    c = draft["content"]
+    r = client.put(f"/api/v1/admin/ai/drafts/{draft['id']}", headers=h, json={
+        "title": c["title"], "objectives": c["objectives"], "blocks": c["blocks"],
+        "questions": [{**q, "reviewed": True} for q in c["questions"]]})
+    assert r.status_code == 200, r.text
+    return r.json()
 
 
 def test_xuat_ban_tao_bai_cham_duoc_va_giu_nguon(env):
     client, _ = env
     h = make_admin()
     draft = new_draft(client, h)
+    blocked = client.post(f"/api/v1/admin/ai/drafts/{draft['id']}/publish", headers=h, json={})
+    assert blocked.status_code == 409 and blocked.json()["error"]["code"] == "QUESTIONS_NEED_REVIEW"
+    approve_all(client, h, draft)
     r = client.post(f"/api/v1/admin/ai/drafts/{draft['id']}/publish", headers=h, json={})
     assert r.status_code == 200, r.text
     lesson_id = r.json()["lesson_id"]

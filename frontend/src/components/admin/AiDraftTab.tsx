@@ -1,10 +1,17 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { api, type AiDocument, type AiDraft, type AiDraftRow, type AiQuestion } from "../../api";
+import { api, type AiDocument, type AiDraft, type AiDraftRow, type AiQuestion, type AiQuestionKind } from "../../api";
 import { Button } from "../ui/Button";
 import { Badge, Card, CardTitle } from "../ui/Page";
 
 const errMsg = (e: unknown) => (e as { message?: string }).message ?? "Có lỗi xảy ra, thử lại sau.";
-const KIND: Record<AiQuestion["kind"], string> = { mcq: "Trắc nghiệm", build_chord: "Dựng hợp âm", build_scale: "Dựng âm giai" };
+const KIND: Record<AiQuestionKind, string> = {
+  mcq: "Trắc nghiệm", true_false: "Đúng/Sai", multi_select: "Chọn nhiều", short: "Tự luận ngắn",
+  build_chord: "Dựng hợp âm", build_scale: "Dựng âm giai", open: "Tự luận mở",
+};
+const LEVEL: Record<string, string> = { nho: "Nhớ", hieu: "Hiểu", van_dung: "Vận dụng" };
+const show = (v: string | string[] | null | undefined) => (Array.isArray(v) ? v.join(" ") : v ?? "—");
+// Câu cũ (trước ADR-028) chưa có needs_review: chỉ câu dựng hợp âm/âm giai là Engine tự kiểm.
+const needsReview = (q: AiQuestion) => q.needs_review ?? !["build_chord", "build_scale"].includes(q.kind);
 
 // AI chỉ soạn BẢN NHÁP (ADR-025). Bài chỉ tới học sinh khi Quản trị viên bấm xuất bản ở đây.
 function DraftEditor({ draftId, onClose }: { draftId: string; onClose: () => void }) {
@@ -12,6 +19,7 @@ function DraftEditor({ draftId, onClose }: { draftId: string; onClose: () => voi
   const [ack, setAck] = useState(false);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [moreKinds, setMoreKinds] = useState<AiQuestionKind[]>([]);
   const load = () => api.aiDraft(draftId).then(setDraft).catch((e) => setMsg(errMsg(e)));
   useEffect(() => { load(); }, [draftId]);
   if (!draft) return <p className="text-muted">{msg ?? "Đang tải…"}</p>;
@@ -21,7 +29,20 @@ function DraftEditor({ draftId, onClose }: { draftId: string; onClose: () => voi
   const set = (patch: Partial<typeof c>) => setDraft({ ...draft, content: { ...c, ...patch } });
   const run = async (fn: () => Promise<void>) => { setBusy(true); setMsg(null); try { await fn(); } catch (e) { setMsg(errMsg(e)); } finally { setBusy(false); } };
   const save = () => run(async () => { setDraft(await api.aiSaveDraft(draft.id, { title: c.title, objectives: c.objectives, blocks: c.blocks, questions: c.questions })); setAck(false); setMsg("Đã lưu và soát lại bằng Music Engine."); });
-  const publish = () => run(async () => { const r = await api.aiPublish(draft.id, ack); setMsg(`Đã xuất bản bài “${r.title}”. Học sinh thấy ngay.`); await load(); });
+  // Lưu trước khi xuất bản: dấu "Đã duyệt" vừa tick chỉ có hiệu lực khi máy chủ đã lưu (máy chủ kiểm lại lúc xuất bản).
+  const publish = () => run(async () => {
+    await api.aiSaveDraft(draft.id, { title: c.title, objectives: c.objectives, blocks: c.blocks, questions: c.questions });
+    const r = await api.aiPublish(draft.id, ack); setMsg(`Đã xuất bản bài “${r.title}”. Học sinh thấy ngay.`); await load(); });
+  const pending = c.questions.filter((q) => needsReview(q) && !q.reviewed).length;
+  const setQ = (i: number, patch: Partial<AiQuestion>) => set({ questions: c.questions.map((x, j) => (j === i ? { ...x, ...patch } : x)) });
+  const more = () => run(async () => {
+    setMsg("AI đang soạn thêm câu luyện tập, có thể mất đến một phút…");
+    // Lưu sửa đổi trước, vì sinh thêm câu đọc bản nháp đang lưu trên máy chủ.
+    await api.aiSaveDraft(draft.id, { title: c.title, objectives: c.objectives, blocks: c.blocks, questions: c.questions });
+    const before = c.questions.length;
+    const next = await api.aiMoreQuestions(draft.id, moreKinds);
+    setDraft(next); setMsg(`AI đã thêm ${next.content.questions.length - before} câu. Câu Engine không kiểm được cần bạn đọc và tick “Đã duyệt”.`);
+  });
   const reject = () => run(async () => { if (!window.confirm("Từ chối bản nháp này?")) return; await api.aiReject(draft.id); await load(); });
 
   return <div className="grid gap-3">
@@ -55,17 +76,46 @@ function DraftEditor({ draftId, onClose }: { draftId: string; onClose: () => voi
       {open && <Button variant="ghost" onClick={() => set({ blocks: c.blocks.filter((_, j) => j !== i) })}>Xóa khối này</Button>}
     </Card>)}
 
-    <h3 className="font-semibold">Câu hỏi gợi ý ({c.questions.length})</h3>
-    {c.questions.map((q, i) => <Card key={i} className="grid gap-2 p-3">
-      <p className="text-xs text-muted"><Badge tone="muted">{KIND[q.kind]}</Badge> kỹ năng {q.skill_id} · trang {q.page}</p>
+    <h3 className="font-semibold">Câu luyện tập ({c.questions.length})</h3>
+    <p className="text-sm text-muted">Câu có nhãn “Engine đã kiểm” có đáp án do Music Engine tính. Câu “Cần duyệt” là câu khái niệm Engine không kiểm được:
+      đọc kỹ đề, đáp án, giải thích rồi tick “Đã duyệt” thì mới xuất bản được.</p>
+    {c.questions.map((q, i) => <Card key={i} className={`grid gap-2 p-3 ${needsReview(q) && !q.reviewed ? "border-warning" : ""}`}>
+      <p className="flex flex-wrap items-center gap-1.5 text-xs text-muted">
+        <Badge tone="muted">{KIND[q.kind] ?? q.kind}</Badge>{q.level && <Badge tone="muted">{LEVEL[q.level]}</Badge>}
+        {needsReview(q) ? <Badge tone={q.reviewed ? "success" : "warning"}>{q.reviewed ? "Đã duyệt" : "Cần duyệt"}</Badge> : <Badge tone="success">Engine đã kiểm</Badge>}
+        kỹ năng {q.skill_id} · trang {q.page}</p>
       <textarea aria-label={`Đề câu ${i + 1}`} rows={2} value={q.prompt} disabled={!open} className="rounded border border-line bg-surface p-2"
-        onChange={(e) => set({ questions: c.questions.map((x, j) => (j === i ? { ...x, prompt: e.target.value } : x)) })} />
-      {q.kind === "mcq" && <p className="text-sm">Phương án: {q.options?.map((o) => o === q.answer ? `✔ ${o}` : o).join(" · ")}</p>}
-      {q.kind !== "mcq" && <p className="text-sm">Đáp án do Music Engine tính: <b>{q.engine_answer?.join(" ") ?? "—"}</b> ({q.symbol ?? `${q.tonic} ${q.scale_type}`})</p>}
+        onChange={(e) => setQ(i, { prompt: e.target.value, reviewed: false })} />
+      {q.engine_note && <p className="text-sm text-warning">{q.engine_note}</p>}
+      {(q.kind === "mcq" || q.kind === "true_false") && <p className="text-sm">Phương án: {q.options?.map((o) => o === q.answer ? `✔ ${o}` : o).join(" · ")}</p>}
+      {q.kind === "multi_select" && <p className="text-sm">Phương án: {q.options?.map((o) => q.answers?.includes(o) ? `✔ ${o}` : o).join(" · ")}</p>}
+      {q.option_feedback && Object.keys(q.option_feedback).length > 0 && <ul className="list-disc pl-5 text-xs text-muted">
+        {Object.entries(q.option_feedback).map(([o, why]) => <li key={o}><b>{o}</b>: {why}</li>)}</ul>}
+      {(q.kind === "build_chord" || q.kind === "build_scale" || q.kind === "short") &&
+        <p className="text-sm">Đáp án do Music Engine tính: <b>{show(q.engine_answer)}</b>{q.kind === "build_chord" ? ` (${q.symbol})` : q.kind === "build_scale" ? ` (${q.tonic} ${q.scale_type})` : ""}</p>}
+      {q.kind === "open" && <>
+        <label className="text-sm font-semibold" htmlFor={`ai-model-${i}`}>Đáp án mẫu</label>
+        <textarea id={`ai-model-${i}`} rows={3} value={q.model_answer ?? ""} disabled={!open} className="rounded border border-line bg-surface p-2 text-sm"
+          onChange={(e) => setQ(i, { model_answer: e.target.value, reviewed: false })} />
+        <label className="text-sm font-semibold" htmlFor={`ai-rubric-${i}`}>Ý chấm (mỗi dòng một ý, 2–5 ý)</label>
+        <textarea id={`ai-rubric-${i}`} rows={3} value={(q.rubric ?? []).join("\n")} disabled={!open} className="rounded border border-line bg-surface p-2 text-sm"
+          onChange={(e) => setQ(i, { rubric: e.target.value.split("\n").filter((l) => l.trim()), reviewed: false })} />
+      </>}
       <textarea aria-label={`Lời giải câu ${i + 1}`} rows={2} value={q.explanation} disabled={!open} placeholder="Lời giải" className="rounded border border-line bg-surface p-2 text-sm"
-        onChange={(e) => set({ questions: c.questions.map((x, j) => (j === i ? { ...x, explanation: e.target.value } : x)) })} />
-      {open && <Button variant="ghost" onClick={() => set({ questions: c.questions.filter((_, j) => j !== i) })}>Xóa câu này</Button>}
+        onChange={(e) => setQ(i, { explanation: e.target.value })} />
+      {open && <div className="flex flex-wrap items-center gap-3">
+        {needsReview(q) && <label className="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" checked={Boolean(q.reviewed)}
+          onChange={(e) => setQ(i, { reviewed: e.target.checked })} />Đã duyệt: tôi đã đọc đề, đáp án và lời giải</label>}
+        <Button variant="ghost" onClick={() => set({ questions: c.questions.filter((_, j) => j !== i) })}>Xóa câu này</Button>
+      </div>}
     </Card>)}
+    {open && <div className="grid gap-2 rounded-lg border border-line p-3">
+      <p className="text-sm font-semibold">AI sinh thêm câu luyện tập (tối đa 20 câu mỗi bài)</p>
+      <div className="flex flex-wrap gap-3 text-sm">{(Object.keys(KIND) as AiQuestionKind[]).map((k) => <label key={k} className="flex items-center gap-1">
+        <input type="checkbox" checked={moreKinds.includes(k)} onChange={(e) => setMoreKinds(e.target.checked ? [...moreKinds, k] : moreKinds.filter((x) => x !== k))} />{KIND[k]}</label>)}</div>
+      <p className="text-xs text-muted">Không tick dạng nào thì AI trộn đủ các dạng. Sửa đổi chưa lưu sẽ được lưu trước.</p>
+      <div><Button variant="secondary" loading={busy} disabled={c.questions.length >= 20} onClick={more}>AI sinh thêm câu</Button></div>
+    </div>}
     {c.dropped_questions.length > 0 && <details className="text-sm text-muted"><summary>{c.dropped_questions.length} câu AI gợi ý đã bị loại tự động</summary>
       <ul className="list-disc pl-5">{c.dropped_questions.map((d, i) => <li key={i}>{d}</li>)}</ul></details>}
 
@@ -76,8 +126,9 @@ function DraftEditor({ draftId, onClose }: { draftId: string; onClose: () => voi
       </div>
       {flags > 0 && <label className="flex items-start gap-2 text-sm"><input type="checkbox" className="mt-1" checked={ack} onChange={(e) => setAck(e.target.checked)} />
         Tôi đã đối chiếu tài liệu gốc và vẫn muốn xuất bản dù Engine báo nghi sai.</label>}
-      <Button loading={busy} disabled={flags > 0 && !ack} onClick={publish}>Xuất bản thành bài học</Button>
-      <p className="text-xs text-muted">Lưu các sửa đổi trước khi xuất bản. Bài mới hiện ở cuối danh sách bài học.</p>
+      {pending > 0 && <p className="text-sm text-warning" role="status">Còn {pending} câu cần duyệt. Đọc kỹ rồi tick “Đã duyệt” ở từng câu.</p>}
+      <Button loading={busy} disabled={(flags > 0 && !ack) || pending > 0} onClick={publish}>Xuất bản thành bài học</Button>
+      <p className="text-xs text-muted">Bấm xuất bản sẽ tự lưu các sửa đổi rồi soát lại bằng Music Engine. Bài mới hiện ở cuối danh sách bài học.</p>
     </div>}
     {msg && <p role="status" className="text-sm">{msg}</p>}
   </div>;

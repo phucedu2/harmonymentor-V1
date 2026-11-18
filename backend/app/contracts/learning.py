@@ -79,7 +79,7 @@ class AttemptIn(BaseModel):
     answer: Any
     # "piano": đáp án chọn trên phím đàn, chỉ chấm cao độ (phím không mang chính tả tên nốt). HM-011: bỏ trống thì
     # máy chủ dùng cách nhập mặc định của câu; cách nhập nào hợp lệ do phiên bản câu hỏi quyết định.
-    input_method: Optional[Literal["text", "choice", "piano"]] = None
+    input_method: Optional[Literal["text", "choice", "multi_choice", "piano"]] = None
 
 
 class AttemptErrorOut(BaseModel):

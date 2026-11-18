@@ -73,8 +73,8 @@ def record_practice(db: Session, user: User, kind: str, level: str | None, quest
     # Chỉ lưu đúng các trường của đề, không lưu thứ client gửi kèm. Lượt bấm piano ghi thêm "input" để lịch sử
     # biết lượt đó chấm theo lớp cao độ (dễ hơn chấm chính tả), không trộn lẫn khi thống kê.
     clean_question = {name: question[name] for name in _REQUIRED[kind]}
-    if input_mode == "piano":
-        clean_question["input"] = "piano"
+    if input_mode in ("piano", "choice"):
+        clean_question["input"] = input_mode
     row = PracticeAttempt(
         id=str(uuid4()), user_id=user.id, kind=kind, level=level, question=clean_question, answer=answer,
         correct=bool(result["correct"]), primary_error=result.get("primary_error"), is_test=user.role == "admin",
