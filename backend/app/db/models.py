@@ -38,6 +38,8 @@ class User(Base):
     # Chỉ so với vector mô tả kỹ năng cùng mô hình; khác mô hình thì tầng nội dung dùng dự phòng.
     goal_embedding: Mapped[Optional[list[float]]] = mapped_column(JSON, nullable=True)
     goal_embedding_model: Mapped[Optional[str]] = mapped_column(String(80), nullable=True)
+    # Ảnh đại diện là một con vật vẽ sẵn (ADR-029, 10A). Rỗng = con vật cố định suy từ id (app/auth/avatars.py).
+    avatar_key: Mapped[Optional[str]] = mapped_column(String(24), nullable=True)
 
 
 class RefreshToken(Base):
@@ -650,3 +652,21 @@ def _guard_exercise_identity(_mapper, connection, target: Exercise) -> None:
         ).first() is not None
         if has_versions:
             raise ImmutableVersionError(f"Câu {target.id} đã có phiên bản; đổi {', '.join(moved)} thì phải tạo câu mới với id mới.")
+
+
+class AiSummaryJob(Base):
+    """Việc AI tóm tắt CẢ tài liệu (ADR-029): chia phần theo chương/mục, mỗi phần thành một bản nháp, chạy nền.
+    `parts` giữ trạng thái từng phần để hết hạn mức thì tạm dừng và lần sau chạy tiếp từ phần đang dở."""
+
+    __tablename__ = "ai_summary_jobs"
+    __table_args__ = (CheckConstraint("status IN ('running', 'paused', 'done', 'cancelled')", name="ck_ai_summary_jobs_status"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    document_id: Mapped[str] = mapped_column(ForeignKey("source_documents.id", ondelete="CASCADE"), index=True)
+    created_by: Mapped[Optional[str]] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    status: Mapped[str] = mapped_column(String(12), default="running")
+    pause_reason: Mapped[Optional[str]] = mapped_column(String(24), nullable=True)
+    parts: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list)
+    skipped_pages: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)

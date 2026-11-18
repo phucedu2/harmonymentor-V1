@@ -53,6 +53,11 @@ class LessonSummaryOut(BaseModel):
     block_count: int
     exercise_count: int
     review_item_count: int
+    # ADR-029 (7A, 8A): bài AI soạn từ tài liệu hiện ở mục "Kiến thức mới"; "Mở rộng" = kiến thức chưa khớp kỹ năng nào,
+    # câu luyện tập không tính mức thành thạo. published_at để gắn nhãn "Mới".
+    ai_generated: bool = False
+    expansion: bool = False
+    published_at: Optional[datetime] = None
 
 
 class ExternalResourceOut(BaseModel):

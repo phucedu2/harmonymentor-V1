@@ -4,6 +4,8 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
+from .avatars import AvatarKey
+
 Instrument = Literal["piano", "guitar", "drums"]
 
 
@@ -25,6 +27,7 @@ class UserOut(BaseModel):
     role: Literal["learner", "admin"]
     preferred_instrument: Instrument | None
     goal_text: str | None
+    avatar: AvatarKey
 
 
 class AuthOut(BaseModel):
@@ -37,3 +40,4 @@ class AuthOut(BaseModel):
 class ProfilePatchIn(BaseModel):
     display_name: str | None = Field(default=None, min_length=1, max_length=160)
     preferred_instrument: Instrument | None = None
+    avatar: AvatarKey | None = None

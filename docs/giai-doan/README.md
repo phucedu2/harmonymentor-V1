@@ -56,6 +56,7 @@ Các giai đoạn 0.2 → 2.3 là lộ trình của bản code gốc (zip v0.1.0
 ## Quy ước cho giai đoạn sau
 
 - [`ai-luyen-tap/`](ai-luyen-tap/BAO_CAO.md): AI sinh bài luyện tập trắc nghiệm + tự luận từ tài liệu, trắc nghiệm Engine ở Luyện tập (18/11/2026, ADR-028).
+- [`ai-soan-bai-dot2/`](ai-soan-bai-dot2/BAO_CAO.md): AI tóm tắt cả tài liệu chạy nền, chống trùng kiến thức, mục "Kiến thức mới", ảnh đại diện con vật, cửa sổ AI Tutor (18/11/2026, ADR-029).
 - Mỗi giai đoạn mới (ví dụ `gd2-goi-y`) tạo thư mục `docs/giai-doan/<tên giai đoạn>/`, đặt báo cáo triển khai và file kiểm chứng của giai đoạn đó vào đây, rồi thêm một dòng vào bảng trên.
 - Báo cáo PR vẫn ở [`docs/bao-cao/`](../bao-cao/), ảnh và minh chứng chấm điểm ở [`docs/minh-chung/`](../minh-chung/), quyết định ở [`docs/decisions/`](../decisions/).
 - Đặc tả dùng chung cho nhiều giai đoạn (`SKILL_GRAPH.md`, `LESSON_SPECIFICATIONS.md`, `CURRICULUM_SOURCE_MATRIX.md`) và minh chứng mốc chấm (`CP1_*.md`) giữ ở `docs/`.

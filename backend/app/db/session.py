@@ -69,6 +69,12 @@ def _check_legacy_users_table() -> None:
             "CSDL cũ thiếu cột users.goal_embedding (pipeline AI GĐ2, hệ gợi ý). Giữ dữ liệu: "
             "`alembic -c alembic.ini upgrade head`. Không cần dữ liệu cũ: xóa harmonymentor_dev.db để tạo lại."
         )
+    # ADR-029 (18/11/2026, migration c7a8b9c0d1e2): thiếu cột ảnh đại diện thì đăng nhập lỗi 500.
+    if "email" in columns and "avatar_key" not in columns:
+        raise RuntimeError(
+            "CSDL cũ thiếu cột users.avatar_key và bảng ai_summary_jobs (ADR-029). Giữ dữ liệu: "
+            "`alembic -c alembic.ini upgrade head`. Không cần dữ liệu cũ: xóa harmonymentor_dev.db để tạo lại."
+        )
     if "email" not in columns:
         raise RuntimeError(
             "CSDL cũ thiếu cột users.email (tạo trước Giai đoạn B). Với SQLite dev: xóa file harmonymentor_dev.db "

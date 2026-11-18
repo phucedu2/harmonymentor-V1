@@ -9,6 +9,7 @@ from ..core.config import settings
 from ..core.errors import AppError, error_response
 from ..db.models import User
 from ..db.session import get_db
+from .avatars import avatar_of
 from .deps import client_ip, get_current_user
 from .schemas import AuthOut, LoginIn, ProfilePatchIn, RegisterIn, UserOut
 from .service import (
@@ -29,7 +30,8 @@ router = APIRouter(prefix="/api/v1", tags=["auth"])
 
 def user_out(user: User) -> UserOut:
     return UserOut(id=user.id, email=user.email, display_name=user.display_name, role=user.role,
-                   preferred_instrument=user.preferred_instrument, goal_text=user.goal_text)
+                   preferred_instrument=user.preferred_instrument, goal_text=user.goal_text,
+                   avatar=avatar_of(user.id, user.avatar_key))
 
 
 def _clear_cookie(response: Response) -> None:
@@ -95,5 +97,7 @@ def update_me(body: ProfilePatchIn, user: User = Depends(get_current_user), db: 
         user.display_name = name
     if "preferred_instrument" in sent:
         user.preferred_instrument = body.preferred_instrument
+    if "avatar" in sent:
+        user.avatar_key = body.avatar  # None = quay về con vật mặc định suy từ id
     db.commit()
     return user_out(user)

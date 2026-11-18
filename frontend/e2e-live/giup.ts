@@ -29,3 +29,9 @@ export async function moBai1(page: Page) {
   await page.getByRole("button", { name: /Học ngay/ }).click();
   await expect(page.getByText(/Bước 1\/\d+/)).toBeVisible();
 }
+
+// ADR-029: "Đăng xuất" nằm trong menu ảnh đại diện ở góc phải trên cùng.
+export async function dangXuat(page: Page) {
+  await page.getByRole("button", { name: /^Tài khoản/ }).click();
+  await page.getByRole("menuitem", { name: "Đăng xuất" }).click();
+}

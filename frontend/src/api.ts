@@ -27,6 +27,10 @@ export type LessonSummary = {
   block_count: number;
   exercise_count: number;
   review_item_count: number;
+  // ADR-029: bài AI soạn từ tài liệu (mục "Kiến thức mới"); "Mở rộng" = không tính mức thành thạo.
+  ai_generated?: boolean;
+  expansion?: boolean;
+  published_at?: string | null;
 };
 
 export type LessonBlock = { id: string; position: number; block_type: string; payload: Record<string, unknown> };
@@ -315,8 +319,15 @@ export type AiQuestion = { kind: AiQuestionKind; level?: "nho" | "hieu" | "van_d
   options?: string[]; answer?: string; answers?: string[]; option_feedback?: Record<string, string>;
   check?: Record<string, string>; symbol?: string; tonic?: string; scale_type?: string; model_answer?: string; rubric?: string[];
   engine_answer?: string | string[] | null; engine_verified?: boolean; engine_note?: string; needs_review?: boolean; reviewed?: boolean };
+export type AiDuplicate = { concept: string; where: string; by: "ai" | "e5" | "tfidf"; score: number | null };
 export type AiDraftContent = { title: string; objectives: string[]; blocks: { title: string; paragraphs: string[]; page: number }[];
-  questions: AiQuestion[]; dropped_questions: string[] };
+  questions: AiQuestion[]; dropped_questions: string[]; expansion?: boolean; duplicates?: AiDuplicate[]; part?: { heading: string; index: number } };
+export type AiJobPartStatus = "pending" | "running" | "done" | "no_new" | "not_theory" | "failed";
+export type AiJob = { id: string; document_id: string; status: "running" | "paused" | "done" | "cancelled";
+  pause_reason: "quota" | "daily_limit" | "unavailable" | "interrupted" | "admin" | "document_deleted" | null;
+  parts: { index: number; page_from: number; page_to: number; heading: string; status: AiJobPartStatus; draft_id: string | null;
+    duplicates: AiDuplicate[]; note: string | null }[];
+  skipped_pages: { page: number; reason: string }[]; total: number; finished: number; drafts: number; created_at: string; updated_at: string };
 export type AiDraft = { id: string; status: "draft" | "published" | "rejected"; document: AiDocument | null; page_from: number; page_to: number;
   model: string | null; published_lesson_id: string | null; content: AiDraftContent; engine: AdminEngineReport; created_at: string };
 export type AiDraftRow = { id: string; status: string; title: string | null; questions: number; flags: number; published_lesson_id: string | null; created_at: string };
@@ -334,13 +345,15 @@ export const api = {
   aiPendingDocuments: () => apiCall<AiDocument[]>("/admin/ai/documents?status=pending"),
   aiReviewDocument: (id: string, decision: "approve" | "reject", note?: string) =>
     apiPost<AiDocument>(`/admin/ai/documents/${encodeURIComponent(id)}/review`, { decision, note: note || null }),
-  aiMakeDraft: (docId: string, pageFrom: number, pageTo: number, topic: string) =>
-    apiPost<AiDraft>(`/admin/ai/documents/${encodeURIComponent(docId)}/draft`, { page_from: pageFrom, page_to: pageTo, topic: topic || null }),
+  aiSummarize: (docId: string) => apiPost<AiJob>(`/admin/ai/documents/${encodeURIComponent(docId)}/summarize`, {}),
+  aiJobs: () => apiCall<AiJob[]>("/admin/ai/jobs"),
+  aiResumeJob: (id: string) => apiPost<AiJob>(`/admin/ai/jobs/${encodeURIComponent(id)}/resume`, {}),
+  aiCancelJob: (id: string) => apiPost<AiJob>(`/admin/ai/jobs/${encodeURIComponent(id)}/cancel`, {}),
   aiMoreQuestions: (id: string, kinds: AiQuestionKind[] = []) =>
     apiPost<AiDraft>(`/admin/ai/drafts/${encodeURIComponent(id)}/questions`, { kinds }),
   aiDrafts: () => apiCall<AiDraftRow[]>("/admin/ai/drafts"),
   aiDraft: (id: string) => apiCall<AiDraft>(`/admin/ai/drafts/${encodeURIComponent(id)}`),
-  aiSaveDraft: (id: string, content: Omit<AiDraftContent, "dropped_questions">) =>
+  aiSaveDraft: (id: string, content: Omit<AiDraftContent, "dropped_questions" | "duplicates" | "part">) =>
     apiCall<AiDraft>(`/admin/ai/drafts/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(content) }),
   aiPublish: (id: string, acknowledge: boolean) =>
     apiPost<{ lesson_id: string; title: string }>(`/admin/ai/drafts/${encodeURIComponent(id)}/publish`, { acknowledge_engine_flags: acknowledge }),

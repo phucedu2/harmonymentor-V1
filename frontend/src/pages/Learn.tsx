@@ -7,6 +7,8 @@ import { Alert } from "../components/ui/Alert";
 import { PageLoader } from "../components/ui/PageLoader";
 import { Badge, PageHeading, ProgressBar } from "../components/ui/Page";
 
+const NEW_DAYS = 14;   // nhãn "Mới" cho bài AI đăng trong 14 ngày gần nhất
+
 export default function LearnPage() {
   const [lessons, setLessons] = useState<LessonSummary[]>([]);
   const [overview, setOverview] = useState<LearningOverview | null>(null);
@@ -33,7 +35,10 @@ export default function LearnPage() {
   }, []);
 
   const progressMap = useMemo(() => new Map((overview?.lessons ?? []).map((row) => [row.lesson_id, row])), [overview]);
-  const nextLessonId = lessons.find((lesson) => lesson.exercise_count > 0 && progressMap.get(lesson.id)?.status !== "completed")?.id;
+  // ADR-029 (7A): bài AI soạn từ tài liệu (Quản trị viên đã duyệt) gom vào mục "Kiến thức mới", không chen vào lộ trình.
+  const course = lessons.filter((l) => !l.ai_generated);
+  const fresh = lessons.filter((l) => l.ai_generated).sort((a, b) => (b.published_at ?? "").localeCompare(a.published_at ?? ""));
+  const nextLessonId = course.find((lesson) => lesson.exercise_count > 0 && progressMap.get(lesson.id)?.status !== "completed")?.id;
 
   const open = async (id: string) => {
     setError(null); setLoading(true);
@@ -86,8 +91,32 @@ export default function LearnPage() {
     </PageHeading>
     {loading && <PageLoader label="Đang tải bài học…" />}
     {error && <Alert tone="danger">Không tải được bài học: {error}. Hãy thử tải lại trang.</Alert>}
+    {fresh.length > 0 && <section aria-labelledby="kien-thuc-moi" className="mb-6 rounded-2xl border border-primary/40 bg-primary-soft/40 p-4">
+      <h2 id="kien-thuc-moi" className="font-display text-lg font-semibold text-ink">Kiến thức mới</h2>
+      <p className="mt-1 text-sm text-muted">Bài soạn từ tài liệu nhạc lý mới, chỉ gồm điều lộ trình chưa dạy. Quản trị viên đã duyệt trước khi đăng.
+        Bài “Mở rộng” là kiến thức ngoài lộ trình: làm để biết thêm, không tính vào mức thành thạo.</p>
+      <ul className="mt-3 grid gap-2 sm:grid-cols-2" aria-label="Danh sách kiến thức mới">
+        {fresh.map((lesson) => {
+          const done = progressMap.get(lesson.id)?.status === "completed";
+          const isNew = !!lesson.published_at && Date.now() - Date.parse(lesson.published_at) < NEW_DAYS * 86_400_000;
+          return <li key={lesson.id}>
+            <button type="button" data-lesson-id={lesson.id} onClick={() => lesson.exercise_count > 0 && void open(lesson.id)}
+              disabled={lesson.exercise_count === 0}
+              className="grid h-full w-full gap-1 rounded-xl border border-line bg-surface p-3 text-left transition-colors hover:border-primary disabled:cursor-not-allowed">
+              <span className="flex flex-wrap gap-1.5">
+                {isNew && !done && <Badge tone="primary">Mới</Badge>}
+                {lesson.expansion && <Badge tone="warning">Mở rộng</Badge>}
+                {done && <Badge tone="success">Đã xong</Badge>}
+              </span>
+              <span className="font-semibold text-ink">{lesson.title}</span>
+              <span className="text-sm text-muted">{lesson.block_count} phần · {lesson.exercise_count} câu hỏi</span>
+            </button>
+          </li>;
+        })}
+      </ul>
+    </section>}
     <ol className="grid gap-3" aria-label="Danh sách bài học">
-      {lessons.map((lesson) => {
+      {course.map((lesson) => {
         const progress = progressMap.get(lesson.id);
         const runnable = lesson.exercise_count > 0;
         // Gợi ý thứ tự: bài chưa xong đầu tiên là "Học ngay"; bài sau nó vẫn mở nhưng nhắc học bài trước.

@@ -8,6 +8,8 @@ export type User = {
   role: "learner" | "admin";
   preferred_instrument: "piano" | "guitar" | "drums" | null;
   goal_text: string | null;
+  // ADR-029: khóa con vật vẽ sẵn (components/ui/AnimalAvatar.tsx). Máy chủ cũ chưa có trường này thì suy từ id.
+  avatar?: string;
 };
 
 export type AuthResponse = {

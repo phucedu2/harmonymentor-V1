@@ -5,6 +5,7 @@ import { PageLoader } from "../ui/PageLoader";
 import { Logo } from "./Logo";
 import FloatingTutorDrawer from "../learning/FloatingTutorDrawer";
 import { ThemeToggle } from "../../theme/ThemeToggle";
+import { AccountMenu } from "./AccountMenu";
 
 // Bố cục khung lấy từ v0.5.3-dev (thanh bên tối, mục đang mở nổi khối), logic giữ của main:
 // NavLink theo route, RequireAuth ở App.tsx, đăng xuất về trang chủ.
@@ -16,8 +17,8 @@ const NAV = [
   { to: "/app/quiz", label: "Quiz kỹ năng" },
   { to: "/app/tien-do", label: "Tiến độ" },
   { to: "/app/composition", label: "Sáng tác" },
-  { to: "/app/ho-so", label: "Hồ sơ" },
 ];
+// "Hồ sơ" chuyển lên menu ảnh đại diện ở góc phải trên (ADR-029, 9A); trang /app/ho-so giữ nguyên.
 
 // Phiên bản hiện ở chân thanh bên, giống v0.5.3 ghi "v0.5.3-dev" dưới logo.
 const APP_VERSION = `v${__APP_VERSION__}`;
@@ -28,9 +29,6 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
   `flex min-h-11 items-center whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium leading-tight transition-colors lg:min-h-0 lg:px-3 lg:py-2.5 ${
     isActive ? "bg-shell-raised text-shell-ink" : "text-shell-text hover:bg-shell-raised/60 hover:text-shell-ink"
   }`;
-
-const signOutClass =
-  "inline-flex items-center justify-center gap-2 rounded-lg border border-shell-line px-3 py-2 text-sm font-semibold text-shell-text transition-colors hover:border-shell-muted hover:text-shell-ink disabled:opacity-50";
 
 const toggleClass = "lg:size-9 border-shell-line text-shell-text hover:border-shell-muted hover:text-shell-ink";
 
@@ -67,7 +65,7 @@ export default function AppLayout() {
           <Logo to="/app" inverted />
           <div className="flex items-center gap-2">
             <ThemeToggle className={toggleClass} />
-            <button type="button" className={`${signOutClass} lg:hidden`} onClick={signOut} disabled={leaving} aria-busy={leaving}>Đăng xuất</button>
+            <div className="lg:hidden"><AccountMenu tone="dark" onSignOut={signOut} leaving={leaving} /></div>
           </div>
         </div>
         <nav aria-label="Điều hướng chính" className="sticky top-0 z-30 border-b border-shell-line bg-shell px-2 py-1.5 lg:static lg:border-0 lg:bg-transparent lg:p-0">
@@ -78,15 +76,18 @@ export default function AppLayout() {
           </ul>
         </nav>
         <div className="hidden border-t border-shell-line pt-4 lg:mt-auto lg:block">
-          <p className="truncate text-sm font-semibold text-shell-ink">{user?.display_name}</p>
-          <p className="truncate text-xs text-shell-muted">{user?.email}</p>
-          <button type="button" className={`${signOutClass} mt-3 w-full`} onClick={signOut} disabled={leaving} aria-busy={leaving}>Đăng xuất</button>
-          <p className="mt-3 text-xs text-shell-muted">HarmonyMentor {APP_VERSION}</p>
+          <p className="text-xs text-shell-muted">HarmonyMentor {APP_VERSION}</p>
         </div>
       </aside>
-      <main id="noi-dung" className="mx-auto w-full max-w-5xl px-4 py-6 max-md:pb-28 sm:px-6 lg:px-8 lg:py-8">
-        <Suspense fallback={<PageLoader />}><Outlet /></Suspense>
-      </main>
+      <div className="min-w-0">
+        {/* Máy tính: thanh mỏng trên cùng chỉ chứa ảnh đại diện ở góc phải (điện thoại: ảnh nằm ở dòng logo). */}
+        <div className="mx-auto hidden w-full max-w-5xl justify-end px-8 pt-5 lg:flex">
+          <AccountMenu onSignOut={signOut} leaving={leaving} />
+        </div>
+        <main id="noi-dung" className="mx-auto w-full max-w-5xl px-4 py-6 max-md:pb-28 sm:px-6 lg:px-8 lg:pb-8 lg:pt-2">
+          <Suspense fallback={<PageLoader />}><Outlet /></Suspense>
+        </main>
+      </div>
       <FloatingTutorDrawer />
     </div>
   );

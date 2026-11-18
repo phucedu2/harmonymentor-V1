@@ -166,6 +166,13 @@ QUESTIONS_SCHEMA: dict[str, Any] = {"type": "array", "items": {"type": "object",
 SCHEMA: dict[str, Any] = {
     "type": "object",
     "properties": {
+        # ADR-029: tóm tắt cả tài liệu. AI liệt kê khái niệm của phần, đánh dấu cái nào trang web đã dạy (covered) để bỏ,
+        # báo phần không phải nhạc lý (not_theory) và kiến thức mới không khớp kỹ năng nào (expansion).
+        "concepts": {"type": "array", "items": {"type": "object", "properties": {
+            "name": {"type": "string"}, "status": {"type": "string", "enum": ["new", "covered"]},
+            "covered_by": {"type": "string"}, "page": {"type": "integer"}}, "required": ["name", "status"]}},
+        "not_theory": {"type": "boolean"},
+        "expansion": {"type": "boolean"},
         "title": {"type": "string"},
         "objectives": {"type": "array", "items": {"type": "string"}},
         "blocks": {"type": "array", "items": {"type": "object", "properties": {
@@ -327,7 +334,7 @@ def normalize_content(db: Session, raw: Any, page_from: int, page_to: int, *, tr
         raise AdminContentError("AI_EMPTY", "AI không tạo được khối lý thuyết nào, thử lại hoặc chọn trang khác.", 502)
     return {"title": _s(raw.get("title"), 200) or "Bài nháp từ tài liệu",
             "objectives": [_s(o, 300) for o in (raw.get("objectives") or []) if _s(o, 300)][:6],
-            "blocks": blocks, "questions": questions, "dropped_questions": dropped}
+            "blocks": blocks, "questions": questions, "dropped_questions": dropped, "expansion": raw.get("expansion") is True}
 
 
 def expected_notes(question: dict[str, Any]) -> list[str] | str | None:
@@ -375,7 +382,14 @@ def update_draft(db: Session, admin: User, draft_id: str, edited: dict[str, Any]
         raise AdminContentError("DRAFT_CLOSED", "Bản nháp này đã xuất bản hoặc bị từ chối, không sửa được.", 409)
     doc = _doc(db, draft.document_id)
     content = normalize_content(db, {"title": edited.get("title"), "objectives": edited.get("objectives"), "blocks": edited.get("blocks"),
-                                     "questions": edited.get("questions")}, 1, len(doc.pages), trust_review=True)
+                                     "questions": edited.get("questions"),
+                                     "expansion": draft.content.get("expansion", False) if edited.get("expansion") is None
+                                     else edited.get("expansion")},
+                                1, len(doc.pages), trust_review=True)
+    # Báo cáo trùng và tên phần do máy tính lúc soạn, Quản trị viên không sửa: giữ nguyên.
+    for key in ("duplicates", "part"):
+        if key in draft.content:
+            content[key] = draft.content[key]
     draft.content = content
     draft.engine_report = engine_check(content)
     audit(db, admin, "ai.draft.edit", "ai_lesson_draft", draft.id)
@@ -428,8 +442,12 @@ def publish_draft(db: Session, admin: User, draft_id: str, acknowledge_engine_fl
     for pos, block in enumerate(content["blocks"], start=1):
         db.add(LessonBlock(id=f"{lesson_id}-B{pos:02d}", lesson_id=lesson_id, position=pos, block_type="theory",
                            payload={"title": block["title"], "paragraphs": block["paragraphs"]}))
+    expansion = content.get("expansion") is True
     for pos, q in enumerate(content["questions"], start=1):
         item = aq.exercise_spec(f"{lesson_id}-Q{pos:02d}", q, work_id)
+        if expansion:
+            # 8A: kiến thức mới chưa khớp kỹ năng nào. Vẫn chấm, nhưng không cộng mức thành thạo của kỹ năng gần nhất.
+            item["grader_config"] = {**item["grader_config"], "counts_for_mastery": False}
         snapshot = snapshot_from_spec(item)
         db.add(Exercise(id=item["id"], lesson_id=lesson_id, skill_id=q["skill_id"], position=pos, kind=snapshot["kind"],
                         prompt=snapshot["prompt"], options=snapshot["options"], grading_strategy=snapshot["grading_strategy"]))
@@ -437,6 +455,7 @@ def publish_draft(db: Session, admin: User, draft_id: str, acknowledge_engine_fl
         db.add(ExerciseVersion(id=f"{item['id']}-v1", exercise_id=item["id"], version=1, **snapshot, status="published", published_at=now,
                                content_hash=content_hash(snapshot), snapshot_origin="seed"))
     draft.status, draft.published_lesson_id, draft.engine_report = "published", lesson_id, report
-    audit(db, admin, "ai.draft.publish", "ai_lesson_draft", draft.id, {"lesson": lesson_id, "engine_flags": len(report["contradicted"])})
+    audit(db, admin, "ai.draft.publish", "ai_lesson_draft", draft.id,
+          {"lesson": lesson_id, "engine_flags": len(report["contradicted"]), "expansion": expansion})
     db.commit()
     return lesson
