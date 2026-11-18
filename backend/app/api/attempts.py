@@ -36,6 +36,7 @@ def create_attempt(body: AttemptIn, user: User = Depends(get_current_user), db: 
             "INPUT_METHOD_NOT_ALLOWED": "Câu này không nhận cách nhập đó.",
             "ANSWER_NOT_IN_OPTIONS": "Đáp án phải là một trong các lựa chọn của câu.",
             "INVALID_PIANO_PAYLOAD": "Dữ liệu từ phím đàn không hợp lệ.",
+            "OPEN_QUESTION": "Câu tự luận mở không chấm đúng/sai; hãy dùng nút xem đáp án mẫu và nhận xét.",
         }
         raise AppError(422, exc.code, messages.get(exc.code, "Bài nộp không hợp lệ.")) from exc
     except LookupError as exc:

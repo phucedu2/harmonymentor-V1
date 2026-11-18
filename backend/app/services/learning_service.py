@@ -22,7 +22,7 @@ from ..db.models import (
 from ..content import versioning
 from ..content.overrides import hidden_lesson_ids
 from . import mastery_service
-from .grading_service import GradeOutcome, InputRejected, grade_payload, is_self_check, validate_input  # noqa: F401
+from .grading_service import GradeOutcome, InputRejected, grade_payload, is_open_question, is_self_check, validate_input  # noqa: F401
 from .review_scheduler import activate_lesson_reviews, apply_review_result
 
 
@@ -94,6 +94,9 @@ def submit_attempt(db: Session, user_id: str, version_id: str, answer,
     version, exercise = require_exercise_version(db, version_id)
     now = now or utcnow()
     # HM-011: cách nhập do phiên bản quyết định; sai thì ném InputRejected trước khi chấm, không ghi lượt làm.
+    if is_open_question(version.grading_strategy):
+        # Câu mở không có đúng/sai tất định nên không ghi lượt làm (không chạm mastery); dùng /practice/open-feedback.
+        raise InputRejected("OPEN_QUESTION")
     method = validate_input(version.options, version.grader_config, answer, input_method)
     # Cách chấm lấy từ ảnh chụp của phiên bản, không lấy từ exercises (HM-003: bản cũ rubric từng bị chấm bằng exact).
     outcome = grade_payload(version.grading_strategy, version.answer_key, version.grader_config, answer,
@@ -137,8 +140,9 @@ def complete_lesson(db: Session, user_id: str, lesson_id: str,
             .where(Attempt.user_id == user_id, Attempt.correct.is_(True))
         ).all())
         # Chỉ tính câu đang hiện cho người học; đúng ở bất kỳ phiên bản nào của câu cũng được tính (6A).
+        # Câu mở (ADR-028) không có đúng/sai tất định nên không chặn việc hoàn thành bài.
         active_ids = [e.id for e in sorted(lesson.exercises, key=lambda e: e.position)
-                      if versioning.current_version(e) is not None]
+                      if (v := versioning.current_version(e)) is not None and not is_open_question(v.grading_strategy)]
         if not active_ids:
             # Bài chưa có câu, toàn nháp, toàn retired hoặc bản hiện hành missing: danh sách "còn thiếu"
             # rỗng không có nghĩa là đã học xong.

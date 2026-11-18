@@ -116,7 +116,7 @@ export type AttemptResult = {
   wrong_attempts: number;
 };
 
-export type InputMethod = "text" | "choice" | "piano";
+export type InputMethod = "text" | "choice" | "multi_choice" | "piano";
 
 export type CompleteLessonResult = {
   lesson_id: string;
@@ -251,7 +251,16 @@ export type Recommendations = {
   next: RecLesson[]; review: RecLesson[];
 };
 export type Goal = { goal_text: string | null; embedded: boolean; embedding_model: string | null };
-export type Quiz = { skill_id: string; requested: number; available: number; questions: (PlacementQuestion & { lesson_id: string })[] };
+export type QuizQuestion = PlacementQuestion & { lesson_id: string; allowed_input_methods?: InputMethod[]; difficulty?: string | null };
+export type Quiz = { skill_id: string; requested: number; available: number; questions: QuizQuestion[] };
+// ADR-028: ngân hàng câu "Từ tài liệu" (AI soạn, Quản trị viên duyệt). Câu mở không chấm đúng/sai, không tính mastery.
+export type BankQuestion = QuizQuestion & { open: boolean };
+export type BankSet = { skill_id: string | null; level: PracticeLevel | null; available: number; questions: BankQuestion[] };
+export type OpenFeedback = {
+  model_answer: string; rubric: string[]; explanation: string | null; counts_for_mastery: false;
+  ai_status: "ok" | "off" | "quota" | "unavailable" | "flagged";
+  ai: { points: { point: string; met: "yes" | "partial" | "no"; comment: string }[]; summary: string } | null;
+};
 export type PlacementSubmitResult = { status: "completed"; results: { skill_id: string; correct: boolean; score: number }[] };
 
 // Pipeline AI GĐ3: AI Tutor (04 mục 3.3, Bảng 13). Nhãn "đã kiểm" do máy chủ quyết, giao diện chỉ hiển thị.
@@ -301,8 +310,11 @@ export type AdminAudit = { id: number; actor_id: string | null; action: string; 
 
 export type AiDocument = { id: string; filename: string; kind: string; page_count: number; source_title: string; source_note: string | null; created_at: string;
   relevance_status: "accepted" | "pending" | "rejected"; relevance_score: number | null; relevance_reason: string | null; dropped_pages: number[]; dropped_chunks: number };
-export type AiQuestion = { kind: "mcq" | "build_chord" | "build_scale"; prompt: string; skill_id: string; explanation: string; page: number;
-  options?: string[]; answer?: string; symbol?: string; tonic?: string; scale_type?: string; engine_answer?: string[] | null };
+export type AiQuestionKind = "mcq" | "true_false" | "multi_select" | "short" | "build_chord" | "build_scale" | "open";
+export type AiQuestion = { kind: AiQuestionKind; level?: "nho" | "hieu" | "van_dung"; prompt: string; skill_id: string; explanation: string; page: number;
+  options?: string[]; answer?: string; answers?: string[]; option_feedback?: Record<string, string>;
+  check?: Record<string, string>; symbol?: string; tonic?: string; scale_type?: string; model_answer?: string; rubric?: string[];
+  engine_answer?: string | string[] | null; engine_verified?: boolean; engine_note?: string; needs_review?: boolean; reviewed?: boolean };
 export type AiDraftContent = { title: string; objectives: string[]; blocks: { title: string; paragraphs: string[]; page: number }[];
   questions: AiQuestion[]; dropped_questions: string[] };
 export type AiDraft = { id: string; status: "draft" | "published" | "rejected"; document: AiDocument | null; page_from: number; page_to: number;
@@ -324,6 +336,8 @@ export const api = {
     apiPost<AiDocument>(`/admin/ai/documents/${encodeURIComponent(id)}/review`, { decision, note: note || null }),
   aiMakeDraft: (docId: string, pageFrom: number, pageTo: number, topic: string) =>
     apiPost<AiDraft>(`/admin/ai/documents/${encodeURIComponent(docId)}/draft`, { page_from: pageFrom, page_to: pageTo, topic: topic || null }),
+  aiMoreQuestions: (id: string, kinds: AiQuestionKind[] = []) =>
+    apiPost<AiDraft>(`/admin/ai/drafts/${encodeURIComponent(id)}/questions`, { kinds }),
   aiDrafts: () => apiCall<AiDraftRow[]>("/admin/ai/drafts"),
   aiDraft: (id: string) => apiCall<AiDraft>(`/admin/ai/drafts/${encodeURIComponent(id)}`),
   aiSaveDraft: (id: string, content: Omit<AiDraftContent, "dropped_questions">) =>
@@ -366,8 +380,19 @@ export const api = {
     enginePost<GradeResult>("/grade/roman-numeral", { key, chord, answer }),
 
   practiceAttempt: (kind: PracticeKind, level: PracticeLevel, question: Record<string, string>, answer: string | string[],
-    input: "text" | "piano" = "text") =>
+    input: "text" | "piano" | "choice" = "text") =>
     apiPost<PracticeAttemptResult>("/practice/attempts", { kind, level, question, answer, input }),
+  practiceOptions: (kind: PracticeKind, question: Record<string, string>) =>
+    apiPost<{ options: string[] }>("/practice/options", { kind, question }),
+  bankSkills: () => apiCall<{ skills: { skill_id: string; name: string; count: number }[] }>("/practice/bank/skills"),
+  bank: (skillId: string | null, level: PracticeLevel | null, n = 10) => {
+    const q = new URLSearchParams({ n: String(n) });
+    if (skillId) q.set("skill_id", skillId);
+    if (level) q.set("level", level);
+    return apiCall<BankSet>(`/practice/bank?${q.toString()}`);
+  },
+  openFeedback: (exerciseVersionId: string, answer: string) =>
+    apiPost<OpenFeedback>("/practice/open-feedback", { exercise_version_id: exerciseVersionId, answer }),
   practiceHistory: (limit = 20) => apiCall<PracticeHistory>(`/practice/history?limit=${limit}`),
 
   composeOptions: () => apiCall<ComposeOptions>("/composition/options"),

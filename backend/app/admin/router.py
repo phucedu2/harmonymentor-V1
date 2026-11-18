@@ -186,7 +186,7 @@ class DraftEditIn(BaseModel):
     title: str = Field(max_length=200)
     objectives: list[str] = Field(default_factory=list, max_length=6)
     blocks: list[dict[str, Any]] = Field(default_factory=list, max_length=8)
-    questions: list[dict[str, Any]] = Field(default_factory=list, max_length=10)
+    questions: list[dict[str, Any]] = Field(default_factory=list, max_length=20)
 
 
 @router.get("/ai/status")
@@ -253,6 +253,20 @@ def make_draft(doc_id: str, body: DraftIn, admin: User = Depends(require_admin),
     except AdminContentError as exc:
         raise _wrap(exc) from exc
     return ai_service.draft_view(db, draft)
+
+
+class MoreQuestionsIn(BaseModel):
+    kinds: list[str] = Field(default_factory=list, max_length=7)
+
+
+@router.post("/ai/drafts/{draft_id}/questions")
+def more_questions(draft_id: str, body: MoreQuestionsIn, admin: User = Depends(require_admin), db: Session = Depends(get_db),
+                   provider: LLMProvider | None = Depends(draft_provider_dep)):
+    """AI soạn thêm câu luyện tập cho bản nháp (ADR-028); câu mới vẫn chờ Quản trị viên duyệt rồi mới xuất bản."""
+    try:
+        return ai_service.draft_view(db, ai_service.generate_more_questions(db, admin, provider, draft_id, body.kinds))
+    except AdminContentError as exc:
+        raise _wrap(exc) from exc
 
 
 @router.get("/ai/drafts")

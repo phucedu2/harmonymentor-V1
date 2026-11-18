@@ -10,6 +10,7 @@ import {
   type LessonLearningProgress,
 } from "../../api";
 import ChordInspector, { ProgressionInspector } from "./ChordInspector";
+import { ChoiceList, OpenAnswer } from "./AnswerInputs";
 import { resumeStepIndex } from "../../lib/resumeStep";
 import { parseProgressionSymbols, pitchClassOf } from "../../audio/musicUtils";
 import { ChordAudioSet, ProgressionAudio } from "../music/AudioControls";
@@ -40,6 +41,10 @@ export const REVIEW_MODE_LABELS: Record<string, string> = {
 
 const EXERCISE_KIND_LABELS: Record<string, string> = {
   mcq: "Trắc nghiệm",
+  true_false: "Đúng hay sai",
+  multi_select: "Chọn nhiều đáp án",
+  short: "Tự luận ngắn",
+  open: "Tự luận mở",
   active_recall: "Tự nhớ",
   build: "Tự dựng",
   context: "Theo ngữ cảnh",
@@ -170,8 +175,10 @@ export default function LessonRunner({
       .map((block) => String(block.payload.exercise_id)),
   ), [lesson.blocks]);
   const finalQuiz = lesson.exercises.filter((exercise) => !checkpointIds.has(exercise.id));
-  const total = lesson.exercises.length;
-  const correctCount = lesson.exercises.filter((exercise) => correct.has(exercise.id)).length;
+  // Câu tự luận mở (ADR-028) không chấm đúng/sai nên không tính vào điều kiện hoàn thành, giống máy chủ.
+  const graded = lesson.exercises.filter((exercise) => exercise.grading_strategy !== "open_rubric");
+  const total = graded.length;
+  const correctCount = graded.filter((exercise) => correct.has(exercise.id)).length;
   const masteryPercent = total ? Math.round(correctCount / total * 100) : 0;
   // Hoàn thành bài = mọi câu đã đúng ít nhất một lần (backend kiểm lại, trả 409 nếu thiếu).
   const allCorrect = total > 0 && correctCount >= total;
@@ -254,7 +261,7 @@ export default function LessonRunner({
         <article className={`${ui.block} border-primary/40`}>
           <div><span className={ui.kicker}>Hoàn thành</span><h3>Hoàn thành bài</h3></div>
           <p>{alreadyCompleted ? "Bạn đã hoàn thành bài này. Lịch ôn nằm ở trang Tiến độ." : allCorrect ? "Bạn đã trả lời đúng tất cả các câu. Bấm nút bên dưới để hoàn thành và lên lịch ôn." : `Bạn cần trả lời đúng cả ${total} câu (mỗi câu đúng ít nhất một lần). Hiện đã đúng ${correctCount}/${total}.`}</p>
-          {!alreadyCompleted && !allCorrect && <ul>{lesson.exercises.filter((exercise) => !correct.has(exercise.id)).map((exercise) => {
+          {!alreadyCompleted && !allCorrect && <ul>{graded.filter((exercise) => !correct.has(exercise.id)).map((exercise) => {
             const target = steps.findIndex((step) => step.exerciseId === exercise.id);
             return <li key={exercise.id}><button type="button" className={ui.textButton} onClick={() => goTo(target >= 0 ? target : steps.length - 2)}>{exercise.prompt}</button></li>;
           })}</ul>}
@@ -608,15 +615,20 @@ function ExerciseCard({
   inline?: boolean;
 }) {
   const [answer, setAnswer] = useState("");
+  const [picked, setPicked] = useState<string[]>([]);
   const [result, setResult] = useState<AttemptResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const multi = Boolean(exercise.allowed_input_methods?.includes("multi_choice"));
+  const ready = multi ? picked.length > 0 : Boolean(answer.trim());
 
   const submit = async () => {
-    if (!answer.trim()) return;
+    if (!ready) return;
     setBusy(true); setError(null);
     try {
-      const response = await api.submitAttempt(exercise.version_id, answer, exercise.options ? "choice" : "text");
+      const response = multi
+        ? await api.submitAttempt(exercise.version_id, picked, "multi_choice")
+        : await api.submitAttempt(exercise.version_id, answer, exercise.options ? "choice" : "text");
       setResult(response);
       onAttempt(exercise.id, response);
     } catch (e) {
@@ -632,10 +644,18 @@ function ExerciseCard({
   };
 
   const kindLabel = EXERCISE_KIND_LABELS[exercise.kind] ?? exercise.kind.replace(/_/g, " ");
+  if (exercise.grading_strategy === "open_rubric") {
+    return <div className={inline ? "grid gap-2 pt-3" : "grid gap-2 rounded-xl border border-line bg-bg p-4"}>
+      <div className="text-xs font-semibold tracking-wide text-muted uppercase">{kindLabel}</div>
+      <b className="text-ink">{exercise.prompt}</b>
+      <OpenAnswer versionId={exercise.version_id} label={`Câu trả lời: ${exercise.prompt}`} />
+    </div>;
+  }
   return <div className={inline ? "grid gap-2 pt-3" : "grid gap-2 rounded-xl border border-line bg-bg p-4"}>
     <div className="flex items-center justify-between gap-2 text-xs font-semibold tracking-wide text-muted uppercase"><span>{kindLabel}</span>{attempted && <Badge tone={correct ? "success" : "warning"}>{correct ? "✓ Đã đúng" : "Đã thử"}</Badge>}</div>
     <b className="text-ink">{exercise.prompt}</b>
-    {exercise.options && <div className="flex flex-wrap gap-2" role="group" aria-label="Các lựa chọn">{exercise.options.map((option) => <button type="button" key={option} aria-pressed={answer === option} className={ui.choice(answer === option)} onClick={() => setAnswer(option)}>{option}</button>)}</div>}
+    {exercise.options && multi && <ChoiceList multi options={exercise.options} value={picked} onChange={setPicked} label="Các lựa chọn" />}
+    {exercise.options && !multi && <div className="flex flex-wrap gap-2" role="group" aria-label="Các lựa chọn">{exercise.options.map((option) => <button type="button" key={option} aria-pressed={answer === option} className={ui.choice(answer === option)} onClick={() => setAnswer(option)}>{option}</button>)}</div>}
     {!exercise.options && (() => {
       const presentation = inputPresentation(exercise);
       return <>
@@ -643,7 +663,7 @@ function ExerciseCard({
         {presentation.hint && <small id={`${exercise.id}-input-hint`} className={ui.hint}>{presentation.hint}</small>}
       </>;
     })()}
-    <div><Button disabled={busy || !answer.trim()} onClick={submit}>{busy ? "Đang kiểm tra…" : attempted ? "Kiểm tra lại" : "Kiểm tra"}</Button></div>
+    <div><Button disabled={busy || !ready} onClick={submit}>{busy ? "Đang kiểm tra…" : attempted ? "Kiểm tra lại" : "Kiểm tra"}</Button></div>
     {result && <ResultBox correct={result.correct} title={result.correct ? "Chính xác!" : "Chưa đúng"}>
       {!result.correct && result.feedback && <p>{result.feedback}</p>}
       {result.explanation
