@@ -111,5 +111,8 @@ export function useDraggable<T extends HTMLElement>({ key, snapX = false, enable
   const handlers = enabled ? { onPointerDown, onPointerMove, onPointerUp: end, onPointerCancel: end } : {};
   const style = pos && enabled ? { left: pos.x, top: pos.y, right: "auto", bottom: "auto" } : undefined;
 
-  return { ref, pos: enabled ? pos : null, dragging, handlers, style, onKeyDown, consumeDrag, reset: () => commit(null) };
+  // place: đặt vị trí từ ngoài (đổi kích thước từ mép trái/trên phải dời góc trên trái); live = chưa ghi localStorage.
+  const place = (next: Pos, live = false) => { if (live) setPos(next); else commit(next); };
+
+  return { ref, pos: enabled ? pos : null, dragging, handlers, style, onKeyDown, consumeDrag, place, reset: () => commit(null) };
 }

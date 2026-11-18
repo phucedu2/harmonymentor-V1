@@ -65,9 +65,17 @@ def _apply(db: Session, *, user_id: str, skill_id: str, source: str, source_id: 
     return state
 
 
+def counts_for_mastery(grader_config: dict | None) -> bool:
+    """Câu thuộc bài "Mở rộng" (ADR-029, 8A: kiến thức mới chưa khớp kỹ năng nào) vẫn chấm nhưng không cộng mức thành thạo."""
+    return (grader_config or {}).get("counts_for_mastery") is not False
+
+
 def record_attempt(db: Session, attempt: Attempt, exercise_id: str, skill_id: str, now: datetime) -> None:
     if attempt.is_test or not is_mvp(skill_id):
         return  # S11 (post_mvp không tạo dòng), S13 (is_test không tính)
+    version = db.get(ExerciseVersion, attempt.exercise_version_id)
+    if version is not None and not counts_for_mastery(version.grader_config):
+        return
     history = [c for (c,) in db.execute(
         select(Attempt.correct)
         .join(ExerciseVersion, ExerciseVersion.id == Attempt.exercise_version_id)
@@ -89,7 +97,7 @@ def _counted_review_today(db: Session, user_id: str, skill_id: str, day: str) ->
 def record_review(db: Session, *, user_id: str, item: ReviewItem, review_attempt_id: str, correct: bool,
                   due_before: datetime, now: datetime) -> None:
     """Luật 2A. `due_before` là ngày hẹn TRƯỚC khi áp kết quả Leitner."""
-    if not is_mvp(item.skill_id):
+    if not is_mvp(item.skill_id) or not counts_for_mastery(item.grader_config):
         return
     counts = m.review_counts(self_check=is_self_check(item.grading_strategy, item.grader_config),
                              due_at=_aware(due_before), now=now,

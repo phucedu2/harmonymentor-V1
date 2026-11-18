@@ -32,6 +32,8 @@ def build_quiz(db: Session, user_id: str, skill_id: str, n: int = MAX_QUIZ, seed
         version = versioning.current_version(exercise)
         if version is None or is_self_check(version.grading_strategy, version.grader_config or {}):
             continue  # câu tự đánh giá (thẻ ý mở) không chấm được tự động
+        if (version.grader_config or {}).get("counts_for_mastery") is False:
+            continue  # câu bài "Mở rộng" (ADR-029) chỉ gắn kỹ năng gần nhất, không đo đúng kỹ năng này
         pool.append((version, exercise))
 
     first_try: dict[str, bool] = {}

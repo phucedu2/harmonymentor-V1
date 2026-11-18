@@ -1,11 +1,11 @@
 import { expect, test } from "@playwright/test";
-import { dangKy, PASSWORD, taiKhoanMoi } from "./giup";
+import { dangKy, dangXuat, PASSWORD, taiKhoanMoi } from "./giup";
 
 test("Đăng ký xong vào Tổng quan, đăng xuất rồi đăng nhập lại", async ({ page }) => {
   const user = await dangKy(page);
   await expect(page.getByRole("heading", { name: `Chào ${user.name}` })).toBeVisible();
 
-  await page.getByRole("button", { name: "Đăng xuất" }).click();
+  await dangXuat(page);
   await expect(page).not.toHaveURL(/\/app/);
   await page.goto("/app");
   await expect(page).toHaveURL(/\/dang-nhap/); // khu /app đóng lại sau khi đăng xuất
@@ -20,7 +20,7 @@ test("Đăng ký xong vào Tổng quan, đăng xuất rồi đăng nhập lại"
 test("Sai mật khẩu: báo lỗi, ở lại trang đăng nhập, không vào được /app", async ({ page }) => {
   const user = taiKhoanMoi();
   await dangKy(page, user);
-  await page.getByRole("button", { name: "Đăng xuất" }).click();
+  await dangXuat(page);
 
   await page.goto("/dang-nhap");
   await page.getByLabel("Email").fill(user.email);
@@ -39,7 +39,7 @@ test("Tải lại trang vẫn giữ phiên đăng nhập (cookie refresh)", asyn
 
 test("Đăng ký trùng email bị từ chối, không tạo phiên", async ({ page }) => {
   const user = await dangKy(page);
-  await page.getByRole("button", { name: "Đăng xuất" }).click();
+  await dangXuat(page);
   await page.goto("/dang-ky");
   await page.getByLabel("Tên hiển thị").fill("Người trùng");
   await page.getByLabel("Email").fill(user.email);

@@ -12,12 +12,12 @@ from sqlalchemy.orm import Session
 from ..auth.deps import require_admin
 from ..core.errors import AppError
 from ..db.models import AdminAuditLog, Attempt, LessonProgress, User
-from ..db.session import get_db
+from ..db.session import SessionLocal, get_db
 from ..ai.tutor.llm import LLMProvider, get_provider
 from ..core.ai_config import relevance_config
 from ..core.config import settings
 from ..db.models import SourceDocument
-from . import ai_service, content_service, stats_service
+from . import ai_job, ai_service, content_service, stats_service
 from .content_service import AdminContentError
 
 # Mọi route /api/v1/admin/* gắn require_admin ở cấp router để không route nào quên kiểm tra quyền.
@@ -187,6 +187,7 @@ class DraftEditIn(BaseModel):
     objectives: list[str] = Field(default_factory=list, max_length=6)
     blocks: list[dict[str, Any]] = Field(default_factory=list, max_length=8)
     questions: list[dict[str, Any]] = Field(default_factory=list, max_length=20)
+    expansion: bool | None = None
 
 
 @router.get("/ai/status")
@@ -253,6 +254,60 @@ def make_draft(doc_id: str, body: DraftIn, admin: User = Depends(require_admin),
     except AdminContentError as exc:
         raise _wrap(exc) from exc
     return ai_service.draft_view(db, draft)
+
+
+# --- Tóm tắt CẢ tài liệu, chạy nền (ADR-029) -------------------------------------------------------------------
+
+def job_starter_dep():
+    """Chạy nền bằng luồng; test thay bằng hàm chạy đồng bộ để kết quả không phụ thuộc thời gian."""
+    return lambda job_id, provider: ai_job.start_job(job_id, provider, SessionLocal)
+
+
+@router.post("/ai/documents/{doc_id}/summarize")
+def summarize_document(doc_id: str, admin: User = Depends(require_admin), db: Session = Depends(get_db),
+                       provider: LLMProvider | None = Depends(draft_provider_dep), start=Depends(job_starter_dep)):
+    """Bỏ chọn trang (Phúc 18/11/2026): AI tóm tắt toàn bộ tài liệu, chia theo chương, mỗi phần một bản nháp."""
+    try:
+        job = ai_job.create_job(db, admin, provider, doc_id)
+    except AdminContentError as exc:
+        raise _wrap(exc) from exc
+    if job.status == "running":
+        start(job.id, provider)
+    db.expire_all()
+    return ai_job.job_view(db, ai_job.get_job(db, job.id))
+
+
+@router.get("/ai/jobs")
+def list_jobs(db: Session = Depends(get_db)):
+    return ai_job.latest_jobs(db)
+
+
+@router.get("/ai/jobs/{job_id}")
+def read_job(job_id: str, db: Session = Depends(get_db)):
+    try:
+        return ai_job.job_view(db, ai_job.get_job(db, job_id))
+    except AdminContentError as exc:
+        raise _wrap(exc) from exc
+
+
+@router.post("/ai/jobs/{job_id}/resume")
+def resume_job(job_id: str, admin: User = Depends(require_admin), db: Session = Depends(get_db),
+               provider: LLMProvider | None = Depends(draft_provider_dep), start=Depends(job_starter_dep)):
+    try:
+        job = ai_job.resume_job(db, admin, provider, job_id)
+    except AdminContentError as exc:
+        raise _wrap(exc) from exc
+    start(job.id, provider)
+    db.expire_all()
+    return ai_job.job_view(db, ai_job.get_job(db, job_id))
+
+
+@router.post("/ai/jobs/{job_id}/cancel")
+def cancel_job(job_id: str, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    try:
+        return ai_job.job_view(db, ai_job.cancel_job(db, admin, job_id))
+    except AdminContentError as exc:
+        raise _wrap(exc) from exc
 
 
 class MoreQuestionsIn(BaseModel):

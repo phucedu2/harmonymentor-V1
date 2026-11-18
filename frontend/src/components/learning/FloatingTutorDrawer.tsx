@@ -1,9 +1,43 @@
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import React, { useEffect, useRef, useState, type FormEvent } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { api, type ApiError, type ChatReply } from "../../api";
 import { TUTOR_EXPLAIN_EVENT, type TutorExplainDetail } from "../../lib/tutorBus";
 import { Button, Spinner } from "../ui/Button";
-import { useDraggable } from "./useDraggable";
+import { TutorIcon } from "./TutorIcon";
+import { clampPos, useDraggable } from "./useDraggable";
+
+// ADR-029 (11A): khung AI Tutor như một cửa sổ thật trên màn hình ≥ 640 px: kéo thanh tiêu đề để di chuyển, kéo mép/góc để
+// đổi cỡ, nút phóng to/thu nhỏ (hoặc bấm đúp thanh tiêu đề), nhớ vị trí và cỡ theo máy.
+type Size = { w: number; h: number };
+type Edge = "n" | "s" | "e" | "w" | "ne" | "nw" | "se" | "sw";
+const SIZE_KEY = "hm-ai-khung-co";
+const MAX_KEY = "hm-ai-khung-to";
+const MIN_W = 320;
+const MIN_H = 360;
+const GAP = 8;
+
+function readSize(): Size | null {
+  try {
+    const v = JSON.parse(localStorage.getItem(SIZE_KEY) ?? "null") as Size | null;
+    return v && Number.isFinite(v.w) && Number.isFinite(v.h) ? v : null;
+  } catch { return null; }
+}
+function store(key: string, value: unknown) {
+  try { if (value === null || value === false) localStorage.removeItem(key); else localStorage.setItem(key, JSON.stringify(value)); } catch { /* chế độ riêng tư */ }
+}
+export function clampSize(size: Size): Size {
+  return { w: Math.min(Math.max(MIN_W, size.w), window.innerWidth - 2 * GAP), h: Math.min(Math.max(MIN_H, size.h), window.innerHeight - 2 * GAP) };
+}
+const EDGES: { edge: Edge; className: string; label?: string }[] = [
+  { edge: "n", className: "inset-x-3 top-0 h-1.5 cursor-ns-resize" },
+  { edge: "s", className: "inset-x-3 bottom-0 h-1.5 cursor-ns-resize" },
+  { edge: "w", className: "inset-y-3 left-0 w-1.5 cursor-ew-resize" },
+  { edge: "e", className: "inset-y-3 right-0 w-1.5 cursor-ew-resize" },
+  { edge: "nw", className: "left-0 top-0 size-4 cursor-nwse-resize" },
+  { edge: "ne", className: "right-0 top-0 size-4 cursor-nesw-resize" },
+  { edge: "sw", className: "bottom-0 left-0 size-4 cursor-nesw-resize" },
+  { edge: "se", className: "bottom-0 right-0 size-4 cursor-nwse-resize" },
+];
 
 // Khung AI Tutor nổi ở góc phải dưới trên mọi trang /app/* (04 Bảng 25, đề GĐ3 mục 11).
 // Mọi phán đoán nhạc lý, trích dẫn và nhãn "Đã kiểm bằng Music Engine" đều do máy chủ quyết; ở đây chỉ hiển thị.
@@ -129,8 +163,66 @@ export default function FloatingTutorDrawer() {
   const fab = useDraggable<HTMLButtonElement>({ key: "hm-ai-nut", snapX: true });
   const panel = useDraggable<HTMLElement>({ key: "hm-ai-khung", enabled: wide });
   const fabLeft = fab.pos !== null && fab.pos.x < window.innerWidth / 2;
-  const moved = fab.pos !== null || panel.pos !== null;
-  const resetPlace = () => { fab.reset(); panel.reset(); };
+  const [size, setSize] = useState<Size | null>(() => (typeof window !== "undefined" ? readSize() : null));
+  const [maximized, setMaximized] = useState(() => { try { return localStorage.getItem(MAX_KEY) === "true"; } catch { return false; } });
+  const [minimized, setMinimized] = useState(false);
+  const [resizing, setResizing] = useState(false);
+  const moved = fab.pos !== null || panel.pos !== null || size !== null || maximized;
+  const resetPlace = () => { fab.reset(); panel.reset(); setSize(null); store(SIZE_KEY, null); setMaximized(false); store(MAX_KEY, false); };
+  const toggleMax = () => { setMinimized(false); setMaximized((v) => { store(MAX_KEY, !v); return !v; }); };
+  useEffect(() => {
+    if (!size) return;
+    const onResize = () => setSize((cur) => (cur ? clampSize(cur) : cur));
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [size === null]);
+
+  // Kéo mép/góc: tính khung mới từ khung lúc bắt đầu kéo; mép trái/trên dời cả góc trên trái.
+  const resize = useRef<{ edge: Edge; x: number; y: number; r: DOMRect; last: { pos: { x: number; y: number }; size: Size } | null } | null>(null);
+  const onEdgeDown = (edge: Edge) => (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.button !== 0 || !panel.ref.current) return;
+    e.preventDefault();
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+    resize.current = { edge, x: e.clientX, y: e.clientY, r: panel.ref.current.getBoundingClientRect(), last: null };
+    setResizing(true);
+  };
+  const onEdgeMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = resize.current;
+    if (!d) return;
+    const dx = e.clientX - d.x, dy = e.clientY - d.y;
+    let { left, top, width, height } = { left: d.r.left, top: d.r.top, width: d.r.width, height: d.r.height };
+    if (d.edge.includes("e")) width += dx;
+    if (d.edge.includes("s")) height += dy;
+    if (d.edge.includes("w")) { width -= dx; left += dx; }
+    if (d.edge.includes("n")) { height -= dy; top += dy; }
+    const next = clampSize({ w: width, h: height });
+    if (d.edge.includes("w")) left = d.r.right - next.w;
+    if (d.edge.includes("n")) top = d.r.bottom - next.h;
+    const pos = clampPos({ x: left, y: top }, next.w, next.h);
+    d.last = { pos, size: next };
+    setSize(next);
+    panel.place(pos, true);
+  };
+  const onEdgeUp = () => {
+    const d = resize.current;
+    resize.current = null;
+    setResizing(false);
+    if (d?.last) { store(SIZE_KEY, d.last.size); panel.place(d.last.pos); }
+  };
+  // Bàn phím cho đổi cỡ (WCAG 2.5.7): Alt + mũi tên trên thanh tiêu đề đổi rộng/cao 32 px.
+  const onHeaderKey = (e: React.KeyboardEvent<HTMLElement>) => {
+    if (!e.altKey || !panel.ref.current) return;
+    const delta = { ArrowLeft: [-32, 0], ArrowRight: [32, 0], ArrowUp: [0, -32], ArrowDown: [0, 32] }[e.key];
+    if (!delta) return;
+    e.preventDefault();
+    const r = panel.ref.current.getBoundingClientRect();
+    const next = clampSize({ w: r.width + delta[0], h: r.height + delta[1] });
+    setSize(next); store(SIZE_KEY, next);
+    panel.place(clampPos({ x: r.left, y: r.top }, next.w, next.h));
+  };
+  const windowStyle: React.CSSProperties | undefined = !wide ? undefined
+    : maximized ? { left: GAP * 2, top: GAP * 2, right: "auto", bottom: "auto", width: window.innerWidth - GAP * 4, height: window.innerHeight - GAP * 4, maxHeight: "none" }
+    : { ...(panel.style ?? {}), ...(size ? { width: size.w, height: minimized ? "auto" : size.h, maxHeight: "none" } : {}) };
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const navigate = useNavigate();
@@ -193,19 +285,36 @@ export default function FloatingTutorDrawer() {
   const cite = (lesson: string, block: string) => navigate(`/app/hoc?bai=${encodeURIComponent(lesson)}&khoi=${encodeURIComponent(block)}`);
 
   return <>
-    {open && <section ref={panel.ref} role="dialog" aria-label="AI Tutor" aria-modal="false" style={panel.style}
-      className={`fixed inset-x-2 bottom-2 z-50 flex max-h-[85vh] md:bottom-24 md:max-h-[75vh] flex-col overflow-hidden rounded-2xl border border-line bg-bg shadow-2xl sm:inset-x-auto sm:w-[380px] ${fabLeft && !panel.pos ? "sm:left-5" : "sm:right-5"} ${panel.dragging ? "select-none opacity-95" : ""}`}>
-      <header {...panel.handlers} className={`flex items-center justify-between gap-2 border-b border-line bg-surface px-4 py-3 ${wide ? (panel.dragging ? "cursor-grabbing" : "cursor-grab") : ""}`}>
-        {wide && <button type="button" onKeyDown={panel.onKeyDown} title="Kéo thanh này để di chuyển khung; hoặc bấm vào đây rồi dùng phím mũi tên"
-          aria-label="Di chuyển khung AI Tutor bằng phím mũi tên" className="-ml-2 grid size-9 shrink-0 place-items-center rounded-md text-lg leading-none text-muted hover:bg-bg hover:text-ink">⠿</button>}
-        <div className="min-w-0 flex-1">
+    {open && <section ref={panel.ref} role="dialog" aria-label="AI Tutor" aria-modal="false" style={windowStyle}
+      className={`fixed inset-x-2 bottom-2 z-50 flex max-h-[85vh] md:bottom-24 md:max-h-[75vh] flex-col overflow-hidden rounded-2xl border border-line bg-bg shadow-2xl sm:inset-x-auto sm:w-[380px] ${fabLeft && !panel.pos ? "sm:left-5" : "sm:right-5"} ${panel.dragging || resizing ? "select-none" : ""} ${panel.dragging ? "opacity-95" : ""}`}>
+      {wide && !maximized && !minimized && EDGES.map(({ edge, className }) => <div key={edge} aria-hidden="true" data-edge={edge}
+        className={`absolute z-10 touch-none ${className}`} onPointerDown={onEdgeDown(edge)} onPointerMove={onEdgeMove} onPointerUp={onEdgeUp} onPointerCancel={onEdgeUp} />)}
+      <header {...(maximized ? {} : panel.handlers)} onDoubleClick={(e) => { if (wide && !(e.target as Element).closest("button")) toggleMax(); }}
+        className={`flex items-center justify-between gap-1 border-b border-line bg-surface py-2 pl-3 pr-2 ${wide && !maximized ? (panel.dragging ? "cursor-grabbing" : "cursor-grab") : ""}`}>
+        {wide && <button type="button" onKeyDown={(e) => { onHeaderKey(e); if (!e.altKey) panel.onKeyDown(e); }}
+          title="Kéo thanh này để di chuyển, kéo mép hoặc góc để đổi cỡ. Bàn phím: mũi tên để di chuyển, Alt + mũi tên để đổi cỡ."
+          aria-label="Di chuyển khung AI Tutor bằng phím mũi tên, đổi cỡ bằng Alt và mũi tên" className="grid size-9 shrink-0 place-items-center rounded-md text-lg leading-none text-muted hover:bg-bg hover:text-ink">⠿</button>}
+        <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-primary text-on-primary" aria-hidden="true"><TutorIcon size={24} /></span>
+        <div className="ml-1 min-w-0 flex-1">
           <h2 className="font-display text-base font-semibold text-ink">AI Tutor</h2>
-          <p className="text-xs text-muted">Trả lời dựa trên bài học, nốt nhạc kiểm bằng Music Engine{remaining !== null ? ` · còn ${remaining} lượt hôm nay` : ""}</p>
+          {!minimized && <p className="text-xs text-muted">Trả lời dựa trên bài học, nốt nhạc kiểm bằng Music Engine{remaining !== null ? ` · còn ${remaining} lượt hôm nay` : ""}</p>}
         </div>
-        {moved && <button type="button" className="grid size-11 shrink-0 place-items-center rounded-full text-xl leading-none text-muted hover:bg-bg hover:text-ink"
-          aria-label="Đưa AI Tutor về góc phải dưới" title="Đưa về góc phải dưới" onClick={resetPlace}>↺</button>}
-        <button type="button" className="grid size-11 shrink-0 place-items-center rounded-full text-2xl leading-none text-muted hover:bg-bg hover:text-ink" aria-label="Đóng AI Tutor" onClick={() => setOpen(false)}>×</button>
+        {moved && !minimized && <button type="button" className="grid size-10 shrink-0 place-items-center rounded-full text-xl leading-none text-muted hover:bg-bg hover:text-ink"
+          aria-label="Đưa AI Tutor về góc phải dưới, cỡ mặc định" title="Đưa về góc phải dưới, cỡ mặc định" onClick={resetPlace}>↺</button>}
+        {wide && <button type="button" className="grid size-10 shrink-0 place-items-center rounded-full text-muted hover:bg-bg hover:text-ink"
+          aria-label={minimized ? "Mở lại khung AI Tutor" : "Thu nhỏ AI Tutor"} title={minimized ? "Mở lại" : "Thu nhỏ"} aria-pressed={minimized}
+          onClick={() => { setMinimized((v) => !v); if (maximized) { setMaximized(false); store(MAX_KEY, false); } }}>
+          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">{minimized
+            ? <rect x="3" y="3" width="10" height="10" rx="1.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
+            : <path d="M3 12.5h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />}</svg></button>}
+        {wide && !minimized && <button type="button" className="grid size-10 shrink-0 place-items-center rounded-full text-muted hover:bg-bg hover:text-ink"
+          aria-label={maximized ? "Thu khung AI Tutor về cỡ cũ" : "Phóng to AI Tutor"} title={maximized ? "Thu về cỡ cũ" : "Phóng to"} aria-pressed={maximized} onClick={toggleMax}>
+          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.6">{maximized
+            ? <><rect x="2.5" y="5.5" width="8" height="8" rx="1.2" /><path d="M5.5 5.5V3.7a1.2 1.2 0 0 1 1.2-1.2h5.6a1.2 1.2 0 0 1 1.2 1.2v5.6a1.2 1.2 0 0 1-1.2 1.2h-1.8" /></>
+            : <rect x="2.5" y="2.5" width="11" height="11" rx="1.5" />}</svg></button>}
+        <button type="button" className="grid size-10 shrink-0 place-items-center rounded-full text-2xl leading-none text-muted hover:bg-bg hover:text-ink" aria-label="Đóng AI Tutor" onClick={() => setOpen(false)}>×</button>
       </header>
+      {!minimized && <>
       <div ref={listRef} className="flex flex-1 flex-col gap-2 overflow-y-auto px-3 py-3" aria-live="polite">
         {items.length === 0 && <p className="rounded-lg bg-primary-soft px-3 py-2 text-sm text-ink">
           Hỏi mình về nốt, quãng, hợp âm, âm giai hay vòng hòa âm trong các bài, ví dụ “C7 khác Cmaj7 thế nào?”, hoặc cách dùng trang web. Câu ngoài bài học mình sẽ ghi rõ nguồn, không biết thì nói không biết. Sau khi làm sai một câu, bấm “Giải thích lỗi này” để nhận gợi ý từng bước.
@@ -232,6 +341,7 @@ export default function FloatingTutorDrawer() {
           <Button type="submit" disabled={busy || !text.trim()} className="!min-h-9 !px-3">Gửi</Button>
         </div>
       </form>
+      </>}
     </section>}
     {/* FE-001: trên điện thoại khung chat phủ gần hết màn hình và có nút × riêng, nên ẩn nút tròn khi khung mở;
         trước đây nút tròn nằm đè lên nút "Gửi". FE-002: nút nhỏ hơn (48px), thu vào mép khi cuộn xuống; FE-023: kéo được;
@@ -241,7 +351,7 @@ export default function FloatingTutorDrawer() {
       title="Bấm để hỏi AI Tutor. Kéo để đổi chỗ (hoặc phím mũi tên)."
       data-tucked={(tucked && !fab.dragging) || undefined}
       className={`fixed right-3 bottom-24 z-40 size-12 touch-none items-center justify-center rounded-full bg-primary text-sm font-bold text-on-primary shadow-xl ring-2 ring-bg hover:bg-primary-strong focus-visible:translate-x-0 motion-reduce:transition-none md:right-5 md:bottom-5 md:flex md:size-14 md:translate-x-0 ${fab.dragging ? "cursor-grabbing scale-110" : "cursor-grab transition-transform duration-200"} ${tucked && !fab.dragging ? (fabLeft ? "max-md:-translate-x-[calc(100%+0.5rem)]" : "max-md:translate-x-[calc(100%+0.5rem)]") : ""} ${open ? "hidden" : "flex"}`}>
-      {open ? "×" : "AI"}
+      <TutorIcon size={30} />
     </button>
   </>;
 }
