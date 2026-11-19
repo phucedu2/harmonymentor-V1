@@ -65,7 +65,8 @@ jobs:
       - name: Cache mô hình e5-small
         uses: actions/cache@v4
         with:
-          path: backend/models
+          # Chỉ cache thư mục e5: cache cả backend/models sẽ ghi đè model đã commit (relevance/, route/) bằng bản cũ.
+          path: backend/models/multilingual-e5-small
           key: e5-small-${{ hashFiles('backend/app/ai/local_embedder.py') }}
 
       - name: Tải mô hình e5-small (kiểm SHA-256)
