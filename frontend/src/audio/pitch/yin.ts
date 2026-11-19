@@ -1,4 +1,4 @@
-// ADR-030: thuật toán YIN (de Cheveigné & Kawahara, 2002) tìm tần số cơ bản của MỘT nốt từ một khung âm thanh.
+// ADR-031: thuật toán YIN (de Cheveigné & Kawahara, 2002) tìm tần số cơ bản của MỘT nốt từ một khung âm thanh.
 // Chỉ đo tần số (Hz). Tên nốt luôn do Music Engine đặt (GET /engine/note-from-frequency), frontend không tự tính.
 // Bản Python giống hệt ở scripts/ai/pitch/dac_trung.py để so với model ở bước 2; sửa một bên thì sửa cả hai.
 

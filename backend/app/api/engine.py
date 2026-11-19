@@ -52,7 +52,7 @@ def get_transpose(note: str, interval: str):
 
 @router.get("/note-from-frequency")
 def get_note_from_frequency(hz: float, a4_hz: float = 440.0, prefer: Literal["sharp", "flat"] = "sharp"):
-    """ADR-030: trình duyệt đo tần số từ micro, Engine đặt tên nốt. Chỉ nhận con số, không nhận âm thanh."""
+    """ADR-031: trình duyệt đo tần số từ micro, Engine đặt tên nốt. Chỉ nhận con số, không nhận âm thanh."""
     r = note_from_frequency(hz, a4_hz, prefer)
     return {"note": str(r.note), "midi": r.midi, "cents": r.cents, "hz": hz}
 

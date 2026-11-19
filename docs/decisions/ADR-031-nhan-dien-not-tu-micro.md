@@ -1,4 +1,4 @@
-# ADR-030: Nhận diện nốt từ micro (YIN + model MLP) để trả lời bài Luyện tập
+# ADR-031: Nhận diện nốt từ micro (YIN + model MLP) để trả lời bài Luyện tập
 
 - Ngày: 19/11/2026
 - Trạng thái: Đề xuất (Draft PR vào `phuc-music`, chờ nhóm duyệt)

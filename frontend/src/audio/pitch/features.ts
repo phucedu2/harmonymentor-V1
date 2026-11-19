@@ -1,4 +1,4 @@
-// ADR-030 bước 2: đặc trưng + model MLP chạy ngay trên trình duyệt (âm thanh không rời máy).
+// ADR-031 bước 2: đặc trưng + model MLP chạy ngay trên trình duyệt (âm thanh không rời máy).
 // Giống hệt scripts/ai/pitch/dac_trung.py; test features.test.ts so với số do Python xuất (__fixtures__/parity.json).
 // Model chỉ chọn "nốt nào" (một nửa cung); Hz chính xác lấy từ đáy đường YIN, rồi Music Engine đặt tên nốt.
 import { cmndCurve, parabolicTau } from "./yin";

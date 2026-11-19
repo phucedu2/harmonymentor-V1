@@ -1,4 +1,4 @@
-// ADR-030: nghe micro trên trình duyệt. Âm thanh chỉ xử lý trong máy người học, không ghi âm, không gửi đi;
+// ADR-031: nghe micro trên trình duyệt. Âm thanh chỉ xử lý trong máy người học, không ghi âm, không gửi đi;
 // mỗi nốt ổn định chỉ gửi MỘT con số (Hz) cho Music Engine đặt tên.
 import { modelHz, type PitchModel } from "./features";
 import { NoteStabilizer, type StableNote } from "./stabilizer";

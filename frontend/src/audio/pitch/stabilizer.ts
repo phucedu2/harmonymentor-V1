@@ -1,4 +1,4 @@
-// ADR-030: biến dòng tần số (mỗi khung ~40 ms) thành sự kiện "đã chơi một nốt".
+// ADR-031: biến dòng tần số (mỗi khung ~40 ms) thành sự kiện "đã chơi một nốt".
 // Vì sao cần: lúc mới gảy đàn cao độ dao động, và một nốt ngân dài không được tính nhiều lần.
 // Chỉ nhóm khung theo nửa cung để biết "cùng một nốt"; tên nốt vẫn do Music Engine đặt.
 

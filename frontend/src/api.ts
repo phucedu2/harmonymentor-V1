@@ -379,7 +379,7 @@ export const api = {
   // Legacy Practice routes retained during migration.
   transpose: (note: string, interval: string) =>
     engineCall<{ note: string }>(`/transpose?note=${encodeURIComponent(note)}&interval=${encodeURIComponent(interval)}`),
-  // ADR-030: micro chỉ đo Hz; Engine đặt tên nốt (tên thăng, chấm theo pitch_class_only như bấm phím).
+  // ADR-031: micro chỉ đo Hz; Engine đặt tên nốt (tên thăng, chấm theo pitch_class_only như bấm phím).
   noteFromFrequency: (hz: number) =>
     engineCall<{ note: string; midi: number; cents: number; hz: number }>(`/note-from-frequency?hz=${hz.toFixed(2)}`),
   diatonic: (tonic: string, sevenths: boolean) =>
