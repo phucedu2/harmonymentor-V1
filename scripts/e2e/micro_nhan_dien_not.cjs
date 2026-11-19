@@ -38,6 +38,15 @@ const FAKE_MIC = `(() => {
     return (t - ctx.currentTime) * 1000;
   };
   // Mỗi lần mở micro trả một bản sao, vì tắt micro sẽ dừng track (giống micro thật).
+  // Tiếng ù điện 50 Hz (dây sạc, loa kém) khi kịch bản yêu cầu: YIN dễ bắt nhầm, model được train để chịu.
+  if (window.__hmHum) {
+    // Ù điện thật chủ yếu là các họa âm thấp của 50 Hz: dựng 12 họa âm biên độ 1/k (sóng răng cưa đủ dải
+    // của trình duyệt có họa âm tới 24 kHz, không giống ù điện và khác dữ liệu train; xem báo cáo mục Giới hạn).
+    const K = 13, real = new Float32Array(K), imag = new Float32Array(K);
+    for (let k = 1; k < K; k += 1) imag[k] = 1 / k;
+    const hum = ctx.createOscillator(); hum.setPeriodicWave(ctx.createPeriodicWave(real, imag)); hum.frequency.value = 50;
+    const hg = ctx.createGain(); hg.gain.value = window.__hmHum; hum.connect(hg).connect(dest); hum.start();
+  }
   navigator.mediaDevices.getUserMedia = async () => new MediaStream(dest.stream.getAudioTracks().map((t) => t.clone()));
 })();`;
 
@@ -54,9 +63,10 @@ function midisFrom(notes) {
   });
 }
 
-async function run(viewport, tag) {
+async function run(viewport, tag, { detector = null, hum = 0, shots = true } = {}) {
   const b = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] });
   const ctx = await b.newContext({ viewport, deviceScaleFactor: 2 });
+  if (hum) await ctx.addInitScript(`window.__hmHum = ${hum};`);
   await ctx.addInitScript(FAKE_MIC);
   const p = await ctx.newPage();
   const email = `micro-${tag}-${Date.now()}@example.test`;
@@ -74,19 +84,21 @@ async function run(viewport, tag) {
   const chord = await (await p.request.get(`${BASE}/api/v1/engine/chord/${encodeURIComponent(symbol)}`)).json();
   const midis = midisFrom(chord.notes);
   log(tag, 'de:', symbol, chord.notes.join(' '), '-> phat MIDI', midis.join(' '));
+  if (detector) await p.getByLabel('Bộ nhận diện').selectOption(detector);
   await p.getByRole('button', { name: /Bật micro/ }).click();
   await p.getByRole('button', { name: /Tắt micro/ }).waitFor();
   // Lượt 1: đàn sai nốt cuối (lệch nửa cung) để thấy máy chấm sai.
   const wrong = [...midis.slice(0, -1), midis[midis.length - 1] + 1];
   let ms = await p.evaluate((m) => window.__hmPlay(m), wrong);
   await p.waitForTimeout(ms * 0.55);
-  await p.screenshot({ path: `${OUT}/${tag}-01-dang-nghe.png` });
+  if (shots) await p.screenshot({ path: `${OUT}/${tag}-01-dang-nghe.png` });
   await p.waitForTimeout(ms * 0.45 + 600);
   const heardWrong = await p.getByText(/^Đã chọn:/).innerText();
   log(tag, 'nghe (sai):', heardWrong);
+  if (!/Đã chọn: (?!chưa)/.test(heardWrong)) { log(tag, 'KHONG NGHE DUOC NOT NAO'); await b.close(); return { tag, ok: false }; }
   await p.getByRole('button', { name: 'Kiểm tra' }).click();
   await p.getByText('Đáp án đúng:').waitFor({ timeout: 10000 });
-  await p.screenshot({ path: `${OUT}/${tag}-02-sai.png`, fullPage: true });
+  if (shots) await p.screenshot({ path: `${OUT}/${tag}-02-sai.png`, fullPage: true });
   // Lượt 2: câu khác, đàn đúng.
   await p.getByRole('button', { name: 'Câu khác' }).click();
   const symbol2 = (await p.locator('p.text-xl span.font-mono').first().innerText()).trim();
@@ -96,15 +108,25 @@ async function run(viewport, tag) {
   await p.getByRole('button', { name: /Bật micro/ }).click();
   ms = await p.evaluate((m) => window.__hmPlay(m), midis2);
   await p.waitForTimeout(ms + 600);
-  log(tag, 'nghe (dung):', await p.getByText(/^Đã chọn:/).innerText());
+  const heard = await p.getByText(/^Đã chọn:/).innerText();
+  log(tag, 'nghe (dung):', heard);
+  if (!/Đã chọn: (?!chưa)/.test(heard)) { log(tag, 'KHONG NGHE DUOC NOT NAO'); await b.close(); return { tag, ok: false }; }
   await p.getByRole('button', { name: 'Kiểm tra' }).click();
-  await p.getByText(/Đúng cao độ/).waitFor({ timeout: 10000 });
-  await p.screenshot({ path: `${OUT}/${tag}-03-dung.png`, fullPage: true });
-  log(tag, 'ket qua:', (await p.getByText(/Đúng cao độ/).innerText()).slice(0, 120));
+  const verdict = await Promise.race([
+    p.getByText(/Đúng cao độ/).waitFor({ timeout: 10000 }).then(() => true),
+    p.getByText('Đáp án đúng:').waitFor({ timeout: 10000 }).then(() => false)]);
+  if (shots) await p.screenshot({ path: `${OUT}/${tag}-03-dung.png`, fullPage: true });
+  log(tag, 'ket qua:', verdict ? 'DUNG' : 'SAI');
   await b.close();
+  return { tag, ok: verdict };
 }
 
 (async () => {
-  await run({ width: 1280, height: 900 }, 'may-tinh');
-  await run({ width: 390, height: 844 }, 'dien-thoai');
+  const results = [];
+  results.push(await run({ width: 1280, height: 900 }, 'may-tinh'));
+  results.push(await run({ width: 390, height: 844 }, 'dien-thoai'));
+  // Có tiếng ù 50 Hz: so "Chỉ YIN" với "Kết hợp" trên cùng kịch bản.
+  results.push(await run({ width: 1280, height: 900 }, 'u-dien-chi-yin', { detector: 'yin', hum: 0.1, shots: false }));
+  results.push(await run({ width: 1280, height: 900 }, 'u-dien-ket-hop', { detector: 'hybrid', hum: 0.1 }));
+  console.log(JSON.stringify(results));
 })().catch((e) => { console.error(e); process.exit(1); });

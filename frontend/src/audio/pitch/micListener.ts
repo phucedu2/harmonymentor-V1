@@ -1,5 +1,6 @@
 // ADR-030: nghe micro trên trình duyệt. Âm thanh chỉ xử lý trong máy người học, không ghi âm, không gửi đi;
 // mỗi nốt ổn định chỉ gửi MỘT con số (Hz) cho Music Engine đặt tên.
+import { modelHz, type PitchModel } from "./features";
 import { NoteStabilizer, type StableNote } from "./stabilizer";
 import { rms, yin } from "./yin";
 
@@ -16,6 +17,20 @@ export const yinDetector: PitchDetector = (frame, sr) => {
   const r = yin(frame, sr);
   return r && r.clarity >= 0.8 ? r.hz : null;
 };
+
+export type DetectorKind = "hybrid" | "yin" | "model";
+export const DETECTOR_LABEL: Record<DetectorKind, string> = {
+  hybrid: "Kết hợp YIN + model AI (khuyên dùng)", yin: "Chỉ thuật toán YIN", model: "Chỉ model AI",
+};
+
+/** Bước 2: model MLP. Kết hợp = dùng YIN khi YIN chắc chắn (rất chính xác), YIN bỏ qua thì hỏi model
+ *  (model chịu nhiễu và tiếng ù tốt hơn). Số đo: docs/giai-doan/nhan-dien-not-micro/KET_QUA_MODEL.md. */
+export function makeDetector(kind: DetectorKind, model: PitchModel | null): PitchDetector {
+  if (kind === "yin" || !model) return yinDetector;
+  const byModel: PitchDetector = (frame, sr) => modelHz(model, frame, sr)?.hz ?? null;
+  if (kind === "model") return byModel;
+  return (frame, sr) => yinDetector(frame, sr) ?? byModel(frame, sr);
+}
 
 export function micSupported(): boolean {
   return typeof navigator !== "undefined" && Boolean(navigator.mediaDevices?.getUserMedia) && typeof AudioContext !== "undefined";

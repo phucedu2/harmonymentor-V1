@@ -2,7 +2,8 @@
 // Nốt nghe được hiện trên piano ảo; bấm phím để bỏ nốt nghe nhầm, nên người học luôn sửa được trước khi nộp.
 import { useEffect, useRef, useState } from "react";
 import { api } from "../../api";
-import { classifyMicError, micSupported, startMic, type MicError, type MicSession, type PitchDetector } from "../../audio/pitch/micListener";
+import { loadPitchModel } from "../../audio/pitch/features";
+import { classifyMicError, DETECTOR_LABEL, makeDetector, micSupported, startMic, type DetectorKind, type MicError, type MicSession } from "../../audio/pitch/micListener";
 import { Alert } from "../ui/Alert";
 import { Button } from "../ui/Button";
 import VirtualPiano from "./VirtualPiano";
@@ -18,8 +19,10 @@ const ERROR_TEXT: Record<MicError, string> = {
 
 export default function MicNoteInput(props: {
   notes: string[]; onChange: (notes: string[]) => void; disabled?: boolean;
-  highlighted?: string[]; incorrect?: string[]; detector?: PitchDetector; detectorLabel?: string;
+  highlighted?: string[]; incorrect?: string[];
 }) {
+  const [kind, setKind] = useState<DetectorKind>("hybrid");
+  const [modelMissing, setModelMissing] = useState(false);
   const [listening, setListening] = useState(false);
   const [starting, setStarting] = useState(false);
   const [error, setError] = useState<MicError | null>(null);
@@ -39,10 +42,12 @@ export default function MicNoteInput(props: {
   useEffect(() => { if (props.disabled) stop(); }, [props.disabled]);
 
   const start = async () => {
-    setError(null); setStarting(true);
+    setError(null); setStarting(true); setModelMissing(false);
+    // Model nạp lười; nạp lỗi thì vẫn chạy bằng YIN và báo cho người học biết.
+    const model = kind === "yin" ? null : await loadPitchModel().catch(() => { setModelMissing(true); return null; });
     try {
       session.current = await startMic({
-        detector: props.detector,
+        detector: makeDetector(kind, model),
         onFrame: ({ level: l, hz }) => { setLevel(l); setLiveHz(hz); },
         onNote: ({ hz }) => {
           api.noteFromFrequency(hz).then((r) => {
@@ -77,10 +82,18 @@ export default function MicNoteInput(props: {
       {listening
         ? liveHz ? `Đang nghe một nốt khoảng ${Math.round(liveHz)} Hz…` : "Đang nghe. Đàn hoặc hát từng nốt một, giữ khoảng nửa giây."
         : "Micro chỉ dùng trong máy bạn: không ghi âm, không gửi âm thanh đi, chỉ gửi tần số của từng nốt để máy chủ đặt tên."}
-      {props.detectorLabel && listening ? ` (Bộ nhận diện: ${props.detectorLabel})` : ""}
     </p>
+    <label className="flex flex-wrap items-center gap-2 text-sm text-ink">Bộ nhận diện
+      <select value={kind} disabled={listening} onChange={(e) => setKind(e.target.value as DetectorKind)}
+        className="min-h-10 rounded-lg border border-line bg-surface px-2 font-normal">
+        {(Object.keys(DETECTOR_LABEL) as DetectorKind[]).map((k) => <option key={k} value={k}>{DETECTOR_LABEL[k]}</option>)}
+      </select></label>
+    {modelMissing && <Alert tone="info">Chưa tải được model AI, đang dùng thuật toán YIN.</Alert>}
     {last && <p className="text-sm text-ink" aria-live="polite">Vừa nghe: <b className="font-mono">{last.note}</b>
-      {" "}<span className="text-muted">({last.cents > 0 ? "+" : ""}{last.cents} cent{Math.abs(last.cents) > 25 ? ", hơi lệch, nên chỉnh dây đàn" : ""})</span></p>}
+      {" "}<span className="text-muted">{Math.abs(last.cents) >= 45
+        // Model chỉ chọn nốt; khi đáy YIN bị nhiễu đẩy ra mép nốt thì độ lệch không đáng tin, không hiện.
+        ? "(chưa đo được độ lệch vì nhiều tiếng ồn)"
+        : `(${last.cents > 0 ? "+" : ""}${last.cents} cent${Math.abs(last.cents) > 25 ? ", hơi lệch, nên chỉnh dây đàn" : ""})`}</span></p>}
     {error && <Alert tone="danger">{ERROR_TEXT[error]}</Alert>}
     {engineDown && <Alert tone="danger">Không kết nối được máy chủ để đặt tên nốt. Hãy kiểm tra mạng rồi đàn lại.</Alert>}
     <VirtualPiano selectionMode selectedNotes={props.notes} onSelectionChange={props.onChange} showLabels={false} startMidi={48} endMidi={84}
