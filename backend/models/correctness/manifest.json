@@ -1,0 +1,63 @@
+{
+  "phien_ban_model": "1.0.0",
+  "phien_ban_dac_trung": "1",
+  "nguon_du_lieu": "mo_phong",
+  "seed": 20261119,
+  "so_nguoi": 2000,
+  "so_dong": 160770,
+  "ma_bam_du_lieu": "b2373af2fcb2bc08",
+  "model_chon": "hist_gradient_boosting",
+  "dac_trung": [
+    "ema_skill",
+    "seen_skill",
+    "log_n_skill",
+    "acc_skill",
+    "last_skill",
+    "tries_exercise",
+    "last_ex_wrong",
+    "is_review",
+    "log_gap_days",
+    "acc_user",
+    "log_n_user",
+    "ema_group",
+    "prereq_ema",
+    "group=note_names",
+    "group=accidentals",
+    "group=intervals",
+    "group=major_scales",
+    "group=minor_scales",
+    "group=triads",
+    "group=seventh_chords",
+    "group=diatonic_chords",
+    "group=progressions",
+    "group=rhythm_basics",
+    "group=chromatic_harmony",
+    "group=pop_harmony",
+    "group=jazz_voicing",
+    "group=jazz_scales_tensions",
+    "group=khac"
+  ],
+  "moi_truong": {
+    "python": "3.13.18",
+    "sklearn": "1.9.1",
+    "numpy": "2.5.3",
+    "joblib": "1.6.0"
+  },
+  "ngay_chay": "2026-11-19 07:26 UTC",
+  "luu_y": "Số đo trên người học mô phỏng: chưa chứng minh chất lượng với người học thật.",
+  "test": {
+    "auc": 0.624,
+    "log_loss": 0.6613,
+    "brier": 0.2344,
+    "accuracy": 0.6059,
+    "precision": 0.624,
+    "recall": 0.765,
+    "f1": 0.6874,
+    "ece": 0.0053
+  },
+  "baseline_test_auc": {
+    "hang_so_ty_le_dung_chung": 0.5,
+    "mastery_ema": 0.5966,
+    "ty_le_dung_truoc_do_cua_ky_nang": 0.5263
+  }
+}
