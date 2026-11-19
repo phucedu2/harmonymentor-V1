@@ -1,0 +1,32 @@
+{
+ "note": "Tầng 1 định tuyến AI Tutor (ADR-030). Sinh bởi app/ml/route_train.py; route_classifier.py chỉ nạp file đúng sha256 và đúng phiên bản scikit-learn, không thì train lại model cũ lúc khởi động.",
+ "sklearn": "1.9.1",
+ "labels": [
+  "nhac_ly",
+  "huong_dan",
+  "chao_hoi",
+  "ngoai_pham_vi"
+ ],
+ "embedder": "multilingual-e5-small",
+ "train_hash": "5445541ed3d30112575b74c9c8b777ea63de1bf9edf48622507ecb08a6385c7b",
+ "date": "2026-11-19T07:50:13+00:00",
+ "models": {
+  "primary": {
+   "file": "route-old-recipe-clean.joblib",
+   "kind": "old_recipe_clean",
+   "needs_e5": false,
+   "sha256": "1fc69e4c1f4344e9d04abda0c56a752f270d9b5c0305939e4ce2ce0e0b3b49e2",
+   "enabled": true,
+   "test_macro_f1": 0.9102,
+   "enabled_by": "Phúc chọn 1A + 2B ngày 19/11/2026 (thread Train bộ phân loại ý định AI Tutor)"
+  },
+  "experiment": {
+   "file": "route-tfidf-e5.joblib",
+   "kind": "tfidf+e5",
+   "needs_e5": true,
+   "sha256": "0ec43bfd52a78fdf97679ee9f35cb8afd2fb35e4db0fdd2b0c61bd010195a79a",
+   "enabled": false,
+   "test_macro_f1": 0.9066
+  }
+ }
+}
