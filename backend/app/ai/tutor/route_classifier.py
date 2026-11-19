@@ -71,7 +71,8 @@ log = logging.getLogger(__name__)
 
 
 def _load_trained(mode: str):
-    """ROUTE_MODEL=auto (mặc định): model mới nếu manifest bật; new: nạp cả khi chưa bật (chỉ để đo); old: model cũ."""
+    """ROUTE_MODEL=auto (mặc định): vai đầu tiên được bật trong manifest; new: vai đầu tiên dùng được kể cả chưa bật;
+    <vai>: đúng vai đó (chỉ để đo); old: model cũ train lúc khởi động."""
     import hashlib
 
     manifest_path = MODEL_DIR / "manifest.json"
@@ -85,9 +86,11 @@ def _load_trained(mode: str):
         log.warning("route model: scikit-learn %s khác %s lúc train, dùng model cũ", sklearn.__version__,
                     manifest.get("sklearn"))
         return None
-    for role in ("primary", "no_e5"):
-        info = manifest["models"].get(role)
-        if not info or (mode != "new" and not info.get("enabled")):
+    for role, info in manifest["models"].items():
+        # ROUTE_MODEL=<tên vai trong manifest> (vd experiment): chỉ nạp đúng vai đó, kể cả chưa bật, để đo so sánh.
+        if mode in manifest["models"] and role != mode:
+            continue
+        if mode == "auto" and not info.get("enabled"):
             continue
         # Model cần vector e5 GỐC; máy chưa tải e5 hoặc đang dùng bản e5 tinh chỉnh thì bỏ qua (tránh nạp 2 model).
         if info.get("needs_e5") and not (available(DEFAULT_DIR) and model_dir() == DEFAULT_DIR):

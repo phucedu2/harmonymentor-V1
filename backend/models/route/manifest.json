@@ -8,24 +8,25 @@
   "ngoai_pham_vi"
  ],
  "embedder": "multilingual-e5-small",
- "train_hash": "c50f94e8ba46410df661f9f6a531a6ab9e468942239c5632df34bd5c39be52d3",
- "date": "2026-11-19T07:34:58+00:00",
+ "train_hash": "5445541ed3d30112575b74c9c8b777ea63de1bf9edf48622507ecb08a6385c7b",
+ "date": "2026-11-19T07:50:13+00:00",
  "models": {
   "primary": {
+   "file": "route-old-recipe-clean.joblib",
+   "kind": "old_recipe_clean",
+   "needs_e5": false,
+   "sha256": "1fc69e4c1f4344e9d04abda0c56a752f270d9b5c0305939e4ce2ce0e0b3b49e2",
+   "enabled": true,
+   "test_macro_f1": 0.9102,
+   "enabled_by": "Phúc chọn 1A + 2B ngày 19/11/2026 (thread Train bộ phân loại ý định AI Tutor)"
+  },
+  "experiment": {
    "file": "route-tfidf-e5.joblib",
    "kind": "tfidf+e5",
    "needs_e5": true,
-   "sha256": "a87608a8c6b187c79a99644c9a18f78618bb052d764d9c7c0454e69b7ade9ebd",
+   "sha256": "0ec43bfd52a78fdf97679ee9f35cb8afd2fb35e4db0fdd2b0c61bd010195a79a",
    "enabled": false,
-   "test_macro_f1": 0.8822
-  },
-  "no_e5": {
-   "file": "route-tfidf.joblib",
-   "kind": "tfidf",
-   "needs_e5": false,
-   "sha256": "ae192b986429078aaae031474a057fd4693f25026415cd5fa23d74cfd1d12e79",
-   "enabled": false,
-   "test_macro_f1": 0.8415
+   "test_macro_f1": 0.9066
   }
  }
 }

@@ -12,7 +12,8 @@ Quy trình (chương 2–4 của handson-ml3, áp vào dự án):
 4. So 3 cách biến câu thành vector: TF-IDF n-gram ký tự, vector e5-small, gộp cả hai. Mốc so sánh là model cũ
    (route_classifier.train trên dữ liệu cũ).
 5. Chấm: accuracy, Precision/Recall/F1 từng nhãn, macro-F1, ma trận nhầm lẫn, đường học (learning curve).
-Model mới chỉ được BẬT (manifest "enabled": true) khi thắng model cũ cả trên VALIDATION lẫn TEST."""
+Luật mặc định: model thí nghiệm chỉ BẬT khi thắng model cũ cả trên VALIDATION lẫn TEST. Model chạy thật hiện tại
+(công thức cũ trên dữ liệu đã bỏ câu rò) do nhóm quyết bật, xem TEAM_DECISION."""
 
 from __future__ import annotations
 
@@ -206,6 +207,26 @@ def bootstrap_diff(rows: list[dict], pred_a: list[str], pred_b: list[str], n: in
             "resamples": n}
 
 
+# Quyết định của nhóm (Phúc, 19/11/2026, sau lần chạy 1 lưu ở DO_LUONG_lan1.json):
+# 1A: 262 câu Claude soạn (route_data_ml.json) KHÔNG đưa vào train, chỉ giữ làm minh chứng "học vẹt theo validation".
+# 2B: bật công thức cũ học trên dữ liệu đã bỏ câu rò làm model chạy thật.
+INCLUDE_ML_DATA = False
+TEAM_DECISION = "Phúc chọn 1A + 2B ngày 19/11/2026 (thread Train bộ phân loại ý định AI Tutor)"
+
+
+def old_recipe():
+    """Đúng tham số của model cũ (route_classifier.train), gói thành Pipeline nhận câu thô để lưu được bằng joblib."""
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.pipeline import Pipeline
+
+    from .route_features import prep
+
+    return Pipeline([("vec", TfidfVectorizer(analyzer="char_wb", ngram_range=(2, 4), sublinear_tf=True, min_df=1,
+                                             preprocessor=prep)),
+                     ("clf", LogisticRegression(C=10.0, max_iter=3000, random_state=0))])
+
+
 def run(save: bool = True, n_jobs: int = 1) -> dict:
     import numpy as np
     import sklearn
@@ -214,21 +235,22 @@ def run(save: bool = True, n_jobs: int = 1) -> dict:
     from ..ai.tutor.intent import _prep
 
     data = remove_leaks(splits())
-    tr, va, te = data["train"], data["val"], data["test"]
+    ml_rows = [r for r in data["train"] if r["src"].startswith("route_data_ml")]
+    tr = data["train"] if INCLUDE_ML_DATA else [r for r in data["train"] if r not in ml_rows]
+    va, te = data["val"], data["test"]
     x, y, g = [r["q"] for r in tr], [r["label"] for r in tr], [r["group"] for r in tr]
     cv = GroupKFold(n_splits=5)
 
     old = old_model()
-    old_pred = lambda qs: old.predict([_prep(q) for q in qs])  # noqa: E731
-    res: dict = {"models": {}, "old": {"val": evaluate(old_pred, va)}}
+    pipes = {"old": lambda qs: old.predict([_prep(q) for q in qs])}
+    # Model chạy thật (2B): công thức cũ, dữ liệu cũ đã bỏ 325 câu gần trùng val/test.
+    clean = old_recipe().fit(x, y)
+    pipes["old_recipe_clean"] = clean.predict
+    # Thí nghiệm giữ lại để báo cáo: thêm 262 câu Claude soạn thì sao (lần 1: kém đi trên test).
+    with_ml = old_recipe().fit(x + [r["q"] for r in ml_rows], y + [r["label"] for r in ml_rows])
+    pipes["old_recipe_clean_plus_claude_data"] = with_ml.predict
 
-    # Mốc công bằng: model cũ học trên dữ liệu cũ, nhưng ĐÃ loại câu gần trùng với val/test. Model cũ đang chạy được
-    # train trên cả những câu gần trùng đó nên điểm test của nó đẹp hơn thực tế (rò dữ liệu).
-    from ..ai.tutor import route_classifier as rc
-    recipes = {"old_recipe_clean": [r for r in tr if not r["src"].startswith("route_data_ml")],
-               "old_recipe_clean_plus_new_data": tr}
-    fair = {k: rc.train([_prep(r["q"]) for r in rows], [r["label"] for r in rows]) for k, rows in recipes.items()}
-
+    res: dict = {"models": {}}
     best = {}
     for name, (pipe, grid) in candidates().items():
         gs = GridSearchCV(pipe, grid, cv=cv, scoring="f1_macro", n_jobs=n_jobs, refit=True)
@@ -236,73 +258,66 @@ def run(save: bool = True, n_jobs: int = 1) -> dict:
         best[name] = gs.best_estimator_
         res["models"][name] = {"cv_macro_f1": round(float(gs.best_score_), 4),
                                "best_params": {k: (list(v) if isinstance(v, tuple) else v)
-                                               for k, v in gs.best_params_.items()},
-                               "val": evaluate(gs.best_estimator_.predict, va)}
-        print(f"{name:9} CV {gs.best_score_:.4f}  val macro-F1 {res['models'][name]['val']['macro_f1']:.4f}  {gs.best_params_}")
-
-    # Chọn model chỉ dựa trên VALIDATION (không nhìn TEST).
+                                               for k, v in gs.best_params_.items()}}
+        pipes[name] = gs.best_estimator_.predict
+    for name in ("old", "old_recipe_clean", "old_recipe_clean_plus_claude_data", *best):
+        res["models"].setdefault(name, {})["val"] = evaluate(pipes[name], va)
+    # Thí nghiệm GridSearch chọn model chỉ bằng VALIDATION.
     winner = max(best, key=lambda n: res["models"][n]["val"]["macro_f1"])
-    no_e5 = "tfidf"   # dự phòng khi máy chưa tải e5 (AI Tutor khi đó cũng lùi về BM25)
-    res["winner"] = winner
+    res["winner_gridsearch"] = winner
 
-    # TEST: chấm đúng một lần, cho model cũ, model thắng và model dự phòng.
-    res["old"]["test"] = evaluate(old_pred, te)
-    for k, m in fair.items():
-        pred = lambda qs, m=m: m.predict([_prep(q) for q in qs])  # noqa: E731
-        res[k] = {"train": len(recipes[k]), "val": evaluate(pred, va), "test": evaluate(pred, te)}
-        print(f"{k:30} val {res[k]['val']['macro_f1']:.4f}  test {res[k]['test']['macro_f1']:.4f}")
-    for name in {winner, no_e5}:
-        res["models"][name]["test"] = evaluate(best[name].predict, te)
-    print(f"old       val {res['old']['val']['macro_f1']:.4f}  test {res['old']['test']['macro_f1']:.4f}")
-    for name in {winner, no_e5}:
-        print(f"{name:9} test {res['models'][name]['test']['macro_f1']:.4f}")
-
-    # So từng model với model cũ đang chạy trên TEST, kèm khoảng tin cậy (test chỉ ~300 câu, nhãn nhỏ có 20–33 câu).
-    old_te = list(old_pred([r["q"] for r in te]))
-    preds = {name: list(best[name].predict([r["q"] for r in te])) for name in {winner, no_e5}}
-    preds.update({k: list(m.predict([_prep(r["q"]) for r in te])) for k, m in fair.items()})
-    res["vs_old_test"] = {k: bootstrap_diff(te, p, old_te) for k, p in preds.items()}
+    for name in pipes:
+        res["models"][name]["test"] = evaluate(pipes[name], te)
+        m = res["models"][name]
+        print(f"{name:34} val {m['val']['macro_f1']:.4f}  test {m['test']['macro_f1']:.4f}")
+    old_te = list(pipes["old"]([r["q"] for r in te]))
+    res["vs_old_test"] = {n: bootstrap_diff(te, list(pipes[n]([r["q"] for r in te])), old_te)
+                          for n in pipes if n != "old"}
     for k, v in res["vs_old_test"].items():
-        print(f"{k:30} − old: {v['mean']:+.4f}  CI95 {v['ci95']}")
+        print(f"{k:34} − old: {v['mean']:+.4f}  CI95 {v['ci95']}")
 
-    # Đường học: macro-F1 khi train bằng 10%…100% dữ liệu (CV theo nhóm). Hai đường còn cách xa nhau = model học vẹt,
-    # thêm dữ liệu còn giúp; hai đường sát nhau mà thấp = model quá đơn giản.
-    sizes, tr_sc, cv_sc = learning_curve(best[winner], x, y, groups=g, cv=cv, scoring="f1_macro",
+    # Đường học của model chạy thật: hai đường cách xa = học thuộc, thêm dữ liệu còn giúp.
+    sizes, tr_sc, cv_sc = learning_curve(old_recipe(), x, y, groups=g, cv=cv, scoring="f1_macro",
                                          train_sizes=np.linspace(0.1, 1.0, 6), n_jobs=n_jobs, shuffle=True,
                                          random_state=SEED)
-    res["learning_curve"] = {"train_sizes": sizes.tolist(), "train_f1": tr_sc.mean(axis=1).round(4).tolist(),
+    res["learning_curve"] = {"model": "old_recipe_clean", "train_sizes": sizes.tolist(),
+                             "train_f1": tr_sc.mean(axis=1).round(4).tolist(),
                              "cv_f1": cv_sc.mean(axis=1).round(4).tolist()}
 
-    def beats(name: str) -> bool:
-        m = res["models"][name]
-        return (m["val"]["macro_f1"] > res["old"]["val"]["macro_f1"]
-                and m["test"]["macro_f1"] > res["old"]["test"]["macro_f1"])
-
-    res["enabled"] = {"primary": beats(winner), "no_e5": beats(no_e5)}
+    exp = res["models"][winner]
+    # Thí nghiệm không bao giờ tự chạy thật: luật "thắng cả val lẫn test" chỉ ghi lại; muốn bật thì nhóm quyết
+    # sau khi đo cả luồng AI Tutor (lần 2: đúng luồng cao hơn nhưng từ chối nhầm câu bài học nhiều hơn).
+    res["enabled"] = {"primary": True, "primary_reason": TEAM_DECISION, "experiment": False,
+                      "experiment_passes_rule": (exp["val"]["macro_f1"] > res["models"]["old"]["val"]["macro_f1"]
+                                     and exp["test"]["macro_f1"] > res["models"]["old"]["test"]["macro_f1"])}
     res["data"] = {"train": len(tr), "val": len(va), "test": len(te), "train_hash": data_hash(tr),
+                   "include_claude_data": INCLUDE_ML_DATA, "claude_data_rows": len(ml_rows),
                    "dropped": {k: len(v) for k, v in data["_dropped"].items()},
                    "dropped_rows": data["_dropped"],
                    "label_counts": {k: {lab: sum(r["label"] == lab for r in rows) for lab in LABELS}
                                     for k, rows in (("train", tr), ("val", va), ("test", te))}}
     res["run"] = {"date": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-                  "sklearn": sklearn.__version__, "command": "cd backend && python -m app.ml.route_train"}
+                  "sklearn": sklearn.__version__, "command": "cd backend && python -m app.ml.route_train --jobs 4"}
     if save:
-        save_models(best, winner, no_e5, res)
+        save_models({"primary": ("old_recipe_clean", clean), "experiment": (winner, best[winner])}, res)
     return res
 
 
-def save_models(best: dict, winner: str, no_e5: str, res: dict) -> None:
+def save_models(models: dict, res: dict) -> None:
     import joblib
     import sklearn
 
     MODEL_DIR.mkdir(parents=True, exist_ok=True)
+    for f in MODEL_DIR.glob("*.joblib"):
+        f.unlink()
     files = {}
-    for role, name in (("primary", winner), ("no_e5", no_e5)):
-        path = MODEL_DIR / f"route-{name.replace('+', '-')}.joblib"
-        joblib.dump(best[name], path, compress=3)
+    for role, (name, pipe) in models.items():
+        path = MODEL_DIR / f"route-{name.replace('+', '-').replace('_', '-')}.joblib"
+        joblib.dump(pipe, path, compress=3)
         files[role] = {"file": path.name, "kind": name, "needs_e5": "e5" in name,
                        "sha256": hashlib.sha256(path.read_bytes()).hexdigest(), "enabled": res["enabled"][role],
                        "test_macro_f1": res["models"][name]["test"]["macro_f1"]}
+    files["primary"]["enabled_by"] = res["enabled"]["primary_reason"]
     manifest = {"note": "Tầng 1 định tuyến AI Tutor (ADR-030). Sinh bởi app/ml/route_train.py; route_classifier.py chỉ "
                         "nạp file đúng sha256 và đúng phiên bản scikit-learn, không thì train lại model cũ lúc khởi động.",
                 "sklearn": sklearn.__version__, "labels": list(LABELS), "embedder": "multilingual-e5-small",

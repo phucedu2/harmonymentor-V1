@@ -1,5 +1,5 @@
-"""ADR-030: model định tuyến train sẵn. Kiểm: chia dữ liệu không rò, model chỉ nạp khi đủ điều kiện, mặc định giữ
-model cũ khi manifest chưa bật, số đo có thể tính lại."""
+"""ADR-030: model định tuyến train sẵn. Kiểm: chia dữ liệu không rò, model chỉ nạp khi đủ điều kiện, mặc định nạp
+đúng vai nhóm đã bật, số đo khớp manifest."""
 
 import hashlib
 import json
@@ -48,12 +48,21 @@ def test_manifest_khop_sha256():
         assert hashlib.sha256(data).hexdigest() == info["sha256"]
 
 
-def test_mac_dinh_giu_model_cu_khi_manifest_chua_bat(monkeypatch):
+def test_mac_dinh_nap_dung_vai_duoc_bat(monkeypatch):
+    import sklearn
+
     manifest = json.loads((rt.MODEL_DIR / "manifest.json").read_text(encoding="utf-8"))
     monkeypatch.delenv("ROUTE_MODEL", raising=False)
-    _, needs_prep = rc.model()
-    # Model mới chỉ chạy khi manifest bật; hiện chưa bật vì không thắng model cũ trên test (DO_LUONG.json).
-    assert needs_prep == (not any(i["enabled"] for i in manifest["models"].values()))
+    pipe, needs_prep = rc.model()
+    if manifest["sklearn"] != sklearn.__version__:
+        assert needs_prep is True
+        return
+    # Nhóm bật công thức cũ trên dữ liệu đã bỏ câu rò (2B); model thí nghiệm TF-IDF + e5 không tự chạy.
+    assert manifest["models"]["primary"]["kind"] == "old_recipe_clean" and manifest["models"]["primary"]["enabled"]
+    assert manifest["models"]["experiment"]["enabled"] is False
+    assert needs_prep is False and [n for n, _ in pipe.steps] == ["vec", "clf"]
+    assert rc.classify_route("Hợp âm C gồm những nốt nào?").label == "nhac_ly"
+    assert rc.classify_route("thời tiết hà nội mai thế nào").label == "ngoai_pham_vi"
 
 
 def test_route_model_old_luon_dung_model_cu(monkeypatch):
@@ -108,10 +117,11 @@ def test_danh_gia_va_bootstrap():
     assert same["ci95"] == [0.0, 0.0]
 
 
-def test_so_do_da_luu_khop_quy_tac_bat():
+def test_so_do_da_luu_khop_manifest_va_quyet_dinh():
     res = json.loads((rt.RESULT_DIR / "DO_LUONG.json").read_text(encoding="utf-8"))
-    old = res["old"]
-    for role, name in (("primary", res["winner"]), ("no_e5", "tfidf")):
-        m = res["models"][name]
-        wins = m["val"]["macro_f1"] > old["val"]["macro_f1"] and m["test"]["macro_f1"] > old["test"]["macro_f1"]
-        assert res["enabled"][role] == wins
+    manifest = json.loads((rt.MODEL_DIR / "manifest.json").read_text(encoding="utf-8"))
+    assert res["data"]["include_claude_data"] is False          # quyết định 1A
+    assert manifest["models"]["primary"]["test_macro_f1"] == res["models"]["old_recipe_clean"]["test"]["macro_f1"]
+    old, exp = res["models"]["old"], res["models"][res["winner_gridsearch"]]
+    wins = exp["val"]["macro_f1"] > old["val"]["macro_f1"] and exp["test"]["macro_f1"] > old["test"]["macro_f1"]
+    assert res["enabled"]["experiment_passes_rule"] == wins and res["enabled"]["experiment"] is False
