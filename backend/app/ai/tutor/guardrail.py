@@ -15,10 +15,12 @@ from typing import Any, Iterable
 
 from ...music_engine import tools as engine
 from ...music_engine.errors import MusicEngineError
+from ...music_engine.interval import parse_interval
 from ...music_engine.roman import diatonic_chords
-from .notes import (CHORD_IS_ROMAN_IN_KEY, CHORD_WITH_NOTES, INTERVAL_PAIR_WITH_NAME, INTERVAL_WITH_NAME, NOTE_SEQ, ROMAN_IN_KEY_IS_CHORD,
-                    SCALE_WITH_NOTES, SYMBOL_IN_QUESTION, interval_name, norm_accidentals, solfege_to_letters,
-                    split_notes)
+from .notes import (CHORD_IS_ROMAN_IN_KEY, CHORD_WITH_NOTES, INTERVAL_PAIR_WITH_NAME, INTERVAL_SIZE_CLAIM,
+                    INTERVAL_WITH_NAME, NOTE_SEQ, NOTES_SEMITONE_CLAIM, ROMAN_IN_KEY_IS_CHORD, SCALE_WITH_NOTES,
+                    SYMBOL_IN_QUESTION, interval_name, is_comparison, norm_accidentals, semitone_count,
+                    solfege_to_letters, split_notes)
 from .schema import Claim
 
 _SCALE_KIND = {"major": "major", "trưởng": "major", "natural minor": "natural_minor", "thứ tự nhiên": "natural_minor",
@@ -129,6 +131,33 @@ def check_declared(claims: Iterable[Claim]) -> list[CheckedClaim]:
     return out
 
 
+# G8 (19/11/2026): "Shell root–3–7 của G7: G, B, F" là đúng nhưng từng bị so với G7 đầy đủ (G B D F) và báo sai,
+# câu trả lời đúng rơi vào dự phòng. Nhìn ngữ cảnh ngay trước ký hiệu để biết câu đang nói một phần hợp âm.
+_SHELL_CTX = re.compile(r"shell|root\s*[–\-]\s*3\s*[–\-]\s*7|1\s*[–\-]\s*3\s*[–\-]\s*7", re.IGNORECASE)
+_GUIDE_CTX = re.compile(r"guide[\s-]*tone|nốt\s*3\s*(?:và|,)\s*(?:nốt\s*)?7|3rd\s+(?:và|and)\s+7th", re.IGNORECASE)
+_PARTIAL_CTX = re.compile(r"voicing|lược|bỏ\s+(?:nốt|quãng)|rút\s+gọn", re.IGNORECASE)
+_CTX_BEFORE = 120
+
+
+def _compare_chord(text: str, start: int, claimed: str, engine_value: str | None) -> str:
+    """So dãy nốt AI ghi với hợp âm Engine, có tính ngữ cảnh shell/guide tone/voicing.
+
+    Shell root–3–7 phải đúng 3 nốt gốc–3–7; guide tone đúng 2 nốt 3–7; voicing/lược nốt khác chỉ cần là tập con
+    các nốt của hợp âm. Nốt không thuộc hợp âm thì vẫn sai."""
+    full = _compare("get_chord_tones", claimed, engine_value)
+    if full != "contradicted" or engine_value is None:
+        return full
+    tones, got = engine_value.split(), _norm_seq(claimed)
+    window = text[max(0, start - _CTX_BEFORE):start]
+    if len(tones) >= 4 and _SHELL_CTX.search(window):
+        return "verified" if sorted(got) == sorted([tones[0], tones[1], tones[3]]) else "contradicted"
+    if len(tones) >= 4 and _GUIDE_CTX.search(window):
+        return "verified" if sorted(got) == sorted([tones[1], tones[3]]) else "contradicted"
+    if _PARTIAL_CTX.search(window) and len(got) >= 2 and set(got) < set(tones):
+        return "verified"
+    return full
+
+
 def scan_reply(reply: str) -> list[CheckedClaim]:
     text = solfege_to_letters(reply)
     out = []
@@ -137,7 +166,7 @@ def scan_reply(reply: str) -> list[CheckedClaim]:
         claimed = " ".join(split_notes(m["notes"]))
         value, _ = run_tool("get_chord_tones", args)
         out.append(CheckedClaim("get_chord_tones", args, claimed, value,
-                                _compare("get_chord_tones", claimed, value), "scanned"))
+                                _compare_chord(text, m.start(), claimed, value), "scanned"))
     for m in SCALE_WITH_NOTES.finditer(text):
         args = {"tonic": norm_accidentals(m["tonic"]), "scale_type": _SCALE_KIND[m["kind"].lower()]}
         claimed = " ".join(split_notes(m["notes"]))
@@ -159,6 +188,29 @@ def scan_reply(reply: str) -> list[CheckedClaim]:
         args = {"lower": lo, "upper": hi} if hit in (None, up) else {"lower": hi, "upper": lo}
         out.append(CheckedClaim("identify_interval", args, claimed, hit or up,
                                 "unsupported" if up is None and down is None else ("verified" if hit else "contradicted"),
+                                "scanned"))
+    # G8: số nửa cung AI nêu cho một quãng ("M6 có 8 nửa cung") hoặc cho hai nốt ("A lên C ... 4 nửa cung").
+    for m in INTERVAL_SIZE_CLAIM.finditer(text):
+        if is_comparison(text, m.start()):
+            continue
+        code = interval_name(m)
+        try:
+            size = str(parse_interval(code).semitones)
+        except (MusicEngineError, ValueError, KeyError):
+            size = None
+        claimed = str(semitone_count(m))
+        out.append(CheckedClaim("interval_size", {"interval": code}, claimed, size,
+                                "unsupported" if size is None else ("verified" if claimed == size else "contradicted"),
+                                "scanned"))
+    for m in NOTES_SEMITONE_CLAIM.finditer(text):
+        if is_comparison(text, m.start()):
+            continue
+        args = {"lower": norm_accidentals(m["lo"]), "upper": norm_accidentals(m["hi"])}
+        _, raw = run_tool("identify_interval", args)
+        size = str(raw["semitones"]) if raw.get("ok") else None
+        claimed = str(semitone_count(m))
+        out.append(CheckedClaim("interval_size", args, claimed, size,
+                                "unsupported" if size is None else ("verified" if claimed == size else "contradicted"),
                                 "scanned"))
     # "Dm7: D F A C là ii7": chữ C cuối dãy nốt không phải hợp âm C, nên bỏ khớp nằm trong một dãy nốt.
     seqs = [m.span() for m in re.finditer(NOTE_SEQ, text)]

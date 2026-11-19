@@ -59,7 +59,7 @@ Có 11/14 câu sai nằm ở **phần giải thích Gemini tự viết thêm**, 
 - T084–T089: Lydian, Phrygian, Locrian, ngũ cung trưởng/thứ, blues. Music Engine chưa có các âm giai này, nên AI nói "Music Engine chưa tính được" rồi chỉ đưa ra công thức (công thức đều đúng). Đây là giới hạn đã biết từ lượt 1. Muốn sửa phải mở rộng Engine, tức là cần test mới và ADR.
 - T274: "Cadence V–I gọi là gì?" bị từ chối với lý do "bài chưa dạy", trong khi các câu cùng loại (IV–I, V–vi, dừng ở V) đều được trả lời. Đây là lỗi định tuyến.
 
-## 5. Phát hiện kỹ thuật (chưa sửa, đề xuất làm tiếp)
+## 5. Phát hiện kỹ thuật (mục 1–3 đã sửa trong PR này, xem mục 5b)
 
 1. **Guardrail chặn nhầm shell voicing.** Câu đúng "Shell voicing root–3–7 của G7 gồm các nốt G, B và F" bị `scan_reply` đánh `contradicted`, vì nó so với G7 đầy đủ là G B D F. Đã thử lại trên `885173b`:
    ```
@@ -70,6 +70,20 @@ Có 11/14 câu sai nằm ở **phần giải thích Gemini tự viết thêm**, 
 2. **Lời giải thích về quãng không được kiểm** (11 câu ở mục 3). Hướng sửa: guardrail quét thêm mẫu "<nốt> (lên|đến) <nốt> là quãng <q>" và "<q> có <n> nửa cung", rồi đối chiếu với `get_interval`.
 3. **Lộ chữ nội bộ**: T020 có "theo ENGINE_FACTS", T069 và T148 có "theo kết quả từ hệ thống". Không sai nhạc lý nhưng người học không nên thấy.
 4. **Bộ chấm tự động bỏ sót và báo nhầm.** `grade.py` cho "đạt" 267 câu, nhưng 11 câu sai không bị bắt. Ngược lại, nó báo nhầm "quãng năm giảm" là thuật ngữ sai (T008, T017, T097) và không đọc được tên Đô Rê Mi (T298) hay nốt có số quãng tám (T293). Bộ chấm tự động chỉ dùng để khoanh vùng, kết luận cuối vẫn do người chấm.
+
+## 5b. Đã sửa (19/11/2026, Phúc chọn phương án "Shell + quãng + chữ nội bộ")
+
+| Lỗi | Sửa ở đâu | Cách sửa |
+|---|---|---|
+| Guardrail chặn nhầm shell voicing | `ai/tutor/guardrail.py` (`_compare_chord`) | Nhìn 120 ký tự trước ký hiệu hợp âm. Ngữ cảnh "shell/root–3–7" thì phải đúng 3 nốt gốc–3–7; "guide tone/nốt 3 và 7" thì đúng 2 nốt 3–7; "voicing/lược/bỏ nốt" thì chỉ cần là tập con. Nốt không thuộc hợp âm vẫn bị bác. |
+| Lời giải thích về quãng không được kiểm | `ai/tutor/notes.py` + `guardrail.py` | Nhận thêm "F đến Ab là quãng ..." (trước chỉ nhận "–", "lên"). Kiểm thêm số nửa cung: "M6 có 8 nửa cung", "A lên C ... 4 nửa cung". Không bắt câu so sánh ("rộng hơn m7 một nửa cung") hay mệnh đề sau "và". |
+| Lộ chữ nội bộ | `ai/tutor/fact_anchor.py` (`scrub_internal`), gọi ở `services/ai_tutor_service.py` | Máy chủ đổi "ENGINE_FACTS" thành "Music Engine" và bỏ cụm "theo kết quả từ hệ thống". Không tốn thêm lượt Gemini. |
+
+Kiểm trên dữ liệu thật đã có: chạy guardrail mới trên toàn bộ câu trả lời của 4 lượt (`answers`, `answers_v2`, `answers_v3_codecu`, `answers_v5`, tổng 951 câu) và 82 đoạn bài học. Chỉ có đúng 3 khẳng định mới bị bác, và cả 3 đều là lỗi thật đã chấm tay: T011 (F–Ab gọi P5), T100 (A–C 4 nửa cung), T110 (M6 8 nửa cung). Không có câu đúng nào bị bác nhầm. 4 câu shell voicing (T219, T222, T224, T225) chuyển từ "bị bác" sang "đúng".
+
+Chưa sửa (ghi lại để làm sau): đoạn bài học L01-B08 "nâng thành F#: D–F#–A" vẫn bị đọc thành "hợp âm F# = D F# A" (lỗi cũ, không phải do Gemini), và L08-B03 "Dm7: D–F–C" khi bị cắt khỏi tiêu đề "Shell" thì không có ngữ cảnh.
+
+Test: thêm 20 test trong `tests/test_g8_cham_nhac_ly.py`. `pytest -q` toàn bộ (cloud, 19/11/2026): **1524 passed, 46 skipped, 0 failed**. Trên `phuc-music` gốc, cùng máy: 1503 passed, 1 failed (`test_g5_eval`: groundedness_structural 94,5 < 100). Bản sửa shell voicing đưa chỉ số này về 100, nên test đó xanh lại.
 
 ## 6. Giới hạn của số đo
 

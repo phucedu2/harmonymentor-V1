@@ -264,8 +264,8 @@ def _finish(ans: TutorAnswer, guard: GuardResult, allowed: dict[str, Hit], title
         seen.add(c.block_id)
         cites.append(_citation(allowed[c.block_id], titles))  # tiêu đề lấy từ kho, không lấy chữ AI viết
     merged = _merge_results(results)
-    return Draft(ans.reply, ans.intent, cites, [c.as_dict() for c in guard.claims], "ok", "llm", ans.hint_level,
-                 list(ans.suggested_actions), merged, len(results))
+    return Draft(fact_anchor.scrub_internal(ans.reply), ans.intent, cites, [c.as_dict() for c in guard.claims], "ok",
+                 "llm", ans.hint_level, list(ans.suggested_actions), merged, len(results))
 
 
 def _weak_skill_names(db: Session, user_id: str, limit: int = 3) -> list[str]:
@@ -375,7 +375,7 @@ def _general_answer(db: Session, user: User, question: str, turns: Sequence[tupl
         # Gemini là chốt thứ hai: câu không phải âm nhạc thì dùng câu từ chối viết sẵn, không tin chữ AI viết.
         return Draft(fb.OUT_OF_SCOPE, "out_of_scope", [], [], "ok", "out_of_scope", 0, [], merged, len(results),
                      flow="C", source_label=fb.LABEL_REFUSE)
-    text = ans.reply.rstrip() + _pointer(dec, titles)
+    text = fact_anchor.scrub_internal(ans.reply).rstrip() + _pointer(dec, titles)
     actions = list(ans.suggested_actions) or ([f"Mở bài {dec.nearest_lesson}"] if dec.nearest_lesson else [])
     return Draft(text, ans.intent, [], [c.as_dict() for c in guard.claims], "ok", "general_llm", ans.hint_level,
                  actions, merged, len(results), flow="B", source_label=fb.LABEL_GENERAL,

@@ -226,6 +226,55 @@ def test_guardrail_khong_hieu_nham_at_phu_thanh_bac_cua_giong():
     assert [c.status for c in scan_reply("G7 là V7 trong giọng C trưởng.")] == ["verified"]
 
 
+@pytest.mark.parametrize("reply,status", [
+    # G8 19/11: T219/T222/T224/T225 trả lời đúng shell voicing nhưng bị so với hợp âm đầy đủ và rơi vào dự phòng.
+    ("Shell voicing root–3–7 của G7 gồm các nốt G, B và F.", ["verified"]),
+    ("Shell root–3–7 của ii–V–I ở C major: Dm7: D–F–C. G7: G–B–F. Cmaj7: C–E–B.", ["verified"] * 3),
+    ("Shell voicing của Ebmaj7: Eb, G, D.", ["verified"]),
+    ("Shell voicing của G7 gồm G, B và D.", ["contradicted"]),        # shell bỏ quãng 5, không bỏ quãng 7
+    ("Shell voicing của G7 gồm G, Bb, F.", ["contradicted"]),         # Bb không thuộc G7
+    ("Voicing rút gọn của G7: G B F.", ["verified"]),                 # lược nốt: chỉ cần là tập con
+    ("Voicing của G7: G B Eb.", ["contradicted"]),
+    ("G7 gồm G B F.", ["contradicted"]),                              # không có ngữ cảnh lược nốt thì vẫn phải đủ
+    ("Shell voicing của G7: G B D F.", ["verified"]),                 # liệt kê đủ nốt hợp âm vẫn đúng tên nốt
+])
+def test_guardrail_hieu_shell_voicing_va_voicing_rut_gon(reply, status):
+    from app.ai.tutor.guardrail import scan_reply
+
+    assert [c.status for c in scan_reply(reply)] == status, reply
+
+
+@pytest.mark.parametrize("reply,expect", [
+    # G8 19/11: câu sai thật trong answers_v5 (T011, T100, T110) giờ bị Engine bác.
+    ("Db đến F là quãng ba trưởng và F đến Ab là quãng năm đúng.", [("M3", "verified"), ("P5", "contradicted")]),
+    ("Từ A lên C# là quãng 3 trưởng (M3), vì A lên C là quãng 3 chứa 4 nửa cung.",
+     [("M3", "verified"), ("4", "contradicted")]),
+    ("Từ Ab lên F là quãng M6, tức là quãng sáu trưởng, có độ rộng bằng 8 nửa cung.",
+     [("M6", "verified"), ("8", "contradicted")]),
+    ("Quãng P5 có 7 nửa cung.", [("7", "verified")]),
+    ("Quãng năm giảm có độ rộng sáu nửa cung.", [("6", "verified")]),
+    # Không bắt nhầm: so sánh hai quãng, hay mệnh đề sau "và" nói về cặp nốt khác.
+    ("Quãng M7 rộng hơn quãng m7 một nửa cung.", []),
+    ("C lên Ab là quãng 6 thứ (m6). Bạn đếm chữ cái từ C lên A là quãng 6, và khoảng cách cao độ là 8 nửa cung.",
+     [("m6", "verified")]),
+])
+def test_guardrail_kiem_loi_giai_thich_ve_quang(reply, expect):
+    from app.ai.tutor.guardrail import scan_reply
+
+    assert [(c.claimed, c.status) for c in scan_reply(reply)] == expect, reply
+
+
+@pytest.mark.parametrize("raw,clean", [
+    ("Hợp âm Bbm7 gồm bốn nốt theo ENGINE_FACTS là Bb Db F Ab.", "Hợp âm Bbm7 gồm bốn nốt theo Music Engine là Bb Db F Ab."),
+    ("Âm giai C# thứ tự nhiên gồm C# D# E F# G# A B theo kết quả từ hệ thống.",
+     "Âm giai C# thứ tự nhiên gồm C# D# E F# G# A B."),
+    ("Giọng thứ tương quan của F trưởng là D thứ, theo kết quả từ hệ thống.", "Giọng thứ tương quan của F trưởng là D thứ."),
+    ("Hệ thống hóa biểu có 7 dấu thăng.", "Hệ thống hóa biểu có 7 dấu thăng."),          # chữ "hệ thống" thường giữ nguyên
+])
+def test_an_chu_noi_bo_khoi_cau_tra_loi(raw, clean):
+    assert fact_anchor.scrub_internal(raw) == clean
+
+
 def test_probe_cho_va_hoi_lai_khi_gemini_qua_tai_va_bo_dong_du_phong_cu(tmp_path, monkeypatch):
     from app.ai.tutor import llm
     from app.eval.run import ScriptedProvider
