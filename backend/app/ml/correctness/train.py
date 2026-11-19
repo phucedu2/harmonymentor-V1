@@ -1,4 +1,4 @@
-"""Train model dự đoán làm đúng câu tiếp theo (ADR-030).
+"""Train model dự đoán làm đúng câu tiếp theo (ADR-031).
 
     cd backend && python -m app.ml.correctness.train                       # 2.000 người mô phỏng, seed cố định
     cd backend && python -m app.ml.correctness.train --data ../data/correctness/that.jsonl --source that

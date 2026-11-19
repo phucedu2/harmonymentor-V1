@@ -1,6 +1,6 @@
 # Model dự đoán làm đúng câu tiếp theo (19/11/2026)
 
-Nhánh `claude/project-thread-yysz49` từ `phuc-music` (53cebaf), Draft PR vào `phuc-music`. Quyết định: [ADR-030](../../decisions/ADR-030-model-du-doan-dung-cau-tiep.md).
+Nhánh `claude/project-thread-yysz49` từ `phuc-music` (53cebaf), Draft PR vào `phuc-music`. Quyết định: [ADR-031](../../decisions/ADR-031-model-du-doan-dung-cau-tiep.md).
 
 > Mọi số dưới đây đo trên **người học mô phỏng**: chưa chứng minh chất lượng với người học thật.
 
@@ -76,7 +76,7 @@ Kết quả test (19/11/2026, cloud, Python 3.13): `pytest -q tests/test_ml_du_d
 
 ## 5. Việc của từng bạn để kiểm
 
-- Thắng: đọc `features.py` (EMA tái dựng khớp `app.ai.mastery`), `predictor.py`, `ai_predict.py`, ADR-030. Người kiểm: ______
+- Thắng: đọc `features.py` (EMA tái dựng khớp `app.ai.mastery`), `predictor.py`, `ai_predict.py`, ADR-031. Người kiểm: ______
 - Đạt: đọc mục 2 và notebook, kiểm câu "chưa chứng minh chất lượng với người học thật" có ở mọi chỗ báo số. Người kiểm: ______
 - Phúc: chạy notebook trên máy, thử API với `PREDICT_ENABLED=1`. Người kiểm: ______
 

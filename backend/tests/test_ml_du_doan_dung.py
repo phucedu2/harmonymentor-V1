@@ -1,4 +1,4 @@
-"""Model dự đoán làm đúng câu tiếp theo (ADR-030): đặc trưng không rò rỉ, train tất định, model đã commit nạp được,
+"""Model dự đoán làm đúng câu tiếp theo (ADR-031): đặc trưng không rò rỉ, train tất định, model đã commit nạp được,
 API sau cờ PREDICT_ENABLED và chỉ đọc dữ liệu của người trong token."""
 
 from __future__ import annotations

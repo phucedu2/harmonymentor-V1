@@ -30,6 +30,7 @@ Thumbs.db
 docs/backing-track/nghe-thu/artifact.html
 backend/models/*
 !backend/models/relevance/
+!backend/models/route/
 !backend/models/correctness/
 
 # Kho tài liệu thô cho RAG (T3): không đưa sách có bản quyền vào git

@@ -1,4 +1,4 @@
-# ADR-030: Model dự đoán học sinh làm đúng câu tiếp theo
+# ADR-031: Model dự đoán học sinh làm đúng câu tiếp theo
 
 - Ngày: 19/11/2026
 - Trạng thái: đề xuất (Draft PR vào `phuc-music`, chờ Thắng duyệt phần backend, Đạt đọc phần đánh giá)

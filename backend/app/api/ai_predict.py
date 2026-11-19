@@ -1,4 +1,4 @@
-"""GET /api/v1/me/predictions: xác suất làm đúng câu mới tiếp theo của từng kỹ năng (ADR-030).
+"""GET /api/v1/me/predictions: xác suất làm đúng câu mới tiếp theo của từng kỹ năng (ADR-031).
 
 user_id lấy từ token (nguyên tắc 4). Cờ PREDICT_ENABLED tắt → 404 như thể chưa có tính năng.
 """

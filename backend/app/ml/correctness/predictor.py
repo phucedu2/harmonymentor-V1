@@ -1,7 +1,7 @@
 """Phục vụ model: nạp joblib một lần, tính xác suất làm đúng câu MỚI tiếp theo của từng kỹ năng cho một người.
 
 Bật bằng PREDICT_ENABLED=1 (mặc định tắt). Chỉ là thông tin thêm: mastery EMA, mức yếu/đủ/thành thạo và hệ gợi ý
-vẫn tính như cũ, không đọc kết quả ở đây (ADR-030).
+vẫn tính như cũ, không đọc kết quả ở đây (ADR-031).
 """
 
 from __future__ import annotations
