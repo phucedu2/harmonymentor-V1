@@ -34,7 +34,7 @@ def submit_practice(body: PracticeAttemptIn, user: User = Depends(get_current_us
     except PracticeQuestionInvalid as exc:
         raise AppError(422, "PRACTICE_QUESTION_INVALID", f"Đề luyện tập thiếu trường: {exc}.") from exc
     except PracticeInputInvalid as exc:
-        raise AppError(422, "PRACTICE_INPUT_INVALID", f"Dạng bài {exc} chỉ trả lời bằng chữ, không bấm piano.") from exc
+        raise AppError(422, "PRACTICE_INPUT_INVALID", f"Dạng bài {exc} chỉ trả lời bằng chữ, không bấm piano hay đàn qua micro.") from exc
     return PracticeAttemptOut(
         id=row.id, kind=row.kind, correct=row.correct, expected=result["expected"], message_vi=result["message_vi"],
         primary_error=result.get("primary_error"), errors=result.get("errors", []),

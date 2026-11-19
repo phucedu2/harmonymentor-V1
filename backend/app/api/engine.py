@@ -12,6 +12,7 @@ from ..music_engine import (
     diatonic_chords,
     interval_between,
     key_signature,
+    note_from_frequency,
     parse_chord_symbol,
     roman_numeral,
     transpose,
@@ -47,6 +48,13 @@ def get_interval(lower: str, upper: str):
 @router.get("/transpose")
 def get_transpose(note: str, interval: str):
     return {"note": str(transpose(note, interval))}
+
+
+@router.get("/note-from-frequency")
+def get_note_from_frequency(hz: float, a4_hz: float = 440.0, prefer: Literal["sharp", "flat"] = "sharp"):
+    """ADR-030: trình duyệt đo tần số từ micro, Engine đặt tên nốt. Chỉ nhận con số, không nhận âm thanh."""
+    r = note_from_frequency(hz, a4_hz, prefer)
+    return {"note": str(r.note), "midi": r.midi, "cents": r.cents, "hz": hz}
 
 
 @router.get("/key/{tonic}")
