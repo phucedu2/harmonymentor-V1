@@ -50,7 +50,7 @@ def grade_practice(kind: str, question: dict[str, Any], answer: str | list[str],
     missing = [name for name in _REQUIRED[kind] if not isinstance(question.get(name), str) or not question[name]]
     if missing:
         raise PracticeQuestionInvalid(", ".join(missing))
-    # ADR-031: "micro" = người học đàn/hát từng nốt, trình duyệt đo tần số rồi Engine đặt tên nốt.
+    # ADR-032: "micro" = người học đàn/hát từng nốt, trình duyệt đo tần số rồi Engine đặt tên nốt.
     # Giống bấm phím: âm thanh không cho biết cách viết, nên cùng chế độ chấm và cùng dạng bài.
     by_pitch = input_mode in PITCH_INPUTS
     if by_pitch and kind not in PIANO_KINDS:

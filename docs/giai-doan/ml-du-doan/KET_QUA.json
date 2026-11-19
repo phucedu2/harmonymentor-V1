@@ -1,0 +1,740 @@
+{
+  "phien_ban_model": "1.0.0",
+  "phien_ban_dac_trung": "1",
+  "nguon_du_lieu": "mo_phong",
+  "seed": 20261119,
+  "so_nguoi": 2000,
+  "so_dong": 160770,
+  "so_dong_train": 128003,
+  "so_dong_test": 32767,
+  "so_nguoi_test": 400,
+  "ty_le_dung_train": 0.5626,
+  "ma_bam_du_lieu": "b2373af2fcb2bc08",
+  "dac_trung": [
+    "ema_skill",
+    "seen_skill",
+    "log_n_skill",
+    "acc_skill",
+    "last_skill",
+    "tries_exercise",
+    "last_ex_wrong",
+    "is_review",
+    "log_gap_days",
+    "acc_user",
+    "log_n_user",
+    "ema_group",
+    "prereq_ema",
+    "group=note_names",
+    "group=accidentals",
+    "group=intervals",
+    "group=major_scales",
+    "group=minor_scales",
+    "group=triads",
+    "group=seventh_chords",
+    "group=diatonic_chords",
+    "group=progressions",
+    "group=rhythm_basics",
+    "group=chromatic_harmony",
+    "group=pop_harmony",
+    "group=jazz_voicing",
+    "group=jazz_scales_tensions",
+    "group=khac"
+  ],
+  "dac_trung_so": [
+    "ema_skill",
+    "seen_skill",
+    "log_n_skill",
+    "acc_skill",
+    "last_skill",
+    "tries_exercise",
+    "last_ex_wrong",
+    "is_review",
+    "log_gap_days",
+    "acc_user",
+    "log_n_user",
+    "ema_group",
+    "prereq_ema"
+  ],
+  "baseline_test": {
+    "hang_so_ty_le_dung_chung": {
+      "auc": 0.5,
+      "log_loss": 0.6843,
+      "brier": 0.2456,
+      "accuracy": 0.5663,
+      "precision": 0.5663,
+      "recall": 1.0,
+      "f1": 0.7231,
+      "ece": 0.0037,
+      "hieu_chinh": [
+        {
+          "khoang": "0.5-0.6",
+          "so_dong": 32767,
+          "du_doan_tb": 0.5626,
+          "ty_le_dung_that": 0.5663
+        }
+      ]
+    },
+    "mastery_ema": {
+      "auc": 0.5966,
+      "log_loss": 2.3704,
+      "brier": 0.3596,
+      "accuracy": 0.4981,
+      "precision": 0.6666,
+      "recall": 0.2277,
+      "f1": 0.3394,
+      "ece": 0.3162,
+      "hieu_chinh": [
+        {
+          "khoang": "0.0-0.1",
+          "so_dong": 10334,
+          "du_doan_tb": 0.0064,
+          "ty_le_dung_that": 0.452
+        },
+        {
+          "khoang": "0.1-0.2",
+          "so_dong": 5106,
+          "du_doan_tb": 0.1424,
+          "ty_le_dung_that": 0.5758
+        },
+        {
+          "khoang": "0.2-0.3",
+          "so_dong": 5823,
+          "du_doan_tb": 0.2589,
+          "ty_le_dung_that": 0.583
+        },
+        {
+          "khoang": "0.3-0.4",
+          "so_dong": 1834,
+          "du_doan_tb": 0.3509,
+          "ty_le_dung_that": 0.645
+        },
+        {
+          "khoang": "0.4-0.5",
+          "so_dong": 3332,
+          "du_doan_tb": 0.4368,
+          "ty_le_dung_that": 0.6432
+        },
+        {
+          "khoang": "0.5-0.6",
+          "so_dong": 2954,
+          "du_doan_tb": 0.5419,
+          "ty_le_dung_that": 0.6398
+        },
+        {
+          "khoang": "0.6-0.7",
+          "so_dong": 1834,
+          "du_doan_tb": 0.6438,
+          "ty_le_dung_that": 0.6767
+        },
+        {
+          "khoang": "0.7-0.8",
+          "so_dong": 1320,
+          "du_doan_tb": 0.7419,
+          "ty_le_dung_that": 0.7144
+        },
+        {
+          "khoang": "0.8-0.9",
+          "so_dong": 230,
+          "du_doan_tb": 0.8355,
+          "ty_le_dung_that": 0.6565
+        }
+      ]
+    },
+    "ty_le_dung_truoc_do_cua_ky_nang": {
+      "auc": 0.5263,
+      "log_loss": 0.7401,
+      "brier": 0.27,
+      "accuracy": 0.5082,
+      "precision": 0.5655,
+      "recall": 0.5684,
+      "f1": 0.5669,
+      "ece": 0.1274,
+      "hieu_chinh": [
+        {
+          "khoang": "0.0-0.1",
+          "so_dong": 9,
+          "du_doan_tb": 0.0884,
+          "ty_le_dung_that": 0.6667
+        },
+        {
+          "khoang": "0.1-0.2",
+          "so_dong": 712,
+          "du_doan_tb": 0.1529,
+          "ty_le_dung_that": 0.5449
+        },
+        {
+          "khoang": "0.2-0.3",
+          "so_dong": 3718,
+          "du_doan_tb": 0.2477,
+          "ty_le_dung_that": 0.5296
+        },
+        {
+          "khoang": "0.3-0.4",
+          "so_dong": 5196,
+          "du_doan_tb": 0.3421,
+          "ty_le_dung_that": 0.5446
+        },
+        {
+          "khoang": "0.4-0.5",
+          "so_dong": 4479,
+          "du_doan_tb": 0.4226,
+          "ty_le_dung_that": 0.6287
+        },
+        {
+          "khoang": "0.5-0.6",
+          "so_dong": 12679,
+          "du_doan_tb": 0.5236,
+          "ty_le_dung_that": 0.5474
+        },
+        {
+          "khoang": "0.6-0.7",
+          "so_dong": 3727,
+          "du_doan_tb": 0.6586,
+          "ty_le_dung_that": 0.5994
+        },
+        {
+          "khoang": "0.7-0.8",
+          "so_dong": 1564,
+          "du_doan_tb": 0.7409,
+          "ty_le_dung_that": 0.6151
+        },
+        {
+          "khoang": "0.8-0.9",
+          "so_dong": 683,
+          "du_doan_tb": 0.8188,
+          "ty_le_dung_that": 0.6032
+        }
+      ]
+    }
+  },
+  "tran_ly_thuyet_test": {
+    "auc": 0.6813,
+    "log_loss": 0.6314,
+    "brier": 0.2208,
+    "accuracy": 0.6408,
+    "precision": 0.6512,
+    "recall": 0.7875,
+    "f1": 0.7129,
+    "ece": 0.0053,
+    "hieu_chinh": [
+      {
+        "khoang": "0.0-0.1",
+        "so_dong": 96,
+        "du_doan_tb": 0.0623,
+        "ty_le_dung_that": 0.1042
+      },
+      {
+        "khoang": "0.1-0.2",
+        "so_dong": 407,
+        "du_doan_tb": 0.1603,
+        "ty_le_dung_that": 0.1376
+      },
+      {
+        "khoang": "0.2-0.3",
+        "so_dong": 1321,
+        "du_doan_tb": 0.258,
+        "ty_le_dung_that": 0.2725
+      },
+      {
+        "khoang": "0.3-0.4",
+        "so_dong": 3012,
+        "du_doan_tb": 0.3562,
+        "ty_le_dung_that": 0.3456
+      },
+      {
+        "khoang": "0.4-0.5",
+        "so_dong": 5492,
+        "du_doan_tb": 0.4534,
+        "ty_le_dung_that": 0.451
+      },
+      {
+        "khoang": "0.5-0.6",
+        "so_dong": 7613,
+        "du_doan_tb": 0.5521,
+        "ty_le_dung_that": 0.5484
+      },
+      {
+        "khoang": "0.6-0.7",
+        "so_dong": 7923,
+        "du_doan_tb": 0.6483,
+        "ty_le_dung_that": 0.6436
+      },
+      {
+        "khoang": "0.7-0.8",
+        "so_dong": 5209,
+        "du_doan_tb": 0.7436,
+        "ty_le_dung_that": 0.7477
+      },
+      {
+        "khoang": "0.8-0.9",
+        "so_dong": 1516,
+        "du_doan_tb": 0.8372,
+        "ty_le_dung_that": 0.8423
+      },
+      {
+        "khoang": "0.9-1.0",
+        "so_dong": 178,
+        "du_doan_tb": 0.9339,
+        "ty_le_dung_that": 0.9382
+      }
+    ]
+  },
+  "models": {
+    "logistic_regression": {
+      "tham_so_tot_nhat": {
+        "C": 10.0
+      },
+      "auc_kiem_cheo": 0.6282,
+      "bang_tham_so": [
+        {
+          "tham_so": {
+            "C": 0.01
+          },
+          "auc_tb": 0.6282,
+          "do_lech": 0.0036
+        },
+        {
+          "tham_so": {
+            "C": 0.1
+          },
+          "auc_tb": 0.6282,
+          "do_lech": 0.0036
+        },
+        {
+          "tham_so": {
+            "C": 1.0
+          },
+          "auc_tb": 0.6282,
+          "do_lech": 0.0036
+        },
+        {
+          "tham_so": {
+            "C": 10.0
+          },
+          "auc_tb": 0.6282,
+          "do_lech": 0.0036
+        }
+      ],
+      "train": {
+        "auc": 0.6286
+      },
+      "test": {
+        "auc": 0.6227,
+        "log_loss": 0.6619,
+        "brier": 0.2347,
+        "accuracy": 0.6038,
+        "precision": 0.6236,
+        "recall": 0.7581,
+        "f1": 0.6843,
+        "ece": 0.005,
+        "hieu_chinh": [
+          {
+            "khoang": "0.2-0.3",
+            "so_dong": 69,
+            "du_doan_tb": 0.2941,
+            "ty_le_dung_that": 0.3768
+          },
+          {
+            "khoang": "0.3-0.4",
+            "so_dong": 2469,
+            "du_doan_tb": 0.3726,
+            "ty_le_dung_that": 0.3994
+          },
+          {
+            "khoang": "0.4-0.5",
+            "so_dong": 7668,
+            "du_doan_tb": 0.4474,
+            "ty_le_dung_that": 0.4534
+          },
+          {
+            "khoang": "0.5-0.6",
+            "so_dong": 8476,
+            "du_doan_tb": 0.5529,
+            "ty_le_dung_that": 0.5531
+          },
+          {
+            "khoang": "0.6-0.7",
+            "so_dong": 10641,
+            "du_doan_tb": 0.6517,
+            "ty_le_dung_that": 0.6477
+          },
+          {
+            "khoang": "0.7-0.8",
+            "so_dong": 3443,
+            "du_doan_tb": 0.7227,
+            "ty_le_dung_that": 0.7226
+          },
+          {
+            "khoang": "0.8-0.9",
+            "so_dong": 1,
+            "du_doan_tb": 0.8028,
+            "ty_le_dung_that": 0.0
+          }
+        ]
+      }
+    },
+    "hist_gradient_boosting": {
+      "tham_so_tot_nhat": {
+        "learning_rate": 0.05,
+        "max_depth": 3,
+        "max_iter": 150
+      },
+      "auc_kiem_cheo": 0.6291,
+      "bang_tham_so": [
+        {
+          "tham_so": {
+            "learning_rate": 0.05,
+            "max_depth": 3,
+            "max_iter": 150
+          },
+          "auc_tb": 0.6291,
+          "do_lech": 0.0036
+        },
+        {
+          "tham_so": {
+            "learning_rate": 0.05,
+            "max_depth": 6,
+            "max_iter": 150
+          },
+          "auc_tb": 0.6275,
+          "do_lech": 0.0035
+        },
+        {
+          "tham_so": {
+            "learning_rate": 0.1,
+            "max_depth": 3,
+            "max_iter": 150
+          },
+          "auc_tb": 0.6287,
+          "do_lech": 0.0038
+        },
+        {
+          "tham_so": {
+            "learning_rate": 0.1,
+            "max_depth": 6,
+            "max_iter": 150
+          },
+          "auc_tb": 0.6249,
+          "do_lech": 0.0034
+        }
+      ],
+      "train": {
+        "auc": 0.6329
+      },
+      "test": {
+        "auc": 0.624,
+        "log_loss": 0.6613,
+        "brier": 0.2344,
+        "accuracy": 0.6059,
+        "precision": 0.624,
+        "recall": 0.765,
+        "f1": 0.6874,
+        "ece": 0.0053,
+        "hieu_chinh": [
+          {
+            "khoang": "0.2-0.3",
+            "so_dong": 107,
+            "du_doan_tb": 0.284,
+            "ty_le_dung_that": 0.3271
+          },
+          {
+            "khoang": "0.3-0.4",
+            "so_dong": 2069,
+            "du_doan_tb": 0.3745,
+            "ty_le_dung_that": 0.3828
+          },
+          {
+            "khoang": "0.4-0.5",
+            "so_dong": 7839,
+            "du_doan_tb": 0.4465,
+            "ty_le_dung_that": 0.4507
+          },
+          {
+            "khoang": "0.5-0.6",
+            "so_dong": 9014,
+            "du_doan_tb": 0.5514,
+            "ty_le_dung_that": 0.5548
+          },
+          {
+            "khoang": "0.6-0.7",
+            "so_dong": 9839,
+            "du_doan_tb": 0.6528,
+            "ty_le_dung_that": 0.6468
+          },
+          {
+            "khoang": "0.7-0.8",
+            "so_dong": 3870,
+            "du_doan_tb": 0.7188,
+            "ty_le_dung_that": 0.7258
+          },
+          {
+            "khoang": "0.8-0.9",
+            "so_dong": 29,
+            "du_doan_tb": 0.8136,
+            "ty_le_dung_that": 0.7931
+          }
+        ]
+      }
+    }
+  },
+  "model_chon": "hist_gradient_boosting",
+  "he_so_logistic_chuan_hoa": [
+    {
+      "dac_trung": "log_n_skill",
+      "he_so": 0.4692
+    },
+    {
+      "dac_trung": "acc_user",
+      "he_so": 0.1502
+    },
+    {
+      "dac_trung": "seen_skill",
+      "he_so": -0.0868
+    },
+    {
+      "dac_trung": "acc_skill",
+      "he_so": 0.0474
+    },
+    {
+      "dac_trung": "is_review",
+      "he_so": 0.0397
+    },
+    {
+      "dac_trung": "log_n_user",
+      "he_so": -0.0366
+    },
+    {
+      "dac_trung": "group=accidentals",
+      "he_so": -0.0333
+    },
+    {
+      "dac_trung": "group=progressions",
+      "he_so": 0.0303
+    },
+    {
+      "dac_trung": "last_ex_wrong",
+      "he_so": 0.0242
+    },
+    {
+      "dac_trung": "ema_skill",
+      "he_so": -0.0195
+    },
+    {
+      "dac_trung": "group=jazz_voicing",
+      "he_so": 0.0188
+    },
+    {
+      "dac_trung": "prereq_ema",
+      "he_so": 0.0187
+    },
+    {
+      "dac_trung": "last_skill",
+      "he_so": 0.0138
+    },
+    {
+      "dac_trung": "group=triads",
+      "he_so": -0.0135
+    },
+    {
+      "dac_trung": "tries_exercise",
+      "he_so": -0.0104
+    },
+    {
+      "dac_trung": "ema_group",
+      "he_so": 0.0101
+    },
+    {
+      "dac_trung": "log_gap_days",
+      "he_so": -0.0094
+    },
+    {
+      "dac_trung": "group=diatonic_chords",
+      "he_so": 0.0047
+    },
+    {
+      "dac_trung": "group=intervals",
+      "he_so": -0.0031
+    },
+    {
+      "dac_trung": "group=seventh_chords",
+      "he_so": 0.0028
+    },
+    {
+      "dac_trung": "group=major_scales",
+      "he_so": -0.0022
+    },
+    {
+      "dac_trung": "group=note_names",
+      "he_so": 0.0
+    },
+    {
+      "dac_trung": "group=minor_scales",
+      "he_so": 0.0
+    },
+    {
+      "dac_trung": "group=rhythm_basics",
+      "he_so": 0.0
+    },
+    {
+      "dac_trung": "group=chromatic_harmony",
+      "he_so": 0.0
+    },
+    {
+      "dac_trung": "group=pop_harmony",
+      "he_so": 0.0
+    },
+    {
+      "dac_trung": "group=jazz_scales_tensions",
+      "he_so": 0.0
+    },
+    {
+      "dac_trung": "group=khac",
+      "he_so": 0.0
+    }
+  ],
+  "do_quan_trong_hoan_vi": [
+    {
+      "dac_trung": "log_n_skill",
+      "giam_auc": 0.0821
+    },
+    {
+      "dac_trung": "acc_user",
+      "giam_auc": 0.0152
+    },
+    {
+      "dac_trung": "ema_skill",
+      "giam_auc": 0.0019
+    },
+    {
+      "dac_trung": "log_n_user",
+      "giam_auc": 0.0013
+    },
+    {
+      "dac_trung": "ema_group",
+      "giam_auc": 0.0007
+    },
+    {
+      "dac_trung": "log_gap_days",
+      "giam_auc": 0.0003
+    },
+    {
+      "dac_trung": "group=diatonic_chords",
+      "giam_auc": 0.0001
+    },
+    {
+      "dac_trung": "prereq_ema",
+      "giam_auc": 0.0001
+    },
+    {
+      "dac_trung": "last_skill",
+      "giam_auc": 0.0
+    },
+    {
+      "dac_trung": "group=major_scales",
+      "giam_auc": 0.0
+    },
+    {
+      "dac_trung": "last_ex_wrong",
+      "giam_auc": 0.0
+    },
+    {
+      "dac_trung": "group=note_names",
+      "giam_auc": 0.0
+    },
+    {
+      "dac_trung": "group=accidentals",
+      "giam_auc": 0.0
+    },
+    {
+      "dac_trung": "group=intervals",
+      "giam_auc": 0.0
+    },
+    {
+      "dac_trung": "group=minor_scales",
+      "giam_auc": 0.0
+    },
+    {
+      "dac_trung": "group=seventh_chords",
+      "giam_auc": 0.0
+    },
+    {
+      "dac_trung": "group=rhythm_basics",
+      "giam_auc": 0.0
+    },
+    {
+      "dac_trung": "group=chromatic_harmony",
+      "giam_auc": 0.0
+    },
+    {
+      "dac_trung": "group=pop_harmony",
+      "giam_auc": 0.0
+    },
+    {
+      "dac_trung": "group=jazz_scales_tensions",
+      "giam_auc": 0.0
+    },
+    {
+      "dac_trung": "group=khac",
+      "giam_auc": 0.0
+    },
+    {
+      "dac_trung": "acc_skill",
+      "giam_auc": -0.0
+    },
+    {
+      "dac_trung": "group=progressions",
+      "giam_auc": -0.0
+    },
+    {
+      "dac_trung": "group=triads",
+      "giam_auc": -0.0
+    },
+    {
+      "dac_trung": "group=jazz_voicing",
+      "giam_auc": -0.0
+    },
+    {
+      "dac_trung": "seen_skill",
+      "giam_auc": -0.0001
+    },
+    {
+      "dac_trung": "tries_exercise",
+      "giam_auc": -0.0001
+    },
+    {
+      "dac_trung": "is_review",
+      "giam_auc": -0.0002
+    }
+  ],
+  "duong_hoc": [
+    {
+      "so_dong_train": 4266,
+      "auc_train": 0.7046,
+      "auc_validation": 0.6158
+    },
+    {
+      "so_dong_train": 12799,
+      "auc_train": 0.6571,
+      "auc_validation": 0.6248
+    },
+    {
+      "so_dong_train": 34132,
+      "auc_train": 0.6413,
+      "auc_validation": 0.6279
+    },
+    {
+      "so_dong_train": 85331,
+      "auc_train": 0.6345,
+      "auc_validation": 0.629
+    }
+  ],
+  "moi_truong": {
+    "python": "3.13.18",
+    "sklearn": "1.9.1",
+    "numpy": "2.5.3",
+    "joblib": "1.6.0"
+  },
+  "ngay_chay": "2026-11-19 07:26 UTC",
+  "thoi_gian_giay": 43.9,
+  "luu_y": "Số đo trên người học mô phỏng: chưa chứng minh chất lượng với người học thật."
+}

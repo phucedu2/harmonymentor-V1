@@ -1,4 +1,4 @@
-"""ADR-031 bước 2: YIN và đặc trưng cho model nhận diện nốt. Bản TypeScript giống hệt:
+"""ADR-032 bước 2: YIN và đặc trưng cho model nhận diện nốt. Bản TypeScript giống hệt:
 frontend/src/audio/pitch/yin.ts và features.ts (test Vitest so khớp số với file mẫu do script này xuất).
 
 Đặc trưng = 2 "bức ảnh" nhỏ của một khung âm thanh 2048 mẫu:

@@ -19,7 +19,7 @@ class PracticeAttemptIn(BaseModel):
     # GĐ5: "piano" = người học bấm phím trên piano ảo. Một phím đen có hai tên (C#/Db) nên phím không thể hiện
     # cách viết; máy chủ chấm theo lớp cao độ (Engine pitch_class_only) và nhắc cách viết chuẩn. Chỉ cho chord/scale.
     # ADR-028: "choice" = chọn trong 4 phương án Engine sinh (POST /practice/options); vẫn chấm bằng đúng hàm Engine.
-    # ADR-031: "micro" = đàn/hát từng nốt qua micro; answer là tên nốt Engine đã đặt từ tần số. Chấm như "piano".
+    # ADR-032: "micro" = đàn/hát từng nốt qua micro; answer là tên nốt Engine đã đặt từ tần số. Chấm như "piano".
     input: Literal["text", "piano", "choice", "micro"] = "text"
 
 

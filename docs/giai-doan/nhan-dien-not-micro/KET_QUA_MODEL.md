@@ -1,4 +1,4 @@
-# Kết quả model nhận diện nốt so với YIN (ADR-031 bước 2)
+# Kết quả model nhận diện nốt so với YIN (ADR-032 bước 2)
 
 Ngày chạy: 2026-11-19. Lệnh: `python scripts/ai/pitch/du_lieu.py` rồi `python scripts/ai/pitch/train.py --seed 42` (xem đầu file train.py). Máy: container cloud, CPU, scikit-learn.
 

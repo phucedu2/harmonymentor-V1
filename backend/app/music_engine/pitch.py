@@ -137,7 +137,7 @@ def note_from_midi(midi: int, prefer: str = "sharp") -> Note:
     return Note(letter, -1, octave)
 
 
-# ADR-031: dải tần nhận từ micro. 27,5 Hz = A0 (phím thấp nhất của piano), 4186 Hz = C8 (phím cao nhất).
+# ADR-032: dải tần nhận từ micro. 27,5 Hz = A0 (phím thấp nhất của piano), 4186 Hz = C8 (phím cao nhất).
 MIN_MIC_HZ, MAX_MIC_HZ = 27.5, 4186.01
 
 
@@ -151,7 +151,7 @@ class FrequencyReading:
 
 
 def note_from_frequency(hz: float, a4_hz: float = 440.0, prefer: str = "sharp") -> FrequencyReading:
-    """Đổi tần số đo từ micro (Hz) → nốt gần nhất theo chuẩn bình quân 12 (ADR-031).
+    """Đổi tần số đo từ micro (Hz) → nốt gần nhất theo chuẩn bình quân 12 (ADR-032).
 
     Công thức: midi = 69 + 12·log2(f / 440). Ví dụ 329,63 Hz → 64 → E4, lệch 0 cent.
     Tần số cũng không cho biết tên nốt (G#4 hay Ab4), nên kết quả chỉ chấm theo pitch_class_only,

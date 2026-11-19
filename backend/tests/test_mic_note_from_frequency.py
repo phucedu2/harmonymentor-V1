@@ -1,4 +1,4 @@
-"""ADR-031: nhận diện nốt từ micro. Trình duyệt đo tần số, Music Engine đặt tên nốt và chấm.
+"""ADR-032: nhận diện nốt từ micro. Trình duyệt đo tần số, Music Engine đặt tên nốt và chấm.
 
 Khẳng định: công thức Hz → MIDI đúng ở các nốt mốc, cent lệch đúng dấu, từ chối tần số ngoài phím piano,
 và lượt "micro" ở Luyện tập chấm theo lớp cao độ giống bấm phím, ghi riêng trong lịch sử.

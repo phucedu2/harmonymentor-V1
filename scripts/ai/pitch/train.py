@@ -1,4 +1,4 @@
-"""ADR-031 bước 2: train model nhận diện nốt (MLP scikit-learn) và so với YIN trên CÙNG bộ test.
+"""ADR-032 bước 2: train model nhận diện nốt (MLP scikit-learn) và so với YIN trên CÙNG bộ test.
 
 Các bước theo handson-ml3:
   Ch.2  chia train/test theo NHÓM (bản thu gốc), không chia ngẫu nhiên từng khung.
@@ -165,7 +165,7 @@ def write_report(path, a, X, y, groups, inst, tr, te, search, train_acc, train_s
                  per_inst, cm_model, cm_yin):
     L = []
     w = L.append
-    w("# Kết quả model nhận diện nốt so với YIN (ADR-031 bước 2)\n")
+    w("# Kết quả model nhận diện nốt so với YIN (ADR-032 bước 2)\n")
     w(f"Ngày chạy: {dt.date.today().isoformat()}. Lệnh: `python scripts/ai/pitch/du_lieu.py` rồi `python scripts/ai/pitch/train.py "
       f"--seed {a.seed}` (xem đầu file train.py). Máy: container cloud, CPU, scikit-learn.\n")
     w("> Đo trên mẫu nhạc cụ thu sẵn (thư viện CC0/CC BY) và giọng hát tổng hợp, có thêm nhiễu. "

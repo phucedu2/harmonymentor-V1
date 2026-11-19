@@ -1,4 +1,4 @@
-// ADR-031: trả lời bằng cách đàn/hát từng nốt vào micro. Trình duyệt đo tần số (YIN), Music Engine đặt tên nốt.
+// ADR-032: trả lời bằng cách đàn/hát từng nốt vào micro. Trình duyệt đo tần số (YIN), Music Engine đặt tên nốt.
 // Nốt nghe được hiện trên piano ảo; bấm phím để bỏ nốt nghe nhầm, nên người học luôn sửa được trước khi nộp.
 import { useEffect, useRef, useState } from "react";
 import { api } from "../../api";

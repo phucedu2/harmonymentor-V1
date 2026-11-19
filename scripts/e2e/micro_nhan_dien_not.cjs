@@ -1,4 +1,4 @@
-// ADR-031: thử "Đàn bằng micro" trên giao diện thật (Playwright), không cần micro thật.
+// ADR-032: thử "Đàn bằng micro" trên giao diện thật (Playwright), không cần micro thật.
 // Thay getUserMedia bằng luồng âm thanh phát MẪU PIANO THU THẬT (Salamander, /samples/piano), nên cả chuỗi
 // micro → AnalyserNode → YIN → ổn định nốt → Engine đặt tên → chấm đều chạy như trên máy người học.
 // Chạy: backend :8000 + vite :5173, rồi  OUT=thu-muc-anh node scripts/e2e/micro_nhan_dien_not.cjs

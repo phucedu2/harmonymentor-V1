@@ -1,4 +1,4 @@
-"""ADR-031 bước 2: dựng bộ dữ liệu khung âm thanh có nhãn nốt (MIDI).
+"""ADR-032 bước 2: dựng bộ dữ liệu khung âm thanh có nhãn nốt (MIDI).
 
 Nguồn (đều có sẵn trong repo, ghi công ở frontend/public/samples/CREDITS.md):
   - Mẫu THU THẬT: piano Salamander (CC BY 3.0), epiano, clav, guitar, guitar_mute, bass, upright, cello (CC0).

@@ -1,4 +1,4 @@
-# Nhận diện nốt nhạc từ micro (19/11/2026, ADR-031)
+# Nhận diện nốt nhạc từ micro (19/11/2026, ADR-032)
 
 Nhánh `nhan-dien-not-micro` (tách từ `phuc-music` tại 53cebaf), Draft PR vào `phuc-music`.
 
@@ -70,7 +70,7 @@ D3. Đã thêm 3.000 khung ù/ồn có nhãn 0. Sau đó tỉ lệ báo nhầm k
 ## 4. Việc để kiểm
 
 - **Phúc:** mở Luyện tập → Dựng hợp âm → "Đàn bằng micro", đàn piano/guitar thật hoặc hát; thử 3 bộ nhận diện. Người kiểm: ______
-- **Thắng:** đọc `note_from_frequency` và test; quyết định có nhận thay đổi Engine (ADR-031). Người kiểm: ______
+- **Thắng:** đọc `note_from_frequency` và test; quyết định có nhận thay đổi Engine (ADR-032). Người kiểm: ______
 - **Đạt:** đọc `train.py`, `KET_QUA_MODEL.md`; thu giọng thật của nhóm để train lại. Người kiểm: ______
 
 ## 5. Rủi ro và câu hỏi

@@ -134,7 +134,7 @@ function Exercise(props: {
   const [answer, setAnswer] = useState("");
   // GĐ5: hợp âm và âm giai trả lời được bằng cách bấm piano; máy chủ chấm theo phím (lớp cao độ) rồi nhắc cách viết.
   // ADR-028: "Trắc nghiệm" = chọn 1 trong 4 phương án do Music Engine sinh (lỗi hay gặp); chấm vẫn bằng đúng hàm Engine.
-  // ADR-031: "micro" = đàn/hát từng nốt, chấm theo cao độ giống bấm phím.
+  // ADR-032: "micro" = đàn/hát từng nốt, chấm theo cao độ giống bấm phím.
   const [mode, setMode] = useState<"text" | "piano" | "choice" | "micro">("text");
   const [keys, setKeys] = useState<string[]>([]);
   const [options, setOptions] = useState<string[] | null>(null);
