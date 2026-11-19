@@ -10,6 +10,7 @@ lời được thì là A, không có thì là B. Phần đó do tầng 2 (đi�
 from __future__ import annotations
 
 import json
+import logging
 import os
 from dataclasses import dataclass
 from functools import lru_cache
@@ -63,14 +64,55 @@ def train(xs: list[str], ys: list[str]):
     return pipe
 
 
+# Model train sẵn bằng app/ml/route_train.py (ADR-030). Chỉ nạp khi manifest bật, sha256 khớp và cùng phiên bản
+# scikit-learn (file joblib của phiên bản khác có thể nạp sai âm thầm); thiếu điều kiện nào thì dùng model cũ.
+MODEL_DIR = Path(__file__).resolve().parents[3] / "models" / "route"
+log = logging.getLogger(__name__)
+
+
+def _load_trained(mode: str):
+    """ROUTE_MODEL=auto (mặc định): model mới nếu manifest bật; new: nạp cả khi chưa bật (chỉ để đo); old: model cũ."""
+    import hashlib
+
+    manifest_path = MODEL_DIR / "manifest.json"
+    if mode == "old" or not manifest_path.exists():
+        return None
+    import sklearn
+
+    from ..local_embedder import DEFAULT_DIR, available, model_dir
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if manifest.get("sklearn") != sklearn.__version__:
+        log.warning("route model: scikit-learn %s khác %s lúc train, dùng model cũ", sklearn.__version__,
+                    manifest.get("sklearn"))
+        return None
+    for role in ("primary", "no_e5"):
+        info = manifest["models"].get(role)
+        if not info or (mode != "new" and not info.get("enabled")):
+            continue
+        # Model cần vector e5 GỐC; máy chưa tải e5 hoặc đang dùng bản e5 tinh chỉnh thì bỏ qua (tránh nạp 2 model).
+        if info.get("needs_e5") and not (available(DEFAULT_DIR) and model_dir() == DEFAULT_DIR):
+            continue
+        path = MODEL_DIR / info["file"]
+        if not path.exists() or hashlib.sha256(path.read_bytes()).hexdigest() != info["sha256"]:
+            log.warning("route model: %s thiếu hoặc sai sha256, bỏ qua", info["file"])
+            continue
+        import joblib
+        return joblib.load(path), info
+    return None
+
+
 @lru_cache(maxsize=1)
 def model():
-    return train(*pairs(load_data()["train"]))
+    """Trả (pipeline, cần chuẩn hóa câu trước không). Model cũ nhận câu đã _prep; model mới tự chuẩn hóa bên trong."""
+    loaded = _load_trained(os.getenv("ROUTE_MODEL", "auto"))
+    if loaded:
+        return loaded[0], False
+    return train(*pairs(load_data()["train"])), True
 
 
 def classify_route(text: str) -> RouteLabel:
-    pipe = model()
-    probs = pipe.predict_proba([_prep(text)])[0]
+    pipe, needs_prep = model()
+    probs = pipe.predict_proba([_prep(text) if needs_prep else text])[0]
     best = int(probs.argmax())
     return RouteLabel(str(pipe.classes_[best]), round(float(probs[best]), 4),
                       {str(c): round(float(p), 4) for c, p in zip(pipe.classes_, probs)})
