@@ -1,0 +1,53 @@
+digraph G {
+  graph [fontname="Liberation Serif", bgcolor=white, pad=0.2 , rankdir=TB, nodesep=0.3, ranksep=0.9];
+  node [fontname="Liberation Serif", fontsize=11, color=black];
+  edge [fontname="Liberation Serif", fontsize=9, color=black];
+  P6 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="6.0
+Xem bài học"];
+  P7 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="7.0
+Nộp đáp án
+(Music Engine)"];
+  P8 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="8.0
+Cập nhật
+mastery EMA"];
+  P9 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="9.0
+Hoàn thành bài
++ Leitner"];
+  P10 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="10.0
+Ôn
+thẻ ôn"];
+  P11 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="11.0
+Luyện tập /
+đầu vào / quiz"];
+  L [shape=box, label="Người học"];
+  D3 [shape=record, fontsize=10, label="{D3|lessons, lesson_blocks}"];
+  D4 [shape=record, fontsize=10, label="{D4|exercises, exercise_versions}"];
+  D5 [shape=record, fontsize=10, label="{D5|attempts, attempt_errors}"];
+  D6 [shape=record, fontsize=10, label="{D6|mastery_states, mastery_events}"];
+  D7 [shape=record, fontsize=10, label="{D7|lesson_progress}"];
+  D8 [shape=record, fontsize=10, label="{D8|review_items, review_states}"];
+  D9 [shape=record, fontsize=10, label="{D9|review_attempts}"];
+  D10 [shape=record, fontsize=10, label="{D10|practice_attempts, placement_results}"];
+  L -> P6 [label="mở bài"];
+  D3 -> P6 [label="các khối"];
+  D4 -> P6 [label="phiên bản đã phát hành"];
+  P6 -> L [label="lý thuyết, piano, khuông nhạc, câu hỏi"];
+  L -> P7 [label="đáp án + cách nhập"];
+  D4 -> P7 [label="answer_key, grader_config"];
+  P7 -> D5 [label="lượt làm + mã lỗi"];
+  P7 -> L [label="đúng?, mã lỗi, phản hồi"];
+  P7 -> P8 [label="kết quả 1 / 0,5 / 0"];
+  P8 -> D6 [label="điểm mới"];
+  L -> P9 [label="hoàn thành"];
+  D5 -> P9 [label="đúng hết các câu?"];
+  P9 -> D7 [label="đã hoàn thành"];
+  P9 -> D8 [label="thẻ đến hạn ngay (hộp 1)"];
+  L -> P10 [label="đáp án thẻ"];
+  D8 -> P10 [label="thẻ đến hạn"];
+  P10 -> D8 [label="hộp 1..5, due_at"];
+  P10 -> D9 [label="lượt ôn"];
+  P10 -> P8 [label="kết quả ôn đến hạn"];
+  L -> P11 [label="đáp án"];
+  P11 -> D10 [label="lịch sử / đầu vào"];
+  P11 -> D6 [label="đầu vào 0,65"];
+}

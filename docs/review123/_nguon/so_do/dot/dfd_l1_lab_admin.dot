@@ -1,0 +1,48 @@
+digraph G {
+  graph [fontname="Liberation Serif", bgcolor=white, pad=0.2 , rankdir=TB, nodesep=0.3, ranksep=0.9];
+  node [fontname="Liberation Serif", fontsize=11, color=black];
+  edge [fontname="Liberation Serif", fontsize=9, color=black];
+  P17 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="17.0
+Suggest &
+arrange chords"];
+  P18 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="18.0
+Save / open
+project"];
+  P19 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="19.0
+Edit & publish
+lesson text"];
+  P20 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="20.0
+Statistics"];
+  P21 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="21.0
+AI lesson
+draft"];
+  L [shape=box, label="Learner"];
+  A [shape=box, label="Admin"];
+  GM [shape=box, label="Google Gemini"];
+  D15 [shape=record, fontsize=10, label="{D15|composition_projects}"];
+  D16 [shape=record, fontsize=10, label="{D16|chord_events, drum_events}"];
+  D3 [shape=record, fontsize=10, label="{D3|lessons, lesson_blocks}"];
+  D17 [shape=record, fontsize=10, label="{D17|content_revisions}"];
+  D20 [shape=record, fontsize=10, label="{D20|admin_audit_log}"];
+  D18 [shape=record, fontsize=10, label="{D18|source_documents}"];
+  D19 [shape=record, fontsize=10, label="{D19|ai_lesson_drafts}"];
+  D5 [shape=record, fontsize=10, label="{D5|attempts (is_test = false)}"];
+  L -> P17 [label="key, chord grid, style, energy"];
+  P17 -> L [label="suggestions, voicings, backing track"];
+  L -> P18 [label="project"];
+  P18 -> D15 [label="header, form, mix"];
+  P18 -> D16 [label="events in beats"];
+  D15 -> P18 [label="own projects only"];
+  A -> P19 [label="block text"];
+  P19 -> D17 [label="draft / published revision"];
+  D3 -> P19 [label="original block"];
+  P19 -> D20 [label="action"];
+  D5 -> P20 [label="attempts, reviews"];
+  P20 -> A [label="charts, funnel"];
+  A -> P21 [label="PDF / DOCX / text + source"];
+  P21 -> D18 [label="pages, relevance"];
+  P21 -> GM [label="selected pages"];
+  GM -> P21 [label="draft JSON"];
+  P21 -> D19 [label="draft + Engine report"];
+  P21 -> D3 [label="publish (admin click)"];
+}

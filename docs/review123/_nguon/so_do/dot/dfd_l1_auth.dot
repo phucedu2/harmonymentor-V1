@@ -1,0 +1,43 @@
+digraph G {
+  graph [fontname="Liberation Serif", bgcolor=white, pad=0.2 , rankdir=TB, nodesep=0.3, ranksep=0.9];
+  node [fontname="Liberation Serif", fontsize=11, color=black];
+  edge [fontname="Liberation Serif", fontsize=9, color=black];
+  P1 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="1.0
+Register"];
+  P2 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="2.0
+Login +
+temporary lock"];
+  P3 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="3.0
+Refresh /
+logout"];
+  P4 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="4.0
+Profile &
+role check"];
+  P5 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="5.0
+Manage users
+(admin)"];
+  U [shape=box, label="Guest / Learner"];
+  A [shape=box, label="Admin"];
+  D1 [shape=record, fontsize=10, label="{D1|users}"];
+  D2 [shape=record, fontsize=10, label="{D2|refresh_tokens}"];
+  R1 [shape=record, fontsize=10, label="{R1|Redis login_fail:ip|email}"];
+  D20 [shape=record, fontsize=10, label="{D20|admin_audit_log}"];
+  U -> P1 [label="name, e-mail, password"];
+  P1 -> D1 [label="new user (bcrypt hash)"];
+  P1 -> U [label="access JWT"];
+  U -> P2 [label="e-mail, password"];
+  P2 -> R1 [label="count failures"];
+  R1 -> P2 [label="locked seconds"];
+  D1 -> P2 [label="hashed_password, role"];
+  P2 -> D2 [label="refresh token hash"];
+  P2 -> U [label="JWT / 401 / 429"];
+  U -> P3 [label="refresh cookie"];
+  D2 -> P3 [label="valid token"];
+  P3 -> U [label="new JWT"];
+  U -> P4 [label="Bearer JWT"];
+  D1 -> P4 [label="user row"];
+  P4 -> U [label="profile / 403"];
+  A -> P5 [label="lock / unlock"];
+  P5 -> D1 [label="is_active"];
+  P5 -> D20 [label="action log"];
+}

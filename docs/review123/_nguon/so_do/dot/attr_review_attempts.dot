@@ -1,0 +1,22 @@
+graph G {
+  graph [fontname="Liberation Serif", bgcolor=white, pad=0.2 , layout=neato, overlap=false, sep="+4"];
+  node [fontname="Liberation Serif", fontsize=11, color=black];
+  edge [fontname="Liberation Serif", fontsize=9, color=black];
+  E [shape=box, style=bold, fontsize=16, label="review_attempts"];
+  a0 [shape=ellipse, fontsize=14, margin="0.05,0.02", label=<<U>id</U>>];
+  E -- a0 [len=1.6];
+  a1 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="review_state_id"];
+  E -- a1 [len=1.6];
+  a2 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="answer"];
+  E -- a2 [len=1.6];
+  a3 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="correct"];
+  E -- a3 [len=1.6];
+  a4 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="rating"];
+  E -- a4 [len=1.6];
+  a5 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="response_time_ms"];
+  E -- a5 [len=1.6];
+  a6 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="due_before"];
+  E -- a6 [len=1.6];
+  a7 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="created_at"];
+  E -- a7 [len=1.6];
+}

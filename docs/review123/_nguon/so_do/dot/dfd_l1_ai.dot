@@ -1,0 +1,50 @@
+digraph G {
+  graph [fontname="Liberation Serif", bgcolor=white, pad=0.2 , rankdir=TB, nodesep=0.3, ranksep=0.9];
+  node [fontname="Liberation Serif", fontsize=11, color=black];
+  edge [fontname="Liberation Serif", fontsize=9, color=black];
+  P12 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="12.0
+Save goal
++ embed"];
+  P13 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="13.0
+Hybrid
+recommend"];
+  P14 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="14.0
+AI Tutor
+chat"];
+  P15 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="15.0
+Explain wrong
+answer (3 levels)"];
+  P16 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="16.0
+Rate answer"];
+  L [shape=box, label="Learner"];
+  GM [shape=box, label="Google Gemini"];
+  D1 [shape=record, fontsize=10, label="{D1|users}"];
+  D6 [shape=record, fontsize=10, label="{D6|mastery_states}"];
+  D8 [shape=record, fontsize=10, label="{D8|review_states}"];
+  D11 [shape=record, fontsize=10, label="{D11|skills, skill_prerequisites}"];
+  D12 [shape=record, fontsize=10, label="{D12|recommendation_logs}"];
+  D13 [shape=record, fontsize=10, label="{D13|chat_sessions, chat_messages}"];
+  D14 [shape=record, fontsize=10, label="{D14|chat_feedback}"];
+  V1 [shape=record, fontsize=10, label="{V1|Qdrant harmony_knowledge (lesson chunks)}"];
+  L -> P12 [label="goal text"];
+  P12 -> D1 [label="goal_text, goal_embedding"];
+  L -> P13 [label="GET /recommend"];
+  D6 -> P13 [label="mastery of all learners (KNN)"];
+  D8 -> P13 [label="due skills"];
+  D11 -> P13 [label="prerequisites, thresholds"];
+  D1 -> P13 [label="goal vector"];
+  P13 -> D12 [label="list + scores + reasons"];
+  P13 -> L [label="continue / next / review lists"];
+  L -> P14 [label="question"];
+  D13 -> P14 [label="last 6 messages"];
+  V1 -> P14 [label="top chunks"];
+  P14 -> GM [label="prompt (no PII)"];
+  GM -> P14 [label="JSON answer"];
+  P14 -> D13 [label="messages, citations, engine claims"];
+  P14 -> L [label="answer + citations"];
+  L -> P15 [label="attempt id"];
+  P15 -> GM [label="error code, prompt"];
+  P15 -> L [label="hint level 1–3"];
+  L -> P16 [label="1–5 stars"];
+  P16 -> D14 [label="rating"];
+}

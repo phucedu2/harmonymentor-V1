@@ -1,0 +1,38 @@
+graph G {
+  graph [fontname="Liberation Serif", bgcolor=white, pad=0.2 , layout=neato, overlap=false, sep="+4"];
+  node [fontname="Liberation Serif", fontsize=11, color=black];
+  edge [fontname="Liberation Serif", fontsize=9, color=black];
+  E [shape=box, style=bold, fontsize=16, label="exercise_versions"];
+  a0 [shape=ellipse, fontsize=14, margin="0.05,0.02", label=<<U>id</U>>];
+  E -- a0 [len=2.6];
+  a1 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="exercise_id"];
+  E -- a1 [len=2.6];
+  a2 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="version"];
+  E -- a2 [len=2.6];
+  a3 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="kind"];
+  E -- a3 [len=2.6];
+  a4 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="prompt"];
+  E -- a4 [len=2.6];
+  a5 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="options"];
+  E -- a5 [len=2.6];
+  a6 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="grading_strategy"];
+  E -- a6 [len=2.6];
+  a7 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="answer_key"];
+  E -- a7 [len=2.6];
+  a8 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="grader_config"];
+  E -- a8 [len=2.6];
+  a9 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="explanation"];
+  E -- a9 [len=2.6];
+  a10 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="provenance"];
+  E -- a10 [len=2.6];
+  a11 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="status"];
+  E -- a11 [len=2.6];
+  a12 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="published_at"];
+  E -- a12 [len=2.6];
+  a13 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="content_hash"];
+  E -- a13 [len=2.6];
+  a14 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="snapshot_origin"];
+  E -- a14 [len=2.6];
+  a15 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="created_at"];
+  E -- a15 [len=2.6];
+}

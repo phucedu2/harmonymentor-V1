@@ -1,0 +1,25 @@
+graph G {
+  graph [fontname="Liberation Serif", bgcolor=white, pad=0.2 , layout=neato, overlap=false, sep="+14", splines=true, size="7.2,9.2"];
+  node [fontname="Liberation Serif", fontsize=11, color=black];
+  edge [fontname="Liberation Serif", fontsize=9, color=black];
+  "users" [shape=box, style=bold, fontsize=12];
+  "recommendation_logs" [shape=box, style=bold, fontsize=12];
+  "chat_sessions" [shape=box, style=bold, fontsize=12];
+  "chat_messages" [shape=box, style=bold, fontsize=12];
+  "chat_feedback" [shape=box, style=bold, fontsize=12];
+  "R_recommendation_logs_users_user_id" [shape=diamond, fontsize=9, width=0.9, height=0.5, label="nhận"];
+  "users" -- "R_recommendation_logs_users_user_id" [label="1"];
+  "R_recommendation_logs_users_user_id" -- "recommendation_logs" [label="n"];
+  "R_chat_sessions_users_user_id" [shape=diamond, fontsize=9, width=0.9, height=0.5, label="mở"];
+  "users" -- "R_chat_sessions_users_user_id" [label="1"];
+  "R_chat_sessions_users_user_id" -- "chat_sessions" [label="n"];
+  "R_chat_messages_chat_sessions_session_id" [shape=diamond, fontsize=9, width=0.9, height=0.5, label="chứa"];
+  "chat_sessions" -- "R_chat_messages_chat_sessions_session_id" [label="1"];
+  "R_chat_messages_chat_sessions_session_id" -- "chat_messages" [label="n"];
+  "R_chat_feedback_chat_messages_message_id" [shape=diamond, fontsize=9, width=0.9, height=0.5, label="đánh giá"];
+  "chat_messages" -- "R_chat_feedback_chat_messages_message_id" [label="1"];
+  "R_chat_feedback_chat_messages_message_id" -- "chat_feedback" [label="1"];
+  "R_chat_feedback_users_user_id" [shape=diamond, fontsize=9, width=0.9, height=0.5, label="cho"];
+  "users" -- "R_chat_feedback_users_user_id" [label="1"];
+  "R_chat_feedback_users_user_id" -- "chat_feedback" [label="n"];
+}

@@ -1,0 +1,51 @@
+digraph G {
+  graph [fontname="Liberation Serif", bgcolor=white, pad=0.2 , nodesep=0.35, ranksep=0.35];
+  node [fontname="Liberation Serif", fontsize=11, color=black];
+  edge [fontname="Liberation Serif", fontsize=9, color=black];
+  node [fontsize=10];
+  s [shape=ellipse, label="Bắt đầu"];
+  i [shape=parallelogram, label="Vào: người học (token), mục tiêu học,
+mastery, thẻ đến hạn"];
+  v [shape=box, label="Dựng vector 14 chiều
+(mastery trung bình theo group_code)"];
+  d1 [shape=diamond, label="Có ≥ 1 người học lân cận
+chung ≥ 3 chiều đã đánh giá?", margin=0.02];
+  w1 [shape=box, label="Trọng số 0,35 nội dung, 0,25 mastery,
+0,20 đến hạn, 0,20 cộng tác (KNN k = 10)"];
+  w2 [shape=box, label="Khởi đầu lạnh: nội dung 0,55,
+mastery 0,25, đến hạn 0,20, CF 0"];
+  loop [shape=box, label="Với mỗi bài học"];
+  d2 [shape=diamond, label="Có kỹ năng dưới 0,80 và mọi
+tiên quyết ≥ 0,60? (tầng 1)", margin=0.02];
+  x [shape=box, label="Loại bài
+(lưu lý do)"];
+  sc [shape=box, label="Điểm kỹ năng = w·nội dung (cosine mục tiêu – kỹ năng, tầng 2)
++ w·(1 − mastery) + w·đến hạn + w·CF (tầng 3)
+Điểm bài = trung bình các kỹ năng đang mở"];
+  d3 [shape=diamond, label="Còn bài?", margin=0.02];
+  t [shape=box, label="Sắp theo điểm, rồi theo thứ tự chương trình;
+lấy 5 bài đầu; viết câu lý do"];
+  sp [shape=box, label="Chia: Học tiếp (đã bắt đầu) / Nên học (mới) /
+Nên ôn (đã xong, nhãn \"Ôn lại\")"];
+  lg [shape=box, label="Lưu recommendation_logs"];
+  o [shape=parallelogram, label="Ra: 3 danh sách kèm lý do"];
+  e [shape=ellipse, label="Kết thúc"];
+  s -> i;
+  i -> v;
+  v -> d1;
+  d1 -> w1 [label="Có"];
+  d1 -> w2 [label="Không"];
+  w1 -> loop;
+  w2 -> loop;
+  loop -> d2;
+  d2 -> x [label="Không"];
+  d2 -> sc [label="Có"];
+  x -> d3;
+  sc -> d3;
+  d3 -> loop [label="Có"];
+  d3 -> t [label="Không"];
+  t -> sp;
+  sp -> lg;
+  lg -> o;
+  o -> e;
+}

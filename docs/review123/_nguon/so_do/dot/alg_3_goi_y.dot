@@ -1,0 +1,51 @@
+digraph G {
+  graph [fontname="Liberation Serif", bgcolor=white, pad=0.2 , nodesep=0.35, ranksep=0.35];
+  node [fontname="Liberation Serif", fontsize=11, color=black];
+  edge [fontname="Liberation Serif", fontsize=9, color=black];
+  node [fontsize=10];
+  s [shape=ellipse, label="Start"];
+  i [shape=parallelogram, label="Input: learner (token), goal text,
+mastery, due cards"];
+  v [shape=box, label="Build 14-dimension vector
+(mean mastery per group_code)"];
+  d1 [shape=diamond, label="≥ 1 neighbour sharing
+≥ 3 assessed dimensions?", margin=0.02];
+  w1 [shape=box, label="Weights 0.35 content, 0.25 mastery,
+0.20 due, 0.20 collaborative (KNN k = 10)"];
+  w2 [shape=box, label="Cold start: content 0.55,
+mastery 0.25, due 0.20, CF 0"];
+  loop [shape=box, label="For each lesson"];
+  d2 [shape=diamond, label="Has a skill below 0.80 and every
+prerequisite ≥ 0.60? (layer 1)", margin=0.02];
+  x [shape=box, label="Exclude lesson
+(reason stored)"];
+  sc [shape=box, label="Skill score = w·content (cosine goal vs skill, layer 2)
++ w·(1 − mastery) + w·due + w·CF (layer 3)
+Lesson score = mean over open skills"];
+  d3 [shape=diamond, label="More lessons?", margin=0.02];
+  t [shape=box, label="Sort by score, then curriculum order;
+take top 5; write reason sentence"];
+  sp [shape=box, label="Split: Continue (started) / Next (new) /
+Review (completed, label \"Ôn lại\")"];
+  lg [shape=box, label="Save recommendation_logs"];
+  o [shape=parallelogram, label="Output: 3 lists with reasons"];
+  e [shape=ellipse, label="End"];
+  s -> i;
+  i -> v;
+  v -> d1;
+  d1 -> w1 [label="Yes"];
+  d1 -> w2 [label="No"];
+  w1 -> loop;
+  w2 -> loop;
+  loop -> d2;
+  d2 -> x [label="No"];
+  d2 -> sc [label="Yes"];
+  x -> d3;
+  sc -> d3;
+  d3 -> loop [label="Yes"];
+  d3 -> t [label="No"];
+  t -> sp;
+  sp -> lg;
+  lg -> o;
+  o -> e;
+}

@@ -1,0 +1,24 @@
+graph G {
+  graph [fontname="Liberation Serif", bgcolor=white, pad=0.2 , layout=neato, overlap=false, sep="+4"];
+  node [fontname="Liberation Serif", fontsize=11, color=black];
+  edge [fontname="Liberation Serif", fontsize=9, color=black];
+  E [shape=box, style=bold, fontsize=16, label="recommendation_logs"];
+  a0 [shape=ellipse, fontsize=14, margin="0.05,0.02", label=<<U>id</U>>];
+  E -- a0 [len=2.1];
+  a1 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="user_id"];
+  E -- a1 [len=2.1];
+  a2 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="lesson_ids"];
+  E -- a2 [len=2.1];
+  a3 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="scores"];
+  E -- a3 [len=2.1];
+  a4 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="explanation"];
+  E -- a4 [len=2.1];
+  a5 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="context"];
+  E -- a5 [len=2.1];
+  a6 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="clicked_lesson_id"];
+  E -- a6 [len=2.1];
+  a7 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="clicked_at"];
+  E -- a7 [len=2.1];
+  a8 [shape=ellipse, fontsize=14, margin="0.05,0.02", label="created_at"];
+  E -- a8 [len=2.1];
+}

@@ -1,0 +1,18 @@
+graph G {
+  graph [fontname="Liberation Serif", bgcolor=white, pad=0.2 , layout=neato, overlap=false, sep="+14", splines=true, size="7.2,9.2"];
+  node [fontname="Liberation Serif", fontsize=11, color=black];
+  edge [fontname="Liberation Serif", fontsize=9, color=black];
+  "users" [shape=box, style=bold, fontsize=12];
+  "composition_projects" [shape=box, style=bold, fontsize=12];
+  "chord_events" [shape=box, style=bold, fontsize=12];
+  "drum_events" [shape=box, style=bold, fontsize=12];
+  "R_composition_projects_users_user_id" [shape=diamond, fontsize=9, width=0.9, height=0.5, label="creates"];
+  "users" -- "R_composition_projects_users_user_id" [label="1"];
+  "R_composition_projects_users_user_id" -- "composition_projects" [label="n"];
+  "R_chord_events_composition_projects_project_id" [shape=diamond, fontsize=9, width=0.9, height=0.5, label="chords"];
+  "composition_projects" -- "R_chord_events_composition_projects_project_id" [label="1"];
+  "R_chord_events_composition_projects_project_id" -- "chord_events" [label="n"];
+  "R_drum_events_composition_projects_project_id" [shape=diamond, fontsize=9, width=0.9, height=0.5, label="drums"];
+  "composition_projects" -- "R_drum_events_composition_projects_project_id" [label="1"];
+  "R_drum_events_composition_projects_project_id" -- "drum_events" [label="n"];
+}
