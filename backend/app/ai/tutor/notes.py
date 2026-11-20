@@ -126,3 +126,9 @@ def solfege_to_letters(text: str) -> str:
         return " ".join(one(t) for t in toks)
 
     return _SOLF_SEQ.sub(repl, unicodedata.normalize("NFC", text))
+
+
+# G8 (20/11/2026): ký hiệu hợp âm rồi, cách một đoạn trong cùng câu, mới tới "gồm các nốt ..." (xem guardrail).
+SHELL_LIST_AFTER = re.compile(
+    rf"(?<![A-Za-z0-9#])(?P<sym>{NOTE}(?:maj7|M7|m7b5|ø7|dim7|m7|7))(?![A-Za-z0-9#])[^.!?\n]*?"
+    rf"(?:gồm(?: có)?(?: các nốt)?|có các nốt|có nốt|là|=|:)\s*(?P<notes>{NOTE_SEQ})(?![A-Za-z0-9#])")

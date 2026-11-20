@@ -296,3 +296,39 @@ def test_probe_cho_va_hoi_lai_khi_gemini_qua_tai_va_bo_dong_du_phong_cu(tmp_path
     assert probe.main(["--only", "T001,T013", "--pause", "0", "--out", str(out)]) == 0
     rows = {r["id"]: r for r in probe.load(out)}
     assert set(rows) == {"T001", "T013"} and rows["T001"].get("fallback_reason") != "unavailable"
+
+
+# G8 20/11: T225 (answers_v5_sua2) nói "lược quãng 5" nhưng liệt kê đủ Eb G Bb D; T210/T211 AI khai guide tone như
+# get_chord_tones. Ký hiệu hợp âm đứng xa danh sách nốt trong cùng câu vẫn phải được kiểm.
+@pytest.mark.parametrize("reply,status", [
+    ("Shell voicing của Ebmaj7 giữ root, quãng 3 và quãng 7, lược quãng 5, gồm các nốt Eb, G, Bb và D.",
+     ["contradicted"]),
+    ("Shell voicing của Ebmaj7 giữ root, quãng 3 và quãng 7, gồm các nốt Eb, G và D.", ["verified"]),
+    ("Shell voicing của A7 giữ root, quãng 3, quãng 7, gồm các nốt A, C# và G.", ["verified"]),
+    ("Shell voicing của A7 giữ root, quãng 3, quãng 7, gồm các nốt A, C# và F.", ["contradicted"]),
+    ("Fmaj7 là F, A, C, E; khi làm shell thì bỏ C.", ["verified"]),
+])
+def test_guardrail_shell_danh_sach_nam_xa_ky_hieu(reply, status):
+    from app.ai.tutor.guardrail import scan_reply
+
+    assert [c.status for c in scan_reply(reply)] == status, reply
+
+
+def test_guardrail_shell_danh_sach_day_du_khong_lot_qua_khai_bao():
+    from app.ai.tutor.guardrail import check_answer
+    from app.ai.tutor.schema import Claim
+
+    reply = "Shell voicing của Ebmaj7 giữ root, quãng 3 và quãng 7, lược quãng 5, gồm các nốt Eb, G, Bb và D."
+    res = check_answer(reply, [Claim(tool="get_chord_tones", args={"symbol": "Ebmaj7"}, result="Eb G Bb D")])
+    assert res.contradicted and not res.all_verified
+
+
+def test_guardrail_khai_guide_tone_bang_get_chord_tones():
+    from app.ai.tutor.guardrail import check_answer
+    from app.ai.tutor.schema import Claim
+
+    claim = Claim(tool="get_chord_tones", args={"symbol": "Fmaj7"}, result="A E")
+    good = check_answer("Guide tone (nốt 3 và nốt 7) của Fmaj7 là A và E.", [claim])
+    assert not good.contradicted
+    # Không nói guide tone/shell thì "A E" vẫn không phải hợp âm Fmaj7.
+    assert check_answer("Fmaj7 gồm A và E.", [claim]).contradicted

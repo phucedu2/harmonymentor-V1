@@ -102,6 +102,15 @@ Lần chạy đầu (19/11, `answers_v5_sua.jsonl`) vô tình dùng code cũ (m�
 - **T011, T100, T110** đúng lần này. Không chắc do bản sửa hay do Gemini không tất định; bản sửa chỉ đảm bảo nếu Gemini lặp lại lỗi cũ thì bị chặn.
 - Nếu thay 28 câu này vào bảng 300 câu: **280/300 (93,3%)** (từ 277). Số này ước lượng, các câu còn lại chưa chạy lại.
 
+**Sửa tiếp (20/11/2026) sau kết quả trên:**
+
+| Lỗi | Cách sửa |
+|---|---|
+| T225 (và T221 của lượt v5): nói "lược quãng 5" nhưng liệt kê đủ 4 nốt | `notes.SHELL_LIST_AFTER` + `guardrail.scan_reply`: trong cùng câu, ký hiệu hợp âm 4 nốt rồi tới "gồm các nốt ..." thì với ngữ cảnh shell phải đúng gốc–3–7, guide tone phải đúng 3–7. Câu bị bác khi AI khai trùng danh sách thì vẫn tính (`check_answer` không còn bỏ khẳng định quét trùng khai báo nếu kết quả khác). |
+| T210, T211 rơi dự phòng `engine_contradiction` | **Nguyên nhân là phỏng đoán**, không có câu trả lời thô của Gemini để xem: nhiều khả năng AI khai `get_chord_tones` Fmaj7 = "A E" (guide tone), bị so với cả hợp âm. `check_answer` giờ xét lại khẳng định khai theo ngữ cảnh câu trả lời: nói rõ guide tone/shell và nốt khớp 3–7 (hoặc gốc–3–7) thì đúng. Chưa kiểm với Gemini thật. |
+
+Kiểm lại trên 979 câu trả lời đã lưu (5 file `answers*`): bị bác 5 khẳng định, cả 5 đều là lỗi thật (T011, T100, T110, T221 của v5, T225 của sua2), không có câu đúng nào bị bác nhầm. Test thêm 8 ca (`test_g8_cham_nhac_ly.py`), `pytest -q`: **1531 passed, 46 skipped, 0 failed**, CI `--min-passed` nâng lên 1530. Chưa chạy lại Gemini thật trên T210, T211, T221, T225 cho bản sửa này.
+
 ## 6. Giới hạn của số đo
 
 - Người chấm là Claude, chưa có người trong nhóm kiểm. Đề nghị Đạt đọc lại 14 câu sai, 2 câu tranh luận và khoảng 20 câu "đúng" chọn ngẫu nhiên trong `review_v5.jsonl`.

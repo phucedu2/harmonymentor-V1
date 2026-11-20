@@ -19,6 +19,7 @@ from ...music_engine.interval import parse_interval
 from ...music_engine.roman import diatonic_chords
 from .notes import (CHORD_IS_ROMAN_IN_KEY, CHORD_WITH_NOTES, INTERVAL_PAIR_WITH_NAME, INTERVAL_SIZE_CLAIM,
                     INTERVAL_WITH_NAME, NOTE_SEQ, NOTES_SEMITONE_CLAIM, ROMAN_IN_KEY_IS_CHORD, SCALE_WITH_NOTES,
+                    SHELL_LIST_AFTER,
                     SYMBOL_IN_QUESTION, interval_name, is_comparison, norm_accidentals, semitone_count,
                     solfege_to_letters, split_notes)
 from .schema import Claim
@@ -139,6 +140,19 @@ _PARTIAL_CTX = re.compile(r"voicing|lược|bỏ\s+(?:nốt|quãng)|rút\s+gọn
 _CTX_BEFORE = 120
 
 
+def _partial_ok(ctx_text: str, claimed: str, engine_value: str) -> str | None:
+    """verified/contradicted khi ngữ cảnh nói về shell (gốc–3–7) hoặc guide tone (3–7) của hợp âm 4 nốt; None nếu
+    ngữ cảnh không nói vậy."""
+    tones, got = engine_value.split(), sorted(_norm_seq(claimed))
+    if len(tones) != 4:
+        return None
+    if _SHELL_CTX.search(ctx_text):
+        return "verified" if got == sorted([tones[0], tones[1], tones[3]]) else "contradicted"
+    if _GUIDE_CTX.search(ctx_text):
+        return "verified" if got == sorted([tones[1], tones[3]]) else "contradicted"
+    return None
+
+
 def _compare_chord(text: str, start: int, claimed: str, engine_value: str | None) -> str:
     """So dãy nốt AI ghi với hợp âm Engine, có tính ngữ cảnh shell/guide tone/voicing.
 
@@ -167,6 +181,20 @@ def scan_reply(reply: str) -> list[CheckedClaim]:
         value, _ = run_tool("get_chord_tones", args)
         out.append(CheckedClaim("get_chord_tones", args, claimed, value,
                                 _compare_chord(text, m.start(), claimed, value), "scanned"))
+    # G8 (20/11/2026): ký hiệu hợp âm đứng xa danh sách nốt trong cùng câu ("Shell của Ebmaj7 giữ root, quãng 3, 7,
+    # lược quãng 5, gồm các nốt Eb, G, Bb và D" — liệt kê cả quãng 5 trong khi nói lược nó).
+    adjacent = {m.start("notes") for m in CHORD_WITH_NOTES.finditer(text)}
+    for sent in re.finditer(r"[^.!?\n]+", text):
+        for m in SHELL_LIST_AFTER.finditer(sent.group(0)):
+            at = sent.start() + m.start("notes")
+            if at in adjacent:
+                continue
+            args = {"symbol": norm_accidentals(m["sym"])}
+            claimed = " ".join(split_notes(m["notes"]))
+            value, _ = run_tool("get_chord_tones", args)
+            status = "unsupported" if value is None else _partial_ok(text[sent.start():at], claimed, value)
+            if status is not None:
+                out.append(CheckedClaim("get_chord_tones", args, claimed, value, status, "scanned"))
     for m in SCALE_WITH_NOTES.finditer(text):
         args = {"tonic": norm_accidentals(m["tonic"]), "scale_type": _SCALE_KIND[m["kind"].lower()]}
         claimed = " ".join(split_notes(m["notes"]))
@@ -224,8 +252,16 @@ def scan_reply(reply: str) -> list[CheckedClaim]:
 
 def check_answer(reply: str, claims: Iterable[Claim]) -> GuardResult:
     declared = check_declared(claims)
-    seen = {(c.tool, tuple(sorted(c.args.items())), c.claimed) for c in declared}
-    scanned = [c for c in scan_reply(reply) if (c.tool, tuple(sorted(c.args.items())), c.claimed) not in seen]
+    # AI khai get_chord_tones với kết quả là shell/guide tone ("A E" cho Fmaj7): đúng nếu câu trả lời nói rõ đó là
+    # guide tone/shell và nốt khớp; so với cả hợp âm sẽ báo sai nhầm.
+    declared = [CheckedClaim(c.tool, c.args, c.claimed, c.engine, _partial_ok(reply, c.claimed, c.engine) or c.status,
+                             c.origin)
+                if c.tool == "get_chord_tones" and c.status == "contradicted" and c.engine else c
+                for c in declared]
+    # Trùng với khẳng định AI khai thì bỏ, trừ khi quét câu cho kết quả khác (shell nói lược quãng 5 mà liệt kê đủ).
+    seen = {(c.tool, tuple(sorted(c.args.items())), c.claimed, c.status) for c in declared}
+    scanned = [c for c in scan_reply(reply)
+               if (c.tool, tuple(sorted(c.args.items())), c.claimed, c.status) not in seen]
     return GuardResult(declared + scanned)
 
 
