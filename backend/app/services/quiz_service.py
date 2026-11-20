@@ -14,7 +14,7 @@ from sqlalchemy.orm import Session
 
 from ..content import versioning
 from ..db.models import Attempt, Exercise, ExerciseVersion, Skill
-from .grading_service import is_self_check
+from .grading_service import allowed_input_methods, is_open_question, is_self_check
 from .learning_service import visible_lessons
 
 MAX_QUIZ = 10
@@ -32,6 +32,8 @@ def build_quiz(db: Session, user_id: str, skill_id: str, n: int = MAX_QUIZ, seed
         version = versioning.current_version(exercise)
         if version is None or is_self_check(version.grading_strategy, version.grader_config or {}):
             continue  # câu tự đánh giá (thẻ ý mở) không chấm được tự động
+        if (version.grader_config or {}).get("counts_for_mastery") is False:
+            continue  # câu bài "Mở rộng" (ADR-029) chỉ gắn kỹ năng gần nhất, không đo đúng kỹ năng này
         pool.append((version, exercise))
 
     first_try: dict[str, bool] = {}
@@ -57,5 +59,55 @@ def build_quiz(db: Session, user_id: str, skill_id: str, n: int = MAX_QUIZ, seed
     chosen = pool[:n]
     rng.shuffle(chosen)
     return {"skill_id": skill_id, "requested": n, "available": len(pool), "questions": [
-        {"exercise_id": e.id, "exercise_version_id": v.id, "skill_id": e.skill_id, "kind": v.kind, "prompt": v.prompt,
-         "options": v.options, "lesson_id": e.lesson_id} for v, e in chosen]}
+        _question_out(v, e) for v, e in chosen]}
+
+
+def _question_out(v: ExerciseVersion, e: Exercise) -> dict[str, Any]:
+    return {"exercise_id": e.id, "exercise_version_id": v.id, "skill_id": e.skill_id, "kind": v.kind, "prompt": v.prompt,
+            "options": v.options, "lesson_id": e.lesson_id,
+            "allowed_input_methods": allowed_input_methods(v.options, v.grader_config),
+            "difficulty": (v.grader_config or {}).get("difficulty")}
+
+
+# --- Ngân hàng câu "Từ tài liệu" ở trang Luyện tập (ADR-028, câu 1B) ----------------------------------
+
+AI_TRACK = "AI soạn từ tài liệu"
+PRACTICE_TO_LEVEL = {"de": "nho", "vua": "hieu", "kho": "van_dung"}
+
+
+def _bank_pool(db: Session) -> list[tuple[ExerciseVersion, Exercise]]:
+    """Câu đã xuất bản từ bản nháp AI (Quản trị viên đã duyệt), trong các bài người học đang thấy."""
+    lesson_ids = {lesson.id for lesson in visible_lessons(db) if lesson.track == AI_TRACK}
+    if not lesson_ids:
+        return []
+    out = []
+    for exercise in db.scalars(select(Exercise).where(Exercise.lesson_id.in_(lesson_ids))).unique().all():
+        version = versioning.current_version(exercise)
+        if version is not None:
+            out.append((version, exercise))
+    return out
+
+
+def bank_skills(db: Session) -> list[dict[str, Any]]:
+    """Kỹ năng có câu trong ngân hàng, kèm số câu, để trang Luyện tập cho chọn."""
+    counts: dict[str, int] = {}
+    for _, e in _bank_pool(db):
+        counts[e.skill_id] = counts.get(e.skill_id, 0) + 1
+    names = {s.id: s.name for s in db.scalars(select(Skill).where(Skill.id.in_(list(counts)))).all()} if counts else {}
+    return [{"skill_id": k, "name": names.get(k, k), "count": n} for k, n in sorted(counts.items())]
+
+
+def build_bank_set(db: Session, user_id: str, skill_id: str | None, level: str | None, n: int = MAX_QUIZ,
+                   seed: int | None = None) -> dict[str, Any]:
+    """Tối đa n câu "Từ tài liệu": lọc theo kỹ năng và mức (Dễ=nhớ, Vừa=hiểu, Khó=vận dụng), gồm cả câu mở.
+    Câu tất định nộp qua /attempts nên tính mastery (5A); câu mở dùng /practice/open-feedback (không tính)."""
+    pool = [(v, e) for v, e in _bank_pool(db) if skill_id is None or e.skill_id == skill_id]
+    want = PRACTICE_TO_LEVEL.get(level or "")
+    if want:
+        same = [(v, e) for v, e in pool if (v.grader_config or {}).get("difficulty") == want]
+        pool = same or pool   # mức này chưa có câu thì vẫn cho luyện, giao diện báo rõ
+    rng = random.Random(seed)
+    rng.shuffle(pool)
+    chosen = pool[:max(1, min(int(n), MAX_QUIZ))]
+    return {"skill_id": skill_id, "level": level, "available": len(pool),
+            "questions": [{**_question_out(v, e), "open": is_open_question(v.grading_strategy)} for v, e in chosen]}

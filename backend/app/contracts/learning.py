@@ -53,6 +53,11 @@ class LessonSummaryOut(BaseModel):
     block_count: int
     exercise_count: int
     review_item_count: int
+    # ADR-029 (7A, 8A): bài AI soạn từ tài liệu hiện ở mục "Kiến thức mới"; "Mở rộng" = kiến thức chưa khớp kỹ năng nào,
+    # câu luyện tập không tính mức thành thạo. published_at để gắn nhãn "Mới".
+    ai_generated: bool = False
+    expansion: bool = False
+    published_at: Optional[datetime] = None
 
 
 class ExternalResourceOut(BaseModel):
@@ -79,7 +84,7 @@ class AttemptIn(BaseModel):
     answer: Any
     # "piano": đáp án chọn trên phím đàn, chỉ chấm cao độ (phím không mang chính tả tên nốt). HM-011: bỏ trống thì
     # máy chủ dùng cách nhập mặc định của câu; cách nhập nào hợp lệ do phiên bản câu hỏi quyết định.
-    input_method: Optional[Literal["text", "choice", "piano"]] = None
+    input_method: Optional[Literal["text", "choice", "multi_choice", "piano"]] = None
 
 
 class AttemptErrorOut(BaseModel):

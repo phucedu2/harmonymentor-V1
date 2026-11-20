@@ -103,3 +103,18 @@ def missing(question: str, reply: str, facts: Sequence[dict[str, Any]]) -> list[
     if direct(question):
         return [f for f in facts if not honoured(reply, f)]
     return list(facts) if refused(reply) else []
+
+
+# G8 (19/11/2026): Gemini thỉnh thoảng vẫn viết "theo ENGINE_FACTS" (T020) hay "theo kết quả từ hệ thống" (T069, T148)
+# dù câu trả lời đúng. Soạn lại cả câu vì vài chữ là phí một lượt Gemini, nên máy chủ tự thay bằng lời người học hiểu.
+_SYSTEM_SOURCE = re.compile(r"\s*,?\s*(?:theo|dựa\s+(?:trên|vào)|như)\s+(?:các\s+|những\s+)?(?:kết quả|dữ liệu)"
+                            r"(?:\s+chính xác)?\s+(?:từ|của)\s+hệ thống", re.IGNORECASE)
+_INTERNAL_NAMES = ((re.compile(r"\bENGINE_FACTS\b"), "Music Engine"), (re.compile(r"\bLESSON_CHUNKS\b"), "bài học"))
+
+
+def scrub_internal(reply: str) -> str:
+    """Bỏ chữ nội bộ của prompt khỏi câu trả lời cho người học; không đổi nội dung nhạc lý."""
+    out = _SYSTEM_SOURCE.sub("", reply)
+    for pattern, plain in _INTERNAL_NAMES:
+        out = pattern.sub(plain, out)
+    return out

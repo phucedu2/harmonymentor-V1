@@ -4,6 +4,7 @@ import { Alert } from "../../components/ui/Alert";
 import { Button } from "../../components/ui/Button";
 import { Card, PageHeading, ProgressBar, ResultBox } from "../../components/ui/Page";
 import { PageLoader } from "../../components/ui/PageLoader";
+import { ChoiceList } from "../../components/learning/AnswerInputs";
 
 // Quiz 10 câu theo kỹ năng (FR-14 rút gọn, ADR-024): chọn kỹ năng, làm từng câu có sẵn trong ngân hàng,
 // mỗi câu nộp qua /attempts nên mastery cập nhật như khi làm trong bài. Không sinh câu bằng AI.
@@ -12,6 +13,7 @@ export default function QuizPage() {
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [index, setIndex] = useState(0);
   const [answer, setAnswer] = useState("");
+  const [picked, setPicked] = useState<string[]>([]);
   const [result, setResult] = useState<AttemptResult | null>(null);
   const [score, setScore] = useState(0);
   const [busy, setBusy] = useState(false);
@@ -24,23 +26,27 @@ export default function QuizPage() {
     try {
       const q = await api.quiz(skillId, 10);
       if (!q.questions.length) { setError("Kỹ năng này chưa có câu hỏi để làm quiz."); return; }
-      setQuiz(q); setIndex(0); setScore(0); setAnswer(""); setResult(null);
+      setQuiz(q); setIndex(0); setScore(0); setAnswer(""); setPicked([]); setResult(null);
     } catch { setError("Chưa tạo được quiz, thử lại sau."); }
     finally { setBusy(false); }
   };
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!quiz || !answer.trim()) return;
+    if (!quiz) return;
+    const q = quiz.questions[index];
+    const multi = Boolean(q.allowed_input_methods?.includes("multi_choice"));
+    if (multi ? !picked.length : !answer.trim()) return;
     setBusy(true); setError(null);
     try {
-      const q = quiz.questions[index];
-      const r = await api.submitAttempt(q.exercise_version_id, answer.trim(), q.options?.length ? "choice" : "text");
+      const r = multi
+        ? await api.submitAttempt(q.exercise_version_id, picked, "multi_choice")
+        : await api.submitAttempt(q.exercise_version_id, answer.trim(), q.options?.length ? "choice" : "text");
       setResult(r); if (r.correct) setScore((s) => s + 1);
     } catch { setError("Chưa nộp được câu này, thử lại."); }
     finally { setBusy(false); }
   };
-  const next = () => { setIndex((i) => i + 1); setAnswer(""); setResult(null); };
+  const next = () => { setIndex((i) => i + 1); setAnswer(""); setPicked([]); setResult(null); };
 
   if (!skills && !error) return <PageLoader />;
 
@@ -58,6 +64,7 @@ export default function QuizPage() {
 
   if (quiz) {
     const q = quiz.questions[index];
+    const multi = Boolean(q.allowed_input_methods?.includes("multi_choice"));
     return <section>
       <PageHeading eyebrow="Quiz kỹ năng" title={`Câu ${index + 1}/${quiz.questions.length}`}>
         {quiz.available < quiz.requested ? `Kỹ năng này hiện có ${quiz.available} câu trong ngân hàng.` : "Mỗi câu chỉ nộp một lần."}
@@ -67,7 +74,9 @@ export default function QuizPage() {
       <form onSubmit={submit}>
         <Card className="p-4">
           <p id="quiz-q" className="mb-2 font-medium">{q.prompt}</p>
-          {q.options?.length
+          {q.options?.length && multi
+            ? <ChoiceList multi options={q.options} value={picked} onChange={setPicked} disabled={!!result} label="Các lựa chọn" />
+            : q.options?.length
             ? <div role="radiogroup" aria-labelledby="quiz-q" className="flex flex-wrap gap-2">
                 {q.options.map((opt) => <button type="button" key={opt} role="radio" aria-checked={answer === opt} disabled={!!result}
                   onClick={() => setAnswer(opt)} className={`rounded-lg border px-3 py-2 text-sm ${answer === opt ? "border-primary bg-primary-soft" : "border-line bg-surface"}`}>{opt}</button>)}
@@ -82,7 +91,7 @@ export default function QuizPage() {
               </ResultBox>
               <Button type="button" onClick={next}>{index + 1 < quiz.questions.length ? "Câu tiếp theo" : "Xem kết quả"}</Button>
             </div>
-          : <Button type="submit" className="mt-3" loading={busy} disabled={!answer.trim()}>Nộp câu này</Button>}
+          : <Button type="submit" className="mt-3" loading={busy} disabled={multi ? !picked.length : !answer.trim()}>Nộp câu này</Button>}
       </form>
     </section>;
   }

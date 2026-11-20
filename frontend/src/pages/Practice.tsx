@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import {
-  api, splitNotes, type EngineError, type LearningOverview, type PracticeAttemptResult, type PracticeHistory,
-  type PracticeHistoryItem, type PracticeKind, type PracticeLevel,
+  api, splitNotes, type AttemptResult, type BankQuestion, type EngineError, type LearningOverview, type PracticeAttemptResult,
+  type PracticeHistory, type PracticeHistoryItem, type PracticeKind, type PracticeLevel,
 } from "../api";
+import { ChoiceList, OpenAnswer } from "../components/learning/AnswerInputs";
 // Practice dùng chung piano tương tác với Learn (v0.5.3); Piano.tsx dạng SVG chỉ còn cho trang chủ.
 import VirtualPiano from "../components/music/VirtualPiano";
 import { Alert } from "../components/ui/Alert";
@@ -57,12 +58,13 @@ function readLevel(): Level | null {
   catch { return null; }
 }
 
-type Tab = PracticeKind;
+type Tab = PracticeKind | "bank";
 const TABS: { id: Tab; label: string }[] = [
   { id: "chord", label: "Dựng hợp âm" },
   { id: "interval", label: "Gọi tên quãng" },
   { id: "scale", label: "Dựng âm giai" },
   { id: "roman", label: "Số La Mã" },
+  { id: "bank", label: "Từ tài liệu" },
 ];
 
 export default function PracticePage() {
@@ -100,6 +102,7 @@ export default function PracticePage() {
       {tab === "interval" && <IntervalExercise key={level} {...ctx} />}
       {tab === "scale" && <ScaleExercise key={level} {...ctx} />}
       {tab === "roman" && <RomanExercise key={level} {...ctx} />}
+      {tab === "bank" && <BankPractice key={level} level={level} />}
       <PracticeHistoryPanel history={history} failed={historyError} />
     </section>
   );
@@ -129,33 +132,54 @@ function Exercise(props: {
 }) {
   const [answer, setAnswer] = useState("");
   // GĐ5: hợp âm và âm giai trả lời được bằng cách bấm piano; máy chủ chấm theo phím (lớp cao độ) rồi nhắc cách viết.
-  const [mode, setMode] = useState<"text" | "piano">("text");
+  // ADR-028: "Trắc nghiệm" = chọn 1 trong 4 phương án do Music Engine sinh (lỗi hay gặp); chấm vẫn bằng đúng hàm Engine.
+  const [mode, setMode] = useState<"text" | "piano" | "choice">("text");
   const [keys, setKeys] = useState<string[]>([]);
+  const [options, setOptions] = useState<string[] | null>(null);
+  const [picked, setPicked] = useState<string[]>([]);
   const piano = props.showPiano && mode === "piano";
+  const choosing = mode === "choice";
   const g = useGrader();
-  const next = () => { setAnswer(""); setKeys([]); g.reset(); props.onNext(); };
+  const questionKey = JSON.stringify(props.question);
+  useEffect(() => {
+    if (!choosing) return;
+    let live = true;
+    setOptions(null); setPicked([]);
+    api.practiceOptions(props.kind, props.question).then((r) => { if (live) setOptions(r.options); })
+      .catch(() => { if (live) setOptions([]); });
+    return () => { live = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [choosing, questionKey, props.kind]);
+  const next = () => { setAnswer(""); setKeys([]); setPicked([]); g.reset(); props.onNext(); };
   const expected = g.result ? ([] as string[]).concat(g.result.expected) : [];
-  const given = piano ? keys : splitNotes(answer);
+  const given = piano ? keys : choosing ? splitNotes(picked[0] ?? "") : splitNotes(answer);
   const submit = async () => {
+    const chosen = picked[0] ?? "";
     const res = piano
       ? await api.practiceAttempt(props.kind, props.ctx.level, props.question, keys, "piano")
+      : choosing
+      ? await api.practiceAttempt(props.kind, props.ctx.level, props.question, props.listAnswer ? splitNotes(chosen) : chosen, "choice")
       : await api.practiceAttempt(props.kind, props.ctx.level, props.question, props.listAnswer ? splitNotes(answer) : answer.trim());
     props.ctx.onRecorded();
     return res;
   };
-  const ready = piano ? keys.length > 0 : Boolean(answer.trim());
+  const ready = piano ? keys.length > 0 : choosing ? picked.length > 0 : Boolean(answer.trim());
+  const modes = [{ value: "text" as const, label: props.showPiano ? "Gõ tên nốt" : "Gõ đáp án" }, { value: "choice" as const, label: "Trắc nghiệm" },
+    ...(props.showPiano ? [{ value: "piano" as const, label: "Bấm piano" }] : [])];
   return (
     <Card className="max-w-3xl">
       <p className="text-xl leading-snug text-ink">{props.prompt}</p>
-      <p className="mt-2 text-sm text-muted">{piano ? (props.kind === "scale"
+      <p className="mt-2 text-sm text-muted">{choosing ? "Chọn một phương án. Các phương án sai là lỗi người học hay mắc, đọc kỹ chính tả tên nốt." : piano ? (props.kind === "scale"
         ? "Bấm lần lượt 7 phím đi lên theo thứ tự bậc. Máy chấm theo phím, rồi nhắc bạn cách viết tên nốt chuẩn."
         : "Bấm các phím của hợp âm (thứ tự nào cũng được). Máy chấm theo phím, rồi nhắc bạn cách viết tên nốt chuẩn.") : props.hint}</p>
-      {props.showPiano && <ToggleGroup className="mt-3" label="Cách trả lời" value={mode}
-        onChange={(v) => { setMode(v); g.reset(); }} options={[{ value: "text", label: "Gõ tên nốt" }, { value: "piano", label: "Bấm piano" }]} />}
+      <ToggleGroup className="mt-3" label="Cách trả lời" value={mode} onChange={(v) => { setMode(v); g.reset(); }} options={modes} />
       {piano && <VirtualPiano selectionMode selectedNotes={keys} onSelectionChange={setKeys} showLabels={false} startMidi={48} endMidi={72}
         highlightedPitchClasses={g.result ? expected : []} incorrectPitchClasses={g.result && !g.result.correct ? given : []} />}
       <form className="mt-4 flex flex-wrap gap-2" onSubmit={(e) => { e.preventDefault(); if (ready) g.run(submit); }}>
-        {!piano && <input className="min-h-11 min-w-0 flex-[1_1_14rem] rounded-lg border border-line bg-surface px-3 font-mono text-base text-ink placeholder:text-muted" value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder={props.placeholder} aria-label="Đáp án" />}
+        {choosing && <div className="w-full">{options === null ? <p className="text-sm text-muted">Đang tạo phương án…</p>
+          : options.length === 0 ? <p className="text-sm text-muted">Chưa tạo được phương án cho đề này, bấm “Câu khác”.</p>
+          : <ChoiceList options={options} value={picked} onChange={setPicked} disabled={Boolean(g.result)} label="Các phương án" />}</div>}
+        {!piano && !choosing && <input className="min-h-11 min-w-0 flex-[1_1_14rem] rounded-lg border border-line bg-surface px-3 font-mono text-base text-ink placeholder:text-muted" value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder={props.placeholder} aria-label="Đáp án" />}
         <Button type="submit" disabled={g.busy || !ready}>Kiểm tra</Button>
         <Button type="button" variant="secondary" onClick={next}>Câu khác</Button>
       </form>
@@ -167,7 +191,7 @@ function Exercise(props: {
           {g.result.convention_verified === false && <p className="text-xs text-muted">Lưu ý: cách viết ký hiệu này chưa được đối chiếu với tài liệu nguồn.</p>}
         </ResultBox>
       )}
-      {props.showPiano && !piano && g.result && <VirtualPiano highlightedPitchClasses={expected} incorrectPitchClasses={g.result.correct ? [] : splitNotes(answer)} showLabels={false} startMidi={48} endMidi={72} />}
+      {props.showPiano && !piano && g.result && <VirtualPiano highlightedPitchClasses={expected} incorrectPitchClasses={g.result.correct ? [] : given} showLabels={false} startMidi={48} endMidi={72} />}
     </Card>
   );
 }
@@ -223,17 +247,92 @@ function RomanExercise(ctx: ExerciseContext) {
     placeholder="ví dụ: ii7" kind="roman" ctx={ctx} question={question} onNext={make} />;
 }
 
+const BANK_KIND: Record<string, string> = {
+  mcq: "Trắc nghiệm", true_false: "Đúng hay sai", multi_select: "Chọn nhiều đáp án", short: "Tự luận ngắn", build: "Tự dựng", open: "Tự luận mở",
+};
+
+// ADR-028 (1B): câu AI soạn từ tài liệu, Quản trị viên đã duyệt. Câu chấm tất định đi qua /attempts nên tính mức thành thạo;
+// câu tự luận mở chỉ để tự luyện (đáp án mẫu + nhận xét AI), không tính.
+function BankPractice({ level }: { level: Level }) {
+  const [skills, setSkills] = useState<{ skill_id: string; name: string; count: number }[] | null>(null);
+  const [skill, setSkill] = useState<string>("");
+  const [set, setSet] = useState<BankQuestion[] | null>(null);
+  const [index, setIndex] = useState(0);
+  const [failed, setFailed] = useState(false);
+  useEffect(() => { api.bankSkills().then((r) => setSkills(r.skills)).catch(() => setFailed(true)); }, []);
+  const load = useCallback(() => {
+    setSet(null); setIndex(0);
+    api.bank(skill || null, level).then((r) => setSet(r.questions)).catch(() => setFailed(true));
+  }, [skill, level]);
+  useEffect(load, [load]);
+  if (failed) return <Card className="max-w-3xl text-muted">Chưa tải được câu hỏi từ tài liệu. Hãy tải lại trang sau.</Card>;
+  if (!skills) return <Card className="max-w-3xl text-muted">Đang tải…</Card>;
+  if (skills.length === 0) return <Card className="max-w-3xl"><p className="text-ink">Chưa có câu luyện tập nào từ tài liệu.</p>
+    <p className="mt-1 text-sm text-muted">Câu ở đây do AI soạn từ tài liệu nhạc lý và được Quản trị viên duyệt trước khi xuất bản.</p></Card>;
+  const q = set?.[index];
+  return <div className="grid max-w-3xl gap-3">
+    <label className="flex flex-wrap items-center gap-2 text-sm font-semibold text-ink">Kỹ năng
+      <select value={skill} onChange={(e) => setSkill(e.target.value)} className="min-h-10 rounded-lg border border-line bg-surface px-2 font-normal">
+        <option value="">Tất cả kỹ năng</option>
+        {skills.map((s) => <option key={s.skill_id} value={s.skill_id}>{s.name} ({s.count} câu)</option>)}
+      </select></label>
+    <p className="text-sm text-muted">Mức độ đang chọn ứng với: Dễ = nhớ khái niệm, Vừa = hiểu, Khó = vận dụng. Câu chấm được tính vào mức thành thạo của kỹ năng.</p>
+    {!set && <Card className="text-muted">Đang tải câu hỏi…</Card>}
+    {set && set.length === 0 && <Card className="text-muted">Kỹ năng này chưa có câu.</Card>}
+    {set && q && <BankQuestionCard key={q.exercise_version_id} q={q} n={index + 1} total={set.length}
+      onNext={() => (index + 1 < set.length ? setIndex(index + 1) : load())} last={index + 1 >= set.length} />}
+  </div>;
+}
+
+function BankQuestionCard({ q, n, total, onNext, last }: { q: BankQuestion; n: number; total: number; onNext: () => void; last: boolean }) {
+  const multi = Boolean(q.allowed_input_methods?.includes("multi_choice"));
+  const [picked, setPicked] = useState<string[]>([]);
+  const [text, setText] = useState("");
+  const [result, setResult] = useState<AttemptResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const ready = q.options?.length ? picked.length > 0 : Boolean(text.trim());
+  const submit = async () => {
+    setBusy(true); setError(null);
+    try {
+      setResult(q.options?.length
+        ? await api.submitAttempt(q.exercise_version_id, multi ? picked : picked[0], multi ? "multi_choice" : "choice")
+        : await api.submitAttempt(q.exercise_version_id, text.trim(), "text"));
+    } catch (e) { setError((e as { message?: string }).message ?? "Chưa nộp được, thử lại."); }
+    finally { setBusy(false); }
+  };
+  return <Card>
+    <p className="text-xs font-semibold tracking-wide text-muted uppercase">Câu {n}/{total} · {BANK_KIND[q.kind] ?? q.kind}</p>
+    <p className="mt-1 text-lg leading-snug text-ink">{q.prompt}</p>
+    <div className="mt-3">
+      {q.open ? <OpenAnswer versionId={q.exercise_version_id} label={`Câu trả lời: ${q.prompt}`} />
+        : q.options?.length ? <ChoiceList options={q.options} multi={multi} value={picked} onChange={setPicked} disabled={Boolean(result)} label="Các phương án" />
+        : <input value={text} onChange={(e) => setText(e.target.value)} disabled={Boolean(result)} aria-label={`Câu trả lời: ${q.prompt}`}
+            placeholder="Gõ đáp án" className="min-h-11 w-full rounded-lg border border-line bg-surface px-3 font-mono text-base text-ink" />}
+    </div>
+    <div className="mt-3 flex flex-wrap gap-2">
+      {!q.open && !result && <Button disabled={busy || !ready} loading={busy} onClick={submit}>Kiểm tra</Button>}
+      {(q.open || result) && <Button variant={q.open && !result ? "secondary" : "primary"} onClick={onNext}>{last ? "Làm bộ câu khác" : "Câu tiếp theo"}</Button>}
+    </div>
+    {error && <div className="mt-3"><Alert tone="danger">{error}</Alert></div>}
+    {result && <ResultBox correct={result.correct}>
+      {!result.correct && result.feedback && <p>{result.feedback}</p>}
+      {result.explanation && <p className="mt-1">{result.explanation}</p>}
+    </ResultBox>}
+  </Card>;
+}
+
 const KIND_LABEL: Record<PracticeKind, string> = { chord: "Hợp âm", interval: "Quãng", scale: "Âm giai", roman: "Số La Mã" };
 
 // Tóm tắt đề để đọc lại trong lịch sử; chỉ ghép chữ, không tính nhạc lý.
 function describeQuestion(item: PracticeHistoryItem): string {
   const q = item.question;
   // Lượt bấm piano chấm theo phím (dễ hơn chấm chính tả), ghi rõ để người học không lẫn.
-  const via = q.input === "piano" ? " (bấm piano)" : "";
+  const via = q.input === "piano" ? " (bấm piano)" : q.input === "choice" ? " (trắc nghiệm)" : "";
   if (item.kind === "chord") return `Dựng ${q.symbol}${via}`;
-  if (item.kind === "interval") return `${q.lower} → ${q.upper}`;
+  if (item.kind === "interval") return `${q.lower} → ${q.upper}${via}`;
   if (item.kind === "scale") return `${q.tonic} ${q.scale_type === "major" ? "trưởng" : "thứ tự nhiên"}${via}`;
-  return `${q.chord} trong ${q.key} trưởng`;
+  return `${q.chord} trong ${q.key} trưởng${via}`;
 }
 
 function PracticeHistoryPanel({ history, failed }: { history: PracticeHistory | null; failed: boolean }) {

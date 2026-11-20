@@ -18,7 +18,18 @@ class PracticeAttemptIn(BaseModel):
     answer: str | list[str]
     # GĐ5: "piano" = người học bấm phím trên piano ảo. Một phím đen có hai tên (C#/Db) nên phím không thể hiện
     # cách viết; máy chủ chấm theo lớp cao độ (Engine pitch_class_only) và nhắc cách viết chuẩn. Chỉ cho chord/scale.
-    input: Literal["text", "piano"] = "text"
+    # ADR-028: "choice" = chọn trong 4 phương án Engine sinh (POST /practice/options); vẫn chấm bằng đúng hàm Engine.
+    input: Literal["text", "piano", "choice"] = "text"
+
+
+class PracticeOptionsIn(BaseModel):
+    kind: PracticeKind
+    question: dict[str, Any]
+
+
+class OpenFeedbackIn(BaseModel):
+    exercise_version_id: str = Field(min_length=1, max_length=80)
+    answer: str = Field(min_length=1, max_length=3000)
 
 
 class PracticeAttemptOut(BaseModel):

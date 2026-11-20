@@ -36,12 +36,13 @@ export function ProgressBar({ value, label, className = "" }: { value: number; l
   );
 }
 
-type BadgeTone = "primary" | "success" | "muted" | "warning";
+type BadgeTone = "primary" | "success" | "muted" | "warning" | "danger";
 const badgeTones: Record<BadgeTone, string> = {
   primary: "bg-primary-soft text-primary-strong",
   success: "bg-success-soft text-success",
   muted: "bg-bg text-muted border border-line",
   warning: "bg-warning-soft text-warning",
+  danger: "bg-danger-soft text-danger",
 };
 
 export function Badge({ tone = "primary", children, className = "" }: { tone?: BadgeTone; children: ReactNode; className?: string }) {

@@ -2,7 +2,7 @@ import { http, httpPost, type AuthResponse, type User } from "../lib/http";
 
 // Đường dẫn và hình dạng dữ liệu theo docs/decisions/ADR-004-hop-dong-xac-thuc.md.
 export type RegisterInput = { email: string; password: string; display_name: string };
-export type ProfilePatch = Partial<Pick<User, "display_name" | "preferred_instrument">>;
+export type ProfilePatch = Partial<Pick<User, "display_name" | "preferred_instrument">> & { avatar?: string | null };
 
 export const authApi = {
   register: (input: RegisterInput) => httpPost<AuthResponse>("/auth/register", input, { auth: false }),

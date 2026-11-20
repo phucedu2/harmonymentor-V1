@@ -7,7 +7,8 @@ import unicodedata
 from dataclasses import dataclass, field
 from typing import Any
 
-from ..music_engine.grading import grade_build_chord, grade_build_scale, grade_roman_numeral
+from ..music_engine.grading import (grade_build_chord, grade_build_scale, grade_identify_chord, grade_identify_interval,
+                                    grade_roman_numeral)
 from . import answer_match
 
 
@@ -100,9 +101,17 @@ def _structured_rubric(answer: Any, accepted: list[Any]) -> bool | None:
     return None
 
 
+OPEN_RUBRIC = "open_rubric"
+
+
+def is_open_question(strategy: str | None) -> bool:
+    """Câu tự luận mở do AI soạn (ADR-028): chấm theo rubric, không có đúng/sai tất định, không tính mastery."""
+    return strategy == OPEN_RUBRIC
+
+
 def is_self_check(strategy: str | None, grader_config: dict[str, Any]) -> bool:
-    """Thẻ ôn có ý mở (chấm theo từ khóa) để người học tự đánh giá sau khi lật thẻ."""
-    return strategy == "rubric" and grader_config.get("mode") == "contains_any"
+    """Thẻ ôn có ý mở (chấm theo từ khóa) để người học tự đánh giá sau khi lật thẻ; câu mở rubric cũng vậy."""
+    return (strategy == "rubric" and grader_config.get("mode") == "contains_any") or is_open_question(strategy)
 
 
 # HM-011 (RS-20): cách nhập hợp lệ do PHIÊN BẢN câu hỏi quyết định, không do trình duyệt tự khai.
@@ -134,6 +143,9 @@ def validate_input(options: list[str] | None, grader_config: dict[str, Any] | No
         raise InputRejected("INPUT_METHOD_NOT_ALLOWED")
     if method == "choice" and not (isinstance(answer, str) and answer in (options or [])):
         raise InputRejected("ANSWER_NOT_IN_OPTIONS")
+    if method == "multi_choice" and not (isinstance(answer, list) and answer and len(set(answer)) == len(answer)
+                                         and all(isinstance(a, str) and a in (options or []) for a in answer)):
+        raise InputRejected("ANSWER_NOT_IN_OPTIONS")
     if method == "piano":
         names = answer.split() if isinstance(answer, str) else None
         if not names or len(set(names)) != len(names) or any(n not in PIANO_NAMES for n in names):
@@ -147,6 +159,14 @@ def _grading_mode(grader_config: dict[str, Any], input_method: str | None) -> st
     if input_method == "piano":
         return "pitch_class_only"
     return grader_config.get("grading_mode", "strict_spelling")
+
+
+def _option_feedback(grader_config: dict[str, Any], answer: Any) -> str:
+    """Câu AI soạn có lời giải thích cho từng phương án sai (8A); câu chọn nhiều thì gộp lời của các phương án đã chọn."""
+    notes = grader_config.get("option_feedback") or {}
+    chosen = answer if isinstance(answer, list) else [answer]
+    said = [notes[a] for a in chosen if isinstance(a, str) and notes.get(a)]
+    return " ".join(said) if said else "Hãy nhớ lại khái niệm rồi thử lại."
 
 
 def grade_payload(strategy: str, answer_key: dict[str, Any], grader_config: dict[str, Any], answer: Any,
@@ -168,6 +188,10 @@ def grade_payload(strategy: str, answer_key: dict[str, Any], grader_config: dict
                 _split_notes(answer),
                 grading_mode=mode,
             )
+        elif kind == "identify_interval":
+            result = grade_identify_interval(grader_config.get("lower"), grader_config.get("upper"), str(answer).strip())
+        elif kind == "identify_chord":
+            result = grade_identify_chord(_split_notes(grader_config.get("notes", "")), str(answer).strip())
         elif kind == "roman_numeral":
             # "iim7" là cách jazz viết ii7 (chữ thường đã là thứ). "V 7" vẫn sai: nhóm chốt ở demo 10/11 là
             # ký hiệu phải viết liền, nên ở đây không bỏ khoảng trắng giữa số La Mã và chỉ số.
@@ -195,7 +219,12 @@ def grade_payload(strategy: str, answer_key: dict[str, Any], grader_config: dict
 
     if strategy == "exact":
         expected = answer_key.get("expected")
-        if isinstance(expected, list):
+        if isinstance(expected, list) and grader_config.get("unordered"):
+            # Câu chọn nhiều (ADR-028): đúng khi chọn ĐỦ và CHỈ các phương án đúng, thứ tự không quan trọng.
+            got = answer if isinstance(answer, list) else [answer]
+            correct = sorted(_normalize_text(x, {**grader_config, "unordered": False}) for x in got) == \
+                sorted(_normalize_text(x, {**grader_config, "unordered": False}) for x in expected)
+        elif isinstance(expected, list):
             got = answer if isinstance(answer, list) else _split_notes(answer)
             correct = [_normalize_text(x, grader_config) for x in got] == [_normalize_text(x, grader_config) for x in expected]
         elif not grader_config.get("case_sensitive") and (symbolic := answer_match.symbolic_equal(answer, expected)) is not None:
@@ -212,7 +241,7 @@ def grade_payload(strategy: str, answer_key: dict[str, Any], grader_config: dict
             correct=correct,
             score=1.0 if correct else 0.0,
             primary_error=None if correct else "INCORRECT_ANSWER",
-            feedback="Chính xác." if correct else "Hãy nhớ lại khái niệm rồi thử lại.",
+            feedback="Chính xác." if correct else _option_feedback(grader_config, answer),
             errors=[] if correct else [{"code": "INCORRECT_ANSWER"}],
         )
 

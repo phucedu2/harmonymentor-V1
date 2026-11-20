@@ -22,6 +22,8 @@ from ..db.session import get_db
 from ..content.overrides import effective_blocks, lesson_hidden
 from ..core.errors import AppError
 from ..services.grading_service import allowed_input_methods
+from ..services.mastery_service import counts_for_mastery
+from ..services.quiz_service import AI_TRACK
 from ..services.learning_service import (
     LessonHasNoExercises,
     LessonNotMastered,
@@ -40,11 +42,17 @@ def _visible_blocks(lesson: Lesson, db: Session) -> list:
 
 
 def _summary(lesson: Lesson, order: int, db: Session) -> LessonSummaryOut:
+    versions = [v for v in (current_version(x) for x in lesson.exercises) if v is not None]
+    ai_generated = lesson.track == AI_TRACK
     return LessonSummaryOut(
         id=lesson.id, order=order, track=lesson.track, title=lesson.title,
         status=lesson.status, objectives=lesson.objectives or [], block_count=len(_visible_blocks(lesson, db)),
-        exercise_count=len([x for x in lesson.exercises if current_version(x) is not None]),
+        exercise_count=len(versions),
         review_item_count=len(lesson.review_items),
+        ai_generated=ai_generated,
+        # Bài "Mở rộng" khi xuất bản đã ghi counts_for_mastery=false vào mọi câu; suy từ đó, không cần cột mới.
+        expansion=ai_generated and bool(versions) and all(not counts_for_mastery(v.grader_config) for v in versions),
+        published_at=lesson.created_at if ai_generated else None,
     )
 
 

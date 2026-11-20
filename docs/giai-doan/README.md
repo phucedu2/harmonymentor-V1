@@ -53,9 +53,14 @@ Các giai đoạn 0.2 → 2.3 là lộ trình của bản code gốc (zip v0.1.0
 | [gop-y-thay](gop-y-thay/) | v0.5.4-dev | Góp ý thầy T1–T6, cổng G6 (T6): bộ phân loại liên quan nhạc lý tự train, công tắc RELEVANCE_SCORER, MODEL_CARD, 15/11 | [G6_BAO_CAO.md](gop-y-thay/G6_BAO_CAO.md) |
 | [gop-y-thay](gop-y-thay/) | v0.5.4-dev | Góp ý thầy T1–T6, cổng G7: bản đồ góp ý, demo 5 phút, tổng kết, 15/11 | [G7_BAO_CAO.md](gop-y-thay/G7_BAO_CAO.md) |
 | [../review123](../review123/) | v0.5.4-dev | Tài liệu eProject Review 01–03 song ngữ (.docx dựng bằng script), test thật và 27 ca thủ công, 17/11 | [BAO_CAO_BAN_GIAO.md](../review123/BAO_CAO_BAN_GIAO.md) |
+| [gop-y-thay](gop-y-thay/) | v0.5.4-dev | Góp ý thầy T1–T6, G8: chấm nhạc lý 300 câu AI Tutor với Gemini thật (92,3% đúng), 19/11 | [G8_BAO_CAO.md](gop-y-thay/G8_BAO_CAO.md) |
 
 ## Quy ước cho giai đoạn sau
 
+- [`ai-luyen-tap/`](ai-luyen-tap/BAO_CAO.md): AI sinh bài luyện tập trắc nghiệm + tự luận từ tài liệu, trắc nghiệm Engine ở Luyện tập (18/11/2026, ADR-028).
+- [`ai-soan-bai-dot2/`](ai-soan-bai-dot2/BAO_CAO.md): AI tóm tắt cả tài liệu chạy nền, chống trùng kiến thức, mục "Kiến thức mới", ảnh đại diện con vật, cửa sổ AI Tutor (18/11/2026, ADR-029).
+- [`ml-dinh-tuyen/`](ml-dinh-tuyen/BAO_CAO.md): train lại bộ phân loại câu hỏi AI Tutor theo quy trình handson-ml3 (chia 3 tập, loại câu rò, GridSearchCV, F1, khoảng tin cậy); bật công thức cũ trên dữ liệu đã bỏ câu rò theo quyết định nhóm (19/11/2026, ADR-030).
+- [`ml-du-doan/`](ml-du-doan/BAO_CAO.md): model tự train dự đoán học sinh làm đúng câu tiếp theo, sau cờ PREDICT_ENABLED, theo quy trình handson-ml3 (19/11/2026, ADR-031).
 - Mỗi giai đoạn mới (ví dụ `gd2-goi-y`) tạo thư mục `docs/giai-doan/<tên giai đoạn>/`, đặt báo cáo triển khai và file kiểm chứng của giai đoạn đó vào đây, rồi thêm một dòng vào bảng trên.
 - Báo cáo PR vẫn ở [`docs/bao-cao/`](../bao-cao/), ảnh và minh chứng chấm điểm ở [`docs/minh-chung/`](../minh-chung/), quyết định ở [`docs/decisions/`](../decisions/).
 - Đặc tả dùng chung cho nhiều giai đoạn (`SKILL_GRAPH.md`, `LESSON_SPECIFICATIONS.md`, `CURRICULUM_SOURCE_MATRIX.md`) và minh chứng mốc chấm (`CP1_*.md`) giữ ở `docs/`.
