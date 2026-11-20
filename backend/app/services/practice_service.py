@@ -39,6 +39,7 @@ def _as_text(answer: str | list[str]) -> str:
 
 
 PIANO_KINDS = ("chord", "scale")
+PITCH_INPUTS = ("piano", "micro")
 
 
 class PracticeInputInvalid(ValueError):
@@ -49,10 +50,13 @@ def grade_practice(kind: str, question: dict[str, Any], answer: str | list[str],
     missing = [name for name in _REQUIRED[kind] if not isinstance(question.get(name), str) or not question[name]]
     if missing:
         raise PracticeQuestionInvalid(", ".join(missing))
-    if input_mode == "piano" and kind not in PIANO_KINDS:
+    # ADR-032: "micro" = người học đàn/hát từng nốt, trình duyệt đo tần số rồi Engine đặt tên nốt.
+    # Giống bấm phím: âm thanh không cho biết cách viết, nên cùng chế độ chấm và cùng dạng bài.
+    by_pitch = input_mode in PITCH_INPUTS
+    if by_pitch and kind not in PIANO_KINDS:
         raise PracticeInputInvalid(kind)
     # Bấm phím không thể hiện cách viết (C# hay Db), nên chỉ chấm lớp cao độ; vẫn do Music Engine chấm.
-    mode = "pitch_class_only" if input_mode == "piano" else "strict_spelling"
+    mode = "pitch_class_only" if by_pitch else "strict_spelling"
     if kind == "chord":
         result = grading.grade_build_chord(question["symbol"], _as_list(answer), grading_mode=mode)
     elif kind == "scale":
@@ -61,19 +65,20 @@ def grade_practice(kind: str, question: dict[str, Any], answer: str | list[str],
         return grading.grade_identify_interval(question["lower"], question["upper"], _as_text(answer))
     else:
         return grading.grade_roman_numeral(question["key"], question["chord"], _as_text(answer))
-    if input_mode == "piano" and result["correct"]:
+    if by_pitch and result["correct"]:
         expected = " ".join(result["expected"]) if isinstance(result["expected"], list) else result["expected"]
-        result = {**result, "message_vi": f"Đúng phím. Khi viết tên nốt, cách viết chuẩn là: {expected}."}
+        what = "Đúng phím" if input_mode == "piano" else "Đúng cao độ"
+        result = {**result, "message_vi": f"{what}. Khi viết tên nốt, cách viết chuẩn là: {expected}."}
     return result
 
 
 def record_practice(db: Session, user: User, kind: str, level: str | None, question: dict[str, Any],
                     answer: str | list[str], input_mode: str = "text") -> tuple[PracticeAttempt, dict[str, Any]]:
     result = grade_practice(kind, question, answer, input_mode)
-    # Chỉ lưu đúng các trường của đề, không lưu thứ client gửi kèm. Lượt bấm piano ghi thêm "input" để lịch sử
+    # Chỉ lưu đúng các trường của đề, không lưu thứ client gửi kèm. Lượt bấm piano/micro ghi thêm "input" để lịch sử
     # biết lượt đó chấm theo lớp cao độ (dễ hơn chấm chính tả), không trộn lẫn khi thống kê.
     clean_question = {name: question[name] for name in _REQUIRED[kind]}
-    if input_mode in ("piano", "choice"):
+    if input_mode in ("piano", "choice", "micro"):
         clean_question["input"] = input_mode
     row = PracticeAttempt(
         id=str(uuid4()), user_id=user.id, kind=kind, level=level, question=clean_question, answer=answer,

@@ -6,6 +6,7 @@ import {
 import { ChoiceList, OpenAnswer } from "../components/learning/AnswerInputs";
 // Practice dùng chung piano tương tác với Learn (v0.5.3); Piano.tsx dạng SVG chỉ còn cho trang chủ.
 import VirtualPiano from "../components/music/VirtualPiano";
+import MicNoteInput from "../components/music/MicNoteInput";
 import { Alert } from "../components/ui/Alert";
 import { Button } from "../components/ui/Button";
 import { Badge, Card, CardTitle, PageHeading, ResultBox, ToggleGroup } from "../components/ui/Page";
@@ -133,11 +134,14 @@ function Exercise(props: {
   const [answer, setAnswer] = useState("");
   // GĐ5: hợp âm và âm giai trả lời được bằng cách bấm piano; máy chủ chấm theo phím (lớp cao độ) rồi nhắc cách viết.
   // ADR-028: "Trắc nghiệm" = chọn 1 trong 4 phương án do Music Engine sinh (lỗi hay gặp); chấm vẫn bằng đúng hàm Engine.
-  const [mode, setMode] = useState<"text" | "piano" | "choice">("text");
+  // ADR-032: "micro" = đàn/hát từng nốt, chấm theo cao độ giống bấm phím.
+  const [mode, setMode] = useState<"text" | "piano" | "choice" | "micro">("text");
   const [keys, setKeys] = useState<string[]>([]);
   const [options, setOptions] = useState<string[] | null>(null);
   const [picked, setPicked] = useState<string[]>([]);
   const piano = props.showPiano && mode === "piano";
+  const mic = props.showPiano && mode === "micro";
+  const [micNotes, setMicNotes] = useState<string[]>([]);
   const choosing = mode === "choice";
   const g = useGrader();
   const questionKey = JSON.stringify(props.question);
@@ -150,48 +154,54 @@ function Exercise(props: {
     return () => { live = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [choosing, questionKey, props.kind]);
-  const next = () => { setAnswer(""); setKeys([]); setPicked([]); g.reset(); props.onNext(); };
+  const next = () => { setAnswer(""); setKeys([]); setMicNotes([]); setPicked([]); g.reset(); props.onNext(); };
   const expected = g.result ? ([] as string[]).concat(g.result.expected) : [];
-  const given = piano ? keys : choosing ? splitNotes(picked[0] ?? "") : splitNotes(answer);
+  const given = piano ? keys : mic ? micNotes : choosing ? splitNotes(picked[0] ?? "") : splitNotes(answer);
   const submit = async () => {
     const chosen = picked[0] ?? "";
     const res = piano
       ? await api.practiceAttempt(props.kind, props.ctx.level, props.question, keys, "piano")
+      : mic
+      ? await api.practiceAttempt(props.kind, props.ctx.level, props.question, micNotes, "micro")
       : choosing
       ? await api.practiceAttempt(props.kind, props.ctx.level, props.question, props.listAnswer ? splitNotes(chosen) : chosen, "choice")
       : await api.practiceAttempt(props.kind, props.ctx.level, props.question, props.listAnswer ? splitNotes(answer) : answer.trim());
     props.ctx.onRecorded();
     return res;
   };
-  const ready = piano ? keys.length > 0 : choosing ? picked.length > 0 : Boolean(answer.trim());
+  const ready = piano ? keys.length > 0 : mic ? micNotes.length > 0 : choosing ? picked.length > 0 : Boolean(answer.trim());
   const modes = [{ value: "text" as const, label: props.showPiano ? "Gõ tên nốt" : "Gõ đáp án" }, { value: "choice" as const, label: "Trắc nghiệm" },
-    ...(props.showPiano ? [{ value: "piano" as const, label: "Bấm piano" }] : [])];
+    ...(props.showPiano ? [{ value: "piano" as const, label: "Bấm piano" }, { value: "micro" as const, label: "Đàn bằng micro" }] : [])];
   return (
     <Card className="max-w-3xl">
       <p className="text-xl leading-snug text-ink">{props.prompt}</p>
-      <p className="mt-2 text-sm text-muted">{choosing ? "Chọn một phương án. Các phương án sai là lỗi người học hay mắc, đọc kỹ chính tả tên nốt." : piano ? (props.kind === "scale"
+      <p className="mt-2 text-sm text-muted">{mic ? (props.kind === "scale"
+        ? "Đàn hoặc hát lần lượt 7 nốt đi lên, mỗi nốt giữ khoảng nửa giây. Máy chấm theo cao độ, rồi nhắc cách viết tên nốt chuẩn."
+        : "Đàn từng nốt của hợp âm (rải từng nốt, không đánh cùng lúc), thứ tự nào cũng được. Máy chấm theo cao độ.") : choosing ? "Chọn một phương án. Các phương án sai là lỗi người học hay mắc, đọc kỹ chính tả tên nốt." : piano ? (props.kind === "scale"
         ? "Bấm lần lượt 7 phím đi lên theo thứ tự bậc. Máy chấm theo phím, rồi nhắc bạn cách viết tên nốt chuẩn."
         : "Bấm các phím của hợp âm (thứ tự nào cũng được). Máy chấm theo phím, rồi nhắc bạn cách viết tên nốt chuẩn.") : props.hint}</p>
       <ToggleGroup className="mt-3" label="Cách trả lời" value={mode} onChange={(v) => { setMode(v); g.reset(); }} options={modes} />
+      {mic && <MicNoteInput notes={micNotes} onChange={setMicNotes} disabled={Boolean(g.result)}
+        highlighted={g.result ? expected : []} incorrect={g.result && !g.result.correct ? given : []} />}
       {piano && <VirtualPiano selectionMode selectedNotes={keys} onSelectionChange={setKeys} showLabels={false} startMidi={48} endMidi={72}
         highlightedPitchClasses={g.result ? expected : []} incorrectPitchClasses={g.result && !g.result.correct ? given : []} />}
       <form className="mt-4 flex flex-wrap gap-2" onSubmit={(e) => { e.preventDefault(); if (ready) g.run(submit); }}>
         {choosing && <div className="w-full">{options === null ? <p className="text-sm text-muted">Đang tạo phương án…</p>
           : options.length === 0 ? <p className="text-sm text-muted">Chưa tạo được phương án cho đề này, bấm “Câu khác”.</p>
           : <ChoiceList options={options} value={picked} onChange={setPicked} disabled={Boolean(g.result)} label="Các phương án" />}</div>}
-        {!piano && !choosing && <input className="min-h-11 min-w-0 flex-[1_1_14rem] rounded-lg border border-line bg-surface px-3 font-mono text-base text-ink placeholder:text-muted" value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder={props.placeholder} aria-label="Đáp án" />}
+        {!piano && !mic && !choosing && <input className="min-h-11 min-w-0 flex-[1_1_14rem] rounded-lg border border-line bg-surface px-3 font-mono text-base text-ink placeholder:text-muted" value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder={props.placeholder} aria-label="Đáp án" />}
         <Button type="submit" disabled={g.busy || !ready}>Kiểm tra</Button>
         <Button type="button" variant="secondary" onClick={next}>Câu khác</Button>
       </form>
       {g.error && <div className="mt-3"><Alert tone="danger">{g.error}</Alert></div>}
       {g.result && (
         <ResultBox correct={g.result.correct}>
-          {(!g.result.correct || piano) && <p>{g.result.message_vi}</p>}
+          {(!g.result.correct || piano || mic) && <p>{g.result.message_vi}</p>}
           {!g.result.correct && <p>Đáp án đúng: <b className="font-mono">{expected.join(" ")}</b></p>}
           {g.result.convention_verified === false && <p className="text-xs text-muted">Lưu ý: cách viết ký hiệu này chưa được đối chiếu với tài liệu nguồn.</p>}
         </ResultBox>
       )}
-      {props.showPiano && !piano && g.result && <VirtualPiano highlightedPitchClasses={expected} incorrectPitchClasses={g.result.correct ? [] : given} showLabels={false} startMidi={48} endMidi={72} />}
+      {props.showPiano && !piano && !mic && g.result && <VirtualPiano highlightedPitchClasses={expected} incorrectPitchClasses={g.result.correct ? [] : given} showLabels={false} startMidi={48} endMidi={72} />}
     </Card>
   );
 }
@@ -328,7 +338,7 @@ const KIND_LABEL: Record<PracticeKind, string> = { chord: "Hợp âm", interval:
 function describeQuestion(item: PracticeHistoryItem): string {
   const q = item.question;
   // Lượt bấm piano chấm theo phím (dễ hơn chấm chính tả), ghi rõ để người học không lẫn.
-  const via = q.input === "piano" ? " (bấm piano)" : q.input === "choice" ? " (trắc nghiệm)" : "";
+  const via = q.input === "piano" ? " (bấm piano)" : q.input === "micro" ? " (đàn qua micro)" : q.input === "choice" ? " (trắc nghiệm)" : "";
   if (item.kind === "chord") return `Dựng ${q.symbol}${via}`;
   if (item.kind === "interval") return `${q.lower} → ${q.upper}${via}`;
   if (item.kind === "scale") return `${q.tonic} ${q.scale_type === "major" ? "trưởng" : "thứ tự nhiên"}${via}`;

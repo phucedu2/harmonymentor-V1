@@ -379,6 +379,9 @@ export const api = {
   // Legacy Practice routes retained during migration.
   transpose: (note: string, interval: string) =>
     engineCall<{ note: string }>(`/transpose?note=${encodeURIComponent(note)}&interval=${encodeURIComponent(interval)}`),
+  // ADR-032: micro chỉ đo Hz; Engine đặt tên nốt (tên thăng, chấm theo pitch_class_only như bấm phím).
+  noteFromFrequency: (hz: number) =>
+    engineCall<{ note: string; midi: number; cents: number; hz: number }>(`/note-from-frequency?hz=${hz.toFixed(2)}`),
   diatonic: (tonic: string, sevenths: boolean) =>
     engineCall<{ degree: number; numeral: string; chord: string; convention_verified: boolean }[]>(
       `/diatonic/${encodeURIComponent(tonic)}?sevenths=${sevenths}`,
@@ -393,7 +396,7 @@ export const api = {
     enginePost<GradeResult>("/grade/roman-numeral", { key, chord, answer }),
 
   practiceAttempt: (kind: PracticeKind, level: PracticeLevel, question: Record<string, string>, answer: string | string[],
-    input: "text" | "piano" | "choice" = "text") =>
+    input: "text" | "piano" | "choice" | "micro" = "text") =>
     apiPost<PracticeAttemptResult>("/practice/attempts", { kind, level, question, answer, input }),
   practiceOptions: (kind: PracticeKind, question: Record<string, string>) =>
     apiPost<{ options: string[] }>("/practice/options", { kind, question }),
