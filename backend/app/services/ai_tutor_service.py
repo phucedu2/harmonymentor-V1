@@ -13,6 +13,8 @@ Gửi cho Gemini chỉ những gì SRS 03 Bảng 3 cho phép: câu hỏi, tối 
 
 from __future__ import annotations
 
+import logging
+
 import re
 import time
 import uuid
@@ -216,6 +218,9 @@ def anchor_note(question: str, reply: str, facts: Sequence[dict[str, Any]]) -> s
     return f"{FACT_NOTE} " + " ".join(fact_text(f) for f in miss) + " Hãy nêu đúng kết quả này (viết thẳng, không từ chối, không tự tính lại)."
 
 
+log = logging.getLogger(__name__)
+
+
 def facts_only_answer(dec, titles: dict[str, str], facts: Sequence[dict[str, Any]], reason: str, flow: str) -> Draft:
     """Câu viết sẵn từ Music Engine khi AI hai lần liền không nêu đúng dữ kiện (G8)."""
     text = " ".join(fact_text(f) for f in facts) + _pointer(dec, titles)
@@ -247,6 +252,10 @@ def _llm_round(provider: LLMProvider, build, allowed: dict[str, Hit], titles: di
             # Lần 2 vẫn có trích dẫn lạ thì bỏ trích dẫn đó thay vì bỏ cả câu trả lời đúng nhạc lý.
             ans.citations = [c for c in ans.citations if c.block_id in allowed]
             return ans, guard, results, None
+        if guard.contradicted:
+            # G8: để biết vì sao rơi dự phòng; chỉ ghi khẳng định nhạc lý, không ghi câu hỏi hay thông tin người dùng.
+            log.warning("tutor_guard_contradicted round=%d %s", round_no,
+                        [(c.tool, c.origin, c.claimed, c.engine) for c in guard.contradicted])
         reason = ("engine_contradiction" if guard.contradicted else
                   ("fact_missing" if extra and extra.startswith(FACT_NOTE) else "answer_leak" if extra else "bad_citation"))
         correction = pr.correction_note([c.as_dict() for c in guard.contradicted], bad_cites, False)
@@ -264,8 +273,8 @@ def _finish(ans: TutorAnswer, guard: GuardResult, allowed: dict[str, Hit], title
         seen.add(c.block_id)
         cites.append(_citation(allowed[c.block_id], titles))  # tiêu đề lấy từ kho, không lấy chữ AI viết
     merged = _merge_results(results)
-    return Draft(ans.reply, ans.intent, cites, [c.as_dict() for c in guard.claims], "ok", "llm", ans.hint_level,
-                 list(ans.suggested_actions), merged, len(results))
+    return Draft(fact_anchor.scrub_internal(ans.reply), ans.intent, cites, [c.as_dict() for c in guard.claims], "ok",
+                 "llm", ans.hint_level, list(ans.suggested_actions), merged, len(results))
 
 
 def _weak_skill_names(db: Session, user_id: str, limit: int = 3) -> list[str]:
@@ -375,7 +384,7 @@ def _general_answer(db: Session, user: User, question: str, turns: Sequence[tupl
         # Gemini là chốt thứ hai: câu không phải âm nhạc thì dùng câu từ chối viết sẵn, không tin chữ AI viết.
         return Draft(fb.OUT_OF_SCOPE, "out_of_scope", [], [], "ok", "out_of_scope", 0, [], merged, len(results),
                      flow="C", source_label=fb.LABEL_REFUSE)
-    text = ans.reply.rstrip() + _pointer(dec, titles)
+    text = fact_anchor.scrub_internal(ans.reply).rstrip() + _pointer(dec, titles)
     actions = list(ans.suggested_actions) or ([f"Mở bài {dec.nearest_lesson}"] if dec.nearest_lesson else [])
     return Draft(text, ans.intent, [], [c.as_dict() for c in guard.claims], "ok", "general_llm", ans.hint_level,
                  actions, merged, len(results), flow="B", source_label=fb.LABEL_GENERAL,

@@ -38,12 +38,42 @@ _NUM_WORDS = {"hai": "2", "ba": "3", "bốn": "4", "tư": "4", "năm": "5", "sá
 _NUM = r"(?P<num>[1-8]|hai|ba|bốn|tư|năm|sáu|bảy|tám)"
 _IV_TAIL = (rf"(?:(?P<code>[PMmAd][1-8])(?![A-Za-z0-9])|{_NUM}\s*(?P<qual>trưởng|thứ|đúng|tăng|giảm)(?![\wÀ-ỹ]))")
 INTERVAL_WITH_NAME = re.compile(
-    rf"(?<![A-Za-z0-9#])(?P<lo>{NOTE})\s*(?:–|—|-|→|lên)\s*(?P<hi>{NOTE})(?![A-Za-z0-9#–—-])\s*"
+    rf"(?<![A-Za-z0-9#])(?P<lo>{NOTE})\s*(?:–|—|-|→|lên(?:\s+(?:đến|tới))?|đến|tới)\s*(?P<hi>{NOTE})(?![A-Za-z0-9#–—-])\s*"
     rf"(?:(?:tạo\s+(?:thành|nên)|tạo|là|=|:)\s*)(?:một\s+)?(?:quãng\s*)?{_IV_TAIL}")
 # "B và F tạo quãng ba giảm": thứ tự nốt không rõ, nên đúng nếu khớp một trong hai chiều (xem guardrail).
 INTERVAL_PAIR_WITH_NAME = re.compile(
     rf"(?<![A-Za-z0-9#])(?P<lo>{NOTE})\s+(?:và|với)\s+(?P<hi>{NOTE})(?![A-Za-z0-9#])\s*(?:\([^)]*\)\s*)?"
     rf"(?:(?:tạo\s+(?:thành|nên)|tạo|là|=|:)\s*)(?:một\s+)?quãng\s*{_IV_TAIL}")
+
+# G8 (19/11/2026): Gemini đúng tên quãng nhưng giải thích sai số nửa cung ("M6 có độ rộng 8 nửa cung", "A lên C là
+# quãng 3 chứa 4 nửa cung"). Chỉ bắt câu khẳng định trực tiếp: đoạn giữa không được có quãng khác hay từ so sánh
+# ("M7 rộng hơn m7 một nửa cung" là nói hiệu, không phải kích thước). "và" mở mệnh đề mới: "từ C lên A là quãng 6,
+# và khoảng cách cao độ là 8 nửa cung" nói về C–Ab của câu trước, không phải C–A.
+_SEMI_WORDS = {"một": 1, "hai": 2, "ba": 3, "bốn": 4, "năm": 5, "sáu": 6, "bảy": 7, "tám": 8, "chín": 9, "mười": 10,
+               "mười một": 11, "mười hai": 12}
+_SEMI = r"(?P<n>1[0-2]|[0-9]|mười một|mười hai|mười|một|hai|ba|bốn|năm|sáu|bảy|tám|chín)\s*nửa\s*cung"
+_GAP = (r"(?:(?!hơn|so với|khác|lệch|thêm|bớt|nâng|hạ|cộng|trừ|tổng|hiệu|nếu|giữa|từ\s|[PMmAd][1-8](?![0-9])|"
+        r"nửa\s*cung|\b(?:lên|đến|tới|và)\b)[^.\n;!?])")
+_SIZE_VERB = r"(?:có|gồm|chứa|bằng|rộng|là|=|tương đương)"
+INTERVAL_SIZE_CLAIM = re.compile(
+    rf"(?<![A-Za-z0-9#])(?:(?P<code>[PMmAd][1-8])(?![A-Za-z0-9])|[Qq]uãng\s+{_NUM}\s*(?P<qual>trưởng|thứ|đúng|tăng|giảm)"
+    rf"(?![\wÀ-ỹ])){_GAP}{{0,60}}?{_SIZE_VERB}[^.\n;!?0-9]{{0,15}}?{_SEMI}")
+NOTES_SEMITONE_CLAIM = re.compile(
+    rf"(?<![A-Za-z0-9#])(?P<lo>{NOTE})\s*(?:lên(?:\s+(?:đến|tới))?|đến|tới|→)\s*(?P<hi>{NOTE})(?![A-Za-z0-9#])"
+    rf"{_GAP}{{0,60}}?{_SIZE_VERB}[^.\n;!?0-9]{{0,15}}?{_SEMI}")
+
+
+_COMPARE_BEFORE = re.compile(r"(?:hơn|so với|khác)\s*(?:quãng\s*)?$")
+
+
+def is_comparison(text: str, start: int) -> bool:
+    """ "rộng hơn quãng m7 một nửa cung": quãng đứng sau từ so sánh không phải chủ ngữ của số nửa cung."""
+    return _COMPARE_BEFORE.search(text[max(0, start - 20):start]) is not None
+
+
+def semitone_count(match: re.Match) -> int:
+    n = match["n"]
+    return int(n) if n.isdigit() else _SEMI_WORDS[n]
 
 
 # "V7 trong G trưởng là D7", "V7 của G là G7", "Am7 là vi7 trong C trưởng". Chỉ giọng trưởng: giọng thứ
@@ -96,3 +126,9 @@ def solfege_to_letters(text: str) -> str:
         return " ".join(one(t) for t in toks)
 
     return _SOLF_SEQ.sub(repl, unicodedata.normalize("NFC", text))
+
+
+# G8 (20/11/2026): ký hiệu hợp âm rồi, cách một đoạn trong cùng câu, mới tới "gồm các nốt ..." (xem guardrail).
+SHELL_LIST_AFTER = re.compile(
+    rf"(?<![A-Za-z0-9#])(?P<sym>{NOTE}(?:maj7|M7|m7b5|ø7|dim7|m7|7))(?![A-Za-z0-9#])[^.!?\n]*?"
+    rf"(?:gồm(?: có)?(?: các nốt)?|có các nốt|có nốt|là|=|:)\s*(?P<notes>{NOTE_SEQ})(?![A-Za-z0-9#])")
