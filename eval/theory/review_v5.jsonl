@@ -1,0 +1,300 @@
+{"id": "T001", "verdict": "dung", "note": ""}
+{"id": "T002", "verdict": "dung", "note": ""}
+{"id": "T003", "verdict": "sai", "note": "Nốt đúng (F# A C#) nhưng gọi quãng là \"ba trưởng nhỏ\"; F#m dùng quãng ba thứ"}
+{"id": "T004", "verdict": "dung", "note": ""}
+{"id": "T005", "verdict": "dung", "note": ""}
+{"id": "T006", "verdict": "dung", "note": ""}
+{"id": "T007", "verdict": "dung", "note": ""}
+{"id": "T008", "verdict": "dung", "note": "Bộ chấm tự động bắt nhầm \"quãng năm giảm\" là thuật ngữ sai"}
+{"id": "T009", "verdict": "dung", "note": ""}
+{"id": "T010", "verdict": "dung", "note": ""}
+{"id": "T011", "verdict": "sai", "note": "Nốt đúng (Db F Ab) nhưng ghi \"F đến Ab là quãng năm đúng\"; F–Ab là m3, Db–Ab mới là P5"}
+{"id": "T012", "verdict": "dung", "note": ""}
+{"id": "T013", "verdict": "dung", "note": ""}
+{"id": "T014", "verdict": "dung", "note": ""}
+{"id": "T015", "verdict": "dung", "note": ""}
+{"id": "T016", "verdict": "dung", "note": ""}
+{"id": "T017", "verdict": "dung", "note": "Bộ chấm tự động bắt nhầm \"quãng năm giảm\""}
+{"id": "T018", "verdict": "dung", "note": ""}
+{"id": "T019", "verdict": "dung", "note": ""}
+{"id": "T020", "verdict": "dung", "note": "Nốt đúng; lộ chữ nội bộ ENGINE_FACTS (lỗi trình bày)"}
+{"id": "T021", "verdict": "dung", "note": ""}
+{"id": "T022", "verdict": "dung", "note": ""}
+{"id": "T023", "verdict": "dung", "note": ""}
+{"id": "T024", "verdict": "dung", "note": ""}
+{"id": "T025", "verdict": "dung", "note": ""}
+{"id": "T026", "verdict": "dung", "note": ""}
+{"id": "T027", "verdict": "dung", "note": ""}
+{"id": "T028", "verdict": "dung", "note": ""}
+{"id": "T029", "verdict": "dung", "note": ""}
+{"id": "T030", "verdict": "dung", "note": ""}
+{"id": "T031", "verdict": "dung", "note": ""}
+{"id": "T032", "verdict": "dung", "note": ""}
+{"id": "T033", "verdict": "dung", "note": ""}
+{"id": "T034", "verdict": "dung", "note": ""}
+{"id": "T035", "verdict": "dung", "note": ""}
+{"id": "T036", "verdict": "dung", "note": ""}
+{"id": "T037", "verdict": "dung", "note": ""}
+{"id": "T038", "verdict": "dung", "note": ""}
+{"id": "T039", "verdict": "tranh_luan", "note": "Nốt đúng (A C E G B); gọi Am9 là \"hợp âm trưởng-thứ\" không chuẩn (hợp âm chín thứ)"}
+{"id": "T040", "verdict": "dung", "note": ""}
+{"id": "T041", "verdict": "dung", "note": ""}
+{"id": "T042", "verdict": "dung", "note": ""}
+{"id": "T043", "verdict": "dung", "note": ""}
+{"id": "T044", "verdict": "dung", "note": ""}
+{"id": "T045", "verdict": "dung", "note": ""}
+{"id": "T046", "verdict": "dung", "note": ""}
+{"id": "T047", "verdict": "dung", "note": ""}
+{"id": "T048", "verdict": "dung", "note": ""}
+{"id": "T049", "verdict": "dung", "note": ""}
+{"id": "T050", "verdict": "dung", "note": ""}
+{"id": "T051", "verdict": "dung", "note": ""}
+{"id": "T052", "verdict": "dung", "note": ""}
+{"id": "T053", "verdict": "dung", "note": ""}
+{"id": "T054", "verdict": "dung", "note": ""}
+{"id": "T055", "verdict": "dung", "note": ""}
+{"id": "T056", "verdict": "dung", "note": ""}
+{"id": "T057", "verdict": "dung", "note": ""}
+{"id": "T058", "verdict": "dung", "note": ""}
+{"id": "T059", "verdict": "dung", "note": ""}
+{"id": "T060", "verdict": "dung", "note": ""}
+{"id": "T061", "verdict": "dung", "note": ""}
+{"id": "T062", "verdict": "dung", "note": ""}
+{"id": "T063", "verdict": "dung", "note": ""}
+{"id": "T064", "verdict": "dung", "note": ""}
+{"id": "T065", "verdict": "dung", "note": ""}
+{"id": "T066", "verdict": "dung", "note": ""}
+{"id": "T067", "verdict": "dung", "note": ""}
+{"id": "T068", "verdict": "dung", "note": ""}
+{"id": "T069", "verdict": "dung", "note": "Có cụm \"theo kết quả từ hệ thống\" (lộ cách làm, không sai nhạc lý)"}
+{"id": "T070", "verdict": "dung", "note": ""}
+{"id": "T071", "verdict": "dung", "note": ""}
+{"id": "T072", "verdict": "dung", "note": ""}
+{"id": "T073", "verdict": "dung", "note": ""}
+{"id": "T074", "verdict": "dung", "note": ""}
+{"id": "T075", "verdict": "dung", "note": ""}
+{"id": "T076", "verdict": "dung", "note": ""}
+{"id": "T077", "verdict": "dung", "note": ""}
+{"id": "T078", "verdict": "dung", "note": ""}
+{"id": "T079", "verdict": "dung", "note": ""}
+{"id": "T080", "verdict": "dung", "note": ""}
+{"id": "T081", "verdict": "dung", "note": ""}
+{"id": "T082", "verdict": "dung", "note": ""}
+{"id": "T083", "verdict": "dung", "note": ""}
+{"id": "T084", "verdict": "khong_tra_loi", "note": "Engine chưa có Lydian; mô tả công thức đúng nhưng không liệt kê nốt"}
+{"id": "T085", "verdict": "khong_tra_loi", "note": "Engine chưa có Phrygian; không liệt kê nốt, gợi ý bài L01 không liên quan"}
+{"id": "T086", "verdict": "khong_tra_loi", "note": "Engine chưa có Locrian; công thức (thứ tự nhiên giáng 2 và 5) đúng nhưng không liệt kê nốt"}
+{"id": "T087", "verdict": "khong_tra_loi", "note": "Engine chưa có ngũ cung; công thức 1-2-3-5-6 đúng nhưng không liệt kê nốt"}
+{"id": "T088", "verdict": "khong_tra_loi", "note": "Engine chưa có ngũ cung; công thức đúng nhưng chỉ có A, không liệt kê đủ nốt"}
+{"id": "T089", "verdict": "khong_tra_loi", "note": "Engine chưa có blues; công thức đúng nhưng không liệt kê nốt"}
+{"id": "T090", "verdict": "dung", "note": ""}
+{"id": "T091", "verdict": "dung", "note": ""}
+{"id": "T092", "verdict": "dung", "note": ""}
+{"id": "T093", "verdict": "dung", "note": ""}
+{"id": "T094", "verdict": "dung", "note": ""}
+{"id": "T095", "verdict": "dung", "note": ""}
+{"id": "T096", "verdict": "dung", "note": ""}
+{"id": "T097", "verdict": "dung", "note": "Bộ chấm tự động bắt nhầm \"quãng năm giảm\""}
+{"id": "T098", "verdict": "dung", "note": ""}
+{"id": "T099", "verdict": "dung", "note": ""}
+{"id": "T100", "verdict": "sai", "note": "Kết luận M3 đúng nhưng giải thích sai: \"A lên C ... chứa 4 nửa cung\" (A–C là 3 nửa cung)"}
+{"id": "T101", "verdict": "dung", "note": ""}
+{"id": "T102", "verdict": "dung", "note": ""}
+{"id": "T103", "verdict": "dung", "note": ""}
+{"id": "T104", "verdict": "dung", "note": ""}
+{"id": "T105", "verdict": "dung", "note": ""}
+{"id": "T106", "verdict": "dung", "note": ""}
+{"id": "T107", "verdict": "sai", "note": "Kết luận M7 đúng nhưng thêm \"D cách C# một nửa cung\", mâu thuẫn với quãng bảy trưởng 11 nửa cung"}
+{"id": "T108", "verdict": "dung", "note": ""}
+{"id": "T109", "verdict": "dung", "note": ""}
+{"id": "T110", "verdict": "sai", "note": "Gọi đúng M6 nhưng ghi \"8 nửa cung\" (M6 = 9)"}
+{"id": "T111", "verdict": "tranh_luan", "note": "Kết luận m3 đúng; giải thích \"E cách C một bậc\" lủng củng"}
+{"id": "T112", "verdict": "dung", "note": ""}
+{"id": "T113", "verdict": "dung", "note": ""}
+{"id": "T114", "verdict": "dung", "note": ""}
+{"id": "T115", "verdict": "dung", "note": ""}
+{"id": "T116", "verdict": "dung", "note": ""}
+{"id": "T117", "verdict": "dung", "note": ""}
+{"id": "T118", "verdict": "dung", "note": ""}
+{"id": "T119", "verdict": "dung", "note": ""}
+{"id": "T120", "verdict": "dung", "note": ""}
+{"id": "T121", "verdict": "dung", "note": ""}
+{"id": "T122", "verdict": "dung", "note": ""}
+{"id": "T123", "verdict": "dung", "note": ""}
+{"id": "T124", "verdict": "dung", "note": ""}
+{"id": "T125", "verdict": "dung", "note": ""}
+{"id": "T126", "verdict": "dung", "note": ""}
+{"id": "T127", "verdict": "dung", "note": ""}
+{"id": "T128", "verdict": "dung", "note": ""}
+{"id": "T129", "verdict": "dung", "note": ""}
+{"id": "T130", "verdict": "dung", "note": ""}
+{"id": "T131", "verdict": "dung", "note": ""}
+{"id": "T132", "verdict": "dung", "note": ""}
+{"id": "T133", "verdict": "dung", "note": ""}
+{"id": "T134", "verdict": "dung", "note": ""}
+{"id": "T135", "verdict": "dung", "note": ""}
+{"id": "T136", "verdict": "dung", "note": ""}
+{"id": "T137", "verdict": "dung", "note": ""}
+{"id": "T138", "verdict": "dung", "note": ""}
+{"id": "T139", "verdict": "dung", "note": ""}
+{"id": "T140", "verdict": "dung", "note": ""}
+{"id": "T141", "verdict": "dung", "note": "Câu dự phòng (engine_contradiction) do máy chủ trả, nội dung đúng"}
+{"id": "T142", "verdict": "dung", "note": ""}
+{"id": "T143", "verdict": "dung", "note": ""}
+{"id": "T144", "verdict": "dung", "note": ""}
+{"id": "T145", "verdict": "dung", "note": ""}
+{"id": "T146", "verdict": "dung", "note": "Câu dự phòng (engine_contradiction) do máy chủ trả, nội dung đúng"}
+{"id": "T147", "verdict": "dung", "note": "Câu dự phòng (engine_contradiction) do máy chủ trả, nội dung đúng"}
+{"id": "T148", "verdict": "dung", "note": "Có cụm \"theo kết quả từ hệ thống\""}
+{"id": "T149", "verdict": "dung", "note": ""}
+{"id": "T150", "verdict": "dung", "note": ""}
+{"id": "T151", "verdict": "dung", "note": ""}
+{"id": "T152", "verdict": "dung", "note": ""}
+{"id": "T153", "verdict": "dung", "note": ""}
+{"id": "T154", "verdict": "dung", "note": ""}
+{"id": "T155", "verdict": "dung", "note": ""}
+{"id": "T156", "verdict": "dung", "note": ""}
+{"id": "T157", "verdict": "dung", "note": ""}
+{"id": "T158", "verdict": "dung", "note": ""}
+{"id": "T159", "verdict": "dung", "note": ""}
+{"id": "T160", "verdict": "dung", "note": ""}
+{"id": "T161", "verdict": "dung", "note": ""}
+{"id": "T162", "verdict": "dung", "note": ""}
+{"id": "T163", "verdict": "dung", "note": ""}
+{"id": "T164", "verdict": "dung", "note": ""}
+{"id": "T165", "verdict": "dung", "note": ""}
+{"id": "T166", "verdict": "dung", "note": ""}
+{"id": "T167", "verdict": "dung", "note": ""}
+{"id": "T168", "verdict": "dung", "note": ""}
+{"id": "T169", "verdict": "dung", "note": "Câu dự phòng (fact_missing) do máy chủ trả, nội dung đúng"}
+{"id": "T170", "verdict": "dung", "note": ""}
+{"id": "T171", "verdict": "dung", "note": ""}
+{"id": "T172", "verdict": "dung", "note": ""}
+{"id": "T173", "verdict": "dung", "note": ""}
+{"id": "T174", "verdict": "dung", "note": ""}
+{"id": "T175", "verdict": "dung", "note": "Câu dự phòng (fact_missing) do máy chủ trả, nội dung đúng"}
+{"id": "T176", "verdict": "dung", "note": ""}
+{"id": "T177", "verdict": "dung", "note": ""}
+{"id": "T178", "verdict": "dung", "note": ""}
+{"id": "T179", "verdict": "dung", "note": ""}
+{"id": "T180", "verdict": "dung", "note": ""}
+{"id": "T181", "verdict": "dung", "note": "Câu dự phòng (fact_missing) do máy chủ trả, nội dung đúng"}
+{"id": "T182", "verdict": "dung", "note": ""}
+{"id": "T183", "verdict": "dung", "note": ""}
+{"id": "T184", "verdict": "dung", "note": "Câu dự phòng (fact_missing) do máy chủ trả, nội dung đúng"}
+{"id": "T185", "verdict": "dung", "note": ""}
+{"id": "T186", "verdict": "dung", "note": "Nói vii là Bm7b5 (hợp âm bảy) thay vì Bdim; kết luận \"không phải Bm\" đúng"}
+{"id": "T187", "verdict": "dung", "note": ""}
+{"id": "T188", "verdict": "dung", "note": ""}
+{"id": "T189", "verdict": "dung", "note": ""}
+{"id": "T190", "verdict": "dung", "note": ""}
+{"id": "T191", "verdict": "dung", "note": ""}
+{"id": "T192", "verdict": "dung", "note": ""}
+{"id": "T193", "verdict": "dung", "note": ""}
+{"id": "T194", "verdict": "dung", "note": ""}
+{"id": "T195", "verdict": "dung", "note": ""}
+{"id": "T196", "verdict": "dung", "note": ""}
+{"id": "T197", "verdict": "dung", "note": ""}
+{"id": "T198", "verdict": "dung", "note": ""}
+{"id": "T199", "verdict": "dung", "note": ""}
+{"id": "T200", "verdict": "dung", "note": ""}
+{"id": "T201", "verdict": "dung", "note": ""}
+{"id": "T202", "verdict": "dung", "note": ""}
+{"id": "T203", "verdict": "dung", "note": ""}
+{"id": "T204", "verdict": "dung", "note": ""}
+{"id": "T205", "verdict": "dung", "note": ""}
+{"id": "T206", "verdict": "dung", "note": ""}
+{"id": "T207", "verdict": "dung", "note": ""}
+{"id": "T208", "verdict": "dung", "note": ""}
+{"id": "T209", "verdict": "dung", "note": ""}
+{"id": "T210", "verdict": "dung", "note": "Câu dự phòng (engine_contradiction) do máy chủ trả, nội dung đúng"}
+{"id": "T211", "verdict": "dung", "note": "Câu dự phòng (fact_missing) do máy chủ trả, nội dung đúng"}
+{"id": "T212", "verdict": "dung", "note": ""}
+{"id": "T213", "verdict": "dung", "note": ""}
+{"id": "T214", "verdict": "dung", "note": ""}
+{"id": "T215", "verdict": "dung", "note": ""}
+{"id": "T216", "verdict": "dung", "note": ""}
+{"id": "T217", "verdict": "dung", "note": ""}
+{"id": "T218", "verdict": "sai", "note": "Nói lược quãng 5 nhưng liệt kê D F A C (vẫn có A); shell Dm7 = D F C"}
+{"id": "T219", "verdict": "dung", "note": "Câu dự phòng (engine_contradiction) do máy chủ trả, nội dung đúng; Gemini trả lời đúng có thể đã bị guardrail chặn nhầm (shell voicing)"}
+{"id": "T220", "verdict": "dung", "note": ""}
+{"id": "T221", "verdict": "sai", "note": "Nói lược quãng 5 nhưng liệt kê F A C E (vẫn có C); shell Fmaj7 = F A E"}
+{"id": "T222", "verdict": "dung", "note": "Câu dự phòng (engine_contradiction) do máy chủ trả, nội dung đúng; Gemini trả lời đúng có thể đã bị guardrail chặn nhầm (shell voicing)"}
+{"id": "T223", "verdict": "dung", "note": ""}
+{"id": "T224", "verdict": "dung", "note": "Câu dự phòng (engine_contradiction) do máy chủ trả, nội dung đúng; Gemini trả lời đúng có thể đã bị guardrail chặn nhầm (shell voicing)"}
+{"id": "T225", "verdict": "dung", "note": "Câu dự phòng (engine_contradiction) do máy chủ trả, nội dung đúng; Gemini trả lời đúng có thể đã bị guardrail chặn nhầm (shell voicing)"}
+{"id": "T226", "verdict": "dung", "note": ""}
+{"id": "T227", "verdict": "dung", "note": ""}
+{"id": "T228", "verdict": "dung", "note": ""}
+{"id": "T229", "verdict": "dung", "note": ""}
+{"id": "T230", "verdict": "dung", "note": ""}
+{"id": "T231", "verdict": "dung", "note": ""}
+{"id": "T232", "verdict": "dung", "note": ""}
+{"id": "T233", "verdict": "dung", "note": ""}
+{"id": "T234", "verdict": "dung", "note": ""}
+{"id": "T235", "verdict": "dung", "note": ""}
+{"id": "T236", "verdict": "dung", "note": ""}
+{"id": "T237", "verdict": "dung", "note": ""}
+{"id": "T238", "verdict": "dung", "note": ""}
+{"id": "T239", "verdict": "dung", "note": ""}
+{"id": "T240", "verdict": "sai", "note": "Hiểu nhầm V7/vii° là \"dựng V7 trên vii°\"; lý do đúng: vii° là hợp âm giảm nên không làm chủ tạm được"}
+{"id": "T241", "verdict": "dung", "note": ""}
+{"id": "T242", "verdict": "dung", "note": ""}
+{"id": "T243", "verdict": "dung", "note": ""}
+{"id": "T244", "verdict": "dung", "note": ""}
+{"id": "T245", "verdict": "dung", "note": ""}
+{"id": "T246", "verdict": "dung", "note": ""}
+{"id": "T247", "verdict": "dung", "note": ""}
+{"id": "T248", "verdict": "dung", "note": ""}
+{"id": "T249", "verdict": "dung", "note": ""}
+{"id": "T250", "verdict": "dung", "note": ""}
+{"id": "T251", "verdict": "dung", "note": ""}
+{"id": "T252", "verdict": "dung", "note": ""}
+{"id": "T253", "verdict": "dung", "note": ""}
+{"id": "T254", "verdict": "dung", "note": ""}
+{"id": "T255", "verdict": "dung", "note": ""}
+{"id": "T256", "verdict": "dung", "note": ""}
+{"id": "T257", "verdict": "dung", "note": ""}
+{"id": "T258", "verdict": "dung", "note": ""}
+{"id": "T259", "verdict": "dung", "note": ""}
+{"id": "T260", "verdict": "dung", "note": ""}
+{"id": "T261", "verdict": "dung", "note": ""}
+{"id": "T262", "verdict": "dung", "note": ""}
+{"id": "T263", "verdict": "dung", "note": ""}
+{"id": "T264", "verdict": "dung", "note": ""}
+{"id": "T265", "verdict": "dung", "note": ""}
+{"id": "T266", "verdict": "sai", "note": "Bbb trùng phím A nhưng ghi thêm \"hoặc Sol#\" (sai) và câu đầu lủng củng"}
+{"id": "T267", "verdict": "dung", "note": ""}
+{"id": "T268", "verdict": "dung", "note": ""}
+{"id": "T269", "verdict": "dung", "note": ""}
+{"id": "T270", "verdict": "dung", "note": ""}
+{"id": "T271", "verdict": "dung", "note": ""}
+{"id": "T272", "verdict": "dung", "note": ""}
+{"id": "T273", "verdict": "dung", "note": ""}
+{"id": "T274", "verdict": "khong_tra_loi", "note": "Từ chối \"bài chưa dạy\" dù cùng loạt hỏi IV–I, V–vi đều được trả lời"}
+{"id": "T275", "verdict": "dung", "note": ""}
+{"id": "T276", "verdict": "dung", "note": ""}
+{"id": "T277", "verdict": "dung", "note": ""}
+{"id": "T278", "verdict": "dung", "note": ""}
+{"id": "T279", "verdict": "dung", "note": ""}
+{"id": "T280", "verdict": "dung", "note": ""}
+{"id": "T281", "verdict": "dung", "note": ""}
+{"id": "T282", "verdict": "dung", "note": ""}
+{"id": "T283", "verdict": "dung", "note": ""}
+{"id": "T284", "verdict": "dung", "note": ""}
+{"id": "T285", "verdict": "dung", "note": ""}
+{"id": "T286", "verdict": "dung", "note": ""}
+{"id": "T287", "verdict": "dung", "note": ""}
+{"id": "T288", "verdict": "dung", "note": ""}
+{"id": "T289", "verdict": "dung", "note": ""}
+{"id": "T290", "verdict": "sai", "note": "Ghi d7 \"tương đương quãng ba trưởng từ âm bậc năm\"; từ d5 lên d7 là m3"}
+{"id": "T291", "verdict": "sai", "note": "Nói thường bỏ 5 và 9; thông lệ là bỏ 11 (chỏi với 3), có thể bỏ 5; 9 thường giữ"}
+{"id": "T292", "verdict": "dung", "note": ""}
+{"id": "T293", "verdict": "dung", "note": "Đúng E2 A2 D3 G3 B3 E4; bộ chấm tự động không đọc nốt có số quãng tám"}
+{"id": "T294", "verdict": "dung", "note": ""}
+{"id": "T295", "verdict": "dung", "note": ""}
+{"id": "T296", "verdict": "sai", "note": "Nốt đúng (C Eb Gb Bbb) nhưng gọi Bbb là \"La giáng\"; Bbb là Si giáng kép, cùng phím La"}
+{"id": "T297", "verdict": "sai", "note": "Cho rằng C#7 \"đúng hơn\" Db7; quy ước viết Db7 (bII7) vì Db đi xuống C, còn C# gợi hướng đi lên D"}
+{"id": "T298", "verdict": "dung", "note": "Đúng Đô Mi Sol Si; bộ chấm tự động không nhận tên Việt"}
+{"id": "T299", "verdict": "sai", "note": "Nốt đúng nhưng không dùng tên Đô Rê Mi như câu hỏi yêu cầu (Rê Fa La Đô)"}
+{"id": "T300", "verdict": "dung", "note": ""}
