@@ -1,4 +1,4 @@
-# HarmonyMentor AI - Phase 2 Interactive Music Layer (`v0.5.3-dev`)
+# HarmonyMentor AI (`v0.5.4-dev`): nền tảng học nhạc lý thích ứng
 
 HarmonyMentor is evolving from a deterministic music-theory prototype into a source-grounded learning platform. Phase 2 adds the first interactive music layer and also fixes a pedagogical problem found during Phase 1 testing: Lessons 1-4 were structurally complete but too compressed for a true beginner.
 
@@ -237,6 +237,20 @@ CI GitHub Actions chạy lại toàn bộ trên mỗi PR, kể cả 21 test Post
 Nếu không cài được `music21`, bộ đối chiếu music21 bị bỏ qua và số test sẽ ít hơn (ví dụ 113 passed, 1 skipped ở bản v0.4.0 gốc trước khi thêm test CP1).
 
 Frontend: `cd frontend && npm ci && npm run build` **đạt** (Node 22, 20/10/2026, sau khi gộp v0.5.3 với Giai đoạn B; đã có `package-lock.json` mới gồm Tone.js và VexFlow).
+
+## AI theo góp ý thầy T1–T6 (15/11/2026)
+
+Bản đồ góp ý → việc đã làm: [`docs/AI_TEACHER_FEEDBACK_MAP.md`](docs/AI_TEACHER_FEEDBACK_MAP.md). Kịch bản demo 5 phút: [`docs/DEMO_5_PHUT.md`](docs/DEMO_5_PHUT.md). Sơ đồ pipeline chatbot: [`docs/AI_PIPELINE.md`](docs/AI_PIPELINE.md). Mô hình tự train: [`docs/MODEL_CARD.md`](docs/MODEL_CARD.md). Báo cáo từng cổng: `docs/giai-doan/gop-y-thay/`.
+
+```powershell
+docker compose up --build                                   # gồm dịch vụ Qdrant (nội bộ, không mở cổng)
+docker compose exec api python -m app.rag.ingest --source all   # nạp bài học + tài liệu ở data/corpus/raw/
+cd backend
+python -m app.eval.run                                      # đo, ghi eval/report.md, lỗi nếu tụt so với baseline
+python -m app.ml.relevance_train                            # train lại bộ phân loại liên quan nhạc lý
+```
+
+Mọi ngưỡng, tên mô hình, cấu hình Qdrant nằm ở `backend/app/core/ai_config.py`, ghi đè bằng biến môi trường (xem `.env.example`).
 
 ## Tài liệu phase
 

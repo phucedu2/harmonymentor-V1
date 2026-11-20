@@ -1,0 +1,19 @@
+digraph G {
+  graph [fontname="Liberation Serif", bgcolor=white, pad=0.2 , layout=dot, rankdir=LR, nodesep=0.35, ranksep=1.6];
+  node [fontname="Liberation Serif", fontsize=11, color=black];
+  edge [fontname="Liberation Serif", fontsize=9, color=black];
+  P0 [shape=circle, width=2.1, fixedsize=true, label="0\nHệ thống\nHarmonyMentor AI"];
+  G [shape=box, width=1.6, label="Khách"];
+  L [shape=box, width=1.6, label="Người học"];
+  A [shape=box, width=1.6, label="Quản trị viên"];
+  GM [shape=box, width=1.6, label="Google Gemini API\n(dịch vụ AI bên ngoài)"];
+  {rank=same; G; L; A;}
+  G -> P0 [label="Dữ liệu đăng ký / đăng nhập"];
+  P0 -> G [label="Trang chủ, chương trình học,\nJWT + refresh cookie"];
+  L -> P0 [label="Đáp án, phím piano, đáp án thẻ ôn,\nmục tiêu học, câu hỏi chat, lưới hợp âm"];
+  P0 -> L [label="Kết quả chấm + mã lỗi, lời giải,\nmastery, hàng đợi ôn, gợi ý bài,\ntrả lời AI có trích dẫn, bản đệm"];
+  A -> P0 [label="Sửa nội dung bài, phát hành / ẩn,\nkhóa người dùng, tài liệu tải lên"];
+  P0 -> A [label="Thống kê, nhật ký thao tác,\nbài nháp AI kèm cờ kiểm của Engine"];
+  P0 -> GM [label="Câu hỏi, 6 tin nhắn gần nhất, đoạn bài học,\nkỹ năng yếu, mã lỗi (không email / tên / id)"];
+  GM -> P0 [label="Trả lời JSON + trích dẫn\n(Music Engine kiểm tra)"];
+}

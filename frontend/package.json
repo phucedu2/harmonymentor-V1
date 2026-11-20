@@ -6,12 +6,18 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "test": "vitest run",
+    "preview": "vite preview",
+    "e2e": "playwright test",
+    "e2e:live": "playwright test -c playwright.live.config.ts"
   },
   "dependencies": {
     "@fontsource/be-vietnam-pro": "5.3.0",
-    "@fontsource/jetbrains-mono": "5.3.0",
+    "@fontsource/fraunces": "5.3.0",
+    "@fontsource/ibm-plex-mono": "5.3.0",
     "@tanstack/react-query": "5.104.4",
+    "gsap": "3.13.0",
+    "lenis": "1.3.4",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-router": "7.18.4",
@@ -19,12 +25,14 @@
     "vexflow": "5.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "@tailwindcss/vite": "4.3.3",
     "@types/react": "18.3.12",
     "@types/react-dom": "18.3.1",
     "@vitejs/plugin-react": "4.3.4",
     "tailwindcss": "4.3.3",
     "typescript": "5.6.3",
-    "vite": "6.0.7"
+    "vite": "6.0.7",
+    "vitest": "3.2.4"
   }
 }

@@ -1,0 +1,71 @@
+digraph G {
+  graph [fontname="Liberation Serif", bgcolor=white, pad=0.2 , nodesep=0.35, ranksep=0.35];
+  node [fontname="Liberation Serif", fontsize=11, color=black];
+  edge [fontname="Liberation Serif", fontsize=9, color=black];
+  node [fontsize=10];
+  s [shape=ellipse, label="Start"];
+  i [shape=parallelogram, label="Input question, session_id"];
+  d0 [shape=diamond, label="> 20 questions
+in 60 s?", margin=0.02];
+  o0 [shape=parallelogram, label="Return 429 AI_RATE_LIMITED"];
+  d1 [shape=diamond, label="Prompt injection
+detected?", margin=0.02];
+  o1 [shape=parallelogram, label="Fixed refusal"];
+  r [shape=box, label="Intent + rewrite follow-up;
+retrieve top chunks (Qdrant e5,
+fallback e5 in memory + BM25)"];
+  d2 [shape=diamond, label="Route?", margin=0.02];
+  g [shape=box, label="Greeting / help
+(fixed text)"];
+  ot [shape=box, label="Off-topic: ≤ 2 sentences,
+then lead back"];
+  gen [shape=box, label="Outside lessons: Gemini general
+answer, Engine scans notes"];
+  d3 [shape=diamond, label="AI enabled and
+daily quota (30) left?", margin=0.02];
+  fb [shape=box, label="Answer from lesson text +
+Music Engine (no AI)"];
+  p [shape=box, label="Build prompt: question, 6 last messages,
+chunks, weak skills (no PII)"];
+  llm [shape=box, label="Call Gemini → JSON"];
+  c [shape=box, label="Keep only citations whose block id
+was in the retrieved context"];
+  d4 [shape=diamond, label="Music Engine confirms every
+note / chord / interval?", margin=0.02];
+  d5 [shape=diamond, label="Already
+retried once?", margin=0.02];
+  rule [shape=box, label="Rule-based fallback answer"];
+  sv [shape=box, label="Save chat_messages (citations,
+engine claims, latency, tokens)"];
+  o [shape=parallelogram, label="Output answer + citations + verified flag"];
+  e [shape=ellipse, label="End"];
+  s -> i;
+  i -> d0;
+  d0 -> o0 [label="Yes"];
+  d0 -> d1 [label="No"];
+  d1 -> o1 [label="Yes"];
+  d1 -> r [label="No"];
+  r -> d2;
+  d2 -> g [label="G / D"];
+  d2 -> ot [label="C"];
+  d2 -> gen [label="B"];
+  d2 -> d3 [label="A (in lessons)"];
+  d3 -> fb [label="No"];
+  d3 -> p [label="Yes"];
+  p -> llm;
+  llm -> c;
+  c -> d4;
+  d4 -> sv [label="Yes"];
+  d4 -> d5 [label="No"];
+  d5 -> p [label="No (retry)"];
+  d5 -> rule [label="Yes"];
+  rule -> sv;
+  fb -> sv;
+  g -> sv;
+  ot -> sv;
+  gen -> sv;
+  o1 -> sv;
+  sv -> o;
+  o -> e;
+  o0 -> e;
+}

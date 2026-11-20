@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { onSessionChange, refreshSession, setSession, type User } from "../lib/http";
+import { hasSessionHint, onSessionChange, refreshSession, setSession, type User } from "../lib/http";
 import { authApi, type RegisterInput } from "./authApi";
 
 type AuthStatus = "loading" | "authenticated" | "anonymous";
@@ -28,7 +28,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!session) queryClient.clear();
     });
     // Tải lại trang: thử lấy phiên từ cookie refresh; backend chưa có /auth/refresh thì coi như chưa đăng nhập.
-    void refreshSession().catch(() => setSession(null));
+    if (hasSessionHint()) void refreshSession().catch(() => setSession(null));
+    else setSession(null);
     return unsubscribe;
   }, [queryClient]);
 

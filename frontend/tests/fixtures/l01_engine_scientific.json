@@ -1,0 +1,2499 @@
+{
+  "_nguon": "Sinh bởi scripts/sinh_bang_l01_engine.py từ backend/app/music_engine; không sửa tay.",
+  "root_octave": 4,
+  "roots": [
+    "C",
+    "C#",
+    "Db",
+    "D",
+    "D#",
+    "Eb",
+    "E",
+    "F",
+    "F#",
+    "Gb",
+    "G",
+    "G#",
+    "Ab",
+    "A",
+    "A#",
+    "Bb",
+    "B"
+  ],
+  "intervals": [
+    {
+      "root": "C",
+      "code": "M3",
+      "notes": [
+        {
+          "name": "C4",
+          "midi": 60
+        },
+        {
+          "name": "E4",
+          "midi": 64
+        }
+      ]
+    },
+    {
+      "root": "C",
+      "code": "m3",
+      "notes": [
+        {
+          "name": "C4",
+          "midi": 60
+        },
+        {
+          "name": "Eb4",
+          "midi": 63
+        }
+      ]
+    },
+    {
+      "root": "C",
+      "code": "P5",
+      "notes": [
+        {
+          "name": "C4",
+          "midi": 60
+        },
+        {
+          "name": "G4",
+          "midi": 67
+        }
+      ]
+    },
+    {
+      "root": "C",
+      "code": "d5",
+      "notes": [
+        {
+          "name": "C4",
+          "midi": 60
+        },
+        {
+          "name": "Gb4",
+          "midi": 66
+        }
+      ]
+    },
+    {
+      "root": "C",
+      "code": "A5",
+      "notes": [
+        {
+          "name": "C4",
+          "midi": 60
+        },
+        {
+          "name": "G#4",
+          "midi": 68
+        }
+      ]
+    },
+    {
+      "root": "C#",
+      "code": "M3",
+      "notes": [
+        {
+          "name": "C#4",
+          "midi": 61
+        },
+        {
+          "name": "E#4",
+          "midi": 65
+        }
+      ]
+    },
+    {
+      "root": "C#",
+      "code": "m3",
+      "notes": [
+        {
+          "name": "C#4",
+          "midi": 61
+        },
+        {
+          "name": "E4",
+          "midi": 64
+        }
+      ]
+    },
+    {
+      "root": "C#",
+      "code": "P5",
+      "notes": [
+        {
+          "name": "C#4",
+          "midi": 61
+        },
+        {
+          "name": "G#4",
+          "midi": 68
+        }
+      ]
+    },
+    {
+      "root": "C#",
+      "code": "d5",
+      "notes": [
+        {
+          "name": "C#4",
+          "midi": 61
+        },
+        {
+          "name": "G4",
+          "midi": 67
+        }
+      ]
+    },
+    {
+      "root": "C#",
+      "code": "A5",
+      "notes": [
+        {
+          "name": "C#4",
+          "midi": 61
+        },
+        {
+          "name": "G##4",
+          "midi": 69
+        }
+      ]
+    },
+    {
+      "root": "Db",
+      "code": "M3",
+      "notes": [
+        {
+          "name": "Db4",
+          "midi": 61
+        },
+        {
+          "name": "F4",
+          "midi": 65
+        }
+      ]
+    },
+    {
+      "root": "Db",
+      "code": "m3",
+      "notes": [
+        {
+          "name": "Db4",
+          "midi": 61
+        },
+        {
+          "name": "Fb4",
+          "midi": 64
+        }
+      ]
+    },
+    {
+      "root": "Db",
+      "code": "P5",
+      "notes": [
+        {
+          "name": "Db4",
+          "midi": 61
+        },
+        {
+          "name": "Ab4",
+          "midi": 68
+        }
+      ]
+    },
+    {
+      "root": "Db",
+      "code": "d5",
+      "notes": [
+        {
+          "name": "Db4",
+          "midi": 61
+        },
+        {
+          "name": "Abb4",
+          "midi": 67
+        }
+      ]
+    },
+    {
+      "root": "Db",
+      "code": "A5",
+      "notes": [
+        {
+          "name": "Db4",
+          "midi": 61
+        },
+        {
+          "name": "A4",
+          "midi": 69
+        }
+      ]
+    },
+    {
+      "root": "D",
+      "code": "M3",
+      "notes": [
+        {
+          "name": "D4",
+          "midi": 62
+        },
+        {
+          "name": "F#4",
+          "midi": 66
+        }
+      ]
+    },
+    {
+      "root": "D",
+      "code": "m3",
+      "notes": [
+        {
+          "name": "D4",
+          "midi": 62
+        },
+        {
+          "name": "F4",
+          "midi": 65
+        }
+      ]
+    },
+    {
+      "root": "D",
+      "code": "P5",
+      "notes": [
+        {
+          "name": "D4",
+          "midi": 62
+        },
+        {
+          "name": "A4",
+          "midi": 69
+        }
+      ]
+    },
+    {
+      "root": "D",
+      "code": "d5",
+      "notes": [
+        {
+          "name": "D4",
+          "midi": 62
+        },
+        {
+          "name": "Ab4",
+          "midi": 68
+        }
+      ]
+    },
+    {
+      "root": "D",
+      "code": "A5",
+      "notes": [
+        {
+          "name": "D4",
+          "midi": 62
+        },
+        {
+          "name": "A#4",
+          "midi": 70
+        }
+      ]
+    },
+    {
+      "root": "D#",
+      "code": "M3",
+      "notes": [
+        {
+          "name": "D#4",
+          "midi": 63
+        },
+        {
+          "name": "F##4",
+          "midi": 67
+        }
+      ]
+    },
+    {
+      "root": "D#",
+      "code": "m3",
+      "notes": [
+        {
+          "name": "D#4",
+          "midi": 63
+        },
+        {
+          "name": "F#4",
+          "midi": 66
+        }
+      ]
+    },
+    {
+      "root": "D#",
+      "code": "P5",
+      "notes": [
+        {
+          "name": "D#4",
+          "midi": 63
+        },
+        {
+          "name": "A#4",
+          "midi": 70
+        }
+      ]
+    },
+    {
+      "root": "D#",
+      "code": "d5",
+      "notes": [
+        {
+          "name": "D#4",
+          "midi": 63
+        },
+        {
+          "name": "A4",
+          "midi": 69
+        }
+      ]
+    },
+    {
+      "root": "D#",
+      "code": "A5",
+      "notes": [
+        {
+          "name": "D#4",
+          "midi": 63
+        },
+        {
+          "name": "A##4",
+          "midi": 71
+        }
+      ]
+    },
+    {
+      "root": "Eb",
+      "code": "M3",
+      "notes": [
+        {
+          "name": "Eb4",
+          "midi": 63
+        },
+        {
+          "name": "G4",
+          "midi": 67
+        }
+      ]
+    },
+    {
+      "root": "Eb",
+      "code": "m3",
+      "notes": [
+        {
+          "name": "Eb4",
+          "midi": 63
+        },
+        {
+          "name": "Gb4",
+          "midi": 66
+        }
+      ]
+    },
+    {
+      "root": "Eb",
+      "code": "P5",
+      "notes": [
+        {
+          "name": "Eb4",
+          "midi": 63
+        },
+        {
+          "name": "Bb4",
+          "midi": 70
+        }
+      ]
+    },
+    {
+      "root": "Eb",
+      "code": "d5",
+      "notes": [
+        {
+          "name": "Eb4",
+          "midi": 63
+        },
+        {
+          "name": "Bbb4",
+          "midi": 69
+        }
+      ]
+    },
+    {
+      "root": "Eb",
+      "code": "A5",
+      "notes": [
+        {
+          "name": "Eb4",
+          "midi": 63
+        },
+        {
+          "name": "B4",
+          "midi": 71
+        }
+      ]
+    },
+    {
+      "root": "E",
+      "code": "M3",
+      "notes": [
+        {
+          "name": "E4",
+          "midi": 64
+        },
+        {
+          "name": "G#4",
+          "midi": 68
+        }
+      ]
+    },
+    {
+      "root": "E",
+      "code": "m3",
+      "notes": [
+        {
+          "name": "E4",
+          "midi": 64
+        },
+        {
+          "name": "G4",
+          "midi": 67
+        }
+      ]
+    },
+    {
+      "root": "E",
+      "code": "P5",
+      "notes": [
+        {
+          "name": "E4",
+          "midi": 64
+        },
+        {
+          "name": "B4",
+          "midi": 71
+        }
+      ]
+    },
+    {
+      "root": "E",
+      "code": "d5",
+      "notes": [
+        {
+          "name": "E4",
+          "midi": 64
+        },
+        {
+          "name": "Bb4",
+          "midi": 70
+        }
+      ]
+    },
+    {
+      "root": "E",
+      "code": "A5",
+      "notes": [
+        {
+          "name": "E4",
+          "midi": 64
+        },
+        {
+          "name": "B#4",
+          "midi": 72
+        }
+      ]
+    },
+    {
+      "root": "F",
+      "code": "M3",
+      "notes": [
+        {
+          "name": "F4",
+          "midi": 65
+        },
+        {
+          "name": "A4",
+          "midi": 69
+        }
+      ]
+    },
+    {
+      "root": "F",
+      "code": "m3",
+      "notes": [
+        {
+          "name": "F4",
+          "midi": 65
+        },
+        {
+          "name": "Ab4",
+          "midi": 68
+        }
+      ]
+    },
+    {
+      "root": "F",
+      "code": "P5",
+      "notes": [
+        {
+          "name": "F4",
+          "midi": 65
+        },
+        {
+          "name": "C5",
+          "midi": 72
+        }
+      ]
+    },
+    {
+      "root": "F",
+      "code": "d5",
+      "notes": [
+        {
+          "name": "F4",
+          "midi": 65
+        },
+        {
+          "name": "Cb5",
+          "midi": 71
+        }
+      ]
+    },
+    {
+      "root": "F",
+      "code": "A5",
+      "notes": [
+        {
+          "name": "F4",
+          "midi": 65
+        },
+        {
+          "name": "C#5",
+          "midi": 73
+        }
+      ]
+    },
+    {
+      "root": "F#",
+      "code": "M3",
+      "notes": [
+        {
+          "name": "F#4",
+          "midi": 66
+        },
+        {
+          "name": "A#4",
+          "midi": 70
+        }
+      ]
+    },
+    {
+      "root": "F#",
+      "code": "m3",
+      "notes": [
+        {
+          "name": "F#4",
+          "midi": 66
+        },
+        {
+          "name": "A4",
+          "midi": 69
+        }
+      ]
+    },
+    {
+      "root": "F#",
+      "code": "P5",
+      "notes": [
+        {
+          "name": "F#4",
+          "midi": 66
+        },
+        {
+          "name": "C#5",
+          "midi": 73
+        }
+      ]
+    },
+    {
+      "root": "F#",
+      "code": "d5",
+      "notes": [
+        {
+          "name": "F#4",
+          "midi": 66
+        },
+        {
+          "name": "C5",
+          "midi": 72
+        }
+      ]
+    },
+    {
+      "root": "F#",
+      "code": "A5",
+      "notes": [
+        {
+          "name": "F#4",
+          "midi": 66
+        },
+        {
+          "name": "C##5",
+          "midi": 74
+        }
+      ]
+    },
+    {
+      "root": "Gb",
+      "code": "M3",
+      "notes": [
+        {
+          "name": "Gb4",
+          "midi": 66
+        },
+        {
+          "name": "Bb4",
+          "midi": 70
+        }
+      ]
+    },
+    {
+      "root": "Gb",
+      "code": "m3",
+      "notes": [
+        {
+          "name": "Gb4",
+          "midi": 66
+        },
+        {
+          "name": "Bbb4",
+          "midi": 69
+        }
+      ]
+    },
+    {
+      "root": "Gb",
+      "code": "P5",
+      "notes": [
+        {
+          "name": "Gb4",
+          "midi": 66
+        },
+        {
+          "name": "Db5",
+          "midi": 73
+        }
+      ]
+    },
+    {
+      "root": "Gb",
+      "code": "d5",
+      "notes": [
+        {
+          "name": "Gb4",
+          "midi": 66
+        },
+        {
+          "name": "Dbb5",
+          "midi": 72
+        }
+      ]
+    },
+    {
+      "root": "Gb",
+      "code": "A5",
+      "notes": [
+        {
+          "name": "Gb4",
+          "midi": 66
+        },
+        {
+          "name": "D5",
+          "midi": 74
+        }
+      ]
+    },
+    {
+      "root": "G",
+      "code": "M3",
+      "notes": [
+        {
+          "name": "G4",
+          "midi": 67
+        },
+        {
+          "name": "B4",
+          "midi": 71
+        }
+      ]
+    },
+    {
+      "root": "G",
+      "code": "m3",
+      "notes": [
+        {
+          "name": "G4",
+          "midi": 67
+        },
+        {
+          "name": "Bb4",
+          "midi": 70
+        }
+      ]
+    },
+    {
+      "root": "G",
+      "code": "P5",
+      "notes": [
+        {
+          "name": "G4",
+          "midi": 67
+        },
+        {
+          "name": "D5",
+          "midi": 74
+        }
+      ]
+    },
+    {
+      "root": "G",
+      "code": "d5",
+      "notes": [
+        {
+          "name": "G4",
+          "midi": 67
+        },
+        {
+          "name": "Db5",
+          "midi": 73
+        }
+      ]
+    },
+    {
+      "root": "G",
+      "code": "A5",
+      "notes": [
+        {
+          "name": "G4",
+          "midi": 67
+        },
+        {
+          "name": "D#5",
+          "midi": 75
+        }
+      ]
+    },
+    {
+      "root": "G#",
+      "code": "M3",
+      "notes": [
+        {
+          "name": "G#4",
+          "midi": 68
+        },
+        {
+          "name": "B#4",
+          "midi": 72
+        }
+      ]
+    },
+    {
+      "root": "G#",
+      "code": "m3",
+      "notes": [
+        {
+          "name": "G#4",
+          "midi": 68
+        },
+        {
+          "name": "B4",
+          "midi": 71
+        }
+      ]
+    },
+    {
+      "root": "G#",
+      "code": "P5",
+      "notes": [
+        {
+          "name": "G#4",
+          "midi": 68
+        },
+        {
+          "name": "D#5",
+          "midi": 75
+        }
+      ]
+    },
+    {
+      "root": "G#",
+      "code": "d5",
+      "notes": [
+        {
+          "name": "G#4",
+          "midi": 68
+        },
+        {
+          "name": "D5",
+          "midi": 74
+        }
+      ]
+    },
+    {
+      "root": "G#",
+      "code": "A5",
+      "notes": [
+        {
+          "name": "G#4",
+          "midi": 68
+        },
+        {
+          "name": "D##5",
+          "midi": 76
+        }
+      ]
+    },
+    {
+      "root": "Ab",
+      "code": "M3",
+      "notes": [
+        {
+          "name": "Ab4",
+          "midi": 68
+        },
+        {
+          "name": "C5",
+          "midi": 72
+        }
+      ]
+    },
+    {
+      "root": "Ab",
+      "code": "m3",
+      "notes": [
+        {
+          "name": "Ab4",
+          "midi": 68
+        },
+        {
+          "name": "Cb5",
+          "midi": 71
+        }
+      ]
+    },
+    {
+      "root": "Ab",
+      "code": "P5",
+      "notes": [
+        {
+          "name": "Ab4",
+          "midi": 68
+        },
+        {
+          "name": "Eb5",
+          "midi": 75
+        }
+      ]
+    },
+    {
+      "root": "Ab",
+      "code": "d5",
+      "notes": [
+        {
+          "name": "Ab4",
+          "midi": 68
+        },
+        {
+          "name": "Ebb5",
+          "midi": 74
+        }
+      ]
+    },
+    {
+      "root": "Ab",
+      "code": "A5",
+      "notes": [
+        {
+          "name": "Ab4",
+          "midi": 68
+        },
+        {
+          "name": "E5",
+          "midi": 76
+        }
+      ]
+    },
+    {
+      "root": "A",
+      "code": "M3",
+      "notes": [
+        {
+          "name": "A4",
+          "midi": 69
+        },
+        {
+          "name": "C#5",
+          "midi": 73
+        }
+      ]
+    },
+    {
+      "root": "A",
+      "code": "m3",
+      "notes": [
+        {
+          "name": "A4",
+          "midi": 69
+        },
+        {
+          "name": "C5",
+          "midi": 72
+        }
+      ]
+    },
+    {
+      "root": "A",
+      "code": "P5",
+      "notes": [
+        {
+          "name": "A4",
+          "midi": 69
+        },
+        {
+          "name": "E5",
+          "midi": 76
+        }
+      ]
+    },
+    {
+      "root": "A",
+      "code": "d5",
+      "notes": [
+        {
+          "name": "A4",
+          "midi": 69
+        },
+        {
+          "name": "Eb5",
+          "midi": 75
+        }
+      ]
+    },
+    {
+      "root": "A",
+      "code": "A5",
+      "notes": [
+        {
+          "name": "A4",
+          "midi": 69
+        },
+        {
+          "name": "E#5",
+          "midi": 77
+        }
+      ]
+    },
+    {
+      "root": "A#",
+      "code": "M3",
+      "notes": [
+        {
+          "name": "A#4",
+          "midi": 70
+        },
+        {
+          "name": "C##5",
+          "midi": 74
+        }
+      ]
+    },
+    {
+      "root": "A#",
+      "code": "m3",
+      "notes": [
+        {
+          "name": "A#4",
+          "midi": 70
+        },
+        {
+          "name": "C#5",
+          "midi": 73
+        }
+      ]
+    },
+    {
+      "root": "A#",
+      "code": "P5",
+      "notes": [
+        {
+          "name": "A#4",
+          "midi": 70
+        },
+        {
+          "name": "E#5",
+          "midi": 77
+        }
+      ]
+    },
+    {
+      "root": "A#",
+      "code": "d5",
+      "notes": [
+        {
+          "name": "A#4",
+          "midi": 70
+        },
+        {
+          "name": "E5",
+          "midi": 76
+        }
+      ]
+    },
+    {
+      "root": "A#",
+      "code": "A5",
+      "notes": [
+        {
+          "name": "A#4",
+          "midi": 70
+        },
+        {
+          "name": "E##5",
+          "midi": 78
+        }
+      ]
+    },
+    {
+      "root": "Bb",
+      "code": "M3",
+      "notes": [
+        {
+          "name": "Bb4",
+          "midi": 70
+        },
+        {
+          "name": "D5",
+          "midi": 74
+        }
+      ]
+    },
+    {
+      "root": "Bb",
+      "code": "m3",
+      "notes": [
+        {
+          "name": "Bb4",
+          "midi": 70
+        },
+        {
+          "name": "Db5",
+          "midi": 73
+        }
+      ]
+    },
+    {
+      "root": "Bb",
+      "code": "P5",
+      "notes": [
+        {
+          "name": "Bb4",
+          "midi": 70
+        },
+        {
+          "name": "F5",
+          "midi": 77
+        }
+      ]
+    },
+    {
+      "root": "Bb",
+      "code": "d5",
+      "notes": [
+        {
+          "name": "Bb4",
+          "midi": 70
+        },
+        {
+          "name": "Fb5",
+          "midi": 76
+        }
+      ]
+    },
+    {
+      "root": "Bb",
+      "code": "A5",
+      "notes": [
+        {
+          "name": "Bb4",
+          "midi": 70
+        },
+        {
+          "name": "F#5",
+          "midi": 78
+        }
+      ]
+    },
+    {
+      "root": "B",
+      "code": "M3",
+      "notes": [
+        {
+          "name": "B4",
+          "midi": 71
+        },
+        {
+          "name": "D#5",
+          "midi": 75
+        }
+      ]
+    },
+    {
+      "root": "B",
+      "code": "m3",
+      "notes": [
+        {
+          "name": "B4",
+          "midi": 71
+        },
+        {
+          "name": "D5",
+          "midi": 74
+        }
+      ]
+    },
+    {
+      "root": "B",
+      "code": "P5",
+      "notes": [
+        {
+          "name": "B4",
+          "midi": 71
+        },
+        {
+          "name": "F#5",
+          "midi": 78
+        }
+      ]
+    },
+    {
+      "root": "B",
+      "code": "d5",
+      "notes": [
+        {
+          "name": "B4",
+          "midi": 71
+        },
+        {
+          "name": "F5",
+          "midi": 77
+        }
+      ]
+    },
+    {
+      "root": "B",
+      "code": "A5",
+      "notes": [
+        {
+          "name": "B4",
+          "midi": 71
+        },
+        {
+          "name": "F##5",
+          "midi": 79
+        }
+      ]
+    }
+  ],
+  "triads": [
+    {
+      "root": "C",
+      "quality": "major",
+      "notes": [
+        {
+          "name": "C4",
+          "midi": 60
+        },
+        {
+          "name": "E4",
+          "midi": 64
+        },
+        {
+          "name": "G4",
+          "midi": 67
+        }
+      ]
+    },
+    {
+      "root": "C",
+      "quality": "minor",
+      "notes": [
+        {
+          "name": "C4",
+          "midi": 60
+        },
+        {
+          "name": "Eb4",
+          "midi": 63
+        },
+        {
+          "name": "G4",
+          "midi": 67
+        }
+      ]
+    },
+    {
+      "root": "C",
+      "quality": "diminished",
+      "notes": [
+        {
+          "name": "C4",
+          "midi": 60
+        },
+        {
+          "name": "Eb4",
+          "midi": 63
+        },
+        {
+          "name": "Gb4",
+          "midi": 66
+        }
+      ]
+    },
+    {
+      "root": "C",
+      "quality": "augmented",
+      "notes": [
+        {
+          "name": "C4",
+          "midi": 60
+        },
+        {
+          "name": "E4",
+          "midi": 64
+        },
+        {
+          "name": "G#4",
+          "midi": 68
+        }
+      ]
+    },
+    {
+      "root": "C#",
+      "quality": "major",
+      "notes": [
+        {
+          "name": "C#4",
+          "midi": 61
+        },
+        {
+          "name": "E#4",
+          "midi": 65
+        },
+        {
+          "name": "G#4",
+          "midi": 68
+        }
+      ]
+    },
+    {
+      "root": "C#",
+      "quality": "minor",
+      "notes": [
+        {
+          "name": "C#4",
+          "midi": 61
+        },
+        {
+          "name": "E4",
+          "midi": 64
+        },
+        {
+          "name": "G#4",
+          "midi": 68
+        }
+      ]
+    },
+    {
+      "root": "C#",
+      "quality": "diminished",
+      "notes": [
+        {
+          "name": "C#4",
+          "midi": 61
+        },
+        {
+          "name": "E4",
+          "midi": 64
+        },
+        {
+          "name": "G4",
+          "midi": 67
+        }
+      ]
+    },
+    {
+      "root": "C#",
+      "quality": "augmented",
+      "notes": [
+        {
+          "name": "C#4",
+          "midi": 61
+        },
+        {
+          "name": "E#4",
+          "midi": 65
+        },
+        {
+          "name": "G##4",
+          "midi": 69
+        }
+      ]
+    },
+    {
+      "root": "Db",
+      "quality": "major",
+      "notes": [
+        {
+          "name": "Db4",
+          "midi": 61
+        },
+        {
+          "name": "F4",
+          "midi": 65
+        },
+        {
+          "name": "Ab4",
+          "midi": 68
+        }
+      ]
+    },
+    {
+      "root": "Db",
+      "quality": "minor",
+      "notes": [
+        {
+          "name": "Db4",
+          "midi": 61
+        },
+        {
+          "name": "Fb4",
+          "midi": 64
+        },
+        {
+          "name": "Ab4",
+          "midi": 68
+        }
+      ]
+    },
+    {
+      "root": "Db",
+      "quality": "diminished",
+      "notes": [
+        {
+          "name": "Db4",
+          "midi": 61
+        },
+        {
+          "name": "Fb4",
+          "midi": 64
+        },
+        {
+          "name": "Abb4",
+          "midi": 67
+        }
+      ]
+    },
+    {
+      "root": "Db",
+      "quality": "augmented",
+      "notes": [
+        {
+          "name": "Db4",
+          "midi": 61
+        },
+        {
+          "name": "F4",
+          "midi": 65
+        },
+        {
+          "name": "A4",
+          "midi": 69
+        }
+      ]
+    },
+    {
+      "root": "D",
+      "quality": "major",
+      "notes": [
+        {
+          "name": "D4",
+          "midi": 62
+        },
+        {
+          "name": "F#4",
+          "midi": 66
+        },
+        {
+          "name": "A4",
+          "midi": 69
+        }
+      ]
+    },
+    {
+      "root": "D",
+      "quality": "minor",
+      "notes": [
+        {
+          "name": "D4",
+          "midi": 62
+        },
+        {
+          "name": "F4",
+          "midi": 65
+        },
+        {
+          "name": "A4",
+          "midi": 69
+        }
+      ]
+    },
+    {
+      "root": "D",
+      "quality": "diminished",
+      "notes": [
+        {
+          "name": "D4",
+          "midi": 62
+        },
+        {
+          "name": "F4",
+          "midi": 65
+        },
+        {
+          "name": "Ab4",
+          "midi": 68
+        }
+      ]
+    },
+    {
+      "root": "D",
+      "quality": "augmented",
+      "notes": [
+        {
+          "name": "D4",
+          "midi": 62
+        },
+        {
+          "name": "F#4",
+          "midi": 66
+        },
+        {
+          "name": "A#4",
+          "midi": 70
+        }
+      ]
+    },
+    {
+      "root": "D#",
+      "quality": "major",
+      "notes": [
+        {
+          "name": "D#4",
+          "midi": 63
+        },
+        {
+          "name": "F##4",
+          "midi": 67
+        },
+        {
+          "name": "A#4",
+          "midi": 70
+        }
+      ]
+    },
+    {
+      "root": "D#",
+      "quality": "minor",
+      "notes": [
+        {
+          "name": "D#4",
+          "midi": 63
+        },
+        {
+          "name": "F#4",
+          "midi": 66
+        },
+        {
+          "name": "A#4",
+          "midi": 70
+        }
+      ]
+    },
+    {
+      "root": "D#",
+      "quality": "diminished",
+      "notes": [
+        {
+          "name": "D#4",
+          "midi": 63
+        },
+        {
+          "name": "F#4",
+          "midi": 66
+        },
+        {
+          "name": "A4",
+          "midi": 69
+        }
+      ]
+    },
+    {
+      "root": "D#",
+      "quality": "augmented",
+      "notes": [
+        {
+          "name": "D#4",
+          "midi": 63
+        },
+        {
+          "name": "F##4",
+          "midi": 67
+        },
+        {
+          "name": "A##4",
+          "midi": 71
+        }
+      ]
+    },
+    {
+      "root": "Eb",
+      "quality": "major",
+      "notes": [
+        {
+          "name": "Eb4",
+          "midi": 63
+        },
+        {
+          "name": "G4",
+          "midi": 67
+        },
+        {
+          "name": "Bb4",
+          "midi": 70
+        }
+      ]
+    },
+    {
+      "root": "Eb",
+      "quality": "minor",
+      "notes": [
+        {
+          "name": "Eb4",
+          "midi": 63
+        },
+        {
+          "name": "Gb4",
+          "midi": 66
+        },
+        {
+          "name": "Bb4",
+          "midi": 70
+        }
+      ]
+    },
+    {
+      "root": "Eb",
+      "quality": "diminished",
+      "notes": [
+        {
+          "name": "Eb4",
+          "midi": 63
+        },
+        {
+          "name": "Gb4",
+          "midi": 66
+        },
+        {
+          "name": "Bbb4",
+          "midi": 69
+        }
+      ]
+    },
+    {
+      "root": "Eb",
+      "quality": "augmented",
+      "notes": [
+        {
+          "name": "Eb4",
+          "midi": 63
+        },
+        {
+          "name": "G4",
+          "midi": 67
+        },
+        {
+          "name": "B4",
+          "midi": 71
+        }
+      ]
+    },
+    {
+      "root": "E",
+      "quality": "major",
+      "notes": [
+        {
+          "name": "E4",
+          "midi": 64
+        },
+        {
+          "name": "G#4",
+          "midi": 68
+        },
+        {
+          "name": "B4",
+          "midi": 71
+        }
+      ]
+    },
+    {
+      "root": "E",
+      "quality": "minor",
+      "notes": [
+        {
+          "name": "E4",
+          "midi": 64
+        },
+        {
+          "name": "G4",
+          "midi": 67
+        },
+        {
+          "name": "B4",
+          "midi": 71
+        }
+      ]
+    },
+    {
+      "root": "E",
+      "quality": "diminished",
+      "notes": [
+        {
+          "name": "E4",
+          "midi": 64
+        },
+        {
+          "name": "G4",
+          "midi": 67
+        },
+        {
+          "name": "Bb4",
+          "midi": 70
+        }
+      ]
+    },
+    {
+      "root": "E",
+      "quality": "augmented",
+      "notes": [
+        {
+          "name": "E4",
+          "midi": 64
+        },
+        {
+          "name": "G#4",
+          "midi": 68
+        },
+        {
+          "name": "B#4",
+          "midi": 72
+        }
+      ]
+    },
+    {
+      "root": "F",
+      "quality": "major",
+      "notes": [
+        {
+          "name": "F4",
+          "midi": 65
+        },
+        {
+          "name": "A4",
+          "midi": 69
+        },
+        {
+          "name": "C5",
+          "midi": 72
+        }
+      ]
+    },
+    {
+      "root": "F",
+      "quality": "minor",
+      "notes": [
+        {
+          "name": "F4",
+          "midi": 65
+        },
+        {
+          "name": "Ab4",
+          "midi": 68
+        },
+        {
+          "name": "C5",
+          "midi": 72
+        }
+      ]
+    },
+    {
+      "root": "F",
+      "quality": "diminished",
+      "notes": [
+        {
+          "name": "F4",
+          "midi": 65
+        },
+        {
+          "name": "Ab4",
+          "midi": 68
+        },
+        {
+          "name": "Cb5",
+          "midi": 71
+        }
+      ]
+    },
+    {
+      "root": "F",
+      "quality": "augmented",
+      "notes": [
+        {
+          "name": "F4",
+          "midi": 65
+        },
+        {
+          "name": "A4",
+          "midi": 69
+        },
+        {
+          "name": "C#5",
+          "midi": 73
+        }
+      ]
+    },
+    {
+      "root": "F#",
+      "quality": "major",
+      "notes": [
+        {
+          "name": "F#4",
+          "midi": 66
+        },
+        {
+          "name": "A#4",
+          "midi": 70
+        },
+        {
+          "name": "C#5",
+          "midi": 73
+        }
+      ]
+    },
+    {
+      "root": "F#",
+      "quality": "minor",
+      "notes": [
+        {
+          "name": "F#4",
+          "midi": 66
+        },
+        {
+          "name": "A4",
+          "midi": 69
+        },
+        {
+          "name": "C#5",
+          "midi": 73
+        }
+      ]
+    },
+    {
+      "root": "F#",
+      "quality": "diminished",
+      "notes": [
+        {
+          "name": "F#4",
+          "midi": 66
+        },
+        {
+          "name": "A4",
+          "midi": 69
+        },
+        {
+          "name": "C5",
+          "midi": 72
+        }
+      ]
+    },
+    {
+      "root": "F#",
+      "quality": "augmented",
+      "notes": [
+        {
+          "name": "F#4",
+          "midi": 66
+        },
+        {
+          "name": "A#4",
+          "midi": 70
+        },
+        {
+          "name": "C##5",
+          "midi": 74
+        }
+      ]
+    },
+    {
+      "root": "Gb",
+      "quality": "major",
+      "notes": [
+        {
+          "name": "Gb4",
+          "midi": 66
+        },
+        {
+          "name": "Bb4",
+          "midi": 70
+        },
+        {
+          "name": "Db5",
+          "midi": 73
+        }
+      ]
+    },
+    {
+      "root": "Gb",
+      "quality": "minor",
+      "notes": [
+        {
+          "name": "Gb4",
+          "midi": 66
+        },
+        {
+          "name": "Bbb4",
+          "midi": 69
+        },
+        {
+          "name": "Db5",
+          "midi": 73
+        }
+      ]
+    },
+    {
+      "root": "Gb",
+      "quality": "diminished",
+      "notes": [
+        {
+          "name": "Gb4",
+          "midi": 66
+        },
+        {
+          "name": "Bbb4",
+          "midi": 69
+        },
+        {
+          "name": "Dbb5",
+          "midi": 72
+        }
+      ]
+    },
+    {
+      "root": "Gb",
+      "quality": "augmented",
+      "notes": [
+        {
+          "name": "Gb4",
+          "midi": 66
+        },
+        {
+          "name": "Bb4",
+          "midi": 70
+        },
+        {
+          "name": "D5",
+          "midi": 74
+        }
+      ]
+    },
+    {
+      "root": "G",
+      "quality": "major",
+      "notes": [
+        {
+          "name": "G4",
+          "midi": 67
+        },
+        {
+          "name": "B4",
+          "midi": 71
+        },
+        {
+          "name": "D5",
+          "midi": 74
+        }
+      ]
+    },
+    {
+      "root": "G",
+      "quality": "minor",
+      "notes": [
+        {
+          "name": "G4",
+          "midi": 67
+        },
+        {
+          "name": "Bb4",
+          "midi": 70
+        },
+        {
+          "name": "D5",
+          "midi": 74
+        }
+      ]
+    },
+    {
+      "root": "G",
+      "quality": "diminished",
+      "notes": [
+        {
+          "name": "G4",
+          "midi": 67
+        },
+        {
+          "name": "Bb4",
+          "midi": 70
+        },
+        {
+          "name": "Db5",
+          "midi": 73
+        }
+      ]
+    },
+    {
+      "root": "G",
+      "quality": "augmented",
+      "notes": [
+        {
+          "name": "G4",
+          "midi": 67
+        },
+        {
+          "name": "B4",
+          "midi": 71
+        },
+        {
+          "name": "D#5",
+          "midi": 75
+        }
+      ]
+    },
+    {
+      "root": "G#",
+      "quality": "major",
+      "notes": [
+        {
+          "name": "G#4",
+          "midi": 68
+        },
+        {
+          "name": "B#4",
+          "midi": 72
+        },
+        {
+          "name": "D#5",
+          "midi": 75
+        }
+      ]
+    },
+    {
+      "root": "G#",
+      "quality": "minor",
+      "notes": [
+        {
+          "name": "G#4",
+          "midi": 68
+        },
+        {
+          "name": "B4",
+          "midi": 71
+        },
+        {
+          "name": "D#5",
+          "midi": 75
+        }
+      ]
+    },
+    {
+      "root": "G#",
+      "quality": "diminished",
+      "notes": [
+        {
+          "name": "G#4",
+          "midi": 68
+        },
+        {
+          "name": "B4",
+          "midi": 71
+        },
+        {
+          "name": "D5",
+          "midi": 74
+        }
+      ]
+    },
+    {
+      "root": "G#",
+      "quality": "augmented",
+      "notes": [
+        {
+          "name": "G#4",
+          "midi": 68
+        },
+        {
+          "name": "B#4",
+          "midi": 72
+        },
+        {
+          "name": "D##5",
+          "midi": 76
+        }
+      ]
+    },
+    {
+      "root": "Ab",
+      "quality": "major",
+      "notes": [
+        {
+          "name": "Ab4",
+          "midi": 68
+        },
+        {
+          "name": "C5",
+          "midi": 72
+        },
+        {
+          "name": "Eb5",
+          "midi": 75
+        }
+      ]
+    },
+    {
+      "root": "Ab",
+      "quality": "minor",
+      "notes": [
+        {
+          "name": "Ab4",
+          "midi": 68
+        },
+        {
+          "name": "Cb5",
+          "midi": 71
+        },
+        {
+          "name": "Eb5",
+          "midi": 75
+        }
+      ]
+    },
+    {
+      "root": "Ab",
+      "quality": "diminished",
+      "notes": [
+        {
+          "name": "Ab4",
+          "midi": 68
+        },
+        {
+          "name": "Cb5",
+          "midi": 71
+        },
+        {
+          "name": "Ebb5",
+          "midi": 74
+        }
+      ]
+    },
+    {
+      "root": "Ab",
+      "quality": "augmented",
+      "notes": [
+        {
+          "name": "Ab4",
+          "midi": 68
+        },
+        {
+          "name": "C5",
+          "midi": 72
+        },
+        {
+          "name": "E5",
+          "midi": 76
+        }
+      ]
+    },
+    {
+      "root": "A",
+      "quality": "major",
+      "notes": [
+        {
+          "name": "A4",
+          "midi": 69
+        },
+        {
+          "name": "C#5",
+          "midi": 73
+        },
+        {
+          "name": "E5",
+          "midi": 76
+        }
+      ]
+    },
+    {
+      "root": "A",
+      "quality": "minor",
+      "notes": [
+        {
+          "name": "A4",
+          "midi": 69
+        },
+        {
+          "name": "C5",
+          "midi": 72
+        },
+        {
+          "name": "E5",
+          "midi": 76
+        }
+      ]
+    },
+    {
+      "root": "A",
+      "quality": "diminished",
+      "notes": [
+        {
+          "name": "A4",
+          "midi": 69
+        },
+        {
+          "name": "C5",
+          "midi": 72
+        },
+        {
+          "name": "Eb5",
+          "midi": 75
+        }
+      ]
+    },
+    {
+      "root": "A",
+      "quality": "augmented",
+      "notes": [
+        {
+          "name": "A4",
+          "midi": 69
+        },
+        {
+          "name": "C#5",
+          "midi": 73
+        },
+        {
+          "name": "E#5",
+          "midi": 77
+        }
+      ]
+    },
+    {
+      "root": "A#",
+      "quality": "major",
+      "notes": [
+        {
+          "name": "A#4",
+          "midi": 70
+        },
+        {
+          "name": "C##5",
+          "midi": 74
+        },
+        {
+          "name": "E#5",
+          "midi": 77
+        }
+      ]
+    },
+    {
+      "root": "A#",
+      "quality": "minor",
+      "notes": [
+        {
+          "name": "A#4",
+          "midi": 70
+        },
+        {
+          "name": "C#5",
+          "midi": 73
+        },
+        {
+          "name": "E#5",
+          "midi": 77
+        }
+      ]
+    },
+    {
+      "root": "A#",
+      "quality": "diminished",
+      "notes": [
+        {
+          "name": "A#4",
+          "midi": 70
+        },
+        {
+          "name": "C#5",
+          "midi": 73
+        },
+        {
+          "name": "E5",
+          "midi": 76
+        }
+      ]
+    },
+    {
+      "root": "A#",
+      "quality": "augmented",
+      "notes": [
+        {
+          "name": "A#4",
+          "midi": 70
+        },
+        {
+          "name": "C##5",
+          "midi": 74
+        },
+        {
+          "name": "E##5",
+          "midi": 78
+        }
+      ]
+    },
+    {
+      "root": "Bb",
+      "quality": "major",
+      "notes": [
+        {
+          "name": "Bb4",
+          "midi": 70
+        },
+        {
+          "name": "D5",
+          "midi": 74
+        },
+        {
+          "name": "F5",
+          "midi": 77
+        }
+      ]
+    },
+    {
+      "root": "Bb",
+      "quality": "minor",
+      "notes": [
+        {
+          "name": "Bb4",
+          "midi": 70
+        },
+        {
+          "name": "Db5",
+          "midi": 73
+        },
+        {
+          "name": "F5",
+          "midi": 77
+        }
+      ]
+    },
+    {
+      "root": "Bb",
+      "quality": "diminished",
+      "notes": [
+        {
+          "name": "Bb4",
+          "midi": 70
+        },
+        {
+          "name": "Db5",
+          "midi": 73
+        },
+        {
+          "name": "Fb5",
+          "midi": 76
+        }
+      ]
+    },
+    {
+      "root": "Bb",
+      "quality": "augmented",
+      "notes": [
+        {
+          "name": "Bb4",
+          "midi": 70
+        },
+        {
+          "name": "D5",
+          "midi": 74
+        },
+        {
+          "name": "F#5",
+          "midi": 78
+        }
+      ]
+    },
+    {
+      "root": "B",
+      "quality": "major",
+      "notes": [
+        {
+          "name": "B4",
+          "midi": 71
+        },
+        {
+          "name": "D#5",
+          "midi": 75
+        },
+        {
+          "name": "F#5",
+          "midi": 78
+        }
+      ]
+    },
+    {
+      "root": "B",
+      "quality": "minor",
+      "notes": [
+        {
+          "name": "B4",
+          "midi": 71
+        },
+        {
+          "name": "D5",
+          "midi": 74
+        },
+        {
+          "name": "F#5",
+          "midi": 78
+        }
+      ]
+    },
+    {
+      "root": "B",
+      "quality": "diminished",
+      "notes": [
+        {
+          "name": "B4",
+          "midi": 71
+        },
+        {
+          "name": "D5",
+          "midi": 74
+        },
+        {
+          "name": "F5",
+          "midi": 77
+        }
+      ]
+    },
+    {
+      "root": "B",
+      "quality": "augmented",
+      "notes": [
+        {
+          "name": "B4",
+          "midi": 71
+        },
+        {
+          "name": "D#5",
+          "midi": 75
+        },
+        {
+          "name": "F##5",
+          "midi": 79
+        }
+      ]
+    }
+  ],
+  "midi": [
+    {
+      "name": "C4",
+      "midi": 60
+    },
+    {
+      "name": "E4",
+      "midi": 64
+    },
+    {
+      "name": "D4",
+      "midi": 62
+    },
+    {
+      "name": "F4",
+      "midi": 65
+    },
+    {
+      "name": "G4",
+      "midi": 67
+    },
+    {
+      "name": "D5",
+      "midi": 74
+    },
+    {
+      "name": "B#3",
+      "midi": 60
+    },
+    {
+      "name": "B#4",
+      "midi": 72
+    },
+    {
+      "name": "Cb4",
+      "midi": 59
+    },
+    {
+      "name": "Cb5",
+      "midi": 71
+    },
+    {
+      "name": "B##4",
+      "midi": 73
+    },
+    {
+      "name": "Cbb5",
+      "midi": 70
+    },
+    {
+      "name": "E#4",
+      "midi": 65
+    },
+    {
+      "name": "Fb4",
+      "midi": 64
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Literal
+from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -32,6 +32,7 @@ class ExerciseOut(BaseModel):
     options: list[str] | None = None
     grading_strategy: str
     skill_id: str
+    allowed_input_methods: list[str] = Field(default_factory=lambda: ["text"])
 
 
 class ReviewItemOut(BaseModel):
@@ -52,6 +53,21 @@ class LessonSummaryOut(BaseModel):
     block_count: int
     exercise_count: int
     review_item_count: int
+    # ADR-029 (7A, 8A): bài AI soạn từ tài liệu hiện ở mục "Kiến thức mới"; "Mở rộng" = kiến thức chưa khớp kỹ năng nào,
+    # câu luyện tập không tính mức thành thạo. published_at để gắn nhãn "Mới".
+    ai_generated: bool = False
+    expansion: bool = False
+    published_at: Optional[datetime] = None
+
+
+class ExternalResourceOut(BaseModel):
+    title: str
+    source: str
+    url: str
+    language: str
+    free: bool
+    why_vi: str
+    draft: bool = False
 
 
 class LessonDetailOut(LessonSummaryOut):
@@ -59,13 +75,16 @@ class LessonDetailOut(LessonSummaryOut):
     exercises: list[ExerciseOut]
     review_items: list[ReviewItemOut]
     sources: list[SourceRefOut]
+    # GĐ5: liên kết học thêm ngoài app (sách mở miễn phí), chỉ mục đã duyệt; mục nháp khi bật SHOW_DRAFT_CONTENT.
+    external_resources: list[ExternalResourceOut] = Field(default_factory=list)
 
 
 class AttemptIn(BaseModel):
     exercise_version_id: str
     answer: Any
-    # "piano": đáp án chọn trên phím đàn, chỉ chấm cao độ (phím không mang chính tả tên nốt).
-    input_method: Literal["text", "choice", "piano"] = "text"
+    # "piano": đáp án chọn trên phím đàn, chỉ chấm cao độ (phím không mang chính tả tên nốt). HM-011: bỏ trống thì
+    # máy chủ dùng cách nhập mặc định của câu; cách nhập nào hợp lệ do phiên bản câu hỏi quyết định.
+    input_method: Optional[Literal["text", "choice", "multi_choice", "piano"]] = None
 
 
 class AttemptErrorOut(BaseModel):

@@ -45,7 +45,8 @@ export default function RegisterPage() {
     setSubmitting(true);
     try {
       await register({ display_name: form.display_name.trim(), email: form.email.trim(), password: form.password });
-      navigate(next, { replace: true });
+      // UC-06: người mới đăng ký được mời làm bài kiểm tra đầu vào (bỏ qua được), trừ khi đang đi tới trang khác.
+      navigate(next === "/app" ? "/app/kiem-tra-dau-vao" : next, { replace: true });
     } catch (err) {
       setError(authErrorMessage(err));
       setServerFields(fieldErrors(err));

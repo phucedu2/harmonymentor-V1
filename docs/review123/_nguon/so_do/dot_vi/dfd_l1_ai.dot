@@ -1,0 +1,51 @@
+digraph G {
+  graph [fontname="Liberation Serif", bgcolor=white, pad=0.2 , rankdir=TB, nodesep=0.3, ranksep=0.9];
+  node [fontname="Liberation Serif", fontsize=11, color=black];
+  edge [fontname="Liberation Serif", fontsize=9, color=black];
+  P12 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="12.0
+Lưu mục tiêu
++ embedding"];
+  P13 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="13.0
+Gợi ý
+lai"];
+  P14 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="14.0
+Chat
+AI Tutor"];
+  P15 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="15.0
+Giải thích
+câu sai (3 mức)"];
+  P16 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="16.0
+Chấm sao
+câu trả lời"];
+  L [shape=box, label="Người học"];
+  GM [shape=box, label="Google Gemini"];
+  D1 [shape=record, fontsize=10, label="{D1|users}"];
+  D6 [shape=record, fontsize=10, label="{D6|mastery_states}"];
+  D8 [shape=record, fontsize=10, label="{D8|review_states}"];
+  D11 [shape=record, fontsize=10, label="{D11|skills, skill_prerequisites}"];
+  D12 [shape=record, fontsize=10, label="{D12|recommendation_logs}"];
+  D13 [shape=record, fontsize=10, label="{D13|chat_sessions, chat_messages}"];
+  D14 [shape=record, fontsize=10, label="{D14|chat_feedback}"];
+  V1 [shape=record, fontsize=10, label="{V1|Qdrant harmony_knowledge (đoạn bài học)}"];
+  L -> P12 [label="mục tiêu học"];
+  P12 -> D1 [label="goal_text, goal_embedding"];
+  L -> P13 [label="GET /recommend"];
+  D6 -> P13 [label="mastery của mọi người học (KNN)"];
+  D8 -> P13 [label="kỹ năng đến hạn ôn"];
+  D11 -> P13 [label="tiên quyết, ngưỡng"];
+  D1 -> P13 [label="vector mục tiêu"];
+  P13 -> D12 [label="danh sách + điểm + lý do"];
+  P13 -> L [label="danh sách học tiếp / nên học / nên ôn"];
+  L -> P14 [label="câu hỏi"];
+  D13 -> P14 [label="6 tin nhắn gần nhất"];
+  V1 -> P14 [label="các đoạn liên quan nhất"];
+  P14 -> GM [label="prompt (không dữ liệu cá nhân)"];
+  GM -> P14 [label="trả lời JSON"];
+  P14 -> D13 [label="tin nhắn, trích dẫn, khẳng định đã kiểm"];
+  P14 -> L [label="trả lời + trích dẫn"];
+  L -> P15 [label="id lượt làm"];
+  P15 -> GM [label="mã lỗi, prompt"];
+  P15 -> L [label="gợi ý mức 1–3"];
+  L -> P16 [label="1–5 sao"];
+  P16 -> D14 [label="đánh giá"];
+}

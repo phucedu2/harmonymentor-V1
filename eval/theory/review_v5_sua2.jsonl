@@ -1,0 +1,28 @@
+{"id": "T011", "verdict": "dung", "note": "Db F Ab đúng; lần trước sai quãng, lần này đúng (Gemini chạy lại, không chắc do bản sửa)."}
+{"id": "T020", "verdict": "dung", "note": ""}
+{"id": "T069", "verdict": "dung", "note": ""}
+{"id": "T090", "verdict": "dung", "note": ""}
+{"id": "T091", "verdict": "dung", "note": ""}
+{"id": "T095", "verdict": "dung", "note": ""}
+{"id": "T097", "verdict": "dung", "note": ""}
+{"id": "T100", "verdict": "dung", "note": "A–C# = M3, 4 nửa cung, giải thích đúng."}
+{"id": "T101", "verdict": "dung", "note": "M7 đúng; câu 'rộng nhất của quãng bảy' hơi lỏng nhưng không sai."}
+{"id": "T102", "verdict": "dung", "note": ""}
+{"id": "T103", "verdict": "dung", "note": ""}
+{"id": "T108", "verdict": "dung", "note": ""}
+{"id": "T110", "verdict": "dung", "note": "Ab–F = M6, giải thích không sai."}
+{"id": "T111", "verdict": "dung", "note": "C#–E = m3, 3 nửa cung đúng (lần trước tranh luận)."}
+{"id": "T112", "verdict": "dung", "note": ""}
+{"id": "T113", "verdict": "dung", "note": ""}
+{"id": "T114", "verdict": "dung", "note": ""}
+{"id": "T115", "verdict": "dung", "note": "Đúng; còn cụm 'Theo hệ thống' chưa bị lọc (nhẹ)."}
+{"id": "T117", "verdict": "dung", "note": ""}
+{"id": "T119", "verdict": "dung", "note": ""}
+{"id": "T124", "verdict": "dung", "note": ""}
+{"id": "T148", "verdict": "dung", "note": ""}
+{"id": "T210", "verdict": "dung", "note": "Vẫn rơi dự phòng (engine_contradiction); nội dung Engine đúng A E."}
+{"id": "T211", "verdict": "dung", "note": "Vẫn rơi dự phòng (engine_contradiction); nội dung Engine đúng D Ab."}
+{"id": "T219", "verdict": "dung", "note": "Shell G B F đúng, Gemini tự trả lời (không còn dự phòng)."}
+{"id": "T222", "verdict": "dung", "note": "Bb D Ab đúng, Gemini tự trả lời."}
+{"id": "T224", "verdict": "dung", "note": "A C# G đúng, Gemini tự trả lời."}
+{"id": "T225", "verdict": "sai", "note": "SAI: nói 'lược quãng 5' nhưng liệt kê Eb G Bb D (còn Bb là quãng 5); shell đúng là Eb G D. Guardrail không bắt vì câu này không có ký hiệu hợp âm đứng sát danh sách nốt."}

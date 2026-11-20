@@ -1,0 +1,231 @@
+{
+  "note": "Kho hướng dẫn sử dụng cho luồng D của AI Tutor (ADR-017, quyết định 10A). Claude viết 06/11/2026 bằng cách đọc giao diện thật trên nhánh phuc-music (7c9408f): frontend/src/App.tsx, components/layout/AppLayout.tsx, pages/*. Trạng thái draft cho tới khi Phúc duyệt. Mỗi mục ghi trang (page) để trích dẫn; không mô tả chức năng chưa có. Trường \"hoi\" là cách hỏi mẫu, chỉ dùng để tìm mục (không hiện cho người học); không chép câu của tập dev/test.",
+  "author": "Claude",
+  "reviewer": null,
+  "entries": [
+    {
+      "id": "H01",
+      "status": "draft",
+      "page": "/dang-ky",
+      "page_title": "Đăng ký",
+      "title": "Tạo tài khoản",
+      "text": "Bấm Đăng ký ở trang chủ hoặc trang Đăng nhập. Điền tên hiển thị, email, mật khẩu và nhập lại mật khẩu. Mật khẩu phải đạt hết các điều kiện hiện ngay dưới ô (dấu ✓ là đã đạt). Bấm Tạo tài khoản. Tài khoản miễn phí, tiến độ học được lưu theo tài khoản. Nếu báo email đã có tài khoản thì bạn chuyển sang Đăng nhập.",
+      "hoi": [
+        "tạo tài khoản mới thế nào",
+        "đăng ký thành viên"
+      ]
+    },
+    {
+      "id": "H02",
+      "status": "draft",
+      "page": "/dang-nhap",
+      "page_title": "Đăng nhập",
+      "title": "Đăng nhập và bị khóa tạm thời",
+      "text": "Vào trang Đăng nhập, nhập email và mật khẩu. Nếu nhập sai 5 lần liền, hệ thống tạm khóa đăng nhập của email đó trên máy bạn trong 15 phút và báo \"Bạn đã nhập sai quá nhiều lần. Hãy thử lại sau.\" Đây là cách chống đoán mật khẩu. Bạn chỉ cần chờ hết 15 phút rồi đăng nhập lại; không cần làm gì thêm.",
+      "hoi": [
+        "nhập sai mật khẩu nhiều lần bị khóa",
+        "không vào được tài khoản",
+        "đăng nhập báo thử lại sau"
+      ]
+    },
+    {
+      "id": "H03",
+      "status": "draft",
+      "page": "/app/ho-so",
+      "page_title": "Hồ sơ",
+      "title": "Đổi mật khẩu, đổi tên hiển thị",
+      "text": "Trang Hồ sơ cho đổi tên hiển thị và nhạc cụ ưa thích rồi bấm Lưu thay đổi. Hiện ứng dụng chưa có chức năng đổi mật khẩu hay lấy lại mật khẩu đã quên. Nếu bạn quên mật khẩu, hãy nhờ nhóm quản trị hỗ trợ. Thông tin hồ sơ chỉ bạn xem được.",
+      "hoi": [
+        "thay mật khẩu",
+        "đặt mật khẩu mới cho tài khoản của mình",
+        "lấy lại mật khẩu đã quên",
+        "sửa tên hiển thị",
+        "đổi password"
+      ]
+    },
+    {
+      "id": "H04",
+      "status": "draft",
+      "page": "/app",
+      "page_title": "Tổng quan",
+      "title": "Trang Tổng quan dùng để làm gì",
+      "text": "Tổng quan là trang đầu sau khi đăng nhập. Ở đây có bài tiếp theo trong lộ trình (nút Học tiếp hoặc Bắt đầu học), số bài đã bắt đầu và đã hoàn thành, số thẻ cần ôn hôm nay, các bài được gợi ý cho bạn, nút Luyện tập tự do và lời mời làm bài kiểm tra đầu vào.",
+      "hoi": [
+        "tổng quan hiển thị những gì",
+        "màn hình đầu tiên sau khi đăng nhập"
+      ]
+    },
+    {
+      "id": "H05",
+      "status": "draft",
+      "page": "/app/kiem-tra-dau-vao",
+      "page_title": "Kiểm tra đầu vào",
+      "title": "Bài kiểm tra đầu vào",
+      "text": "Bài kiểm tra đầu vào có 12 câu ngắn để biết bạn bắt đầu từ đâu. Kỹ năng bạn làm đúng được ghi nhận, nên hệ thống gợi ý bài phù hợp hơn và không bắt bạn học lại từ đầu. Câu nào không biết thì để trống. Chưa biết gì về nhạc lý thì bấm \"Bỏ qua, học từ Bài 1\". Làm lại chỉ thay kết quả ở những kỹ năng bạn chưa học trong bài.",
+      "hoi": [
+        "bài kiểm tra đầu vào làm gì",
+        "xếp trình độ ban đầu"
+      ]
+    },
+    {
+      "id": "H06",
+      "status": "draft",
+      "page": "/app/hoc",
+      "page_title": "Học",
+      "title": "Mở một bài học",
+      "text": "Vào mục Học để xem lộ trình học hòa âm. Mỗi bài ghi số phần, số câu hỏi và số thẻ ôn. Bấm vào bài để học. Nhãn \"Học ngay\" là bài nên học tiếp, \"Đang học\" là bài đang dở, \"Đã xong\" là bài đã hoàn thành. Nhãn \"Nên học sau Bài …\" chỉ là lời khuyên theo thứ tự, bạn vẫn mở được.",
+      "hoi": [
+        "vào học một bài",
+        "bắt đầu học bài mới ở đâu"
+      ]
+    },
+    {
+      "id": "H07",
+      "status": "draft",
+      "page": "/app/hoc",
+      "page_title": "Học",
+      "title": "Vì sao một bài hiện \"Sắp có\" và không mở được",
+      "text": "Bài mang nhãn \"Sắp có\" là bài chưa có câu hỏi luyện tập nên chưa mở được; nhóm đang soạn và duyệt nội dung. Các bài khác không bị khóa: bạn mở được mọi bài có câu hỏi, kể cả khi hệ thống khuyên học bài trước đó. Nếu bài đã có câu hỏi mà vẫn không mở được, hãy tải lại trang.",
+      "hoi": [
+        "bài ghi sắp có",
+        "sao bài không mở được"
+      ]
+    },
+    {
+      "id": "H08",
+      "status": "draft",
+      "page": "/app/hoc",
+      "page_title": "Học",
+      "title": "Hoàn thành một bài",
+      "text": "Một bài được tính là hoàn thành khi bạn đã làm đúng mọi câu hỏi của bài, mỗi câu ít nhất một lần. Làm sai không sao: bạn sửa và nộp lại. Sau khi hoàn thành, các thẻ ôn của bài được lên lịch và xuất hiện ở mục Tiến độ.",
+      "hoi": [
+        "khi nào bài được tính là xong",
+        "đánh dấu hoàn thành bài"
+      ]
+    },
+    {
+      "id": "H09",
+      "status": "draft",
+      "page": "/app/luyen-tap",
+      "page_title": "Luyện tập",
+      "title": "Luyện tập tự do",
+      "text": "Mục Luyện tập cho chọn dạng bài tập (dựng hợp âm, gọi tên quãng, dựng âm giai, số La Mã) và mức độ Dễ, Vừa, Khó. Gõ các nốt cách nhau bằng dấu cách, dấu phẩy hoặc gạch ngang. Tên nốt phải đúng chính tả: Ab khác G#. Quãng viết tính chất cộng số, ví dụ M3, A4, d5. Lịch sử các lượt làm hiện ngay bên dưới.",
+      "hoi": [
+        "luyện tập thêm ngoài bài",
+        "trang luyện tập tự do"
+      ]
+    },
+    {
+      "id": "H10",
+      "status": "draft",
+      "page": "/app/tien-do",
+      "page_title": "Tiến độ",
+      "title": "Ôn thẻ và lịch ôn",
+      "text": "Thẻ ôn xuất hiện sau khi bạn hoàn thành một bài. Vào Tiến độ, phần Thẻ cần ôn hôm nay: tự nhớ trong đầu, nhập đáp án từ trí nhớ rồi bấm Kiểm tra, hoặc chọn Mình đã nhớ đúng hay Mình chưa nhớ. Nhớ đúng thì thẻ lên hộp cao hơn và lần ôn sau giãn ra 2, 4, 8, 16 ngày; chưa nhớ thì thẻ về hộp đầu.",
+      "hoi": [
+        "ôn thẻ hằng ngày",
+        "hộp ôn tập leitner",
+        "lịch ôn đến hạn"
+      ]
+    },
+    {
+      "id": "H11",
+      "status": "draft",
+      "page": "/app/tien-do",
+      "page_title": "Tiến độ",
+      "title": "Xem tiến độ học",
+      "text": "Trang Tiến độ cho biết bạn đã làm được gì: số bài đã hoàn thành, bài đang học, số thẻ đến hạn và thẻ sắp tới. Tiến độ mỗi bài tính theo số câu đã trả lời đúng ít nhất một lần. Mọi số liệu lấy từ chính các lần bạn làm bài và ôn thẻ.",
+      "hoi": [
+        "xem mình học tới đâu",
+        "biểu đồ tiến độ",
+        "mức thành thạo kỹ năng"
+      ]
+    },
+    {
+      "id": "H12",
+      "status": "draft",
+      "page": "/app/composition",
+      "page_title": "Sáng tác",
+      "title": "Bắt đầu với mục Sáng tác (Harmony Lab)",
+      "text": "Mục Sáng tác là Harmony Lab: bạn dựng một vòng hợp âm trong một giọng trưởng. Chọn một ô nhịp, chọn hợp âm cho ô đó, rồi bấm Phát hoặc Nghe thử. Hệ thống gợi ý hợp âm tiếp theo theo luật, kèm mức độ lạ tai, và cảnh báo chỉ để tham khảo, không cấm lựa chọn sáng tạo của bạn. Bấm Lưu vòng này để giữ lại.",
+      "hoi": [
+        "vào xưởng sáng tác",
+        "harmony lab là gì",
+        "soạn vòng hợp âm"
+      ]
+    },
+    {
+      "id": "H13",
+      "status": "draft",
+      "page": "/app/composition",
+      "page_title": "Sáng tác",
+      "title": "Nhạc nền, phong cách và đổi nhạc cụ",
+      "text": "Trong Sáng tác, phần nhạc nền cho chọn phong cách ban nhạc (ví dụ Pop, Ballad, Lo-fi, Bossa, Jazz) và Năng lượng bản phối từ Mộc tới Đầy. Phần \"Bật, tắt và chỉnh âm lượng từng kênh\" cho bật tắt piano, bass, guitar, trống. Hiện chưa chọn được nhạc cụ khác cho từng kênh. Bấm Tạo bản khác để nghe cách chơi mới trong cùng phong cách.",
+      "hoi": [
+        "chọn phong cách nhạc nền",
+        "đổi tiếng nhạc cụ đệm"
+      ]
+    },
+    {
+      "id": "H14",
+      "status": "draft",
+      "page": "/app/composition",
+      "page_title": "Sáng tác",
+      "title": "Chế độ Bài hát",
+      "text": "Sáng tác có hai chế độ. Vòng lặp nghe nhanh 4 vòng của lưới hợp âm, hợp để thử từng hợp âm. Bài hát dựng vòng hợp âm thành Intro, Verse, Chorus… có cao trào và chuyển đoạn, mỗi đoạn có ghi chú vì sao. Bấm Dựng thành bài hát, chỉnh Năng lượng tổng và Độ dài bài, rồi Phát cả bài và Lưu bài này.",
+      "hoi": [
+        "dựng thành bài hát có điệp khúc",
+        "chế độ song form"
+      ]
+    },
+    {
+      "id": "H15",
+      "status": "draft",
+      "page": "/app/composition",
+      "page_title": "Sáng tác",
+      "title": "Xuất file và tiếng bị giống máy",
+      "text": "Hiện Sáng tác chưa xuất được file MIDI, file âm thanh hay bản nhạc PDF; vòng và bài được lưu trong tài khoản của bạn. Nhạc nền dùng mẫu thu thật của piano, bass, guitar, trống. Nếu thấy dòng \"Chưa tải được mẫu âm thanh thật\" thì trình duyệt đang phát bằng âm tổng hợp; hãy kiểm mạng rồi tải lại trang.",
+      "hoi": [
+        "tải bài sáng tác về máy",
+        "xuất MIDI hoặc PDF",
+        "tiếng nghe như máy"
+      ]
+    },
+    {
+      "id": "H16",
+      "status": "draft",
+      "page": "/app",
+      "page_title": "Trợ lý AI",
+      "title": "Trợ lý AI trả lời được gì",
+      "text": "Trợ lý AI trả lời câu hỏi nhạc lý dựa trên các bài trong khóa và ghi rõ trích từ bài nào. Câu nhạc lý mà bài chưa dạy nhưng Music Engine tính được (nốt hợp âm, quãng, âm giai, số La Mã) thì trả lời với nhãn \"Ngoài bài học, theo Music Engine\". Câu không thuộc nhạc lý hay không liên quan khóa học thì trợ lý nói không biết. Mỗi ngày có giới hạn số lượt hỏi.",
+      "hoi": [
+        "trợ lý AI hỏi được gì",
+        "AI tutor giúp gì"
+      ]
+    },
+    {
+      "id": "H17",
+      "status": "draft",
+      "page": "/app/hoc",
+      "page_title": "Học",
+      "title": "Nhờ AI giải thích câu làm sai",
+      "text": "Khi làm sai một câu trong bài, bấm nút giải thích để trợ lý AI gợi ý. Lần đầu trợ lý chỉ gợi lại khái niệm, lần sau chỉ ra bước cần kiểm lại, lần thứ ba mới giải thích đầy đủ. Cách này giúp bạn tự sửa trước khi xem lời giải. Câu được làm đúng sau khi nhờ gợi ý vẫn được tính, nhưng ít điểm thành thạo hơn.",
+      "hoi": [
+        "giải thích câu mình làm sai",
+        "gợi ý từng mức khi sai"
+      ]
+    },
+    {
+      "id": "H18",
+      "status": "draft",
+      "page": "/app",
+      "page_title": "Tổng quan",
+      "title": "Bài được gợi ý cho bạn",
+      "text": "Ở Tổng quan, hệ thống gợi ý bài theo ba nhóm: Tiếp tục bài đang học, Bài nên học tiếp và Bài nên ôn lại. Gợi ý dựa trên mức thành thạo từng kỹ năng của bạn, thứ tự tiên quyết giữa các bài và mục tiêu học bạn đặt. Mỗi gợi ý có một câu lý do. Đây chỉ là lời khuyên; bạn vẫn tự chọn bài muốn học.",
+      "hoi": [
+        "bài được đề xuất cho mình",
+        "mục bài nên học tiếp"
+      ]
+    }
+  ]
+}

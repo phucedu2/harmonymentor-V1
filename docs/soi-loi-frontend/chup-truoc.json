@@ -1,0 +1,2139 @@
+{
+ "email": "soi1794845647488@vd.vn",
+ "report": [
+  {
+   "name": "trang-chu",
+   "w": 1920,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "button \"Bật âm thanh\" 153x38",
+    "button \"C\" 42x34",
+    "button \"Am\" 51x34",
+    "button \"G7\" 51x34",
+    "button \"E♭m7♭5\" 84x34"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-nhap",
+   "w": 1920,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng ký\" 57x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-ky",
+   "w": 1920,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng nhập\" 75x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "404",
+   "w": 1920,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "tong-quan",
+   "w": 1920,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "hoc",
+   "w": 1920,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "luyen-tap",
+   "w": 1920,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "quiz",
+   "w": 1920,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "tien-do",
+   "w": 1920,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "composition",
+   "w": 1920,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38",
+    "button \"5\" 43x44",
+    "button \"6\" 44x44",
+    "button \"7\" 42x44",
+    "button \"8\" 43x44"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "ho-so",
+   "w": 1920,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "kiem-tra-dau-vao",
+   "w": 1920,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "trang-chu",
+   "w": 1440,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "button \"Bật âm thanh\" 153x38",
+    "button \"C\" 42x34",
+    "button \"Am\" 51x34",
+    "button \"G7\" 51x34",
+    "button \"E♭m7♭5\" 84x34"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-nhap",
+   "w": 1440,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng ký\" 57x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-ky",
+   "w": 1440,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng nhập\" 75x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "404",
+   "w": 1440,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "tong-quan",
+   "w": 1440,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "hoc",
+   "w": 1440,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "luyen-tap",
+   "w": 1440,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "quiz",
+   "w": 1440,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "tien-do",
+   "w": 1440,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "composition",
+   "w": 1440,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38",
+    "button \"5\" 43x44",
+    "button \"6\" 44x44",
+    "button \"7\" 42x44",
+    "button \"8\" 43x44"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "ho-so",
+   "w": 1440,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "kiem-tra-dau-vao",
+   "w": 1440,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "trang-chu",
+   "w": 1280,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "button \"Bật âm thanh\" 153x38",
+    "button \"C\" 42x34",
+    "button \"Am\" 51x34",
+    "button \"G7\" 51x34",
+    "button \"E♭m7♭5\" 84x34"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-nhap",
+   "w": 1280,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng ký\" 57x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-ky",
+   "w": 1280,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng nhập\" 75x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "404",
+   "w": 1280,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "tong-quan",
+   "w": 1280,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "hoc",
+   "w": 1280,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "luyen-tap",
+   "w": 1280,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "quiz",
+   "w": 1280,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "tien-do",
+   "w": 1280,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "composition",
+   "w": 1280,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38",
+    "button \"5\" 43x44",
+    "button \"6\" 44x44",
+    "button \"7\" 42x44",
+    "button \"8\" 43x44"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "ho-so",
+   "w": 1280,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "kiem-tra-dau-vao",
+   "w": 1280,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "trang-chu",
+   "w": 768,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "button \"Bật âm thanh\" 153x38",
+    "button \"C\" 42x34",
+    "button \"Am\" 51x34",
+    "button \"G7\" 51x34",
+    "button \"E♭m7♭5\" 84x34"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-nhap",
+   "w": 768,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng ký\" 57x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-ky",
+   "w": 768,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng nhập\" 75x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "404",
+   "w": 768,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "tong-quan",
+   "w": 768,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38",
+    "a \"Tổng quan\" 103x31",
+    "a \"Học\" 103x31",
+    "a \"Luyện tập\" 103x31",
+    "a \"Quiz kỹ năng\" 103x31",
+    "a \"Tiến độ\" 103x31",
+    "a \"Sáng tác\" 103x31",
+    "a \"Hồ sơ\" 103x31"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "hoc",
+   "w": 768,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38",
+    "a \"Tổng quan\" 103x31",
+    "a \"Học\" 103x31",
+    "a \"Luyện tập\" 103x31",
+    "a \"Quiz kỹ năng\" 103x31",
+    "a \"Tiến độ\" 103x31",
+    "a \"Sáng tác\" 103x31",
+    "a \"Hồ sơ\" 103x31"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "luyen-tap",
+   "w": 768,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38",
+    "a \"Tổng quan\" 103x31",
+    "a \"Học\" 103x31",
+    "a \"Luyện tập\" 103x31",
+    "a \"Quiz kỹ năng\" 103x31",
+    "a \"Tiến độ\" 103x31",
+    "a \"Sáng tác\" 103x31",
+    "a \"Hồ sơ\" 103x31"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "quiz",
+   "w": 768,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38",
+    "a \"Tổng quan\" 103x31",
+    "a \"Học\" 103x31",
+    "a \"Luyện tập\" 103x31",
+    "a \"Quiz kỹ năng\" 103x31",
+    "a \"Tiến độ\" 103x31",
+    "a \"Sáng tác\" 103x31",
+    "a \"Hồ sơ\" 103x31"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "tien-do",
+   "w": 768,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38",
+    "a \"Tổng quan\" 103x31",
+    "a \"Học\" 103x31",
+    "a \"Luyện tập\" 103x31",
+    "a \"Quiz kỹ năng\" 103x31",
+    "a \"Tiến độ\" 103x31",
+    "a \"Sáng tác\" 103x31",
+    "a \"Hồ sơ\" 103x31"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "composition",
+   "w": 768,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38",
+    "a \"Tổng quan\" 103x31",
+    "a \"Học\" 103x31",
+    "a \"Luyện tập\" 103x31",
+    "a \"Quiz kỹ năng\" 103x31",
+    "a \"Tiến độ\" 103x31",
+    "a \"Sáng tác\" 103x31",
+    "a \"Hồ sơ\" 103x31",
+    "button \"5\" 43x44",
+    "button \"6\" 44x44",
+    "button \"7\" 42x44",
+    "button \"8\" 43x44"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "ho-so",
+   "w": 768,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38",
+    "a \"Tổng quan\" 103x31",
+    "a \"Học\" 103x31",
+    "a \"Luyện tập\" 103x31",
+    "a \"Quiz kỹ năng\" 103x31",
+    "a \"Tiến độ\" 103x31",
+    "a \"Sáng tác\" 103x31",
+    "a \"Hồ sơ\" 103x31"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "kiem-tra-dau-vao",
+   "w": 768,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38",
+    "a \"Tổng quan\" 103x31",
+    "a \"Học\" 103x31",
+    "a \"Luyện tập\" 103x31",
+    "a \"Quiz kỹ năng\" 103x31",
+    "a \"Tiến độ\" 103x31",
+    "a \"Sáng tác\" 103x31",
+    "a \"Hồ sơ\" 103x31"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "trang-chu",
+   "w": 390,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Bật âm thanh\" 153x38",
+    "button \"C\" 42x34",
+    "button \"Am\" 51x34",
+    "button \"G7\" 51x34",
+    "button \"E♭m7♭5\" 84x34"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-nhap",
+   "w": 390,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Đăng ký\" 57x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-ky",
+   "w": 390,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Đăng nhập\" 75x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "404",
+   "w": 390,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "tong-quan",
+   "w": 390,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "hoc",
+   "w": 390,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "luyen-tap",
+   "w": 390,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "quiz",
+   "w": 390,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "tien-do",
+   "w": 390,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "composition",
+   "w": 390,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38",
+    "button \"5\" 43x44",
+    "button \"6\" 44x44",
+    "button \"7\" 42x44",
+    "button \"8\" 43x44"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "ho-so",
+   "w": 390,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "kiem-tra-dau-vao",
+   "w": 390,
+   "scheme": "light",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "trang-chu",
+   "w": 1920,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "button \"Bật âm thanh\" 153x38",
+    "button \"C\" 42x34",
+    "button \"Am\" 51x34",
+    "button \"G7\" 51x34",
+    "button \"E♭m7♭5\" 84x34"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-nhap",
+   "w": 1920,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng ký\" 57x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-ky",
+   "w": 1920,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng nhập\" 75x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "404",
+   "w": 1920,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "tong-quan",
+   "w": 1920,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "hoc",
+   "w": 1920,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "luyen-tap",
+   "w": 1920,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "quiz",
+   "w": 1920,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "tien-do",
+   "w": 1920,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "composition",
+   "w": 1920,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38",
+    "button \"5\" 43x44",
+    "button \"6\" 44x44",
+    "button \"7\" 42x44",
+    "button \"8\" 43x44"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "ho-so",
+   "w": 1920,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "kiem-tra-dau-vao",
+   "w": 1920,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "trang-chu",
+   "w": 1440,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "button \"Bật âm thanh\" 153x38",
+    "button \"C\" 42x34",
+    "button \"Am\" 51x34",
+    "button \"G7\" 51x34",
+    "button \"E♭m7♭5\" 84x34"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-nhap",
+   "w": 1440,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng ký\" 57x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-ky",
+   "w": 1440,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng nhập\" 75x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "404",
+   "w": 1440,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "tong-quan",
+   "w": 1440,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "hoc",
+   "w": 1440,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "luyen-tap",
+   "w": 1440,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "quiz",
+   "w": 1440,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "tien-do",
+   "w": 1440,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "composition",
+   "w": 1440,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38",
+    "button \"5\" 43x44",
+    "button \"6\" 44x44",
+    "button \"7\" 42x44",
+    "button \"8\" 43x44"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "ho-so",
+   "w": 1440,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "kiem-tra-dau-vao",
+   "w": 1440,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "trang-chu",
+   "w": 1280,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "button \"Bật âm thanh\" 153x38",
+    "button \"C\" 42x34",
+    "button \"Am\" 51x34",
+    "button \"G7\" 51x34",
+    "button \"E♭m7♭5\" 84x34"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-nhap",
+   "w": 1280,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng ký\" 57x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-ky",
+   "w": 1280,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng nhập\" 75x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "404",
+   "w": 1280,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "tong-quan",
+   "w": 1280,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "hoc",
+   "w": 1280,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "luyen-tap",
+   "w": 1280,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "quiz",
+   "w": 1280,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "tien-do",
+   "w": 1280,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "composition",
+   "w": 1280,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38",
+    "button \"5\" 43x44",
+    "button \"6\" 44x44",
+    "button \"7\" 42x44",
+    "button \"8\" 43x44"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "ho-so",
+   "w": 1280,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "kiem-tra-dau-vao",
+   "w": 1280,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Tổng quan\" 198x38",
+    "a \"Học\" 198x38",
+    "a \"Luyện tập\" 198x38",
+    "a \"Quiz kỹ năng\" 198x38",
+    "a \"Tiến độ\" 198x38",
+    "a \"Sáng tác\" 198x38",
+    "a \"Hồ sơ\" 198x38",
+    "button \"Đăng xuất\" 198x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "trang-chu",
+   "w": 768,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "button \"Bật âm thanh\" 153x38",
+    "button \"C\" 42x34",
+    "button \"Am\" 51x34",
+    "button \"G7\" 51x34",
+    "button \"E♭m7♭5\" 84x34"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-nhap",
+   "w": 768,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng ký\" 57x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-ky",
+   "w": 768,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36",
+    "a \"Đăng nhập\" 75x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "404",
+   "w": 768,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Chương trình\" 112x36",
+    "a \"Tính năng\" 91x36",
+    "a \"Đăng nhập\" 99x36"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "tong-quan",
+   "w": 768,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38",
+    "a \"Tổng quan\" 103x31",
+    "a \"Học\" 103x31",
+    "a \"Luyện tập\" 103x31",
+    "a \"Quiz kỹ năng\" 103x31",
+    "a \"Tiến độ\" 103x31",
+    "a \"Sáng tác\" 103x31",
+    "a \"Hồ sơ\" 103x31"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "hoc",
+   "w": 768,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38",
+    "a \"Tổng quan\" 103x31",
+    "a \"Học\" 103x31",
+    "a \"Luyện tập\" 103x31",
+    "a \"Quiz kỹ năng\" 103x31",
+    "a \"Tiến độ\" 103x31",
+    "a \"Sáng tác\" 103x31",
+    "a \"Hồ sơ\" 103x31"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "luyen-tap",
+   "w": 768,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38",
+    "a \"Tổng quan\" 103x31",
+    "a \"Học\" 103x31",
+    "a \"Luyện tập\" 103x31",
+    "a \"Quiz kỹ năng\" 103x31",
+    "a \"Tiến độ\" 103x31",
+    "a \"Sáng tác\" 103x31",
+    "a \"Hồ sơ\" 103x31"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "quiz",
+   "w": 768,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38",
+    "a \"Tổng quan\" 103x31",
+    "a \"Học\" 103x31",
+    "a \"Luyện tập\" 103x31",
+    "a \"Quiz kỹ năng\" 103x31",
+    "a \"Tiến độ\" 103x31",
+    "a \"Sáng tác\" 103x31",
+    "a \"Hồ sơ\" 103x31"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "tien-do",
+   "w": 768,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38",
+    "a \"Tổng quan\" 103x31",
+    "a \"Học\" 103x31",
+    "a \"Luyện tập\" 103x31",
+    "a \"Quiz kỹ năng\" 103x31",
+    "a \"Tiến độ\" 103x31",
+    "a \"Sáng tác\" 103x31",
+    "a \"Hồ sơ\" 103x31"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "composition",
+   "w": 768,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38",
+    "a \"Tổng quan\" 103x31",
+    "a \"Học\" 103x31",
+    "a \"Luyện tập\" 103x31",
+    "a \"Quiz kỹ năng\" 103x31",
+    "a \"Tiến độ\" 103x31",
+    "a \"Sáng tác\" 103x31",
+    "a \"Hồ sơ\" 103x31",
+    "button \"5\" 43x44",
+    "button \"6\" 44x44",
+    "button \"7\" 42x44",
+    "button \"8\" 43x44"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "ho-so",
+   "w": 768,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38",
+    "a \"Tổng quan\" 103x31",
+    "a \"Học\" 103x31",
+    "a \"Luyện tập\" 103x31",
+    "a \"Quiz kỹ năng\" 103x31",
+    "a \"Tiến độ\" 103x31",
+    "a \"Sáng tác\" 103x31",
+    "a \"Hồ sơ\" 103x31"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "kiem-tra-dau-vao",
+   "w": 768,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38",
+    "a \"Tổng quan\" 103x31",
+    "a \"Học\" 103x31",
+    "a \"Luyện tập\" 103x31",
+    "a \"Quiz kỹ năng\" 103x31",
+    "a \"Tiến độ\" 103x31",
+    "a \"Sáng tác\" 103x31",
+    "a \"Hồ sơ\" 103x31"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "trang-chu",
+   "w": 390,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Bật âm thanh\" 153x38",
+    "button \"C\" 42x34",
+    "button \"Am\" 51x34",
+    "button \"G7\" 51x34",
+    "button \"E♭m7♭5\" 84x34"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-nhap",
+   "w": 390,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Đăng ký\" 57x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "dang-ky",
+   "w": 390,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "a \"Đăng nhập\" 75x18"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "404",
+   "w": 390,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "tong-quan",
+   "w": 390,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "hoc",
+   "w": 390,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "luyen-tap",
+   "w": 390,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "quiz",
+   "w": 390,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "tien-do",
+   "w": 390,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "composition",
+   "w": 390,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38",
+    "button \"5\" 43x44",
+    "button \"6\" 44x44",
+    "button \"7\" 42x44",
+    "button \"8\" 43x44"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": [
+    "warning: The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio"
+   ]
+  },
+  {
+   "name": "ho-so",
+   "w": 390,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  },
+  {
+   "name": "kiem-tra-dau-vao",
+   "w": 390,
+   "scheme": "dark",
+   "hscroll": 0,
+   "small": [
+    "a \"Harmony Mentor, về trang chủ\" 160x36",
+    "button \"Đăng xuất\" 99x38"
+   ],
+   "bg": "rgb(242, 243, 234)",
+   "logs": []
+  }
+ ]
+}

@@ -1,0 +1,19 @@
+digraph G {
+  graph [fontname="Liberation Serif", bgcolor=white, pad=0.2 , layout=dot, rankdir=LR, nodesep=0.35, ranksep=1.6];
+  node [fontname="Liberation Serif", fontsize=11, color=black];
+  edge [fontname="Liberation Serif", fontsize=9, color=black];
+  P0 [shape=circle, width=2.1, fixedsize=true, label="0\nHarmonyMentor AI\nSystem"];
+  G [shape=box, width=1.6, label="Guest"];
+  L [shape=box, width=1.6, label="Learner"];
+  A [shape=box, width=1.6, label="Admin"];
+  GM [shape=box, width=1.6, label="Google Gemini API\n(external AI service)"];
+  {rank=same; G; L; A;}
+  G -> P0 [label="Register / login data"];
+  P0 -> G [label="Home page, curriculum,\nJWT + refresh cookie"];
+  L -> P0 [label="Answers, piano input, flashcard answers,\ngoal text, chat questions, chord grids"];
+  P0 -> L [label="Grading result + error code, explanation,\nmastery, review queue, recommendations,\ncited AI answers, backing track"];
+  A -> P0 [label="Lesson text edits, publish / hide,\nuser lock, uploaded documents"];
+  P0 -> A [label="Statistics, audit log,\nAI lesson drafts with Engine flags"];
+  P0 -> GM [label="Question, last 6 messages, lesson chunks,\nweak skills, error code (no e-mail / name / id)"];
+  GM -> P0 [label="JSON answer + citations\n(checked by Music Engine)"];
+}

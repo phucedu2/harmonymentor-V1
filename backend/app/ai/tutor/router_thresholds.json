@@ -1,0 +1,330 @@
+{
+  "note": "Do scripts/ai/gop_y/hieu_chinh_nguong.py chọn trên tập dev, không sửa tay (ADR-017). 11/11: sau khi L07 vào kho, chỉ chọn lại bm25 và e5 gốc (mặc định); hàng gd2b/gd2c giữ từ 08/11, chưa chọn lại.",
+  "dev_set": "scripts/ai/data/router_dev.json + scripts/ai/data/gd2/dev.json + docs/giai-doan/ai-gop-y/phieu-cau-hoi/phieu_Phuc_dev.json",
+  "dev_size": 341,
+  "date": "2026-11-11",
+  "thresholds": {
+    "bm25": {
+      "greet_conf": 0.5,
+      "help_conf": 0.45,
+      "oos_conf": 0.5,
+      "music_min": 0.3,
+      "lesson_gray": 2.5,
+      "lesson_accept": 6.8,
+      "help_accept": 0.0,
+      "help_margin": 1.0
+    },
+    "embedding:multilingual-e5-small": {
+      "greet_conf": 0.5,
+      "help_conf": 0.45,
+      "oos_conf": 0.5,
+      "music_min": 0.3,
+      "lesson_gray": 0.792,
+      "lesson_accept": 0.825,
+      "help_accept": 0.687,
+      "help_margin": 1.0
+    },
+    "embedding:multilingual-e5-small-hm-gd2b": {
+      "greet_conf": 0.5,
+      "help_conf": 0.45,
+      "oos_conf": 0.5,
+      "music_min": 0.3,
+      "lesson_gray": 0.418,
+      "lesson_accept": 0.426,
+      "help_accept": 0.068,
+      "help_margin": 1.0
+    },
+    "embedding:multilingual-e5-small-hm-gd2c": {
+      "greet_conf": 0.5,
+      "help_conf": 0.45,
+      "oos_conf": 0.5,
+      "music_min": 0.3,
+      "lesson_gray": 0.237,
+      "lesson_accept": 0.265,
+      "help_accept": -0.086,
+      "help_margin": 1.0
+    }
+  },
+  "dev_metrics": {
+    "bm25": {
+      "accuracy": 0.8944,
+      "bc_answered_wrong": 0.02,
+      "a_refused_wrong": 0.0674,
+      "a_engine_instead_of_lesson": 0.0281,
+      "confusion": {
+        "A": {
+          "A": 161,
+          "B": 13,
+          "C": 4,
+          "D": 0,
+          "G": 0
+        },
+        "B": {
+          "A": 2,
+          "B": 54,
+          "C": 0,
+          "D": 0,
+          "G": 0
+        },
+        "C": {
+          "A": 0,
+          "B": 8,
+          "C": 36,
+          "D": 0,
+          "G": 0
+        },
+        "D": {
+          "A": 1,
+          "B": 2,
+          "C": 0,
+          "D": 35,
+          "G": 0
+        },
+        "G": {
+          "A": 0,
+          "B": 0,
+          "C": 6,
+          "D": 0,
+          "G": 19
+        }
+      },
+      "per_flow": {
+        "A": {
+          "precision": 0.982,
+          "recall": 0.904,
+          "n": 178
+        },
+        "B": {
+          "precision": 0.701,
+          "recall": 0.964,
+          "n": 56
+        },
+        "C": {
+          "precision": 0.783,
+          "recall": 0.818,
+          "n": 44
+        },
+        "D": {
+          "precision": 1.0,
+          "recall": 0.921,
+          "n": 38
+        },
+        "G": {
+          "precision": 1.0,
+          "recall": 0.76,
+          "n": 25
+        }
+      }
+    },
+    "embedding:multilingual-e5-small": {
+      "accuracy": 0.8944,
+      "bc_answered_wrong": 0.03,
+      "a_refused_wrong": 0.0618,
+      "a_engine_instead_of_lesson": 0.0281,
+      "confusion": {
+        "A": {
+          "A": 162,
+          "B": 12,
+          "C": 4,
+          "D": 0,
+          "G": 0
+        },
+        "B": {
+          "A": 3,
+          "B": 53,
+          "C": 0,
+          "D": 0,
+          "G": 0
+        },
+        "C": {
+          "A": 0,
+          "B": 8,
+          "C": 36,
+          "D": 0,
+          "G": 0
+        },
+        "D": {
+          "A": 2,
+          "B": 1,
+          "C": 0,
+          "D": 35,
+          "G": 0
+        },
+        "G": {
+          "A": 0,
+          "B": 0,
+          "C": 6,
+          "D": 0,
+          "G": 19
+        }
+      },
+      "per_flow": {
+        "A": {
+          "precision": 0.97,
+          "recall": 0.91,
+          "n": 178
+        },
+        "B": {
+          "precision": 0.716,
+          "recall": 0.946,
+          "n": 56
+        },
+        "C": {
+          "precision": 0.783,
+          "recall": 0.818,
+          "n": 44
+        },
+        "D": {
+          "precision": 1.0,
+          "recall": 0.921,
+          "n": 38
+        },
+        "G": {
+          "precision": 1.0,
+          "recall": 0.76,
+          "n": 25
+        }
+      }
+    },
+    "embedding:multilingual-e5-small-hm-gd2b": {
+      "accuracy": 0.8392,
+      "bc_answered_wrong": 0.04,
+      "a_refused_wrong": 0.1776,
+      "a_engine_instead_of_lesson": 0.0197,
+      "confusion": {
+        "A": {
+          "A": 122,
+          "B": 27,
+          "C": 3,
+          "D": 0,
+          "G": 0
+        },
+        "B": {
+          "A": 3,
+          "B": 58,
+          "C": 0,
+          "D": 0,
+          "G": 0
+        },
+        "C": {
+          "A": 1,
+          "B": 8,
+          "C": 30,
+          "D": 0,
+          "G": 0
+        },
+        "D": {
+          "A": 0,
+          "B": 3,
+          "C": 0,
+          "D": 33,
+          "G": 0
+        },
+        "G": {
+          "A": 0,
+          "B": 1,
+          "C": 4,
+          "D": 0,
+          "G": 18
+        }
+      },
+      "per_flow": {
+        "A": {
+          "precision": 0.968,
+          "recall": 0.803,
+          "n": 152
+        },
+        "B": {
+          "precision": 0.598,
+          "recall": 0.951,
+          "n": 61
+        },
+        "C": {
+          "precision": 0.811,
+          "recall": 0.769,
+          "n": 39
+        },
+        "D": {
+          "precision": 1.0,
+          "recall": 0.917,
+          "n": 36
+        },
+        "G": {
+          "precision": 1.0,
+          "recall": 0.783,
+          "n": 23
+        }
+      }
+    },
+    "embedding:multilingual-e5-small-hm-gd2c": {
+      "accuracy": 0.8746,
+      "bc_answered_wrong": 0.06,
+      "a_refused_wrong": 0.1118,
+      "a_engine_instead_of_lesson": 0.0,
+      "confusion": {
+        "A": {
+          "A": 135,
+          "B": 14,
+          "C": 3,
+          "D": 0,
+          "G": 0
+        },
+        "B": {
+          "A": 5,
+          "B": 56,
+          "C": 0,
+          "D": 0,
+          "G": 0
+        },
+        "C": {
+          "A": 1,
+          "B": 8,
+          "C": 30,
+          "D": 0,
+          "G": 0
+        },
+        "D": {
+          "A": 0,
+          "B": 3,
+          "C": 0,
+          "D": 33,
+          "G": 0
+        },
+        "G": {
+          "A": 0,
+          "B": 1,
+          "C": 4,
+          "D": 0,
+          "G": 18
+        }
+      },
+      "per_flow": {
+        "A": {
+          "precision": 0.957,
+          "recall": 0.888,
+          "n": 152
+        },
+        "B": {
+          "precision": 0.683,
+          "recall": 0.918,
+          "n": 61
+        },
+        "C": {
+          "precision": 0.811,
+          "recall": 0.769,
+          "n": 39
+        },
+        "D": {
+          "precision": 1.0,
+          "recall": 0.917,
+          "n": 36
+        },
+        "G": {
+          "precision": 1.0,
+          "recall": 0.783,
+          "n": 23
+        }
+      }
+    }
+  }
+}

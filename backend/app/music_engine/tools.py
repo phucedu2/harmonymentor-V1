@@ -9,6 +9,7 @@ from __future__ import annotations
 from .chord import chord_tones, parse_chord_symbol
 from .errors import MusicEngineError
 from .interval import interval_between
+from .roman import roman_numeral
 from .scale import build_scale
 
 
@@ -45,6 +46,13 @@ def identify_interval(lower: str, upper: str) -> dict:
     return {"interval": iv.name, "semitones": iv.semitones}
 
 
+@_safe
+def get_roman_numeral(key: str, chord: str) -> dict:
+    """Số La Mã của hợp âm thuận giọng trong giọng trưởng, ví dụ ('G', 'D7') → V7. Hợp âm ngoài giọng → lỗi."""
+    rn = roman_numeral(key, chord)
+    return {"key": rn.key, "chord": rn.chord.symbol, "numeral": rn.numeral, "degree": rn.degree}
+
+
 TOOL_DECLARATIONS = [
     {"name": "get_chord_tones", "description": get_chord_tones.__doc__,
      "parameters": {"type": "object", "properties": {"symbol": {"type": "string"}}, "required": ["symbol"]}},
@@ -58,4 +66,10 @@ TOOL_DECLARATIONS = [
      "parameters": {"type": "object", "properties": {"lower": {"type": "string"}, "upper": {"type": "string"}},
                     "required": ["lower", "upper"]}},
 ]
-TOOLS = {"get_chord_tones": get_chord_tones, "get_scale": get_scale, "identify_interval": identify_interval}
+TOOL_DECLARATIONS.append(
+    {"name": "get_roman_numeral", "description": get_roman_numeral.__doc__,
+     "parameters": {"type": "object", "properties": {"key": {"type": "string"}, "chord": {"type": "string"}},
+                    "required": ["key", "chord"]}})
+
+TOOLS = {"get_chord_tones": get_chord_tones, "get_scale": get_scale, "identify_interval": identify_interval,
+         "get_roman_numeral": get_roman_numeral}

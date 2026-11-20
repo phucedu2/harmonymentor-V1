@@ -109,7 +109,7 @@ def test_lesson1_free_response_prompts_explain_input_format_without_leaking_answ
     assert "1-3-5" in by_id["L01-Q03"]["prompt"]
     assert "1-b3-5" not in by_id["L01-Q03"]["prompt"]
     assert "D minor" in by_id["L01-Q04"]["prompt"]
-    assert "Có hoặc Không" in by_id["L01-Q05"]["prompt"]
+    assert "F# và Gb" in by_id["L01-Q05"]["prompt"]
     assert "B diminished" in by_id["L01-Q06"]["prompt"]
 
 def test_formula_grader_accepts_ascii_and_unicode_flat_symbols():

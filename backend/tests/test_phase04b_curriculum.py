@@ -25,14 +25,21 @@ def make_user() -> str:
     return user_id
 
 
-def test_curriculum_bank_is_exactly_8_48_64_and_ids_are_unique():
-    assert len(LESSON_SPECS) == 8
-    exercises = all_exercises()
+def test_curriculum_bank_is_exactly_9_73_70_and_ids_are_unique():
+    assert len(LESSON_SPECS) == 9
+    everything = all_exercises()
+    exercises = [x for x in everything if x.get("status", "published") != "draft"]
     reviews = all_review_items()
-    assert len(exercises) == 48
-    assert len(reviews) == 64
-    assert len({x["id"] for x in exercises}) == 48
-    assert len({x["id"] for x in reviews}) == 64
+    # 48 câu gốc + 6 câu demo 10/11 (Thắng + Đạt duyệt, phát hành 04/11/2026), L05–L08 (L07 đã tính từ trước) mở 10–11/11, trừ L07-Q06 và L08-Q06 để draft.
+    # + 15 câu bổ sung L01–L04 (mỗi kỹ năng đủ 3 câu) và bài L11 "Vòng hợp âm Pop" (6 câu, 6 thẻ), 12/11/2026.
+    assert len(exercises) == 73
+    assert len(reviews) == 70
+    assert len({x["id"] for x in everything}) == len(everything)
+    # + 10 câu draft 14/11/2026 (RS-04: mỗi kỹ năng L05–L07 đủ 3 câu), chờ Đạt duyệt rồi mới phát hành.
+    assert [x["id"] for x in everything if x.get("status") == "draft"] == [
+        "L05-Q07", "L05-Q08", "L05-Q09", "L06-Q07", "L06-Q08", "L06-Q09", "L06-Q10",
+        "L07-Q06", "L07-Q07", "L07-Q08", "L07-Q09", "L08-Q06"]
+    assert len({x["id"] for x in reviews}) == 70
 
 
 def test_every_item_is_skill_mapped_and_source_grounded():
@@ -79,20 +86,17 @@ def test_skill_prerequisites_are_persisted():
             assert len(persisted) >= len(PREREQUISITES)
 
 
-def test_lessons_1_to_4_are_migrated_and_5_to_8_are_specs_only():
+def test_all_eight_lessons_are_migrated():
     with TestClient(app) as client:
         lessons = {x["id"]: x for x in client.get("/api/v1/lessons").json()}
-        assert set(MIGRATED_LESSON_IDS) == {"L01", "L02", "L03", "L04"}
-        expected_block_counts = {"L01": 14, "L02": 10, "L03": 9, "L04": 11}
-        for lesson_id in ["L01", "L02", "L03", "L04"]:
-            assert lessons[lesson_id]["exercise_count"] == 6
-            assert lessons[lesson_id]["review_item_count"] == 8
+        assert set(MIGRATED_LESSON_IDS) == {"L01", "L02", "L03", "L04", "L05", "L06", "L07", "L08", "L11"}
+        expected_block_counts = {"L01": 15, "L02": 10, "L03": 9, "L04": 11, "L05": 11, "L06": 10, "L07": 9, "L08": 8, "L11": 11}
+        expected_exercises = {"L01": 12, "L02": 12, "L03": 12, "L04": 9, "L07": 5, "L08": 5}  # L07-Q06, L08-Q06 draft chờ Đạt; còn lại 6 câu
+        for lesson_id in expected_block_counts:
+            assert lessons[lesson_id]["exercise_count"] == expected_exercises.get(lesson_id, 6), lesson_id
+            assert lessons[lesson_id]["review_item_count"] == (6 if lesson_id == "L11" else 8)
             assert lessons[lesson_id]["block_count"] == expected_block_counts[lesson_id]
             assert lessons[lesson_id]["status"] == "reviewed"
-        for lesson_id in ["L05", "L06", "L07", "L08"]:
-            assert lessons[lesson_id]["exercise_count"] == 0
-            assert lessons[lesson_id]["review_item_count"] == 0
-            assert lessons[lesson_id]["status"] == "source_audited"
 
 
 def test_lesson2_scale_and_roman_music_engine_graders_work_end_to_end():

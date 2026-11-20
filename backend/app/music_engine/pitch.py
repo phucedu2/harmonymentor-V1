@@ -6,6 +6,7 @@ MUS-ACC-002 (♯/♭ = ±1 nửa cung, 𝄪/𝄫 = ±2), MUS-ACC-003/004 (đồn
 
 from __future__ import annotations
 
+import math
 import re
 from dataclasses import dataclass
 from typing import Optional
@@ -134,3 +135,35 @@ def note_from_midi(midi: int, prefer: str = "sharp") -> Note:
         return Note(letter, 1, octave)
     letter = next(l for l, b in NATURAL_PC.items() if b == pc + 1)
     return Note(letter, -1, octave)
+
+
+# ADR-032: dải tần nhận từ micro. 27,5 Hz = A0 (phím thấp nhất của piano), 4186 Hz = C8 (phím cao nhất).
+MIN_MIC_HZ, MAX_MIC_HZ = 27.5, 4186.01
+
+
+@dataclass(frozen=True)
+class FrequencyReading:
+    """Kết quả đổi tần số → nốt. `cents` là độ lệch so với nốt gần nhất (-50..+50, 100 cent = nửa cung)."""
+
+    note: Note
+    midi: int
+    cents: float
+
+
+def note_from_frequency(hz: float, a4_hz: float = 440.0, prefer: str = "sharp") -> FrequencyReading:
+    """Đổi tần số đo từ micro (Hz) → nốt gần nhất theo chuẩn bình quân 12 (ADR-032).
+
+    Công thức: midi = 69 + 12·log2(f / 440). Ví dụ 329,63 Hz → 64 → E4, lệch 0 cent.
+    Tần số cũng không cho biết tên nốt (G#4 hay Ab4), nên kết quả chỉ chấm theo pitch_class_only,
+    giống bấm phím đàn. Tần số ngoài phím piano bị từ chối, không đoán.
+    """
+    if not isinstance(hz, (int, float)) or isinstance(hz, bool) or not math.isfinite(hz):
+        raise InvalidPitch("Tần số phải là số", value=repr(hz))
+    if not 400.0 <= a4_hz <= 480.0:
+        raise InvalidPitch("Tần số chuẩn A4 phải trong 400–480 Hz", a4_hz=a4_hz)
+    if not MIN_MIC_HZ <= hz <= MAX_MIC_HZ:
+        raise InvalidPitch("Tần số nằm ngoài dải phím piano (27,5–4186 Hz)", hz=hz)
+    exact = 69 + 12 * math.log2(hz / a4_hz)
+    midi = int(math.floor(exact + 0.5))
+    cents = round((exact - midi) * 100, 1)
+    return FrequencyReading(note_from_midi(midi, prefer), midi, cents)

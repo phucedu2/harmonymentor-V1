@@ -8,3 +8,7 @@ venv/
 *.sqlite3
 .env
 .env.*
+# mô hình tải trong Dockerfile, không gửi 470 MB từ máy vào build context
+models/*
+!models/relevance
+!models/route

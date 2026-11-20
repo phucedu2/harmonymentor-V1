@@ -48,14 +48,16 @@ def test_runtime_lessons_have_no_keyword_graded_exercises():
     # "không biết" từng được chấm Đúng vì có chữ "không". Câu tự luận trong bài 1–4 nay là nút chọn.
     for lesson_id in MIGRATED_LESSON_IDS:
         for row in lesson_by_id(lesson_id)["exercises"]:
+            if row.get("status") == "draft":
+                continue  # L08-Q06: chờ Đạt viết lại thành câu chọn, người học chưa thấy
             assert row["grader_config"].get("mode") != "contains_any", row["id"]
 
 
 def test_yes_no_question_is_a_choice_and_rejects_the_wrong_choice():
     q05 = item("L01-Q05")
-    assert q05["options"] == ["Có", "Không"]
-    assert grade("L01-Q05", "Không") is True
-    assert grade("L01-Q05", "Có") is False
+    assert len(q05["options"]) == 4
+    assert grade("L01-Q05", "Không, tên đúng còn phụ thuộc số quãng và ngữ cảnh") is True
+    assert grade("L01-Q05", "Có, cùng một phím thì luôn có cùng một tên") is False
 
 
 @pytest.mark.parametrize("answer", ["không biết", "Khong biet", "tôi không hiểu", "idk"])
@@ -149,7 +151,7 @@ def test_lesson_cannot_be_completed_by_guessing():
 def test_changed_questions_publish_a_new_version():
     with TestClient(app) as client:
         versions = {e["id"]: e["version_id"] for e in client.get("/api/v1/lessons/L01").json()["exercises"]}
-        assert versions["L01-Q05"] == "L01-Q05-v5"
+        assert versions["L01-Q05"] == "L01-Q05-v6"
         assert versions["L01-Q01"] == "L01-Q01-v4"
 
 
@@ -157,14 +159,17 @@ def test_changed_questions_publish_a_new_version():
 
 def test_leitner_boxes_move_one_step_on_success_and_reset_on_failure():
     assert REVIEW_INTERVALS_DAYS == [1, 2, 4, 8, 16]
+    now = datetime.now(timezone.utc)
     state = ReviewState(user_id="x", review_item_id="y", status="active", stage=0, interval_days=1,
-                        due_at=datetime.now(timezone.utc), failure_count=0, success_streak=0)
+                        due_at=now, failure_count=0, success_streak=0)
     seen = []
     for rating in ["good", "easy", "good", "good", "good"]:
-        apply_review_result(state, True, rating)
+        # Ôn đúng ngày hẹn; ôn trước hạn thì giữ hộp (HM-012, xem test_hm012_leitner.py).
+        now = state.due_at
+        apply_review_result(state, True, rating, now=now)
         seen.append(state.interval_days)
     assert seen == [2, 4, 8, 16, 16]
-    apply_review_result(state, False, "auto")
+    apply_review_result(state, False, "auto", now=now)
     assert (state.stage, state.interval_days) == (0, 1)
 
 

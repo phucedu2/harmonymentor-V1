@@ -2,6 +2,275 @@
 
 File này ghi lại việc đã xong, việc đang dở, lệnh để chạy lại và việc tiếp theo. Cập nhật sau mỗi phiên việc. Lịch sử trước 27/10/2026 xem `docs/AI_USAGE.md` và các báo cáo trong `docs/giai-doan/`.
 
+## 04/11/2026: demo AI 10/11 (nhánh `ai/demo-1011`, Draft PR #25, xếp chồng trên `ai/gd4-danh-gia`)
+
+**Đã xong** (báo cáo `docs/giai-doan/demo-1011/BAO_CAO.md`)
+- 6 câu nháp L01-Q07/Q08, L02-Q07..Q10 (nguồn MT21C + OMT), test chấm, mô phỏng sau phát hành: 4 kỹ năng lên 0,657, người mới đi L01 → L04 không cần placement.
+- AI Tutor: 5 câu vàng của Thắng, guardrail kiểm thêm khẳng định quãng trong lời AI.
+- 2 kịch bản trên giao diện thật (video + 7 ảnh), 1 lần giải thích lỗi bằng Gemini thật.
+- Đổi câu chữ CF (C4), test `/recommend` trên PostgreSQL (C8), ghi trạng thái duyệt vào ADR-008/014.
+- pytest 917 (không tính postgres/live).
+
+**Đang dở / chờ**
+- Đã xong 04/11: 6 câu phát hành, 4 mô tả kỹ năng mới + vector, ADR-016 (Imaj7/IM7). Thêm `get_roman_numeral` vào guardrail (Thắng duyệt), câu V7 = D7 trong G vào L02-B08 (Đạt duyệt), live 5/5. Còn: Đạt xác nhận bằng văn bản (C6); chọn khóa Gemini cho buổi demo.
+
+**Lệnh chạy lại**
+```bash
+cd backend && pytest -q tests/test_demo1011_cau_nhap.py tests/test_demo1011_tutor_gold.py
+cd backend && RUN_LIVE=1 AI_ENABLED=1 GEMINI_API_KEY=... pytest -q -m live tests/test_demo1011_live.py
+```
+
+## 04/11/2026: pipeline AI GĐ4 (nhánh `ai/gd4-danh-gia`, xếp chồng trên `ai/gd3-tutor`)
+
+**Đã xong** (báo cáo `docs/giai-doan/ai-gd4/BAO_CAO_THUC_NGHIEM.md`)
+- RAG: bộ chuẩn 30 câu + 10 ngoài phạm vi + 10 tấn công + 20 câu cài lỗi (Claude soạn, chưa có người duyệt độc lập). Gemini Recall@1 93,3% (BM25 56,7%); chặn 100%/100%, 0% chặn nhầm; guardrail 11/11, 0 báo nhầm; trả lời thật 30/30 khi nghỉ 5 s (p95 1,7 s), 23/30 khi gọi liên tục (429/503).
+- Hệ gợi ý: 2.000 người mô phỏng (bộ sinh không import bộ gợi ý), chia 80/20 theo thời gian, P0–P3. Luật tiên quyết loại 97% bài đúng nên P1–P3 HitRate@1 2,8% so với P0 96,7%; nguyên nhân là kỹ năng chỉ 1 câu chỉ lên mastery 0,30.
+- Câu dự phòng khi Gemini quá tải không còn nói "đang tạm nghỉ". Sửa test GĐ2 phụ thuộc CSDL dev dùng chung.
+- pytest 828 (không tính postgres/live).
+
+**Đang dở / chờ**
+- Thắng: chọn hướng cho luật tiên quyết (a/b/c, báo cáo mục 1.6); P-2 chờ lần chạy lại sau HM-013. Đạt: lấy mẫu 10 câu bộ chuẩn RAG, chấm đúng nhạc lý.
+
+**Lệnh chạy lại**
+```bash
+cd backend && python ../scripts/ai/evaluate_recommender.py --n 2000 --seed 20261104 --out ../docs/giai-doan/ai-gd4/ket_qua_goi_y.json
+cd backend && python ../scripts/ai/evaluate_rag.py
+cd backend && AI_ENABLED=1 GEMINI_API_KEY=... python ../scripts/ai/evaluate_rag.py --live --pause 5 --out ../docs/giai-doan/ai-gd4/ket_qua_rag.json
+```
+
+## 04/11/2026: pipeline AI GĐ3 (nhánh `ai/gd3-tutor`, xếp chồng trên `ai/gd2-goi-y`)
+
+**Đã xong** (báo cáo `docs/giai-doan/ai-gd3/BAO_CAO.md`)
+- AI Tutor: kho 45 đoạn L01–L04 + vector Gemini, retriever (ngưỡng 0,60, dự phòng BM25), phân loại ý định cục bộ, Gemini có thử lại, guardrail Music Engine, chống prompt injection, `/chat/*`, giải thích lỗi 3 mức, hạn mức, khung chat nổi.
+- pytest 820 (không tính postgres/live); bộ live 10/10 với Gemini thật; Vitest 259; build đạt; p95 3,0 s.
+
+**Đang dở / chờ**
+- Thắng duyệt migration `e3c4d5e6f7a8` + ADR-015; Đạt duyệt ngưỡng, câu mẫu ý định, câu tấn công; Phúc xem khung chat. GĐ4 (đánh giá) làm tiếp.
+
+**Lệnh chạy lại**
+```bash
+cd backend && python -m pytest -q -m "not postgres and not live"    # 820 passed
+cd backend && AI_ENABLED=1 GEMINI_API_KEY=... python -m app.ai.build_index   # khi sửa nội dung bài
+cd backend && AI_ENABLED=1 GEMINI_API_KEY=... python ../scripts/ai/gd3_hoi_thu.py
+```
+
+## 04/11/2026: pipeline AI GĐ2 (nhánh `ai/gd2-goi-y`, xếp chồng trên `ai/gd1-mastery`, Draft PR #22)
+
+**Đã xong** (báo cáo `docs/giai-doan/ai-gd2/BAO_CAO.md`)
+- Hệ gợi ý 3 tầng theo 04 mục 6.5 + ADR-008 (hàm thuần trong `app/ai/recommender/`), `GET /recommend` (3 danh sách G-3), `PUT /me/goal`, nhật ký gợi ý, thẻ "Gợi ý cho bạn".
+- Embedding Gemini thật cho 13 mô tả kỹ năng MVP; không có embedding thì content = 0. 26 mô tả kỹ năng Đạt đã duyệt (04/11).
+- pytest 747 (không tính postgres/live); Vitest 259; build đạt; 2.000 người mô phỏng p95 ~160 ms.
+
+**Đang dở / chờ**
+- Thắng và Đạt đã duyệt các mục GĐ0–GĐ2 (Phúc báo 04/11). Còn P-2 chờ số liệu GĐ4; Phúc xem giao diện (Q-G). GĐ3 làm tiếp trên `ai/gd3-tutor`.
+
+**Lệnh chạy lại**
+```bash
+cd backend && alembic -c alembic.ini upgrade head
+cd backend && python -m pytest -q -m "not postgres and not live"    # 747 passed
+cd backend && python ../scripts/ai/gd2_do_thoi_gian.py --n 2000     # đo thời gian gợi ý
+```
+
+## 04/11/2026: pipeline AI GĐ1 (nhánh `ai/gd1-mastery`, xếp chồng trên `ai/gd0-ke-hoach`)
+
+**Đã xong** (báo cáo `docs/giai-doan/ai-gd1/BAO_CAO.md`)
+- Cherry-pick PR #17 + PR #14. Ánh xạ kỹ năng ADR-008, mastery EMA + luật ôn 2A, `rebuild_mastery`, bài kiểm tra đầu vào 12 câu, `GET /me/mastery`, trang `/app/kiem-tra-dau-vao`.
+- pytest 647 passed + 21 skipped; Vitest 259; `npm run build` đạt; Alembic upgrade + check (SQLite) đạt.
+
+**Đang dở / chờ**
+- Thắng duyệt migration `c1a2b3d4e5f6` (Q-D). Đạt duyệt 12 kỹ năng placement. GĐ2 làm tiếp trên `ai/gd2-goi-y`.
+
+**Lệnh chạy lại**
+```bash
+cd backend && alembic -c alembic.ini upgrade head && python -m app.ai.rebuild_mastery
+cd backend && python -m pytest -q                       # 647 passed + 21 skipped
+python scripts/ai/gd1_nguoi_mau.py                      # PowerShell: python scripts\ai\gd1_nguoi_mau.py
+```
+
+## 04/11/2026: pipeline AI của giảng viên, GĐ0 (nhánh `ai/gd0-ke-hoach`, từ `phuc-music`)
+
+**Đã xong** (kế hoạch `docs/giai-doan/ai-gd0/KE_HOACH_AI.md`)
+- Mốc test: pytest 592 passed + 21 skipped; Vitest 259; `npm run build` đạt.
+- `scripts/ai/gd0_mo_phong_mo_khoa.py`: với nội dung hiện có, L02 và L04 không bao giờ vào gợi ý (pitch.spelling, chord.seventh_quality không có thẻ máy chấm); luật ôn 2A mở L03 ngày thứ 3; thẻ tự đánh giá tính 0,5 không giúp được.
+- Kiểm Gemini bằng khóa thật: có `gemini-3.5-flash-lite`, `gemini-3.6-flash` (lần thử bị 503), `gemini-embedding-001` (768 chiều, chưa chuẩn hóa), `gemini-embedding-2`.
+- CI chạy cả PR đích `phuc-music`. Chép pipeline vào `docs/tham-khao/`.
+
+**Đang dở / chờ**
+- Phúc duyệt kế hoạch + Q-A, Q-C; Thắng Q-B, Q-D. GĐ1 làm tiếp trên `ai/gd1-mastery` trong lúc chờ.
+
+**Lệnh chạy lại**
+```bash
+python scripts/ai/gd0_mo_phong_mo_khoa.py      # PowerShell: python scripts\ai\gd0_mo_phong_mo_khoa.py
+cd backend && python -m pytest -q              # 592 passed + 21 skipped
+```
+
+## 02/11/2026: nhánh `phuc-music`, Harmony Lab chế độ Bài hát (Bước 0 → 5)
+
+**Đã xong** (báo cáo `docs/phuc-music/BAO_CAO_CAU_TRUC_BAI_HAT.md`, ADR-013 đề xuất, sổ tay `docs/backing-track/CAU_TRUC_BAI_HAT.md`)
+- Backend `POST /api/v1/composition/song`: 9 loại đoạn, năng lượng 1–5, chuyển đoạn (fill, snare dồn, drop, stop-time, riser, cymbal ngược), 1–3 bất ngờ theo seed, 4 kiểu kết, hook, chuyển giọng điệp khúc cuối (mặc định tắt), độ dài Ngắn/Vừa/Đầy đủ, đề xuất vòng B/C. Cột `composition_projects.form` (migration `b8d5e6f7a9c1`).
+- Frontend: phát theo khối, automation âm lượng/bộ lọc/reverb, ritardando, kênh Hook, dòng thời gian kéo thả.
+- Thu 10 bài: Chorus − Verse +2,3…+3,6 LU (9/9 bài có Verse/Chorus), đỉnh ≤ −1,2 dBTP, 0 mẫu vỡ. Trang nghe: https://claude.ai/artifact/N3pQphRxJiQ2SLkyWYcWD9
+- Sửa lỗi thu offline làm mọi bản "sau" của ADR-012 gần như im lặng; thu lại 18 cặp.
+
+**Đang dở / chờ**
+- Nhóm nghe mù 10 bài (đích ≥ 4/5, đoán đúng Chorus ≥ 80%) và chấm lại phòng nghe ADR-012 trên bản thu mới.
+- Thắng duyệt ADR-013. Phúc chọn: Outro funk/jazz giữ năng lượng cao (kết lớn) hay hạ để Intro/Outro nhỏ nhất.
+- Máy Phúc: sao lưu `harmonymentor_dev.db` rồi `cd backend && alembic -c alembic.ini upgrade head`.
+
+**Lệnh chạy lại**
+```bash
+cd backend && python -m pytest -q                      # 592 passed + 21 skipped
+cd frontend && npm test && npm run build               # 258 test
+node scripts/backing-track/thu_bai_hat.mjs && python3 scripts/backing-track/tao_trang_bai_hat.py   # cần uvicorn :8000 + npm run dev
+```
+
+## 02/11/2026: nhánh `phuc-music`, backing track "ban nhạc thật" (Bước 0 → 5)
+
+**Đã xong** (báo cáo `docs/phuc-music/BAO_CAO_BACKING_TRACK.md`, ADR-012 đề xuất)
+- 610 mẫu thu thật CC0/CC BY (piano Salamander, Rhodes/clavi FM của VCSL, bass Growlybass, upright, guitar Gretsch, trống Big Rusty, bộ gõ VCSL), ghi công ở `frontend/public/samples/CREDITS.md`.
+- Bộ phối 9 phong cách ở backend (`/api/v1/composition/arrangement`), dẫn giọng, walking bass, fill, crash, tô màu qua Engine; frontend chỉ humanize theo seed (±30 ms).
+- Bàn trộn bus/send, cân mức theo LUFS đo thật; 36 bản thu sau: −14,7..−19,6 LUFS, 0 mẫu vỡ (bản cũ 162–2 190).
+- Giao diện: Năng lượng 1–3, kênh Guitar, fader từng kênh, Tạo bản khác, thanh tải mẫu, tự về synth khi mẫu lỗi. Migration `a7c4d5e6f8b9` (seed, energy, mix, arrangement_version; nới `ck_drum_kind`).
+- Trang nghe mù 18 cặp (claude.ai + `docs/backing-track/nghe-thu/index.html`), `PHONG_CACH.md` 9 phong cách có nguồn.
+
+**Đang dở / chờ**
+- 3 bạn nghe và chấm ở trang nghe mù (đích ≥ 4/5, không phong cách nào < 3). Claude không nghe được nên chưa thể nói "nghe đạt".
+- Thắng duyệt ADR-012 (cột mới + 23 mã trống lệch ERD Bảng 8).
+- Chưa có bộ `.m4a` cho Safari; jazz chưa lên 180 BPM (CHECK tempo 160).
+
+**Lệnh chạy lại**
+```bash
+cd backend && python -m pytest -q                      # 459 passed + 21 skipped
+cd frontend && npm test && npm run build               # 240 test
+python3 scripts/samples/build_samples.py --cache /tmp/src   # dựng lại mẫu (cần git + ffmpeg)
+node scripts/backing-track/thu_nghe_thu.mjs --wav-dir /tmp/wav && python3 scripts/backing-track/tao_trang_nghe.py
+node scripts/backing-track/do_hieu_nang.mjs            # cần uvicorn :8000 và npm run dev :5173
+```
+
+## 01/11/2026: nhánh `phuc-music`, sửa theo báo cáo đối chiếu nội dung học (v0.5.3 / main / phuc-music)
+
+**Đã xong**
+- Chú giải thuật ngữ: "Quãng tám" nói đúng là *tần số* gấp đôi; "Nửa cung" bỏ cách nói "khoảng cách nhỏ nhất giữa hai phím kề nhau"; thêm ví dụ cho m3, P5, d5. Test khóa số nửa cung và số tên chữ cái khớp mã quãng.
+- 3 thẻ ôn tự diễn đạt **nháp** (L01-F09, L03-F09, L04-F09) cho ba ý đã chuyển sang trắc nghiệm (L01-Q05, L03-Q05, L04-Q06), trong `draft_specs.DRAFT_REVIEW_ITEMS`. Không seed vào `review_items` (bảng chưa có trạng thái nháp); chỉ hiện thành khối nháp `-BTHE` khi bật `SHOW_DRAFT_CONTENT`.
+- ADR-011 (đề xuất): giữ lộ trình đi thẳng theo Bảng 7, đề nghị sửa câu "rẽ vào một trong ba nhánh" ở SRS 4.1.
+- Luyện tập: mức Khó gợi ý mở sau L03 (trước là L04, nay là Bài 6).
+- CI: mức pytest 409 → 410 (sửa luôn tên bước còn ghi 355).
+
+**Đang dở / chờ**
+- Đạt/Astra duyệt 3 thẻ nháp; duyệt xong chép nguyên mục từ `DRAFT_REVIEW_ITEMS` vào `review_items` của bài trong `curriculum_specs.py`.
+- Nhóm duyệt ADR-011 và câu sửa SRS 4.1; sửa slide/demo còn gọi ii–V–I là "Bài 4" (nay là Bài 6).
+- Lời giải nghĩa thuật ngữ vẫn nằm ở frontend (`TermText.tsx`), ngoài quy trình duyệt nội dung.
+
+**Lệnh chạy lại**
+```bash
+cd backend && DATABASE_URL=sqlite:///$TMP/t.db AUTO_CREATE_SCHEMA=1 python -m pytest -q -m "not postgres"   # 410 passed
+cd frontend && npm test && npm run build   # 227 test
+```
+
+## 01/11/2026: nhánh `phuc-music`, logo chính thức + piano trang chủ
+
+**Đã xong**
+- Gộp logo "Cuộn I–IV–V–I" (PR #16, ADR-007) vào `phuc-music` bằng merge, giữ nguyên commit của PR #16. `<Logo inverted />` trên khung khu học tối dùng bản tối của logo (`data-theme="dark"` theo vùng; sửa trong `_nguon/gen_react.js` rồi dựng lại).
+- Piano "Bấm thử một hợp âm" ở trang chủ hết đen kịt: `Piano.tsx` dùng token `@theme` thay cho các biến đã mất khi bỏ `styles.css` ở Bước 3. Thêm `tests/cssVars.test.ts` bắt mọi `var(--x)` chưa định nghĩa.
+
+**Đang dở / chờ**
+- PR #16 vẫn mở vào `main`; gộp PR #16 trước hay sau PR #18 đều không xung đột lại vì cùng commit.
+- ADR-007 ghi "màu chính của app vẫn là bảng cũ": trên `phuc-music` đã là Đồng & Gỉ (Bước 3), cập nhật ADR khi gộp.
+- Chữ "HarmonyMentor" ở chân khung khu học (`HarmonyMentor v0.5.4-dev`) chưa đổi thành "Harmony Mentor", để nhóm quyết (ADR-007).
+
+**Lệnh chạy lại**
+```bash
+cd frontend && npm test && npm run build   # 226 test
+cd docs/thuong-hieu/_nguon && npm install && bash fetch_fonts.sh && REPO_OUT=../../../frontend/src/components/brand node gen_react.js
+```
+
+## 31/10/2026: nhánh `phuc-music`, Bước 4 (Harmony Lab tối thiểu)
+
+**Đã xong** (Draft PR #18, chưa gộp; báo cáo `docs/phuc-music/BAO_CAO_BUOC_4.md`)
+- Composition Engine `backend/app/composition/`: gợi ý 5 luật, độ lạ 0–3, phân tích + cảnh báo, 4 mẫu nền. Chưa có AI (`ai_used: false`).
+- Bảng `composition_projects`, `chord_events`, `drum_events` (migration `f6a2b3c4d5e7`), API `/projects`. ADR-010 (đề xuất) chờ Thắng.
+- Trang `/app/composition`: lưới 4–8 ô, Tone.js, VexFlow, gợi ý Nghe/Dùng/Bỏ qua, phân tích, lưu/mở/xóa.
+- Q3 Bước 3: thuật ngữ chỉ chú giải ở bài đầu tiên người học gặp.
+
+**Đang dở / chờ**
+- Phúc duyệt Bước 4 (Q3 nghe thử mẫu nền). Thắng: ADR-009, ADR-010. Đạt/Astra: kiểm 5 luật và lời giải thích.
+
+**Lệnh chạy lại**
+```bash
+cd backend && python -m pytest -q          # 409 passed, 21 skipped
+cd frontend && npm ci && npm test && npm run build   # 225 test
+node scripts/phuc-music/luong_buoc4_harmony_lab.cjs docs/phuc-music/anh/buoc-4
+```
+
+## 31/10/2026: nhánh `phuc-music`, Bước 3 (giao diện "Đồng & Gỉ")
+
+**Đã xong** (Draft PR #18, chưa gộp; báo cáo `docs/phuc-music/BAO_CAO_BUOC_3.md`)
+- Token màu/font/12 màu nốt trong `@theme` (`frontend/src/index.css`). Bỏ `legacy-page` và `styles.css`; khu học dùng Tailwind + `components/ui/Page.tsx`.
+- Chú giải thuật ngữ lần đầu xuất hiện, có nút nghe (nốt từ Music Engine). Lời giải nghĩa chờ Astra/Đạt duyệt.
+- axe-core: 0 vi phạm WCAG 2.1 AA trên 15 màn × 2 cỡ; ảnh trước/sau ở `docs/phuc-music/anh/buoc-3/`.
+
+**Đang dở / chờ**
+- Phúc duyệt Bước 3 lúc 13:27 (Q1 đồng ý, Q2 duyệt, Q3 chỉ chú giải ở bài đầu tiên).
+
+**Lệnh chạy lại**
+```bash
+cd backend && python -m pytest -q          # 371 passed, 21 skipped
+cd frontend && npm ci && npm test && npm run build   # 219 test
+node scripts/phuc-music/anh_moi_trang.cjs docs/phuc-music/anh/buoc-3 sau
+AXE_PATH=<đường dẫn axe.min.js> node scripts/phuc-music/kiem_tra_wcag.cjs
+```
+
+## 31/10/2026: nhánh `phuc-music`, Bước 2 (logic và nội dung)
+
+**Đã xong** (Draft PR #18, chưa gộp; báo cáo `docs/phuc-music/BAO_CAO_BUOC_2.md`)
+- Gộp PR #12. Bài 1 lấy quãng/hợp âm từ API Music Engine. Piano hiện D#/Eb.
+- Luyện tập: máy chủ chấm, ghi `practice_attempts`, trang có lịch sử + thống kê. ADR-009 (đề xuất) chờ Thắng.
+- Lộ trình theo SRS Bảng 7; nháp L09–L12 và mục "Dùng vào sáng tác" L01–L04, chỉ hiện khi `SHOW_DRAFT_CONTENT=1`.
+
+**Đang dở / chờ**
+- Phúc: đã chọn Bảng 7 + nhãn A/B (12:53); còn Q1–Q2 trong báo cáo. Thắng: ADR-009, L-1/L-2/L-5/L-6 (kiểm tra đầu vào, EMA). Đạt/Astra: duyệt nháp.
+- Phúc duyệt Bước 2 lúc 12:55 (Q1 không, Q2 để Claude quyết).
+
+**Lệnh chạy lại**
+```bash
+cd backend && pytest -q                    # 371 passed, 21 skipped
+cd frontend && npm ci && npm test && npm run build   # 195 test
+node scripts/phuc-music/luong_buoc2_luyentap.cjs docs/phuc-music/anh/buoc-2
+node scripts/phuc-music/luong_buoc2_lotrinh.cjs docs/phuc-music/anh/buoc-2 nguoi-hoc   # SHOW_DRAFT_CONTENT=1 thì đổi hậu tố che-do-nhap
+```
+
+## 31/10/2026: nhánh `phuc-music`, Bước 0–1 (gộp khu học v0.5.3)
+
+**Đã xong** (nhánh `phuc-music`, Draft PR #18, chưa gộp)
+- Bước 0: khảo sát `docs/phuc-music/00_KHAO_SAT.md`. Main đã chứa khu học của v0.5.3; backend không cần khôi phục.
+- Bước 1: khung khu học tối kiểu v0.5.3 (`AppLayout.tsx`), nút "Từng bước / Xem cả bài" (`LessonRunner.tsx`), token `--color-shell-*`, phiên bản lấy từ `package.json`. Nhật ký `docs/phuc-music/01_NHAT_KY_GOP.md`, báo cáo `BAO_CAO_BUOC_1.md`.
+
+**Đang dở / chờ**
+- Phúc đã duyệt Bước 1 (31/10).
+
+**Lệnh chạy lại**
+```bash
+cd backend && pytest -q                    # 325 passed, 21 skipped
+cd frontend && npm ci && npm run build
+node scripts/phuc-music/luong_buoc1.cjs anh/   # cần backend :8000 và frontend :5173 đang chạy
+```
+
+## 30/10/2026: logo chính thức "Cuộn I–IV–V–I"
+
+**Đã xong** (nhánh `claude/project-thread-82ijft`, PR vào `main`, chưa gộp)
+- Thay logo ♪ bằng logo nhóm chọn (ADR-007): `frontend/src/components/brand/HarmonyMentorLogo.tsx`, `Logo.tsx` giữ nguyên prop `to`.
+- Favicon SVG/ICO, apple-touch-icon, icon 192/512, `site.webmanifest` trong `frontend/public/`; tiêu đề tab "Harmony Mentor".
+- `docs/thuong-hieu/`: BRAND_NOTE, file logo SVG, script dựng lại. Ảnh trước/sau trong `docs/minh-chung/anh/logo-*.png`.
+
+**Việc tiếp theo**
+- Nhóm quyết có đổi các chữ "HarmonyMentor" còn lại sang "Harmony Mentor" không, và khi nào áp bảng màu Đồng & Gỉ cho toàn app.
+
+**Lệnh chạy lại**
+```bash
+cd frontend && npm ci && npm run build
+cd docs/thuong-hieu/_nguon && npm install && bash build.sh   # dựng lại logo (cần Python: fonttools, cairosvg, pillow)
+```
+
 ## 30/10/2026: gom tài liệu phase vào `docs/giai-doan/`
 
 **Đã xong** (nhánh `claude/project-thread-ng2frm`, PR vào `main`, chưa gộp)
@@ -10,6 +279,24 @@ File này ghi lại việc đã xong, việc đang dở, lệnh để chạy l�
 
 **Việc tiếp theo**
 - Giai đoạn mới đặt báo cáo + kiểm chứng vào `docs/giai-doan/<giai đoạn>/` và thêm một dòng vào mục lục.
+
+## 28/10/2026: HM-001 / NL-L01-01, ký âm và MIDI cho B#/Cb ở Bài 1
+
+**Đã xong** (nhánh `claude/project-thread-qdcaej`, Draft PR #12, chưa gộp)
+- `toScientificInterval/toScientificTriad` tính quãng tám theo chữ cái; `scientificToMidi` không quy về pitch class. Engine không đổi.
+- Vitest (182 test) so 17 nốt gốc × 5 quãng + 4 hợp âm với bảng do Music Engine sinh (`scripts/sinh_bang_l01_engine.py`); 5 pytest giữ bảng khớp Engine; CI thêm bước `npm test`, mức SQLite 330.
+- Chứng minh đỏ trước/xanh sau: CI run 40734235986 đỏ ở `npm test` trên commit chỉ có test. Ảnh và log MIDI trước/sau trên giao diện: `docs/minh-chung/anh/hm001/`, `docs/minh-chung/hm001/`. Báo cáo `docs/bao-cao/HM-001.md`.
+
+**Đang dở / chờ**
+- Astra và nhóm review PR #12. Không merge tự động.
+- Lỗi lân cận tách ticket riêng: `pitchClassesToAscendingNotes` đổi Eb → D# trước khi phát (chỉ sai tên, cao độ đúng).
+
+**Lệnh chạy lại**
+```bash
+cd frontend && npm ci && npm test && npm run build   # 182 passed, build đạt
+cd backend && pytest -q                              # 330 passed, 21 skipped
+python scripts/sinh_bang_l01_engine.py && git diff --exit-code frontend/tests/fixtures
+```
 
 ## 27/10/2026: PR-3, bảo vệ phiên bản câu hỏi (HM-003)
 

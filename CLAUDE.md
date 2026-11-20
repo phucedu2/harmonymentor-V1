@@ -17,12 +17,13 @@ Phân công: **Thắng** Backend/Engine · **Phúc** Frontend/Audio · **Đạt*
 ```bash
 # Backend (Python 3.11+)
 cd backend && pip install -r requirements.txt
-pytest -q                          # 27/10/2026 (PR-3): 325 passed + 21 skipped (21 test PostgreSQL cần TEST_DATABASE_URL)
+pytest -q                          # 28/10/2026 (HM-001): 330 passed + 21 skipped (21 test PostgreSQL cần TEST_DATABASE_URL)
 uvicorn app.main:app --reload      # http://127.0.0.1:8000/docs
 
 # Frontend (Node 22, giống Dockerfile và CI)
 cd frontend && npm ci
 npm run dev                        # http://localhost:5173, proxy /api → :8000
+npm test                           # Vitest: 182 test (HM-001 ký âm/MIDI L01)
 npm run build                      # phải đạt trước khi gộp
 
 # Toàn bộ hệ thống (Docker)
@@ -32,7 +33,7 @@ cp .env.example .env && docker compose up --build   # http://localhost:5173
 cd backend && alembic -c alembic.ini upgrade head && alembic -c alembic.ini check
 ```
 
-CI (`.github/workflows/ci.yml`, xem `docs/CI.md`) chạy trên mọi PR vào `main`: pytest SQLite (0 skip, ≥ 325 đạt), PostgreSQL 16 + pgvector (`alembic upgrade head` + `check`, 21 test HM-010 + migration PR-3, 0 skip), `npm ci && npm run build`. Thêm test mới thì nâng mức `--min-passed` trong `ci.yml`.
+CI (`.github/workflows/ci.yml`, xem `docs/CI.md`) chạy trên mọi PR vào `main`: pytest SQLite (0 skip, ≥ 330 đạt), PostgreSQL 16 + pgvector (`alembic upgrade head` + `check`, 21 test HM-010 + migration PR-3, 0 skip), `npm ci && npm test && npm run build`. Thêm test mới thì nâng mức `--min-passed` trong `ci.yml`.
 
 ## Cấu trúc
 
@@ -76,3 +77,10 @@ Module mới đặt theo SRS 10.4: `backend/app/{auth,learning,recommender,nlp,e
 - Quyết định không hiển nhiên ghi `docs/decisions/ADR-xxx.md`. Ghi việc dùng AI vào `docs/AI_USAGE.md`.
 - Comment/docstring tiếng Việt, ngắn, giải thích "vì sao". Giao diện tiếng Việt, ký hiệu nhạc quốc tế.
 - Cuối mỗi giai đoạn: dừng và báo cáo (đã làm gì theo FR, file, lệnh, kết quả test, giải thích cho nhóm, rủi ro/câu hỏi).
+
+## Cách trả lời Phúc
+
+- Trả lời tiếng Việt, kết luận trước, tối đa ~150 từ trừ khi tôi nói "giải thích kỹ".
+- Khi giải thích: 1 ví dụ code ngắn, bỏ lời dẫn và đoạn tóm tắt lặp lại.
+- Chỉ đọc file tôi nêu, trừ khi thật sự cần.
+- Báo kết quả và file đã sửa, không kể lại từng bước.

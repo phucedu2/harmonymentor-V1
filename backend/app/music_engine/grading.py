@@ -33,7 +33,7 @@ PROPOSED_CODES = {"WRONG_INTERVAL_QUALITY", "WRONG_OCTAVE", "NOT_ROOT_POSITION",
                   "WRONG_SCALE_DEGREE_ORDER", "ROMAN_DEGREE", "ROMAN_QUALITY_MARK", "EXTRA_TAP"}
 
 _ROLE_VI = {"root": "nốt gốc", "third": "quãng 3", "fifth": "quãng 5", "seventh": "quãng 7",
-            "second": "quãng 2", "fourth": "quãng 4"}
+            "second": "quãng 2", "fourth": "quãng 4", "ninth": "quãng 9", "thirteenth": "quãng 13"}
 _QUALITY_VI = {"P": "đúng", "M": "trưởng", "m": "thứ", "A": "tăng", "d": "giảm",
                "AA": "tăng kép", "dd": "giảm kép"}
 
@@ -321,7 +321,9 @@ def grade_identify_interval(lower: str, upper: str, answer: str) -> dict:
 # --- Số La Mã ----------------------------------------------------------------------
 
 def _normalize_roman(text: str) -> str:
-    return (text.strip().replace("o", "°").replace("∅", "ø").replace("Ø", "ø")
+    # "maj7" là cách bài L02 dạy (khớp ký hiệu hợp âm Cmaj7); Engine ghi "M7" như MT21C §8.3. Hai cách cùng
+    # nghĩa nên chấm như nhau (ADR-016). Không nhận "I7": đó là hợp âm bảy át trên bậc I, khác hợp âm.
+    return (text.strip().replace("maj7", "M7").replace("o", "°").replace("∅", "ø").replace("Ø", "ø")
             .replace("dim", "°"))
 
 
