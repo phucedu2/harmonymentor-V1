@@ -85,6 +85,23 @@ Chưa sửa (ghi lại để làm sau): đoạn bài học L01-B08 "nâng thành
 
 Test: thêm 20 test trong `tests/test_g8_cham_nhac_ly.py`. `pytest -q` toàn bộ (cloud, 19/11/2026): **1524 passed, 46 skipped, 0 failed**. Trên `phuc-music` gốc, cùng máy: 1503 passed, 1 failed (`test_g5_eval`: groundedness_structural 94,5 < 100). Bản sửa shell voicing đưa chỉ số này về 100, nên test đó xanh lại.
 
+## 5c. Chạy lại 28 câu trên code đã sửa (20/11/2026)
+
+Lần chạy đầu (19/11, `answers_v5_sua.jsonl`) vô tình dùng code cũ (máy còn ở `phuc-music` 885173b) nên **không dùng làm kiểm chứng**. Lần này máy ở nhánh PR (6104250), build lại `api`, chạy `probe --only` 28 câu vào `answers_v5_sua2.jsonl`, chấm vào `review_v5_sua2.jsonl`. Mỗi câu hỏi một lần.
+
+| | Trước (v5) | Sau (sửa) |
+|---|---|---|
+| Đúng | 24 | 27 |
+| Sai | 3 (T011, T100, T110) | 1 (T225) |
+| Tranh luận | 1 (T111) | 0 |
+| Rơi dự phòng | 6 (T210, T211, T219, T222, T224, T225) | 2 (T210, T211) |
+
+- **Shell voicing**: T219, T222, T224 giờ Gemini tự trả lời, nốt đúng. Đây là bằng chứng trực tiếp cho bản sửa guardrail.
+- **T225 sai**: Gemini viết "lược quãng 5" nhưng liệt kê Eb, G, Bb, D (có Bb là quãng 5); shell đúng là Eb G D. Guardrail không bắt vì câu không có ký hiệu hợp âm đứng sát danh sách nốt. Câu này trước đây rơi dự phòng nên "đúng", giờ lộ lỗi thật.
+- **T210, T211** (guide tone) vẫn rơi dự phòng `engine_contradiction`; nội dung Engine đúng, nhưng chưa rõ guardrail bác khẳng định nào của Gemini. Chưa điều tra.
+- **T011, T100, T110** đúng lần này. Không chắc do bản sửa hay do Gemini không tất định; bản sửa chỉ đảm bảo nếu Gemini lặp lại lỗi cũ thì bị chặn.
+- Nếu thay 28 câu này vào bảng 300 câu: **280/300 (93,3%)** (từ 277). Số này ước lượng, các câu còn lại chưa chạy lại.
+
 ## 6. Giới hạn của số đo
 
 - Người chấm là Claude, chưa có người trong nhóm kiểm. Đề nghị Đạt đọc lại 14 câu sai, 2 câu tranh luận và khoảng 20 câu "đúng" chọn ngẫu nhiên trong `review_v5.jsonl`.
@@ -98,6 +115,9 @@ Test: thêm 20 test trong `tests/test_g8_cham_nhac_ly.py`. `pytest -q` toàn b�
 cd "D:\aptech\Music Tutor v1\hm-phuc-music"     # git log -1: 885173b
 docker compose up -d --build api
 docker compose exec api python -m app.eval.theory.probe --pause 6 --out /eval/theory/answers_v5.jsonl
+
+# Máy Phúc, 20/11/2026, nhánh PR (git log -1: 6104250), 28 câu
+docker compose exec api python -m app.eval.theory.probe --pause 6 --out /eval/theory/answers_v5_sua2.jsonl --only T011,T020,T069,T090,T091,T095,T097,T100,T101,T102,T103,T108,T110,T111,T112,T113,T114,T115,T117,T119,T124,T148,T210,T211,T219,T222,T224,T225
 ```
 ```bash
 # Cloud, 19/11/2026: chấm tự động + ghép kết luận người chấm
@@ -112,6 +132,7 @@ python -m app.eval.theory.grade --answers ../eval/theory/answers_v5.jsonl \
 - `eval/theory/answers_v5.jsonl`: 300 câu trả lời thô (không chứa khóa API hay thông tin người dùng; user là `eval-user`, `is_synthetic=true`).
 - `eval/theory/review_v5.jsonl`: kết luận từng câu kèm ghi chú.
 - `eval/theory/grade_v5.md`: bảng chấm, liệt kê câu sai hoặc cần xem.
+- `eval/theory/answers_v5_sua2.jsonl`, `review_v5_sua2.jsonl`: chạy lại 28 câu trên code đã sửa (mục 5c).
 - `eval/theory/review.jsonl`: giữ nguyên kết quả lượt 1 để so sánh.
 
 ## 9. Câu giảng viên có thể hỏi
