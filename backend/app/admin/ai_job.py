@@ -10,39 +10,46 @@ Luồng:
 3. Hết hạn mức Gemini (429) thì tạm dừng, phần đang làm trở về "chờ"; Quản trị viên bấm "Chạy tiếp" để làm nốt.
 
 AI vẫn chỉ viết BẢN NHÁP: mọi bản nháp sinh ra đi qua đúng cửa duyệt và xuất bản như trước (ADR-025, ADR-028).
+
+Đợt 3 (ADR-033): mỗi bước là một "node" kiểu n8n, ghi nhật ký vào `part["log"]` (node, ms, vào, ra, lý do):
+Retrieve (truy xuất đoạn ĐÃ CÓ giống nhất, V1/V2) → Generate (thử lại 1 lần khi JSON hỏng, V6) → Validate (schema, trang,
+Engine) → Dedup (bỏ khối trùng KÈM câu hỏi của khối, N3) → Flags (bám nguồn, chép nguyên văn, hình, N4/V8) → Draft.
+Hạn mức: một bộ đếm theo khóa Gemini chung với Tutor (app/ai/budget.py, V5), không còn đếm riêng theo người bấm.
 """
 
 from __future__ import annotations
 
-import json
 import math
 import os
 import re
 import threading
+import time
 from collections import Counter
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from typing import Any, Callable, Sequence
 from uuid import uuid4
 
-from sqlalchemy import func, select
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from ..ai import budget
 from ..ai.tutor.bm25 import strip_accents, tokenize
 from ..ai.tutor.llm import LLMProvider, LLMUnavailable
-from ..db.models import AdminAuditLog, AiLessonDraft, AiSummaryJob, Exercise, LessonBlock, SourceDocument, User
+from ..db.models import AiLessonDraft, AiSummaryJob, Exercise, LessonBlock, SourceDocument, User
 from ..services.learning_service import visible_lessons
-from . import ai_service
+from . import ai_review, ai_service
 from .content_service import AdminContentError, audit
 
 PART_PAGES = 15            # như giới hạn cũ của một lần soạn: đầu ra 8192 token đủ cho 2–5 khối + 20 câu
 PART_CHARS = 24000         # chữ gửi AI mỗi phần (~6–8 nghìn token), dư chỗ cho danh mục kiến thức đã có
 MIN_PART_CHARS = 1500      # chương quá ngắn thì gộp với chương sau để không tạo bài một đoạn
-DAILY_PART_LIMIT = 40      # lượt gọi AI soạn phần mỗi Quản trị viên mỗi 24 giờ (bảo vệ hạn mức Gemini chung)
-CATALOG_CHARS = 6000       # danh mục "đã có" gửi kèm mỗi lần gọi
+CONTEXT_TOP_K = 3          # V1: mỗi trang của phần lấy 3 đoạn ĐÃ CÓ giống nhất
+CONTEXT_MAX = 10           # tối đa 10 đoạn ĐÃ CÓ gửi AI mỗi phần
+CONTEXT_CHARS = 360        # mỗi đoạn ĐÃ CÓ gửi phần đầu nội dung, không chỉ tên khối
 
-# Ngưỡng trùng (cosine). e5 nén điểm vào khoảng 0,7–1,0 nên ngưỡng cao hơn TF-IDF. Là mức ban đầu, ghi trong ADR-029:
-# cần hiệu chỉnh trên tài liệu thật của nhóm.
+# Ngưỡng trùng (cosine). e5 nén điểm vào khoảng 0,7–1,0 nên ngưỡng cao hơn TF-IDF. ADR-033 hiệu chỉnh trên bộ cặp có nhãn
+# eval/ai_soan_bai/cases.jsonl (scripts/ai/danh_gia_ai_soan_bai.py); e5 so ĐỐI XỨNG ("query:" cả hai phía, V3).
 DUP_BLOCK = {"e5": 0.90, "tfidf": 0.55}
 DUP_QUESTION = {"e5": 0.95, "tfidf": 0.80}
 
@@ -193,24 +200,21 @@ def build_catalog(db: Session) -> list[Known]:
     return known
 
 
-def catalog_prompt(known: Sequence[Known]) -> str:
-    """Danh mục gọn cho AI: mỗi bài một dòng "mã · tên: khối; khối"."""
-    lines: dict[str, tuple[str, list[str]]] = {}
-    for k in known:
-        if k.kind != "block":
-            continue
-        title, labels = lines.setdefault(k.ref, (k.title, []))
-        if k.label not in labels:
-            labels.append(k.label)
-    out, size = [], 0
-    for ref, (title, labels) in lines.items():
-        line = f"- {ref} · {title}: {'; '.join(labels)}"[:400]
-        if size + len(line) > CATALOG_CHARS:
-            out.append("- …(còn nữa)")
-            break
-        out.append(line)
-        size += len(line)
-    return "\n".join(out) or "(chưa có bài nào)"
+def context_prompt(sim: "Similarity", pages: Sequence[str]) -> tuple[str, list[str]]:
+    """V1 (ADR-033): RAG thật cho "ĐÃ CÓ". Với mỗi trang của phần, lấy các đoạn đã có GIỐNG NHẤT và gửi NỘI DUNG đoạn
+    (không gửi cả danh mục tên khối bị cắt ở 6.000 ký tự như trước). V2: bản nháp của phần trước đã được thêm vào `sim`
+    nên phần sau thấy ngay. Trả (chữ gửi AI, mã các đoạn đã gửi để ghi nhật ký)."""
+    picked: dict[int, tuple[float, Known]] = {}
+    for text in pages:
+        for score, k in sim.top(text, "block", CONTEXT_TOP_K):
+            key = id(k)
+            if key not in picked or picked[key][0] < score:
+                picked[key] = (score, k)
+    best = sorted(picked.values(), key=lambda x: -x[0])[:CONTEXT_MAX]
+    if not best:
+        return "(chưa có bài nào giống phần này)", []
+    lines = [f"- [{k.ref} · {k.label}] {k.text[:CONTEXT_CHARS]}" for _, k in best]
+    return "\n".join(lines), [f"{k.ref} · {k.label} ({s:.2f})" for s, k in best]
 
 
 class Similarity:
@@ -230,7 +234,8 @@ class Similarity:
                 self._e5 = None
         if self._e5 is not None:
             self.backend = "e5"
-            self._vecs = self._e5.embed([k.text for k in self.known], "passage") if self.known else []
+            # V3: so trùng là bài toán ĐỐI XỨNG (đoạn với đoạn) nên cả hai phía dùng tiền tố "query:" của e5.
+            self._vecs = self._e5.embed([k.text for k in self.known], "query") if self.known else []
         else:
             self._rebuild_tfidf()
 
@@ -254,14 +259,18 @@ class Similarity:
             return
         self.known.extend(items)
         if self._e5 is not None:
-            self._vecs.extend(self._e5.embed([k.text for k in items], "passage"))
+            self._vecs.extend(self._e5.embed([k.text for k in items], "query"))
         else:
             self._rebuild_tfidf()
 
     def best(self, text: str, kind: str) -> tuple[float, Known | None]:
-        idx = [i for i, k in enumerate(self.known) if k.kind == kind]
+        top = self.top(text, kind, 1)
+        return top[0] if top else (0.0, None)
+
+    def top(self, text: str, kind: str, k: int) -> list[tuple[float, Known]]:
+        idx = [i for i, kn in enumerate(self.known) if kn.kind == kind]
         if not idx or not text.strip():
-            return 0.0, None
+            return []
         if self._e5 is not None:
             q = self._e5.embed([text], "query")[0]
             scores = [(sum(a * b for a, b in zip(q, self._vecs[i])), i) for i in idx]
@@ -274,8 +283,8 @@ class Similarity:
                 wd = self._weight(self._tf[i])
                 dot = sum(w * wd.get(t, 0.0) for t, w in wq.items())
                 scores.append((dot / (nq * self._norms[i]), i))
-        score, i = max(scores)
-        return round(score, 3), self.known[i]
+        scores.sort(key=lambda x: (-x[0], x[1]))
+        return [(round(score, 3), self.known[i]) for score, i in scores[:k]]
 
 
 def _norm_name(text: str) -> str:
@@ -294,75 +303,121 @@ Tài liệu dài được chia thành nhiều phần; bạn đang soạn MỘT p
 - 'expansion' = true khi kiến thức mới không thuộc kỹ năng nào trong danh sách; khi đó vẫn chọn skill_id gần nhất."""
 
 
-def _part_text(doc: SourceDocument, part: dict[str, Any]) -> str:
-    return "\n\n".join(f"[Trang {n}]\n{doc.pages[n - 1]}" for n in part["pages"] if doc.pages[n - 1])[:PART_CHARS]
+class _Log:
+    """Nhật ký từng node của một phần, như màn "Executions" của n8n: node, thời gian, số vào/ra, ghi chú."""
+
+    def __init__(self) -> None:
+        self.rows: list[dict[str, Any]] = []
+        self._t = time.perf_counter()
+
+    def add(self, node: str, *, inp: int | None = None, out: int | None = None, note: str | None = None, **extra: Any) -> None:
+        now = time.perf_counter()
+        row = {"node": node, "ms": int((now - self._t) * 1000)}
+        if inp is not None:
+            row["in"] = inp
+        if out is not None:
+            row["out"] = out
+        if note:
+            row["note"] = note[:400]
+        row.update({k: v for k, v in extra.items() if v is not None})
+        self.rows.append(row)
+        self._t = now
 
 
 def run_part(db: Session, admin_id: str | None, provider: LLMProvider, doc: SourceDocument, part: dict[str, Any],
-             sim: Similarity, catalog_text: str) -> dict[str, Any]:
-    """Soạn một phần. Trả phần đã cập nhật (status done/no_new/not_theory). Lỗi AI ném ra cho run_job xử lý."""
+             sim: Similarity, catalog_text: str | None = None) -> dict[str, Any]:
+    """Soạn một phần. Trả phần đã cập nhật (status done/no_new/not_theory). Lỗi AI ném ra cho run_job xử lý.
+    `catalog_text` chỉ còn để tương thích chỗ gọi cũ: ngữ cảnh ĐÃ CÓ giờ truy xuất theo từng phần (V1)."""
+    log = _Log()
+    text, used_pages, truncated = ai_service.document_text(doc, part["pages"], PART_CHARS)
+    log.add("extract", inp=len(part["pages"]), out=len(used_pages), note=truncated, chars=len(text))
+    context, context_refs = context_prompt(sim, [doc.pages[n - 1] for n in used_pages])
+    log.add("retrieve", out=len(context_refs), note="; ".join(context_refs[:6]) or None, backend=sim.backend)
     user = (f"Nguồn: {doc.source_title}\nPhần: {part['heading']} (trang {part['page_from']}–{part['page_to']})\n"
             f"Kỹ năng được phép dùng: {', '.join(ai_service._skill_ids(db))}\n"
-            f"Kiến thức ĐÃ CÓ trên trang web (không soạn lại):\n{catalog_text}\n"
+            f"Các đoạn trang web ĐÃ CÓ giống phần này nhất (không soạn lại ý trong đó):\n{context}\n"
             f"Hãy viết 2–5 khối lý thuyết và 10–{ai_service.MAX_QUESTIONS} câu luyện tập trộn đủ các dạng và 3 mức, chỉ cho khái niệm mới.\n"
-            f"<<<DOCUMENT>>>\n{_part_text(doc, part)}\n<<<END>>>")
-    result = provider.generate(PART_SYSTEM, user, ai_service.SCHEMA, 8192)
-    try:
-        raw = json.loads(result.text)
-    except ValueError as exc:
-        raise AdminContentError("AI_BAD_FORMAT", "AI trả về sai định dạng.", 502) from exc
-    if not isinstance(raw, dict):
-        raise AdminContentError("AI_BAD_FORMAT", "AI trả về sai định dạng.", 502)
+            f"<<<DOCUMENT>>>\n{text}\n<<<END>>>")
+    raw, result, calls = ai_service.call_json(db, provider, admin_id, ("ai_document", doc.id), f"part:{part['index']}",
+                                              PART_SYSTEM, user, ai_service.SCHEMA)
+    log.add("generate", out=len(raw.get("blocks") or []), calls=calls, model=result.model,
+            note="JSON hỏng lần đầu, đã thử lại 1 lần" if calls > 1 else None)
     part = {**part, "model": result.model}
     if raw.get("not_theory") is True:
-        return {**part, "status": "not_theory", "note": "AI thấy phần này không có kiến thức nhạc lý nên không soạn bài."}
+        log.add("switch", note="not_theory")
+        return {**part, "status": "not_theory", "log": log.rows,
+                "note": "AI thấy phần này không có kiến thức nhạc lý nên không soạn bài."}
 
-    # (a) Khái niệm AI nhận là đã có.
+    # (a) Khái niệm AI nhận là đã có (kèm trang, để gắn cờ khối trộn ý cũ, V4).
     dups: list[dict[str, Any]] = []
     for c in raw.get("concepts") or []:
         if isinstance(c, dict) and c.get("status") == "covered" and isinstance(c.get("name"), str):
-            dups.append({"concept": c["name"][:160], "where": str(c.get("covered_by") or "")[:80], "by": "ai", "score": None})
+            dups.append({"concept": c["name"][:160], "where": str(c.get("covered_by") or "")[:80], "by": "ai", "score": None,
+                         "page": c.get("page") if isinstance(c.get("page"), int) else None})
     # (b) Máy soát lại từng khối: AI có thể bỏ sót, nhất là khi diễn đạt khác.
     threshold = DUP_BLOCK[sim.backend]
-    kept_blocks = []
-    for b in raw.get("blocks") or []:
-        if not isinstance(b, dict):
-            continue
-        text = f"{b.get('title', '')}. " + " ".join(p for p in (b.get("paragraphs") or []) if isinstance(p, str))
-        score, hit = sim.best(text, "block")
+    raw_blocks = [b for b in (raw.get("blocks") or []) if isinstance(b, dict)]
+    kept_blocks, renumber = [], {}
+    for i, b in enumerate(raw_blocks, start=1):
+        text_b = f"{b.get('title', '')}. " + " ".join(p for p in (b.get("paragraphs") or []) if isinstance(p, str))
+        score, hit = sim.best(text_b, "block")
         if hit is not None and score >= threshold:
-            dups.append({"concept": str(b.get("title") or "")[:160], "where": f"{hit.ref} · {hit.label}"[:160], "by": sim.backend, "score": score})
+            dups.append({"concept": str(b.get("title") or "")[:160], "where": f"{hit.ref} · {hit.label}"[:160], "by": sim.backend,
+                         "score": score, "block": i})
         else:
             kept_blocks.append(b)
+            renumber[i] = len(kept_blocks)
+    dropped_blocks = {d["block"] for d in dups if d.get("block")}
     q_threshold = DUP_QUESTION[sim.backend]
     kept_questions, dup_questions = [], []
     for q in raw.get("questions") or []:
         prompt = q.get("prompt") if isinstance(q, dict) else None
+        ref = q.get("block_ref") if isinstance(q, dict) else None
+        if isinstance(ref, int) and ref in dropped_blocks:
+            # N3: bỏ khối vì trùng thì bỏ cả câu hỏi của khối đó, không để bài nháp hỏi điều đã cắt khỏi bài.
+            dup_questions.append(f"“{str(prompt)[:40]}”: hỏi về khối “{raw_blocks[ref - 1].get('title', '')}” đã bỏ vì trùng")
+            continue
         score, hit = sim.best(prompt, "question") if isinstance(prompt, str) else (0.0, None)
         if hit is not None and score >= q_threshold:
             dup_questions.append(f"“{prompt[:40]}”: trùng câu đã có ở {hit.ref}")
         else:
+            if isinstance(q, dict) and isinstance(ref, int):
+                q = {**q, "block_ref": renumber.get(ref, ref + 1000)}   # số khối sau khi bỏ; số lạ → cần duyệt
             kept_questions.append(q)
+    log.add("dedup", inp=len(raw_blocks), out=len(kept_blocks), backend=sim.backend,
+            note=f"bỏ {len(raw_blocks) - len(kept_blocks)} khối, {len(dup_questions)} câu" if dup_questions or dropped_blocks else None)
     # Gộp báo cáo trùng theo tên khái niệm (AI và máy có thể cùng báo một ý).
     seen: set[str] = set()
     dups = [d for d in dups if not (_norm_name(d["concept"]) in seen or seen.add(_norm_name(d["concept"])))]  # type: ignore[func-returns-value]
     part["duplicates"] = dups[:40]
     if not kept_blocks:
-        return {**part, "status": "no_new", "note": "Mọi kiến thức của phần này trang web đã có nên không tạo bài mới."}
+        log.add("switch", note="no_new")
+        return {**part, "status": "no_new", "log": log.rows,
+                "note": "Mọi kiến thức của phần này trang web đã có nên không tạo bài mới."}
 
+    page_to = used_pages[-1] if used_pages else part["page_to"]
     content = ai_service.normalize_content(db, {**raw, "blocks": kept_blocks, "questions": kept_questions},
-                                           part["page_from"], part["page_to"])
+                                           part["page_from"], page_to)
     content["dropped_questions"] = dup_questions + content["dropped_questions"]
     content["duplicates"] = part["duplicates"]
     content["part"] = {"heading": part["heading"], "index": part["index"]}
+    if truncated:
+        content["truncated"] = truncated
+    review = sum(1 for q in content["questions"] if ai_service.aq_needs_review(q))
+    log.add("validate", inp=len(kept_questions), out=len(content["questions"]),
+            note=f"loại {len(content['dropped_questions']) - len(dup_questions)} câu, {review} câu cần duyệt")
+    content["flags"] = ai_review.review_flags(doc.pages, content, part["page_from"], page_to)
+    log.add("flags", out=len(content["flags"]), note=", ".join(sorted({f["type"] for f in content["flags"]})) or None)
+    log.add("draft", out=1)
+    content["log"] = log.rows
     draft = AiLessonDraft(id=str(uuid4()), document_id=doc.id, created_by=admin_id, page_from=part["page_from"],
-                          page_to=part["page_to"], content=content, engine_report=ai_service.engine_check(content),
+                          page_to=page_to, content=content, engine_report=ai_service.engine_check(content),
                           model=result.model, tokens_in=result.tokens_in, tokens_out=result.tokens_out)
     db.add(draft)
     # Bản nháp vừa soạn thành "đã có" cho các phần sau: sách hay ôn lại chương trước.
     sim.add([Known(f"Bản nháp “{content['title'][:60]}”", content["title"], b["title"], " ".join(b["paragraphs"]), "block")
              for b in content["blocks"]])
-    return {**part, "status": "done", "draft_id": draft.id, "note": None}
+    return {**part, "status": "done", "draft_id": draft.id, "note": truncated, "log": log.rows}
 
 
 # --- 4. việc chạy nền -----------------------------------------------------------------------------------
@@ -373,12 +428,6 @@ _lock = threading.Lock()
 
 def _set_parts(job: AiSummaryJob, parts: list[dict[str, Any]]) -> None:
     job.parts = [dict(p) for p in parts]   # gán danh sách mới: cột JSON không tự theo dõi sửa tại chỗ
-
-
-def _calls_today(db: Session, admin_id: str | None, now: datetime) -> int:
-    return db.scalar(select(func.count()).select_from(AdminAuditLog).where(
-        AdminAuditLog.actor_id == admin_id, AdminAuditLog.action == "ai.job.part",
-        AdminAuditLog.created_at >= now - timedelta(days=1))) or 0
 
 
 def create_job(db: Session, admin: User, provider: LLMProvider | None, doc_id: str) -> AiSummaryJob:
@@ -417,7 +466,6 @@ def run_job(job_id: str, provider: LLMProvider, session_factory: Callable[[], Se
                 db.commit()
                 return
             sim = Similarity(build_catalog(db))
-            catalog_text = catalog_prompt(sim.known)
             admin = db.get(User, job.created_by) if job.created_by else None
             failures = 0
             while True:
@@ -432,7 +480,8 @@ def run_job(job_id: str, provider: LLMProvider, session_factory: Callable[[], Se
                         audit(db, admin, "ai.job.done", "ai_summary_job", job.id, {"drafts": sum(p["status"] == "done" for p in parts)})
                     db.commit()
                     return
-                if _calls_today(db, job.created_by, clock()) >= DAILY_PART_LIMIT:
+                if budget.remaining(db, "authoring", clock()) == 0:
+                    # V5: một bộ đếm theo khóa Gemini, đếm cả việc không có người tạo (created_by rỗng).
                     job.status, job.pause_reason = "paused", "daily_limit"
                     db.commit()
                     return
@@ -441,10 +490,16 @@ def run_job(job_id: str, provider: LLMProvider, session_factory: Callable[[], Se
                 db.commit()
                 if admin:
                     audit(db, admin, "ai.job.part", "ai_summary_job", job.id, {"part": todo["index"]})
-                    db.commit()   # tính lượt ngay cả khi phần này lỗi (rollback bên dưới không xóa)
+                    db.commit()
                 try:
-                    done = run_part(db, job.created_by, provider, doc, todo, sim, catalog_text)
+                    done = run_part(db, job.created_by, provider, doc, todo, sim)
                     failures = 0
+                except budget.BudgetExceeded:
+                    parts = [{**p, "status": "pending"} if p["index"] == todo["index"] else p for p in parts]
+                    _set_parts(job, parts)
+                    job.status, job.pause_reason = "paused", "daily_limit"
+                    db.commit()
+                    return
                 except LLMUnavailable as exc:
                     if exc.reason == "rate_limited":
                         # Hết hạn mức: phần này làm lại từ đầu khi chạy tiếp, không tính là lỗi.
@@ -524,10 +579,10 @@ def job_view(db: Session, job: AiSummaryJob) -> dict[str, Any]:
     counts = Counter(p["status"] for p in job.parts)
     finished = sum(counts[s] for s in ("done", "no_new", "not_theory", "failed"))
     return {"id": job.id, "document_id": job.document_id, "status": job.status, "pause_reason": job.pause_reason,
-            "parts": [{k: p.get(k) for k in ("index", "page_from", "page_to", "heading", "status", "draft_id", "duplicates", "note")}
-                      for p in job.parts],
+            "parts": [{**{k: p.get(k) for k in ("index", "page_from", "page_to", "heading", "status", "draft_id", "duplicates", "note")},
+                       "log": p.get("log", [])} for p in job.parts],
             "skipped_pages": job.skipped_pages, "total": len(job.parts), "finished": finished,
-            "drafts": counts["done"], "created_at": job.created_at, "updated_at": job.updated_at}
+            "drafts": counts["done"], "created_at": job.created_at, "updated_at": job.updated_at, "budget": budget.summary(db)}
 
 
 def latest_jobs(db: Session) -> list[dict[str, Any]]:
