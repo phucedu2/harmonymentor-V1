@@ -9,15 +9,35 @@ from uuid import uuid4
 import pytest
 from sqlalchemy import delete, select
 
-from app.admin import ai_index, ai_job, ai_questions as aq, ai_review, ai_service
-from app.ai import budget
+from app.admin import ai_job, ai_questions as aq, ai_service
 from app.ai.tutor import retriever
 from app.ai.tutor.chunker import lesson_chunks
-from app.db.models import AdminAuditLog, AiLessonDraft, AiSummaryJob, ExerciseVersion, SourceWork, User
+from app.db.models import AdminAuditLog, AiLessonDraft, SourceWork, User
 from app.db.session import SessionLocal
 from tests.auth_helpers import auth
-from tests.test_admin_ai_tai_lieu import approve_all, env, make_admin, show  # noqa: F401  (fixture env dùng lại)
+from tests.test_admin_ai_tai_lieu import approve_all, env, make_admin  # noqa: F401  (fixture env dùng lại)
 from tests.test_ai_tom_tat_ca_file import add_doc, job_env, new_admin, page  # noqa: F401
+
+# Module mới của đợt 3 nhập TRONG từng test: chạy file này trên code cũ (fb87071) thì từng test đỏ riêng lẻ, không hỏng cả file.
+
+
+@pytest.fixture(autouse=True)
+def _tfidf(monkeypatch):
+    # CI không có mô hình e5: test chạy TF-IDF tất định ở mọi máy (eval đo cả e5 khi máy có mô hình).
+    monkeypatch.setenv("AI_GROUND_E5", "0")
+    monkeypatch.setenv("AI_DEDUP_E5", "0")
+
+
+def show(client, h, lesson_id):
+    r = client.post(f"/api/v1/admin/lessons/{lesson_id}/visibility", headers=h, json={"hidden": False})
+    assert r.status_code == 200, r.text
+    return r.json()
+
+
+def _review_flags(*args):
+    from app.admin import ai_review
+
+    return ai_review.review_flags(*args)
 
 SKILLS = {"interval.naming", "chord.seventh_build", "chord.triad_build", "scale.major", "function.dominant", "roman.major_seventh"}
 one = lambda p: 1  # noqa: E731
@@ -103,24 +123,24 @@ def test_n4_trang_ngoai_phan_gan_co_khong_kep_lang_le():
         c = ai_service.normalize_content(db, {"title": "T", "blocks": [{"title": "Quãng", "paragraphs": ["x y z"], "page": 9}],
                                               "questions": []}, 1, 2)
     assert c["blocks"][0]["page"] == 1 and c["blocks"][0]["page_claimed"] == 9
-    flags = ai_review.review_flags([SOURCE, OTHER], c, 1, 2)
+    flags = _review_flags([SOURCE, OTHER], c, 1, 2)
     assert "page_out_of_range" in {f["type"] for f in flags}
 
 
 def test_n4_cho_chep_nguyen_van_va_bam_nguon():
     copied = "Quãng ba trưởng gồm bốn nửa cung, ví dụ từ C lên E. Quãng ba thứ gồm ba nửa cung, ví dụ từ A lên C."
-    kinds = {f["type"] for f in ai_review.review_flags([SOURCE, OTHER], _content(copied), 1, 2)}
+    kinds = {f["type"] for f in _review_flags([SOURCE, OTHER], _content(copied), 1, 2)}
     assert "verbatim" in kinds
     own = "Khoảng cách giữa hai nốt gọi là quãng; quãng ba trưởng rộng bốn nửa cung còn quãng ba thứ ba nửa cung."
-    kinds = {f["type"] for f in ai_review.review_flags([SOURCE, OTHER], _content(own), 1, 2)}
+    kinds = {f["type"] for f in _review_flags([SOURCE, OTHER], _content(own), 1, 2)}
     assert "verbatim" not in kinds and "low_grounding" not in kinds
     made_up = "Hợp âm bảy át giải quyết về chủ qua nốt cảm, thường dùng ở cuối câu nhạc pop."
-    flags = ai_review.review_flags([SOURCE, OTHER], _content(made_up), 1, 2)
+    flags = _review_flags([SOURCE, OTHER], _content(made_up), 1, 2)
     assert "low_grounding" in {f["type"] for f in flags}
 
 
 def test_v8_nhac_toi_vi_du_hinh_thi_gan_co():
-    flags = ai_review.review_flags([SOURCE], _content("Xem ví dụ 3.2 để thấy quãng ba trưởng rộng hơn quãng ba thứ."), 1, 1)
+    flags = _review_flags([SOURCE], _content("Xem ví dụ 3.2 để thấy quãng ba trưởng rộng hơn quãng ba thứ."), 1, 1)
     kinds = {f["type"] for f in flags}
     assert {"figure_ref", "source_figure"} <= kinds
 
@@ -233,6 +253,8 @@ def test_n5_qdrant_bat_thi_nap_khi_hien_go_khi_an(env, monkeypatch):  # noqa: F8
 # --- V5: một bộ đếm theo khóa Gemini ------------------------------------------------------------------------------
 
 def test_v5_han_muc_chia_cho_soan_bai_va_tutor(monkeypatch):
+    from app.ai import budget
+
     monkeypatch.setenv("GEMINI_DAILY_BUDGET", "30")
     monkeypatch.delenv("GEMINI_AUTHORING_SHARE", raising=False)
     assert budget.limit("authoring") == 12 and budget.limit("tutor") == 18
@@ -241,6 +263,8 @@ def test_v5_han_muc_chia_cho_soan_bai_va_tutor(monkeypatch):
 
 
 def test_v5_viec_nen_khong_co_nguoi_tao_van_bi_dem(monkeypatch):
+    from app.ai import budget
+
     with SessionLocal() as db:
         before = budget.used(db, "authoring")
         budget.record_authoring(db, None, "ai_document", "x", "part:1")

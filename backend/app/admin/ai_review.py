@@ -145,12 +145,13 @@ def review_flags(pages: Sequence[str], content: dict[str, Any], page_from: int, 
     for i, b in enumerate(content.get("blocks", []), start=1):
         where = f"block:{i}"
         text = block_text(b)
+        body = " ".join(b.get("paragraphs", []))   # bám nguồn đo trên lời giảng; tiêu đề ngắn hay lặp từ khóa nên bỏ
         claimed = b.get("page_claimed")
         if isinstance(claimed, int):
             out.append(flag("page_out_of_range", where, f"AI ghi trang {claimed}, phần này chỉ gồm trang {page_from}–{page_to}. "
                                                         f"Hãy sửa trang của khối cho đúng."))
         if not lang_gap and part:
-            sc = scorer.scores(text)
+            sc = scorer.scores(body)
             cited = sc.get(b.get("page"), 0.0)
             best_page = max(sc, key=lambda n: (sc[n], -n)) if sc else None
             if cited < GROUND_MIN[scorer.backend]:
