@@ -18,7 +18,7 @@ from app.db.models import (AdminAuditLog, AiLessonDraft, AiSummaryJob, ExerciseV
 from app.db.session import SessionLocal
 from app.main import app
 from tests.auth_helpers import auth
-from tests.test_admin_ai_tai_lieu import approve_all, env, make_admin  # noqa: F401  (fixture env dùng lại)
+from tests.test_admin_ai_tai_lieu import approve_all, env, make_admin, show  # noqa: F401  (fixture env dùng lại)
 
 LOREM = "Nội dung giải thích chi tiết về chủ đề này cho học sinh. " * 40   # ~2,3 nghìn ký tự: không bị gộp
 
@@ -46,7 +46,7 @@ def lesson_json(title: str, block_title: str, text: str, *, expansion: bool = Fa
         "concepts": [{"name": block_title, "status": "new"}] + [{"name": c, "status": "covered", "covered_by": "L02"} for c in covered],
         "blocks": [{"title": block_title, "paragraphs": [text], "page": 3}],
         "questions": [{"kind": "true_false", "level": "nho", "prompt": f"{block_title} là kiến thức mới trong tài liệu.",
-                       "skill_id": "interval.naming", "answer": "Đúng", "page": 3}],
+                       "skill_id": "interval.naming", "answer": "Đúng", "page": 3, "block_ref": 1}],
     })
 
 
@@ -208,7 +208,12 @@ def test_hai_phan_loi_lien_tiep_thi_dung_va_chay_tiep_lam_lai_phan_loi(job_env):
 
 def test_gioi_han_luot_moi_ngay_va_dung_han(job_env, monkeypatch):
     client, use = job_env
-    monkeypatch.setattr(ai_job, "DAILY_PART_LIMIT", 1)
+    # V5 (ADR-033): hạn mức chung theo khóa Gemini. Đặt sao cho soạn bài còn đúng 1 lượt hôm nay.
+    from app.ai import budget
+    with SessionLocal() as db:
+        used = budget.used(db, "authoring")
+    monkeypatch.setenv("GEMINI_DAILY_BUDGET", str(used + 1))
+    monkeypatch.setenv("GEMINI_AUTHORING_SHARE", "1")
     uid, h = new_admin()
     doc = add_doc(uid, BOOK)
     use([lesson_json("A", "Quãng ghép là gì", "Quãng ghép vượt quá một quãng tám.")])
@@ -255,6 +260,7 @@ def test_bai_mo_rong_khong_tinh_thanh_thao_va_khong_vao_quiz_ky_nang(job_env):
     pub = client.post(f"/api/v1/admin/ai/drafts/{draft_id}/publish", headers=h, json={"acknowledge_engine_flags": True})
     assert pub.status_code == 200, pub.text
     lesson_id = pub.json()["lesson_id"]
+    show(client, h, lesson_id)
     with SessionLocal() as db:
         versions = db.scalars(select(ExerciseVersion).where(ExerciseVersion.exercise_id.like(f"{lesson_id}-%"))).all()
         assert versions and all(v.grader_config["counts_for_mastery"] is False for v in versions)

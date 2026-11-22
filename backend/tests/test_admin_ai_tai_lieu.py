@@ -13,7 +13,7 @@ from sqlalchemy import delete, select
 from app.admin import ai_service
 from app.admin.router import draft_provider_dep
 from app.ai.tutor.llm import FakeProvider
-from app.db.models import (AiLessonDraft, Exercise, ExerciseVersion, Lesson, LessonBlock, LessonSource, SourceDocument, SourceWork,
+from app.db.models import (ContentRevision, AiLessonDraft, Exercise, ExerciseVersion, Lesson, LessonBlock, LessonSource, SourceDocument, SourceWork,
                            User)
 from app.db.session import SessionLocal
 from app.main import app
@@ -54,6 +54,7 @@ def env():
             db.execute(delete(Exercise).where(Exercise.lesson_id == lesson_id))
             db.execute(delete(LessonBlock).where(LessonBlock.lesson_id == lesson_id))
             db.execute(delete(LessonSource).where(LessonSource.lesson_id == lesson_id))
+            db.execute(delete(ContentRevision).where(ContentRevision.lesson_id == lesson_id))
             db.execute(delete(Lesson).where(Lesson.id == lesson_id))
         db.execute(delete(AiLessonDraft))
         db.execute(delete(SourceDocument))
@@ -184,11 +185,22 @@ def test_engine_gan_co_noi_dung_sai_va_xuat_ban_can_xac_nhan(env):
 
 
 def approve_all(client, h, draft):
-    """ADR-028: câu Engine không kiểm được phải được Quản trị viên tick đã duyệt trước khi xuất bản."""
+    """ADR-028: câu Engine không kiểm được phải được Quản trị viên tick đã duyệt trước khi xuất bản.
+    ADR-033: mọi cờ (trang sai, bám nguồn, chép nguyên văn, hình...) cũng phải được tick "đã đối chiếu"."""
     c = draft["content"]
-    r = client.put(f"/api/v1/admin/ai/drafts/{draft['id']}", headers=h, json={
-        "title": c["title"], "objectives": c["objectives"], "blocks": c["blocks"],
-        "questions": [{**q, "reviewed": True} for q in c["questions"]]})
+    body = {"title": c["title"], "objectives": c["objectives"], "blocks": c["blocks"],
+            "questions": [{**q, "reviewed": True} for q in c["questions"]]}
+    r = client.put(f"/api/v1/admin/ai/drafts/{draft['id']}", headers=h, json=body)
+    assert r.status_code == 200, r.text
+    r = client.put(f"/api/v1/admin/ai/drafts/{draft['id']}", headers=h,
+                   json={**body, "acknowledged_flags": [f["id"] for f in r.json()["flags"]]})
+    assert r.status_code == 200, r.text
+    return r.json()
+
+
+def show(client, h, lesson_id):
+    """ADR-033 (7B): bài AI xuất bản ở trạng thái ẩn; Quản trị viên bấm "Hiện cho học sinh"."""
+    r = client.post(f"/api/v1/admin/lessons/{lesson_id}/visibility", headers=h, json={"hidden": False})
     assert r.status_code == 200, r.text
     return r.json()
 
@@ -203,6 +215,10 @@ def test_xuat_ban_tao_bai_cham_duoc_va_giu_nguon(env):
     r = client.post(f"/api/v1/admin/ai/drafts/{draft['id']}/publish", headers=h, json={})
     assert r.status_code == 200, r.text
     lesson_id = r.json()["lesson_id"]
+    # 7B: vừa xuất bản thì học sinh chưa thấy; Quản trị viên xem trước được, bấm hiện thì học sinh mới thấy.
+    assert client.get(f"/api/v1/lessons/{lesson_id}").status_code == 404
+    assert client.get(f"/api/v1/lessons/{lesson_id}", params={"preview": 1}, headers=h).status_code == 200
+    show(client, h, lesson_id)
     lesson = client.get(f"/api/v1/lessons/{lesson_id}").json()
     assert lesson["title"] == "Hợp âm bảy trưởng" and len(lesson["exercises"]) == 3
     uid = f"lrn-{uuid4().hex[:10]}"
@@ -230,7 +246,9 @@ def test_tu_choi_va_gioi_han_moi_ngay(env, monkeypatch):
     draft = new_draft(client, h)
     assert client.post(f"/api/v1/admin/ai/drafts/{draft['id']}/reject", headers=h).json()["status"] == "rejected"
     assert client.post(f"/api/v1/admin/ai/drafts/{draft['id']}/publish", headers=h, json={}).status_code == 409
-    monkeypatch.setattr(ai_service, "DAILY_DRAFT_LIMIT", 1)
+    # V5 (ADR-033): một bộ đếm theo khóa Gemini; soạn bài được GEMINI_AUTHORING_SHARE phần của GEMINI_DAILY_BUDGET.
+    monkeypatch.setenv("GEMINI_DAILY_BUDGET", "1")
+    monkeypatch.setenv("GEMINI_AUTHORING_SHARE", "1")
     doc = upload(client, h).json()
     r = client.post(f"/api/v1/admin/ai/documents/{doc['id']}/draft", headers=h, json={"page_from": 1, "page_to": 1})
     assert r.status_code == 429 and r.json()["error"]["code"] == "DRAFT_LIMIT"
