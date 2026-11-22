@@ -88,7 +88,17 @@ def vectors_for(embedder: Embedder, chunks: Sequence[Chunk]) -> Sequence[Sequenc
     trong bộ nhớ, khóa theo hash nội dung, nên sửa bài là vector tự tính lại, không có chuyện file cũ lệch bài."""
     if not getattr(embedder, "local", False):
         if list(chunks) == list(knowledge_base()):
-            return _cached_vectors(embedder.model)
+            vecs = _cached_vectors(embedder.model)
+            if vecs is None and any(c.lesson_id.startswith("AI-") for c in chunks):
+                # ADR-033: file vector Gemini chỉ có bài tĩnh. Bài AI (đọc từ CSDL) chưa có vector thì đặt 0 cho riêng
+                # đoạn đó (không bao giờ vượt ngưỡng) thay vì làm cả kho rơi về BM25; bài AI tìm qua Qdrant/BM25.
+                static = [c for c in chunks if not c.lesson_id.startswith("AI-")]
+                base = index_vectors(load_index(), static, embedder.model)
+                if base is not None:
+                    it = iter(base)
+                    dim = len(base[0]) if base else 0
+                    return [[0.0] * dim if c.lesson_id.startswith("AI-") else next(it) for c in chunks]
+            return vecs
         return None
     key = (embedder.model, tuple(c.content_hash for c in chunks))
     if key not in _computed:

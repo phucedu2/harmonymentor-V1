@@ -17,6 +17,7 @@ from ..ai.tutor.guardrail import scan_reply
 from ..content import overrides
 from ..db.models import AdminAuditLog, ContentRevision, Exercise, Lesson, User
 from ..content.versioning import current_version
+from . import ai_index
 
 MAX_TEXT = 4000
 MAX_ITEMS = 40
@@ -210,4 +211,11 @@ def set_hidden(db: Session, actor: User, lesson_id: str, hidden: bool) -> dict[s
                            payload={"hidden": bool(hidden)}, status="published", created_by=actor.id, published_by=actor.id, published_at=now))
     audit(db, actor, "content.hide" if hidden else "content.show", "lesson", lesson_id)
     db.commit()
-    return {"id": lesson_id, "hidden": bool(hidden)}
+    out: dict[str, Any] = {"id": lesson_id, "hidden": bool(hidden)}
+    lesson = db.get(Lesson, lesson_id)
+    if lesson is not None and lesson.track == ai_index.AI_TRACK:
+        # ADR-033 (N5, 6A): hiện bài AI thì nạp vào kho AI Tutor, ẩn thì gỡ.
+        out["tutor_index"] = ai_index.sync_lesson(db, lesson_id)
+        audit(db, actor, "ai.lesson.index", "lesson", lesson_id, out["tutor_index"])
+        db.commit()
+    return out

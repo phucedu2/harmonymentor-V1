@@ -201,9 +201,11 @@ def answer_review(db: Session, user_id: str, review_item_id: str, answer, rating
 
 
 def start_lesson(db: Session, user_id: str, lesson_id: str) -> LessonProgress:
-    require_user(db, user_id)
+    user = require_user(db, user_id)
     lesson = db.get(Lesson, lesson_id)
-    if lesson is None or not versioning.lesson_visible(lesson) or lesson_id in hidden_lesson_ids(db):
+    # Quản trị viên xem trước bài đang ẩn (ADR-033, 7B) vẫn mở được; lượt làm của Admin là is_test nên không tính thống kê.
+    hidden = lesson_id in hidden_lesson_ids(db) and user.role != "admin"
+    if lesson is None or not versioning.lesson_visible(lesson) or hidden:
         raise LookupError("LESSON_NOT_FOUND")
     # Frontend có thể gọi start nhiều lần cùng lúc (StrictMode, mở lại bài); "đọc rồi thêm" sẽ đụng
     # uq_user_lesson_progress trên PostgreSQL (HM-010), nên chèn kiểu "có rồi thì bỏ qua".

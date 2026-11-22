@@ -72,6 +72,11 @@ class QdrantStore:
     def delete_source(self, source: str) -> None:
         self.client.delete(self.collection, points_selector=models.FilterSelector(filter=self._filter({"source": source})))
 
+    def delete_lesson(self, source: str, lesson_id: str) -> None:
+        """Gỡ mọi điểm của một bài (bài AI bị ẩn, hoặc trước khi nạp lại bài vừa hiện)."""
+        self.client.delete(self.collection, points_selector=models.FilterSelector(
+            filter=self._filter({"source": source, "lesson_id": lesson_id})))
+
     def delete_stale(self, source: str, keep_ids: set[str]) -> int:
         """Xóa điểm cũ của nguồn mà lần nạp này không còn (nội dung đã sửa/xóa)."""
         stale, offset = [], None
