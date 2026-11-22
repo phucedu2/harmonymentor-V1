@@ -324,7 +324,7 @@ class OffTopic(Node):
     def run(self, ctx: Ctx) -> None:
         pc, provider, q = ctx.pcfg, ctx.provider, ctx.question
         if (pc.offtopic_mode != "brief" or provider is None or blocked(q)
-                or ts._llm_rows_today(ctx.db, ctx.now, None) >= ts.settings.ai_global_daily_budget
+                or ts.global_budget_spent(ctx.db, ctx.now)
                 or ts._llm_rows_today(ctx.db, ctx.now, ctx.user.id) >= ts.settings.ai_daily_quota):
             return _done(ctx, self._refusal())
         try:
@@ -383,7 +383,7 @@ class AnswerGate(Node):
         if ctx.provider is None:
             faq = ts._faq_answer(ctx.question, titles, "ai_disabled")
             return _done(ctx, faq if faq is not None else _lesson_flow(ts.offline_answer(hits, facts, titles, "ai_disabled")))
-        if ts._llm_rows_today(ctx.db, ctx.now, None) >= ts.settings.ai_global_daily_budget:
+        if ts.global_budget_spent(ctx.db, ctx.now):
             return _done(ctx, _lesson_flow(ts.offline_answer(hits, facts, titles, "global_budget")))
         used = ts._llm_rows_today(ctx.db, ctx.now, ctx.user.id)
         if used >= ts.settings.ai_daily_quota:
