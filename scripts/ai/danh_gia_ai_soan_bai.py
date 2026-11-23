@@ -152,22 +152,38 @@ def eval_pairs(cases: list[dict], backend: str) -> dict:
 
 
 def live(cases: list[dict], out_path: Path) -> None:
-    """Gemini thật soạn bài từ 4 trang mẫu, ghi kết quả + cờ để Đạt gắn nhãn (không tự chấm đúng/sai nhạc lý)."""
+    """Gemini thật soạn bài từ 4 trang mẫu (1 lượt gọi), chuẩn hóa câu + tính cờ như luồng thật, ghi ra file để Đạt gắn
+    nhãn. Không tự chấm đúng/sai nhạc lý của lời giảng (cần người)."""
     from app.admin import ai_review as rv
     from app.admin import ai_service
-    from app.ai.provider import get_provider
+    from app.admin import ai_questions as aq
+    from app.ai.tutor.llm import get_provider
+    from dataclasses import replace
 
+    from app.core.config import settings
+
+    provider = get_provider(replace(settings, ai_timeout_seconds=max(settings.ai_timeout_seconds, 60.0)))
+    if provider is None:
+        sys.exit("Cần AI_ENABLED=1 và GEMINI_API_KEY trong môi trường.")
     pages = next(c["pages"] for c in cases if c["type"] == "block")
-    provider = get_provider()
-    system, user = ai_service.SYSTEM_PROMPT, ai_service.user_prompt("\n\n".join(
-        f"[Trang {i + 1}]\n{t}" for i, t in enumerate(pages)), 1, len(pages), ai_service.allowed_skills_text())
-    raw = provider.generate(system=system, user=user, schema=ai_service.LESSON_SCHEMA, max_tokens=8192)
-    content = json.loads(raw.text if hasattr(raw, "text") else raw)
+    text = "\n\n".join(f"[Trang {i + 1}]\n{t}" for i, t in enumerate(pages))
+    user = (f"Nguồn: Trang mẫu tự viết (HarmonyMentor)\nKỹ năng được phép dùng: {', '.join(sorted(SKILLS))}\n"
+            f"Chủ đề muốn tập trung: tự chọn theo nội dung\nHãy viết 2–5 khối lý thuyết và 10–20 câu luyện tập.\n"
+            f"<<<DOCUMENT>>>\n{text}\n<<<END>>>")
+    result = provider.generate(ai_service.SYSTEM, user, ai_service.SCHEMA, 8192)
+    raw = json.loads(result.text)
+    blocks = raw.get("blocks", [])
+    questions, dropped = [], []
+    for item in raw.get("questions", []):
+        q, why = aq.normalize_question(item, SKILLS, lambda p: p if isinstance(p, int) and 1 <= p <= len(pages) else 1,
+                                       blocks=len(blocks))
+        (questions.append(q) if q else dropped.append(why))
+    content = {"blocks": blocks, "questions": questions}
     flags = rv.review_flags(pages, content, 1, len(pages))
-    out_path.write_text(json.dumps({"content": content, "flags": flags,
-                                    "label_me": "Đạt: ghi grounded/page_ok/answer_ok cho từng khối/câu"},
+    out_path.write_text(json.dumps({"model": result.model, "content": content, "dropped": dropped, "flags": flags,
+                                    "label_me": "Đạt: ghi grounded/page_ok cho từng khối, answer_ok cho từng câu"},
                                    ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"Đã ghi {out_path} ({len(content.get('blocks', []))} khối, {len(flags)} cờ)")
+    print(f"Đã ghi {out_path}: {len(blocks)} khối, {len(questions)} câu giữ, {len(dropped)} câu loại, {len(flags)} cờ")
 
 
 def main() -> None:
