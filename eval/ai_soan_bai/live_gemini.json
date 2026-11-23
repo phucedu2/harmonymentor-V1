@@ -1,0 +1,33 @@
+{
+  "run": {"date": "2026-11-23", "machine": "máy Phúc (Docker api, hm-dot3 @ 5ad7551)", "gemini_calls": 1, "backend": "tfidf"},
+  "model": "gemini-3.5-flash-lite",
+  "content": {
+    "blocks": [
+      {"title": "Khái niệm quãng", "paragraphs": ["Quãng là khoảng cách cao độ giữa hai nốt, tên quãng gồm số quãng đếm theo tên nốt và tính chất (trưởng, thứ, đúng, tăng, giảm).", "Ví dụ từ C lên E là quãng ba trưởng (M3), còn từ C lên Eb là quãng ba thứ (m3)."], "page": 1},
+      {"title": "Hợp âm ba", "paragraphs": ["Hợp âm ba gồm ba nốt xếp theo quãng ba, nốt thấp nhất là nốt gốc.", "Hợp âm trưởng có ba trưởng và năm đúng; hợp âm thứ có ba thứ và ba trưởng; hợp âm giảm có hai quãng ba thứ."], "page": 2},
+      {"title": "Nhịp", "paragraphs": ["Nhịp quy định số phách trong ô nhịp và hình nốt đại diện cho một phách.", "Nhịp bốn bốn có bốn phách đen, nhịp ba bốn có ba phách đen, nhịp sáu tám gồm sáu nốt móc đơn chia thành hai nhóm."], "page": 3},
+      {"title": "Âm giai trưởng", "paragraphs": ["Âm giai trưởng đi theo công thức cung và nửa cung: cung, cung, nửa cung, cung, cung, cung, nửa cung.", "Bậc bảy cách chủ âm một nửa cung và được gọi là nốt cảm."], "page": 4}
+    ],
+    "questions": [
+      {"kind": "mcq", "prompt": "Quãng từ C lên E là quãng gì?", "skill_id": "interval.naming", "level": "nho", "explanation": "", "page": 1, "options": ["M3", "m3", "P5"], "option_feedback": {"m3": "m3 chỉ có ba nửa cung, từ C lên E có bốn nửa cung.", "P5": "P5 là quãng năm đúng, không phải quãng ba."}, "answer": "M3", "check": {"type": "interval", "lower": "C", "upper": "E"}, "engine_verified": true, "block_ref": 1, "review_notes": [], "needs_review": false, "reviewed": false},
+      {"kind": "true_false", "prompt": "Từ C lên Eb là quãng ba trưởng.", "skill_id": "interval.naming", "level": "nho", "explanation": "Từ C lên Eb có ba nửa cung nên là quãng ba thứ (m3).", "page": 1, "options": ["Đúng", "Sai"], "option_feedback": {}, "answer": "Sai", "engine_verified": true, "block_ref": 1, "review_notes": [], "needs_review": false, "reviewed": false},
+      {"kind": "mcq", "prompt": "Công thức cung và nửa cung của âm giai trưởng là gì?", "skill_id": "scale.major", "level": "nho", "explanation": "", "page": 4, "options": ["Cung, cung, nửa cung, cung, cung, cung, nửa cung", "Cung, nửa cung, cung, cung, nửa cung, cung, cung", "Nửa cung, cung, cung, nửa cung, cung, cung, cung"], "option_feedback": {"Cung, nửa cung, cung, cung, nửa cung, cung, cung": "Sai công thức chuẩn của âm giai trưởng.", "Nửa cung, cung, cung, nửa cung, cung, cung, cung": "Sai vị trí nửa cung."}, "answer": "Cung, cung, nửa cung, cung, cung, cung, nửa cung", "engine_verified": false, "block_ref": 4, "review_notes": [], "needs_review": true, "reviewed": false},
+      {"kind": "short", "prompt": "Điền tên quãng đi lên từ C lên Eb.", "skill_id": "interval.naming", "level": "van_dung", "explanation": "", "page": 1, "check": {"type": "interval", "lower": "C", "upper": "Eb"}, "engine_verified": true, "block_ref": 1, "review_notes": [], "needs_review": false, "reviewed": false},
+      {"kind": "true_false", "prompt": "Bậc bảy cách chủ âm nửa cung gọi là nốt cảm.", "skill_id": "scale.major", "level": "hieu", "explanation": "Tài liệu nêu bậc bảy cách chủ âm nửa cung gọi là nốt cảm vì nghe như muốn đi lên chủ âm.", "page": 4, "options": ["Đúng", "Sai"], "option_feedback": {}, "answer": "Đúng", "engine_verified": false, "block_ref": 4, "review_notes": [], "needs_review": true, "reviewed": false},
+      {"kind": "mcq", "prompt": "Nhịp sáu tám thường được cảm nhận như thế nào trong một ô nhịp?", "skill_id": "rhythm.meter", "level": "hieu", "explanation": "", "page": 3, "options": ["Hai nhóm, mỗi nhóm ba nốt", "Ba nhóm, mỗi nhóm hai nốt", "Sáu phách đều nhau"], "option_feedback": {"Ba nhóm, mỗi nhóm hai nốt": "Nhịp sáu tám chia thành hai nhóm móc đơn.", "Sáu phách đều nhau": "Nhịp sáu tám thường được cảm nhận thành hai nhóm chính."}, "answer": "Hai nhóm, mỗi nhóm ba nốt", "engine_verified": false, "block_ref": 3, "review_notes": [], "needs_review": true, "reviewed": false}
+    ]
+  },
+  "dropped": [
+    "“Hợp âm nào sau đây là hợp âm giảm?”: Engine thấy 0 phương án đúng (cần đúng 1)",
+    "“Đặc điểm nào đúng với nhịp ba bốn?”: câu chọn nhiều cần 4–6 phương án khác nhau"
+  ],
+  "flags": [
+    {"id": "1b2c3c6358d7", "type": "source_figure", "label": "Trang nguồn có ví dụ/hình, chữ trích có thể thiếu ký âm", "where": "block:1", "detail": "Trang 1 có Xem Ví dụ 1.2: ký âm trên khuông không trích được thành chữ, khối có thể thiếu ví dụ."},
+    {"id": "bfb8b8e7230b", "type": "source_figure", "label": "Trang nguồn có ví dụ/hình, chữ trích có thể thiếu ký âm", "where": "block:2", "detail": "Trang 2 có Bảng 2.1: ký âm trên khuông không trích được thành chữ, khối có thể thiếu ví dụ."}
+  ],
+  "claude_review": {
+    "blocks": "4/4 khối bám đúng trang 1–4, nội dung nhạc lý đúng, không chép nguyên văn ≥ 12 từ, không nhắc hình.",
+    "questions": "6/6 câu giữ có đáp án đúng nhạc lý; 3 câu Engine kiểm (C–E = M3, C–Eb = m3 hai câu), 3 câu khái niệm bắt duyệt. Lọt đáp án sai: 0.",
+    "issues": ["3/6 câu thiếu lời giải (explanation rỗng) nhưng không bị bắt duyệt", "AI chỉ đưa 8 câu dù đề yêu cầu 10–20, giữ 6", "Không lưu nội dung thô câu bị loại nên chưa biết câu hợp âm giảm bị loại vì AI sai hay vì phần kiểm"]
+  }
+}
