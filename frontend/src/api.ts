@@ -318,19 +318,25 @@ export type AiQuestionKind = "mcq" | "true_false" | "multi_select" | "short" | "
 export type AiQuestion = { kind: AiQuestionKind; level?: "nho" | "hieu" | "van_dung"; prompt: string; skill_id: string; explanation: string; page: number;
   options?: string[]; answer?: string; answers?: string[]; option_feedback?: Record<string, string>;
   check?: Record<string, string>; symbol?: string; tonic?: string; scale_type?: string; model_answer?: string; rubric?: string[];
-  engine_answer?: string | string[] | null; engine_verified?: boolean; engine_note?: string; needs_review?: boolean; reviewed?: boolean };
+  engine_answer?: string | string[] | null; engine_verified?: boolean; engine_note?: string; needs_review?: boolean; reviewed?: boolean;
+  review_notes?: string[]; block_ref?: number | null; page_claimed?: number };
+// ADR-033: cờ cho người duyệt (cảnh báo, phải tick "Đã đối chiếu" từng cờ mới xuất bản được).
+export type AiFlag = { id: string; type: string; label: string; where: string; detail: string; acknowledged?: boolean };
+export type AiNodeLog = { node: string; ms: number; in?: number; out?: number; note?: string; ok?: boolean; calls?: number };
+export type AiBudget = { total: number; authoring: { limit: number; used: number }; tutor: { limit: number; used: number }; resets_at: string };
 export type AiDuplicate = { concept: string; where: string; by: "ai" | "e5" | "tfidf"; score: number | null };
-export type AiDraftContent = { title: string; objectives: string[]; blocks: { title: string; paragraphs: string[]; page: number }[];
-  questions: AiQuestion[]; dropped_questions: string[]; expansion?: boolean; duplicates?: AiDuplicate[]; part?: { heading: string; index: number } };
+export type AiDraftContent = { title: string; objectives: string[]; blocks: { title: string; paragraphs: string[]; page: number; page_claimed?: number }[];
+  questions: AiQuestion[]; acknowledged_flags?: string[]; log?: AiNodeLog[]; truncated?: string; dropped_questions: string[]; expansion?: boolean; duplicates?: AiDuplicate[]; part?: { heading: string; index: number } };
 export type AiJobPartStatus = "pending" | "running" | "done" | "no_new" | "not_theory" | "failed";
 export type AiJob = { id: string; document_id: string; status: "running" | "paused" | "done" | "cancelled";
   pause_reason: "quota" | "daily_limit" | "unavailable" | "interrupted" | "admin" | "document_deleted" | null;
   parts: { index: number; page_from: number; page_to: number; heading: string; status: AiJobPartStatus; draft_id: string | null;
-    duplicates: AiDuplicate[]; note: string | null }[];
-  skipped_pages: { page: number; reason: string }[]; total: number; finished: number; drafts: number; created_at: string; updated_at: string };
+    duplicates: AiDuplicate[]; note: string | null; log?: AiNodeLog[] }[];
+  skipped_pages: { page: number; reason: string }[]; total: number; finished: number; drafts: number; created_at: string; updated_at: string; budget?: AiBudget };
 export type AiDraft = { id: string; status: "draft" | "published" | "rejected"; document: AiDocument | null; page_from: number; page_to: number;
-  model: string | null; published_lesson_id: string | null; content: AiDraftContent; engine: AdminEngineReport; created_at: string };
-export type AiDraftRow = { id: string; status: string; title: string | null; questions: number; flags: number; published_lesson_id: string | null; created_at: string };
+  model: string | null; published_lesson_id: string | null; content: AiDraftContent; engine: AdminEngineReport; created_at: string;
+  flags?: AiFlag[]; budget?: AiBudget };
+export type AiDraftRow = { id: string; status: string; title: string | null; questions: number; flags: number; review_flags?: number; published_lesson_id: string | null; created_at: string };
 
 export const api = {
   aiStatus: () => apiCall<{ enabled: boolean }>("/admin/ai/status"),
@@ -353,7 +359,7 @@ export const api = {
     apiPost<AiDraft>(`/admin/ai/drafts/${encodeURIComponent(id)}/questions`, { kinds }),
   aiDrafts: () => apiCall<AiDraftRow[]>("/admin/ai/drafts"),
   aiDraft: (id: string) => apiCall<AiDraft>(`/admin/ai/drafts/${encodeURIComponent(id)}`),
-  aiSaveDraft: (id: string, content: Omit<AiDraftContent, "dropped_questions" | "duplicates" | "part">) =>
+  aiSaveDraft: (id: string, content: Omit<AiDraftContent, "dropped_questions" | "duplicates" | "part" | "log" | "truncated">) =>
     apiCall<AiDraft>(`/admin/ai/drafts/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(content) }),
   aiPublish: (id: string, acknowledge: boolean) =>
     apiPost<{ lesson_id: string; title: string }>(`/admin/ai/drafts/${encodeURIComponent(id)}/publish`, { acknowledge_engine_flags: acknowledge }),
@@ -370,7 +376,7 @@ export const api = {
   adminRestore: (lessonId: string, blockId: string, revisionId: string | null) =>
     apiPost<{ revision_id: string }>(`/admin/lessons/${encodeURIComponent(lessonId)}/blocks/${encodeURIComponent(blockId)}/restore`, { revision_id: revisionId }),
   adminVisibility: (lessonId: string, hidden: boolean) =>
-    apiPost<{ id: string; hidden: boolean }>(`/admin/lessons/${encodeURIComponent(lessonId)}/visibility`, { hidden }),
+    apiPost<{ id: string; hidden: boolean; tutor_index?: { qdrant: string; chunks: number } }>(`/admin/lessons/${encodeURIComponent(lessonId)}/visibility`, { hidden }),
   adminUsers: (q = "") => apiCall<{ total: number; items: AdminUser[] }>(`/admin/users?q=${encodeURIComponent(q)}`),
   adminSetActive: (id: string, isActive: boolean) =>
     apiCall<{ id: string; is_active: boolean }>(`/admin/users/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify({ is_active: isActive }) }),
@@ -429,7 +435,9 @@ export const api = {
 
   // Phase 0.4B source-grounded learning contract.
   listLessons: () => apiCall<LessonSummary[]>("/lessons"),
-  getLesson: (lessonId: string) => apiCall<LessonDetail>(`/lessons/${encodeURIComponent(lessonId)}`),
+  // preview: Quản trị viên xem bài đang ẩn đúng như học sinh (ADR-033, N6); máy chủ chỉ cho khi token là admin.
+  getLesson: (lessonId: string, preview = false) =>
+    apiCall<LessonDetail>(`/lessons/${encodeURIComponent(lessonId)}${preview ? "?preview=true" : ""}`),
   // user_id không còn gửi từ client (N3): backend lấy từ token (ADR-004).
   startLesson: (lessonId: string) =>
     apiPost<StartLessonResult>(`/lessons/${encodeURIComponent(lessonId)}/start`, {}),
