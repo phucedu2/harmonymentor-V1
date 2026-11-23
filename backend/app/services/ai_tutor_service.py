@@ -157,6 +157,14 @@ def _llm_rows_today(db: Session, now: datetime, user_id: str | None) -> int:
     return n
 
 
+def global_budget_spent(db: Session, now: datetime) -> bool:
+    """Hết ngân sách chung của cả hệ thống (AI_GLOBAL_DAILY_BUDGET) hoặc hết phần của Tutor trong hạn mức khóa Gemini
+    (GEMINI_DAILY_BUDGET, chia với AI soạn bài, ADR-033 mục V5)."""
+    from ..ai import budget
+
+    return _llm_rows_today(db, now, None) >= settings.ai_global_daily_budget or budget.remaining(db, "tutor", now) == 0
+
+
 def quota_remaining(db: Session, user_id: str, now: datetime | None = None) -> int:
     return max(0, settings.ai_daily_quota - _llm_rows_today(db, _now(now), user_id))
 
@@ -356,7 +364,7 @@ def _general_answer(db: Session, user: User, question: str, turns: Sequence[tupl
     vẫn sai thì bỏ câu AI và trả dữ kiện Engine (hoặc "chưa trả lời được")."""
     if provider is None:
         return _b_without_ai(dec, titles, "ai_disabled", question)
-    if _llm_rows_today(db, now, None) >= settings.ai_global_daily_budget:
+    if global_budget_spent(db, now):
         return _b_without_ai(dec, titles, "global_budget", question)
     used = _llm_rows_today(db, now, user.id)
     if used >= settings.ai_daily_quota:
@@ -615,7 +623,7 @@ def explain_attempt(db: Session, user: User, attempt_id: str, *, hint_level: int
     draft: Draft
     if provider is None:
         draft = rule_draft("ai_disabled")
-    elif _llm_rows_today(db, now, None) >= settings.ai_global_daily_budget:
+    elif global_budget_spent(db, now):
         draft = rule_draft("global_budget")
     else:
         used = _llm_rows_today(db, now, user.id)

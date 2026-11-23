@@ -167,8 +167,14 @@ def lesson_chunks() -> list[Chunk]:
             title = payload.get("title", block_id)
             source = block_source(spec, SOURCE_REGISTRY, title, text)
             out.extend(chunk_block(spec["id"], block_id, title, text, source))
+    # ADR-033 (N5): bài AI soạn từ tài liệu, đã xuất bản và đang hiện, đọc từ CSDL (không có trong curriculum_specs).
+    from ...admin.ai_index import db_chunks_and_titles
+
+    out.extend(db_chunks_and_titles()[0])
     return out
 
 
 def lesson_titles() -> dict[str, str]:
-    return {s["id"]: s["title"] for s in published_lesson_specs()}
+    from ...admin.ai_index import db_chunks_and_titles
+
+    return {**{s["id"]: s["title"] for s in published_lesson_specs()}, **db_chunks_and_titles()[1]}

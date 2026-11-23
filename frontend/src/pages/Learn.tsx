@@ -40,10 +40,10 @@ export default function LearnPage() {
   const fresh = lessons.filter((l) => l.ai_generated).sort((a, b) => (b.published_at ?? "").localeCompare(a.published_at ?? ""));
   const nextLessonId = course.find((lesson) => lesson.exercise_count > 0 && progressMap.get(lesson.id)?.status !== "completed")?.id;
 
-  const open = async (id: string) => {
+  const open = async (id: string, preview = false) => {
     setError(null); setLoading(true);
     try {
-      const detail = await api.getLesson(id);
+      const detail = await api.getLesson(id, preview);
       setSelected(detail);
       // Không gọi startLesson ở đây: LessonRunner tự gọi khi mở bài. Gọi ở cả hai nơi tạo 2 request
       // song song và từng làm PostgreSQL trả 500 (HM-010).
@@ -53,6 +53,15 @@ export default function LearnPage() {
       setError(err.message ?? err.code);
     } finally { setLoading(false); }
   };
+
+  // ?xem_truoc=AI-…: Quản trị viên xem trước bài AI đang ẩn (ADR-033). Lượt làm của admin là is_test nên không tính mastery.
+  useEffect(() => {
+    const preview = params.get("xem_truoc");
+    if (!preview || loading || handledLink.current === `preview|${preview}`) return;
+    handledLink.current = `preview|${preview}`;
+    setParams({}, { replace: true });
+    void open(preview, true);
+  }, [params, loading]);
 
   useEffect(() => {
     const wanted = params.get("bai");
@@ -77,7 +86,7 @@ export default function LearnPage() {
         onProgressChanged={() => { void refreshProgress(); }}
         onLessonOutdated={async () => {
           // Lỗi tải lại để LessonRunner báo cho người học, không thay bằng màn hình lỗi chung.
-          const detail = await api.getLesson(selected.id);
+          const detail = await api.getLesson(selected.id, true);
           setSelected(detail);
           await refreshProgress();
         }}

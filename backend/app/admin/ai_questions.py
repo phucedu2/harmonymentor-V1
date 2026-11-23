@@ -5,12 +5,22 @@ Vì sao tách khỏi ai_service: phần này quyết định câu nào được 
   nếu AI chọn sai, Engine sửa và ghi lại; nếu không phương án nào đúng (hoặc nhiều hơn một), câu bị loại.
 - Câu khái niệm Engine không kiểm được thì `needs_review=True`; xuất bản bị chặn tới khi Quản trị viên tick đã duyệt từng câu.
 - Câu mở (tự luận dài) luôn cần duyệt, chấm bằng rubric, KHÔNG tính mastery (câu 3C).
+
+Đợt 3 (ADR-033, Phúc chốt 22/11/2026):
+- N1: Engine chỉ tin `check` khi ký hiệu trong ĐỀ khớp `check` (đề "C lên E" mà check D–F thì loại câu). Đề không nêu ký
+  hiệu nào thì giữ câu nhưng bắt duyệt (4A).
+- Engine phải SỬA đáp án AI chọn thì câu vẫn giữ nhưng bắt duyệt: AI đã hiểu sai, người phải đọc lại đề và lời giải.
+- N2: câu Đúng/Sai chỉ do Engine quyết khi MỌI phần của câu được kiểm; còn từ phủ định/khái niệm chưa kiểm thì bắt duyệt.
+- H3 (5A): câu Engine kiểm mà kỹ năng AI chọn không khớp loại kiểm (quãng ↔ kỹ năng quãng...) thì bắt duyệt.
+- N3: câu gắn với khối lý thuyết qua `block_ref` (số thứ tự khối, từ 1); thiếu hoặc sai thì bắt duyệt.
 """
 
 from __future__ import annotations
 
+import re
 from typing import Any, Callable
 
+from ..ai.tutor import notes as _nt
 from ..ai.tutor.guardrail import scan_reply
 from ..music_engine import tools as engine
 from ..music_engine.errors import MusicEngineError
@@ -105,24 +115,136 @@ def _member_notes(check: dict[str, str]) -> set[str] | None:
     return set(out["notes"]) if out.get("ok") else None
 
 
+# Mẫu khẳng định mà scan_reply kiểm được (cùng danh sách như trong guardrail.scan_reply).
+_CLAIM_PATTERNS = (_nt.CHORD_WITH_NOTES, _nt.SHELL_LIST_AFTER, _nt.SCALE_WITH_NOTES, _nt.INTERVAL_WITH_NAME,
+                   _nt.INTERVAL_PAIR_WITH_NAME, _nt.INTERVAL_SIZE_CLAIM, _nt.NOTES_SEMITONE_CLAIM,
+                   _nt.ROMAN_IN_KEY_IS_CHORD, _nt.CHORD_IS_ROMAN_IN_KEY)
+# Từ làm đổi nghĩa cả câu (phủ định, lượng từ, "hoặc", "nếu"): có thì Engine không kết luận được câu đúng hay sai.
+_FLIP = re.compile(r"(?<!\w)(không|chẳng|chưa|chỉ|luôn|mọi|tất cả|đều|hoặc|nếu|trừ|ngoại trừ|not|never|only|always|or)(?!\w)",
+                   re.IGNORECASE)
+# Khái niệm nhạc lý Engine không kiểm khi đứng ngoài một khẳng định đã bắt được ("... và là hợp âm thứ").
+_CONCEPT = re.compile(r"(?<!\w)(trưởng|thứ|giảm|tăng|bậc|chức năng|át|chủ|hạ át|ổn định|căng|nghịch|thuận|giải quyết|đảo|"
+                      r"hóa biểu|nốt nhạy|sáng|tối|buồn|vui|major|minor|dominant|tonic|subdominant|diminished|augmented|"
+                      r"cadence|kết)(?!\w)", re.IGNORECASE)
+
+
+def _residual(text: str) -> str:
+    """Phần câu còn lại sau khi bỏ mọi đoạn Engine đã kiểm."""
+    spans = sorted(m.span() for pat in _CLAIM_PATTERNS for m in pat.finditer(text))
+    out, at = [], 0
+    for a, b in spans:
+        if a > at:
+            out.append(text[at:a])
+        at = max(at, b)
+    out.append(text[at:])
+    return " ".join(out)
+
+
 def statement_truth(statement: str) -> bool | None:
-    """Câu Đúng/Sai: nếu Engine kiểm được mọi khẳng định trong câu thì biết câu đúng hay sai; không thì None."""
+    """Câu Đúng/Sai: True/False khi Engine kiểm được MỌI khẳng định trong câu; None (cần người duyệt) khi còn phần chưa kiểm.
+
+    N2 (ADR-033): "Hợp âm C gồm C E G và là hợp âm thứ" từng bị chấm là Đúng vì Engine chỉ thấy vế đầu. Giờ:
+    - còn từ phủ định/lượng từ/"hoặc" ở ngoài khẳng định → None (nghĩa của cả câu có thể ngược lại);
+    - có vế sai → False (một vế sai thì cả câu "A và B" sai), kể cả khi vế khác là khái niệm chưa kiểm;
+    - mọi vế đúng nhưng còn khái niệm chưa kiểm (trưởng/thứ/bậc/chức năng...) → None."""
     claims = scan_reply(statement)
     if not claims:
         return None
+    rest = _residual(_nt.solfege_to_letters(statement))
+    if _FLIP.search(rest):
+        return None
     if any(c.status == "contradicted" for c in claims):
         return False
-    if all(c.status == "verified" for c in claims):
+    if all(c.status == "verified" for c in claims) and not _CONCEPT.search(rest):
         return True
     return None
+
+
+# --- N1: ký hiệu trong đề phải khớp phần kiểm -------------------------------------------------------
+
+_SOLF_ONE = re.compile(r"(?<!\w)(Đô|Rê|Mi|Fa|Sol|La|Si)(?:\s+(thăng|giáng)(\s+kép)?)?(?!\w)")
+_SOLF_MAP = {"Đô": "C", "Rê": "D", "Mi": "E", "Fa": "F", "Sol": "G", "La": "A", "Si": "B"}
+_TOKEN = re.compile(r"(?<![\w#♯♭])(?P<root>[A-G](?:##|#|bb|b|♯|♭)?)"
+                    r"(?P<qual>maj7|maj9|M7|m7b5|ø7|ø|dim7|°7|dim|°|aug|\+|mM7|m7|min7|min|m9|m|add9|sus2|sus4|13|11|9|7|6)?"
+                    r"(?![\w#♯♭])")
+
+
+def prompt_symbols(prompt: str) -> list[str]:
+    """Tên nốt/ký hiệu hợp âm xuất hiện trong đề, theo thứ tự (đổi Đô/Mi/Sol sang chữ cái, ♯/♭ sang #/b)."""
+    def solf(m: re.Match) -> str:
+        acc = {"thăng": "#", "giáng": "b"}.get(m.group(2) or "", "")
+        return _SOLF_MAP[m.group(1)] + (acc * 2 if m.group(3) else acc)
+
+    text = _SOLF_ONE.sub(solf, _nt.solfege_to_letters(prompt))
+    return [_nt.norm_accidentals(m["root"]) + (m["qual"] or "") for m in _TOKEN.finditer(text)]
+
+
+def _root(symbol: str) -> str:
+    m = _TOKEN.match(symbol)
+    return _nt.norm_accidentals(m["root"]) if m else symbol
+
+
+def _note(text: str) -> str:
+    return _nt.norm_accidentals(re.sub(r"[0-9]", "", text.strip()))
+
+
+def _tones(symbol: str) -> tuple[str, ...] | None:
+    try:
+        out = engine.get_chord_tones(symbol=symbol)
+    except (MusicEngineError, ValueError, KeyError):
+        return None
+    return tuple(out["notes"]) if out.get("ok") else None
+
+
+def _has_chord(symbols: list[str], symbol: str) -> bool:
+    want = _tones(symbol)
+    return want is not None and any(_tones(s) == want for s in symbols)
+
+
+def prompt_match(check: dict[str, str], prompt: str) -> str:
+    """"ok" khi ký hiệu của `check` có trong đề; "absent" khi đề không nêu ký hiệu nào; "mismatch" khi đề nêu ký hiệu khác.
+
+    Vì sao: Engine tính đáp án theo `check` do AI tự ghi. AI ghi lệch đề (đề "C lên E", check D–F) thì Engine "sửa" đáp
+    án đúng thành sai mà câu lại được miễn duyệt (N1, ADR-033)."""
+    symbols = prompt_symbols(prompt)
+    if not symbols:
+        return "absent"
+    roots = {_root(s) for s in symbols}
+    t = check["type"]
+    if t == "interval":
+        ok = _note(check["lower"]) in roots and _note(check["upper"]) in roots
+    elif t == "roman":
+        ok = _note(check["key"]) in roots and _has_chord(symbols, check["chord"])
+    elif t == "chord_tones":
+        ok = _has_chord(symbols, check["symbol"])
+    elif t == "scale":
+        ok = _note(check["tonic"]) in roots
+    elif t == "chord_name":
+        ok = set(_notes(_nt.norm_accidentals(check["notes"]))) <= roots
+    else:
+        ok = False
+    return "ok" if ok else "mismatch"
+
+
+# H3 (5A): loại kiểm của Engine phải khớp nhóm kỹ năng thì mới tin kỹ năng AI chọn.
+SKILL_FAMILY = {"interval": ("interval.",), "roman": ("roman.", "function."), "chord_tones": ("chord.",),
+                "chord_name": ("chord.",), "scale": ("scale.", "chord_scale.", "key."),
+                "build_chord": ("chord.",), "build_scale": ("scale.", "chord_scale.", "key.")}
+
+
+def skill_matches(q: dict[str, Any]) -> bool:
+    family = q["kind"] if q["kind"] in ("build_chord", "build_scale") else (q.get("check") or {}).get("type")
+    if family is None:
+        return True   # câu không có phần kiểm: kỹ năng do người duyệt xem
+    return q["skill_id"].startswith(SKILL_FAMILY.get(family, ()))
 
 
 # --- chuẩn hóa từng câu ----------------------------------------------------------------------------
 
 def normalize_question(item: Any, skills: set[str], clamp: Callable[[Any], int], *,
-                       trust_review: bool = False) -> tuple[dict[str, Any] | None, str]:
+                       trust_review: bool = False, blocks: int | None = None) -> tuple[dict[str, Any] | None, str]:
     """Trả (câu đã chuẩn hóa, "") hoặc (None, lý do loại). `trust_review` chỉ bật khi Quản trị viên sửa bản nháp:
-    AI không được tự đánh dấu câu là đã duyệt."""
+    AI không được tự đánh dấu câu là đã duyệt. `blocks` = số khối lý thuyết của bản nháp (None: không kiểm block_ref)."""
     if not isinstance(item, dict):
         return None, "không phải đối tượng"
     kind, prompt = item.get("kind"), _s(item.get("prompt"), 600)
@@ -130,6 +252,10 @@ def normalize_question(item: Any, skills: set[str], clamp: Callable[[Any], int],
     level = item.get("level") if item.get("level") in LEVELS else "hieu"
     base: dict[str, Any] = {"kind": kind, "prompt": prompt, "skill_id": skill, "level": level,
                             "explanation": _s(item.get("explanation"), 800), "page": clamp(item.get("page"))}
+    if isinstance(item.get("page_claimed"), int):
+        base["page_claimed"] = item["page_claimed"]   # trang AI ghi nằm ngoài phần (N4), giữ để người duyệt thấy
+    elif isinstance(item.get("page"), int) and item["page"] != base["page"]:
+        base["page_claimed"] = item["page"]
     short = prompt[:40]
     if not prompt:
         return None, "thiếu đề"
@@ -138,13 +264,45 @@ def normalize_question(item: Any, skills: set[str], clamp: Callable[[Any], int],
     if skill not in skills:
         return None, f"“{short}”: kỹ năng “{skill}” không có trong hệ thống"
     check = clean_check(item.get("check"))
+    review_notes: list[str] = []
+    if check is not None and kind != "true_false":
+        match = prompt_match(check, prompt)
+        if match == "mismatch":
+            return None, f"“{short}”: ký hiệu trong đề không khớp phần kiểm của AI ({_check_text(check)})"
+        if match == "absent":
+            review_notes.append(f"Đề không nêu ký hiệu nào nên máy không đối chiếu được với phần kiểm ({_check_text(check)}).")
     q, why = _BUILDERS[kind](item, base, check, short)
     if q is None:
         return None, why
     q.setdefault("engine_verified", False)
-    q["needs_review"] = not q["engine_verified"]
+    if kind in ("build_chord", "build_scale"):
+        match = prompt_match({"type": "chord_tones", "symbol": q["symbol"]} if kind == "build_chord"
+                             else {"type": "scale", "tonic": q["tonic"], "scale_type": q["scale_type"]}, prompt)
+        if match == "mismatch":
+            return None, f"“{short}”: ký hiệu trong đề không khớp ký hiệu AI đưa cho Engine"
+        if match == "absent":
+            review_notes.append("Đề không nêu ký hiệu nào nên máy không đối chiếu được với ký hiệu Engine dựng.")
+    if q.get("engine_note"):
+        review_notes.append("Engine phải sửa đáp án AI chọn: đọc lại đề và lời giải.")
+    if q["engine_verified"] and not skill_matches(q):
+        review_notes.append(f"Kỹ năng “{skill}” không khớp loại câu Engine kiểm: chọn lại kỹ năng hoặc xác nhận.")
+    if blocks is not None:
+        ref = item.get("block_ref")
+        if isinstance(ref, int) and not isinstance(ref, bool) and 1 <= ref <= blocks:
+            q["block_ref"] = ref
+        else:
+            q["block_ref"] = None
+            review_notes.append("Câu chưa gắn với khối lý thuyết nào của bài.")
+    if "page_claimed" in q:
+        review_notes.append(f"AI ghi trang {q['page_claimed']}, nằm ngoài các trang của phần này.")
+    q["review_notes"] = review_notes
+    q["needs_review"] = not q["engine_verified"] or bool(review_notes)
     q["reviewed"] = bool(trust_review and q["needs_review"] and item.get("reviewed") is True)
     return q, ""
+
+
+def _check_text(check: dict[str, str]) -> str:
+    return ", ".join(f"{k}={v}" for k, v in check.items() if k != "type") or check["type"]
 
 
 def _option_feedback(item: dict[str, Any], options: list[str]) -> dict[str, str]:

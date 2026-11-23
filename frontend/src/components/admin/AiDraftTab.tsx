@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { api, type AiDocument, type AiDraft, type AiDraftRow, type AiJob, type AiQuestion, type AiQuestionKind } from "../../api";
+import { api, type AiBudget, type AiDocument, type AiDraft, type AiDraftRow, type AiFlag, type AiJob, type AiQuestion, type AiQuestionKind } from "../../api";
+import { remapAfterBlockRemoved, unackedCount } from "../../lib/aiDraftReview";
 import { Button } from "../ui/Button";
 import { Badge, Card, CardTitle, ProgressBar } from "../ui/Page";
 
@@ -12,6 +13,30 @@ const LEVEL: Record<string, string> = { nho: "Nhớ", hieu: "Hiểu", van_dung: 
 const show = (v: string | string[] | null | undefined) => (Array.isArray(v) ? v.join(" ") : v ?? "—");
 // Câu cũ (trước ADR-028) chưa có needs_review: chỉ câu dựng hợp âm/âm giai là Engine tự kiểm.
 const needsReview = (q: AiQuestion) => q.needs_review ?? !["build_chord", "build_scale"].includes(q.kind);
+
+const NODE: Record<string, string> = {
+  extract: "Lấy chữ", retrieve: "Tìm bài đã có", generate: "AI soạn", retry_json: "Thử lại JSON", dedup: "Bỏ ý trùng",
+  validate: "Kiểm câu bằng Engine", flags: "Tính cờ duyệt", draft: "Lưu bản nháp", error: "Lỗi",
+};
+// Hạn mức Gemini chung (ADR-033, V5): bản miễn phí 30 lượt/ngày, 40% soạn bài, 60% AI Tutor.
+function BudgetLine({ budget }: { budget?: AiBudget }) {
+  if (!budget || !budget.total) return null;
+  const left = Math.max(0, budget.authoring.limit - budget.authoring.used);
+  const at = new Date(budget.resets_at).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
+  return <p className="text-xs text-muted">Lượt Gemini cho soạn bài hôm nay: còn {left}/{budget.authoring.limit} (AI Tutor {budget.tutor.used}/{budget.tutor.limit}), đặt lại lúc {at}.</p>;
+}
+function NodeLog({ log }: { log?: { node: string; ms: number; in?: number; out?: number; note?: string }[] }) {
+  if (!log?.length) return null;
+  return <details className="w-full text-xs text-muted"><summary className="cursor-pointer">Nhật ký từng bước ({log.length})</summary>
+    <ol className="list-decimal pl-5">{log.map((r, i) => <li key={i}><b>{NODE[r.node] ?? r.node}</b> · {r.ms} ms
+      {r.in !== undefined ? ` · vào ${r.in}` : ""}{r.out !== undefined ? ` · ra ${r.out}` : ""}{r.note ? ` · ${r.note}` : ""}</li>)}</ol></details>;
+}
+function FlagItem({ f, checked, disabled, onChange }: { f: AiFlag; checked: boolean; disabled: boolean; onChange: (v: boolean) => void }) {
+  return <li className={`rounded border p-2 ${checked ? "border-line" : "border-warning"}`}>
+    <p><b>{f.label}</b>{f.where.startsWith("block:") ? ` (khối ${f.where.slice(6)})` : ""}: {f.detail}</p>
+    <label className="mt-1 flex items-center gap-2 font-semibold"><input type="checkbox" checked={checked} disabled={disabled}
+      onChange={(e) => onChange(e.target.checked)} />Đã đối chiếu với tài liệu gốc</label></li>;
+}
 
 // AI chỉ soạn BẢN NHÁP (ADR-025). Bài chỉ tới học sinh khi Quản trị viên bấm xuất bản ở đây.
 function DraftEditor({ draftId, onClose }: { draftId: string; onClose: () => void }) {
@@ -28,18 +53,33 @@ function DraftEditor({ draftId, onClose }: { draftId: string; onClose: () => voi
   const open = draft.status === "draft";
   const flags = draft.engine.contradicted.length;
   const set = (patch: Partial<typeof c>) => setDraft({ ...draft, content: { ...c, ...patch } });
+  // ADR-033: cờ duyệt là cảnh báo; mỗi cờ phải tick "Đã đối chiếu" (lưu theo mã cờ) thì mới xuất bản được.
+  const reviewFlags = draft.flags ?? [];
+  const acked = c.acknowledged_flags ?? [];
+  const unacked = unackedCount(reviewFlags, acked);
+  const toggleFlag = (id: string, v: boolean) => set({ acknowledged_flags: v ? [...acked, id] : acked.filter((x) => x !== id) });
+  const body = () => ({ title: c.title, objectives: c.objectives, blocks: c.blocks, questions: c.questions, expansion: Boolean(c.expansion), acknowledged_flags: acked });
+  // Xóa khối thì câu gắn khối đó mất chỗ gắn (cần duyệt lại), câu gắn khối sau dời số thứ tự.
+  const removeBlock = (i: number) => set({ blocks: c.blocks.filter((_, j) => j !== i), questions: remapAfterBlockRemoved(c.questions, i) });
+  const flagsAt = (where: string) => reviewFlags.filter((f) => f.where === where);
   const run = async (key: string, fn: () => Promise<void>) => { setBusy(key); setMsg(null); try { await fn(); } catch (e) { setMsg(errMsg(e)); } finally { setBusy(null); } };
-  const save = () => run("save", async () => { setDraft(await api.aiSaveDraft(draft.id, { title: c.title, objectives: c.objectives, blocks: c.blocks, questions: c.questions, expansion: Boolean(c.expansion) })); setAck(false); setMsg("Đã lưu và soát lại bằng Music Engine."); });
+  const save = () => run("save", async () => { setDraft(await api.aiSaveDraft(draft.id, body())); setAck(false); setMsg("Đã lưu, soát lại bằng Music Engine và tính lại cờ duyệt."); });
   // Lưu trước khi xuất bản: dấu "Đã duyệt" vừa tick chỉ có hiệu lực khi máy chủ đã lưu (máy chủ kiểm lại lúc xuất bản).
   const publish = () => run("publish", async () => {
-    await api.aiSaveDraft(draft.id, { title: c.title, objectives: c.objectives, blocks: c.blocks, questions: c.questions, expansion: Boolean(c.expansion) });
-    const r = await api.aiPublish(draft.id, ack); setMsg(`Đã xuất bản bài “${r.title}”. Học sinh thấy ngay.`); await load(); });
+    const saved = await api.aiSaveDraft(draft.id, body());
+    const left = unackedCount(saved.flags, saved.content.acknowledged_flags);
+    if (left) { setDraft(saved); setMsg(`Sửa đổi vừa rồi sinh ${left} cờ mới cần đối chiếu trước khi xuất bản.`); return; }
+    const r = await api.aiPublish(draft.id, ack);
+    setMsg(`Đã xuất bản bài “${r.title}” ở trạng thái ẨN. Bấm “Xem như học sinh” để kiểm, rồi “Hiện cho học sinh”.`); await load(); });
+  const reveal = () => run("reveal", async () => {
+    const r = await api.adminVisibility(draft.published_lesson_id!, false);
+    setMsg(`Học sinh đã thấy bài.${r.tutor_index ? ` AI Tutor đã nạp ${r.tutor_index.chunks} đoạn${r.tutor_index.qdrant === "error" ? " (Qdrant lỗi, AI Tutor vẫn tìm được bằng đường dự phòng)" : ""}.` : ""}`); });
   const pending = c.questions.filter((q) => needsReview(q) && !q.reviewed).length;
   const setQ = (i: number, patch: Partial<AiQuestion>) => set({ questions: c.questions.map((x, j) => (j === i ? { ...x, ...patch } : x)) });
   const more = () => run("more", async () => {
     setMsg("AI đang soạn thêm câu luyện tập, có thể mất đến một phút…");
     // Lưu sửa đổi trước, vì sinh thêm câu đọc bản nháp đang lưu trên máy chủ.
-    await api.aiSaveDraft(draft.id, { title: c.title, objectives: c.objectives, blocks: c.blocks, questions: c.questions, expansion: Boolean(c.expansion) });
+    await api.aiSaveDraft(draft.id, body());
     const before = c.questions.length;
     const next = await api.aiMoreQuestions(draft.id, moreKinds);
     setDraft(next); setMsg(`AI đã thêm ${next.content.questions.length - before} câu. Câu Engine không kiểm được cần bạn đọc và tick “Đã duyệt”.`);
@@ -66,6 +106,11 @@ function DraftEditor({ draftId, onClose }: { draftId: string; onClose: () => voi
             <ul className="mt-1 list-disc pl-5">{draft.engine.contradicted.map((f, i) => <li key={i}>({(f as { where?: string }).where}) viết “{f.claimed}”, Engine tính “{f.engine}”</li>)}</ul></>}
     </div>
 
+    {c.truncated && <p className="rounded-lg border border-warning p-3 text-sm" role="alert">{c.truncated}</p>}
+    {reviewFlags.filter((f) => !f.where.startsWith("block:")).length > 0 && <ul className="grid gap-2 text-sm" aria-label="Cờ chung của bản nháp">
+      {reviewFlags.filter((f) => !f.where.startsWith("block:")).map((f) => <FlagItem key={f.id} f={f} checked={acked.includes(f.id)} disabled={!open} onChange={(v) => toggleFlag(f.id, v)} />)}</ul>}
+    {open && <BudgetLine budget={draft.budget} />}
+
     <label className={`flex items-start gap-2 rounded-lg border p-3 text-sm ${c.expansion ? "border-primary bg-primary-soft" : "border-line"}`}>
       <input type="checkbox" className="mt-1" checked={Boolean(c.expansion)} disabled={!open} onChange={(e) => set({ expansion: e.target.checked })} />
       <span><b>Bài “Mở rộng”</b>: kiến thức mới chưa khớp kỹ năng nào của lộ trình. Học sinh vẫn làm và được chấm, nhưng câu luyện tập
@@ -81,8 +126,10 @@ function DraftEditor({ draftId, onClose }: { draftId: string; onClose: () => voi
         onChange={(e) => set({ blocks: c.blocks.map((x, j) => (j === i ? { ...x, title: e.target.value } : x)) })} />
       <textarea aria-label={`Nội dung khối ${i + 1}`} rows={4} value={b.paragraphs.join("\n\n")} disabled={!open} className="rounded border border-line bg-surface p-2"
         onChange={(e) => set({ blocks: c.blocks.map((x, j) => (j === i ? { ...x, paragraphs: e.target.value.split(/\n\s*\n/).filter((l) => l.trim()) } : x)) })} />
-      <p className="text-xs text-muted">Lấy từ trang {b.page}</p>
-      {open && <Button variant="ghost" onClick={() => set({ blocks: c.blocks.filter((_, j) => j !== i) })}>Xóa khối này</Button>}
+      <p className="text-xs text-muted">Lấy từ trang {b.page}{b.page_claimed ? ` (AI ghi trang ${b.page_claimed}, ngoài phần này)` : ""}</p>
+      {flagsAt(`block:${i + 1}`).length > 0 && <ul className="grid gap-2 text-sm" aria-label={`Cờ của khối ${i + 1}`}>
+        {flagsAt(`block:${i + 1}`).map((f) => <FlagItem key={f.id} f={f} checked={acked.includes(f.id)} disabled={!open} onChange={(v) => toggleFlag(f.id, v)} />)}</ul>}
+      {open && <Button variant="ghost" onClick={() => removeBlock(i)}>Xóa khối này</Button>}
     </Card>)}
 
     <h3 className="font-semibold">Câu luyện tập ({c.questions.length})</h3>
@@ -92,7 +139,8 @@ function DraftEditor({ draftId, onClose }: { draftId: string; onClose: () => voi
       <p className="flex flex-wrap items-center gap-1.5 text-xs text-muted">
         <Badge tone="muted">{KIND[q.kind] ?? q.kind}</Badge>{q.level && <Badge tone="muted">{LEVEL[q.level]}</Badge>}
         {needsReview(q) ? <Badge tone={q.reviewed ? "success" : "warning"}>{q.reviewed ? "Đã duyệt" : "Cần duyệt"}</Badge> : <Badge tone="success">Engine đã kiểm</Badge>}
-        kỹ năng {q.skill_id} · trang {q.page}</p>
+        kỹ năng {q.skill_id} · trang {q.page}{typeof q.block_ref === "number" ? ` · khối ${q.block_ref}` : ""}</p>
+      {(q.review_notes?.length ?? 0) > 0 && <ul className="list-disc pl-5 text-sm text-warning">{q.review_notes!.map((n, k) => <li key={k}>{n}</li>)}</ul>}
       <textarea aria-label={`Đề câu ${i + 1}`} rows={2} value={q.prompt} disabled={!open} className="rounded border border-line bg-surface p-2"
         onChange={(e) => setQ(i, { prompt: e.target.value, reviewed: false })} />
       {q.engine_note && <p className="text-sm text-warning">{q.engine_note}</p>}
@@ -135,10 +183,15 @@ function DraftEditor({ draftId, onClose }: { draftId: string; onClose: () => voi
       </div>
       {flags > 0 && <label className="flex items-start gap-2 text-sm"><input type="checkbox" className="mt-1" checked={ack} onChange={(e) => setAck(e.target.checked)} />
         Tôi đã đối chiếu tài liệu gốc và vẫn muốn xuất bản dù Engine báo nghi sai.</label>}
+      {unacked > 0 && <p className="text-sm text-warning" role="status">Còn {unacked} cờ chưa đối chiếu. Đọc lại trang gốc rồi tick “Đã đối chiếu” ở từng cờ.</p>}
       {pending > 0 && <p className="text-sm text-warning" role="status">Còn {pending} câu cần duyệt. Đọc kỹ rồi tick “Đã duyệt” ở từng câu.</p>}
-      <Button loading={busy === "publish"} disabled={busy !== null || (flags > 0 && !ack) || pending > 0} onClick={publish}>Xuất bản thành bài học</Button>
-      <p className="text-xs text-muted">Bấm xuất bản sẽ tự lưu các sửa đổi rồi soát lại bằng Music Engine. Bài mới hiện ở cuối danh sách bài học.</p>
+      <Button loading={busy === "publish"} disabled={busy !== null || (flags > 0 && !ack) || pending > 0 || unacked > 0} onClick={publish}>Xuất bản thành bài học</Button>
+      <p className="text-xs text-muted">Bấm xuất bản sẽ tự lưu các sửa đổi rồi soát lại bằng Music Engine. Bài mới ở trạng thái ẩn: xem trước như học sinh rồi mới hiện.</p>
     </div>}
+    {draft.status === "published" && draft.published_lesson_id && <div className="flex flex-wrap items-center gap-2 rounded-lg border border-line p-3 text-sm">
+      <a className="font-semibold text-primary underline" href={`/app/hoc?xem_truoc=${encodeURIComponent(draft.published_lesson_id)}`} target="_blank" rel="noreferrer">Xem như học sinh</a>
+      <Button variant="secondary" loading={busy === "reveal"} disabled={busy !== null} onClick={reveal}>Hiện cho học sinh</Button>
+      <span className="text-xs text-muted">Lượt làm thử của Quản trị viên không tính vào thống kê. Ẩn lại ở thẻ Bài học.</span></div>}
     {msg && <p role="status" className="text-sm">{msg}</p>}
   </div>;
 }
@@ -153,7 +206,7 @@ const PART: Record<AiJob["parts"][number]["status"], { label: string; tone: "suc
 };
 const PAUSE: Record<string, string> = {
   quota: "Gemini báo hết hạn mức. Đợi hạn mức hồi (thường sau 15:00 giờ Việt Nam hoặc hôm sau) rồi bấm “Chạy tiếp”: hệ thống làm nốt từ phần đang dở.",
-  daily_limit: "Đã dùng hết lượt soạn trong 24 giờ của bạn. Hôm sau bấm “Chạy tiếp”.",
+  daily_limit: "Đã dùng hết lượt Gemini dành cho soạn bài hôm nay (hạn mức chung với AI Tutor). Sau 15:00 giờ Việt Nam bấm “Chạy tiếp”.",
   unavailable: "Hai phần liền nhau lỗi nên hệ thống tạm dừng để không tốn lượt. Bấm “Chạy tiếp” để thử lại các phần lỗi.",
   interrupted: "Máy chủ khởi động lại giữa chừng. Bấm “Chạy tiếp” để làm nốt.",
   admin: "Bạn đã dừng việc này.",
@@ -177,11 +230,13 @@ function JobPanel({ job, busy, onResume, onCancel, onOpen }: {
       {(running || job.status === "paused") && <Button variant="ghost" disabled={busy} onClick={onCancel}>Dừng hẳn</Button>}
     </div>
     {job.status === "paused" && job.pause_reason && <p className="text-warning">{PAUSE[job.pause_reason] ?? job.pause_reason}</p>}
+    <BudgetLine budget={job.budget} />
     <ol className="grid gap-1.5">{job.parts.map((p) => <li key={p.index} className="flex flex-wrap items-center gap-2">
       <Badge tone={PART[p.status].tone}>{PART[p.status].label}</Badge>
       <span className="font-medium">{p.heading}</span><span className="text-muted">trang {p.page_from}–{p.page_to}</span>
       {p.draft_id && <Button variant="ghost" className="!min-h-8 !px-2" onClick={() => onOpen(p.draft_id!)}>Mở bản nháp</Button>}
       {p.note && <span className="w-full text-xs text-muted">{p.note}</span>}
+      <NodeLog log={p.log} />
       {p.duplicates.length > 0 && <details className="w-full text-xs text-muted"><summary className="cursor-pointer">{p.duplicates.length} ý đã có trên trang web, không soạn lại</summary>
         <ul className="list-disc pl-5">{p.duplicates.map((d, i) => <li key={i}>{d.concept}{d.where ? ` (đã có ở ${d.where})` : ""}</li>)}</ul></details>}
     </li>)}</ol>
@@ -297,7 +352,7 @@ export default function AiDraftTab() {
     <Card className="p-4"><CardTitle>Bản nháp</CardTitle>
       {drafts.length === 0 ? <p className="mt-2 text-sm text-muted">Chưa có bản nháp nào.</p> : <ul className="mt-2 grid gap-2">
         {drafts.map((d) => <li key={d.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-line p-2">
-          <span>{d.title} <span className="text-sm text-muted">· {d.questions} câu{d.flags ? ` · ${d.flags} cờ Engine` : ""}</span>{" "}
+          <span>{d.title} <span className="text-sm text-muted">· {d.questions} câu{d.flags ? ` · ${d.flags} cờ Engine` : ""}{d.review_flags ? ` · ${d.review_flags} cờ chưa đối chiếu` : ""}</span>{" "}
             <Badge tone={d.status === "published" ? "success" : d.status === "rejected" ? "muted" : "warning"}>{d.status === "published" ? "Đã xuất bản" : d.status === "rejected" ? "Từ chối" : "Nháp"}</Badge></span>
           <Button variant="secondary" onClick={() => setOpenId(d.id)}>Mở</Button></li>)}
       </ul>}

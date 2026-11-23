@@ -21,7 +21,7 @@ from app.services import open_answer_service
 from app.services.practice_mcq import make_options
 from app.services.practice_service import grade_practice
 from tests.auth_helpers import auth
-from tests.test_admin_ai_tai_lieu import approve_all, env, make_admin, new_draft  # noqa: F401  (fixture env dùng lại)
+from tests.test_admin_ai_tai_lieu import approve_all, env, make_admin, new_draft, show  # noqa: F401  (fixture env dùng lại)
 
 SKILLS = {"interval.naming", "chord.seventh_build", "scale.major", "roman.major_seventh", "function.dominant"}
 clamp = lambda p: 1  # noqa: E731
@@ -37,7 +37,8 @@ def test_mcq_co_check_engine_chon_dap_an_va_sua_khi_ai_chon_sai():
     q, why = norm({"kind": "mcq", "level": "nho", "prompt": "Quãng từ C lên E là gì?", "skill_id": "interval.naming", "page": 1,
                    "options": ["m3", "M3", "P4", "d4"], "answer": "m3", "check": {"type": "interval", "lower": "C", "upper": "E"},
                    "option_feedback": [{"option": "m3", "why": "m3 chỉ 3 nửa cung."}]})
-    assert why == "" and q["answer"] == "M3" and q["engine_verified"] and not q["needs_review"]
+    # ADR-033: Engine phải sửa đáp án AI chọn thì câu vẫn giữ nhưng bắt duyệt (trước đợt 3: miễn duyệt).
+    assert why == "" and q["answer"] == "M3" and q["engine_verified"] and q["needs_review"]
     assert "Engine sửa" in q["engine_note"] and q["option_feedback"] == {"m3": "m3 chỉ 3 nửa cung."}
 
 
@@ -116,18 +117,18 @@ def test_api_phuong_an_va_nop_bang_lua_chon(env):
 FULL = {
     "title": "Hợp âm bảy và quãng",
     "objectives": ["Gọi tên quãng", "Dựng hợp âm bảy"],
-    "blocks": [{"title": "Quãng", "paragraphs": ["Quãng C–E là M3, có 4 nửa cung."], "page": 1}],
+    "blocks": [{"title": "Quãng", "paragraphs": ["Quãng C–E là M3, có 4 nửa cung."], "page": 1, "block_ref": 1}],
     "questions": [
-        {"kind": "mcq", "level": "nho", "prompt": "Quãng từ C lên E là gì?", "skill_id": "interval.naming", "page": 1,
+        {"kind": "mcq", "level": "nho", "prompt": "Quãng từ C lên E là gì?", "skill_id": "interval.naming", "page": 1, "block_ref": 1,
          "options": ["m3", "M3", "P4", "d4"], "answer": "M3", "check": {"type": "interval", "lower": "C", "upper": "E"},
          "option_feedback": [{"option": "m3", "why": "m3 chỉ có 3 nửa cung, C–E có 4."}]},
         {"kind": "true_false", "level": "hieu", "prompt": "Hợp âm át tạo cảm giác muốn về chủ.", "skill_id": "function.dominant",
-         "page": 1, "answer": "Đúng"},
-        {"kind": "multi_select", "level": "van_dung", "prompt": "Chọn các nốt thuộc G7.", "skill_id": "chord.seventh_build", "page": 1,
+         "page": 1, "block_ref": 1, "answer": "Đúng"},
+        {"kind": "multi_select", "level": "van_dung", "prompt": "Chọn các nốt thuộc G7.", "skill_id": "chord.seventh_build", "page": 1, "block_ref": 1,
          "options": ["G", "B", "D", "F#", "F", "A"], "answers": ["G", "B", "D", "F"], "check": {"type": "chord_tones", "symbol": "G7"}},
-        {"kind": "short", "level": "van_dung", "prompt": "Quãng đi lên từ A tới E là gì?", "skill_id": "interval.naming", "page": 1,
+        {"kind": "short", "level": "van_dung", "prompt": "Quãng đi lên từ A tới E là gì?", "skill_id": "interval.naming", "page": 1, "block_ref": 1,
          "check": {"type": "interval", "lower": "A", "upper": "E"}},
-        {"kind": "open", "level": "hieu", "prompt": "Vì sao G7 muốn về C?", "skill_id": "function.dominant", "page": 1,
+        {"kind": "open", "level": "hieu", "prompt": "Vì sao G7 muốn về C?", "skill_id": "function.dominant", "page": 1, "block_ref": 1,
          "model_answer": "G7 có nốt cảm B đi lên C và quãng 3 cung B–F giải quyết vào C–E.",
          "rubric": ["Nêu nốt cảm B lên C", "Nêu tritone B–F giải quyết"]},
     ],
@@ -152,6 +153,7 @@ def published(env):
     with SessionLocal() as db:
         db.add(User(id=uid, display_name="HS", email=f"{uid}@example.test", role="learner", is_active=True))
         db.commit()
+    show(client, h, r.json()["lesson_id"])
     lesson = client.get(f"/api/v1/lessons/{r.json()['lesson_id']}", headers=auth(uid)).json()
     return client, auth(uid), lesson, {e["prompt"]: e for e in lesson["exercises"]}
 

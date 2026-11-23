@@ -188,6 +188,8 @@ class DraftEditIn(BaseModel):
     blocks: list[dict[str, Any]] = Field(default_factory=list, max_length=8)
     questions: list[dict[str, Any]] = Field(default_factory=list, max_length=20)
     expansion: bool | None = None
+    # ADR-033: id các cờ (trang sai, bám nguồn, chép nguyên văn, hình...) Quản trị viên đã đối chiếu. None = giữ như cũ.
+    acknowledged_flags: list[str] | None = Field(default=None, max_length=200)
 
 
 @router.get("/ai/status")

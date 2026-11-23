@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -63,10 +63,19 @@ def list_lessons(db: Session = Depends(get_db)):
     return [_summary(lesson, orders[lesson.id], db) for lesson in lessons]
 
 
+def _preview_admin(request: Request, db: Session) -> bool:
+    """?preview=1 kèm token Quản trị viên: xem bài đang ẩn đúng như học sinh sẽ thấy (ADR-033, 7B). Không phải admin thì bỏ qua."""
+    try:
+        return get_current_user(request, db).role == "admin"
+    except AppError:
+        return False
+
+
 @router.get("/{lesson_id}", response_model=LessonDetailOut)
-def get_lesson(lesson_id: str, db: Session = Depends(get_db)):
+def get_lesson(lesson_id: str, request: Request, preview: bool = False, db: Session = Depends(get_db)):
     lesson = db.get(Lesson, lesson_id)
-    if lesson is None or not lesson_visible(lesson) or lesson_hidden(db, lesson_id):
+    hidden = lesson is not None and lesson_hidden(db, lesson_id)
+    if lesson is None or not lesson_visible(lesson) or (hidden and not (preview and _preview_admin(request, db))):
         raise HTTPException(status_code=404, detail={"code": "LESSON_NOT_FOUND"})
 
     sources = db.execute(
@@ -88,7 +97,8 @@ def get_lesson(lesson_id: str, db: Session = Depends(get_db)):
             allowed_input_methods=allowed_input_methods(version.options, version.grader_config),
         ))
 
-    base = _summary(lesson, display_order(visible_lessons(db))[lesson.id], db).model_dump()
+    # Bài đang ẩn (Quản trị viên xem trước) không có số thứ tự trong lộ trình của học sinh.
+    base = _summary(lesson, display_order(visible_lessons(db)).get(lesson.id, 0), db).model_dump()
     return LessonDetailOut(
         **base,
         blocks=[LessonBlockOut(id=b.id, position=b.position, block_type=b.block_type, payload=payload)
