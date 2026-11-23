@@ -1,0 +1,1312 @@
+{
+  "cases": 41,
+  "questions": {
+    "n": 16,
+    "kept": 11,
+    "dropped": [
+      {
+        "id": "Q01",
+        "reason": "“Quãng từ C lên E là quãng gì?”: ký hiệu trong đề không khớp phần kiểm của AI (lower=D, upper=F)"
+      },
+      {
+        "id": "Q02",
+        "reason": "“Dựng hợp âm Am7.”: ký hiệu trong đề không khớp ký hiệu AI đưa cho Engine"
+      },
+      {
+        "id": "Q09",
+        "reason": "“Trong giọng G trưởng, D7 là bậc mấy?”: ký hiệu trong đề không khớp phần kiểm của AI (key=C, chord=G7)"
+      },
+      {
+        "id": "Q10",
+        "reason": "“Hợp âm D gồm những nốt nào?”: ký hiệu trong đề không khớp phần kiểm của AI (symbol=Dm)"
+      },
+      {
+        "id": "Q13",
+        "reason": "“Chọn các nốt thuộc G7.”: ký hiệu trong đề không khớp phần kiểm của AI (symbol=C7)"
+      }
+    ],
+    "leak_ids": [],
+    "leak_rate": 0.0,
+    "wrong_kept_but_review": [],
+    "rows": [
+      {
+        "id": "Q01",
+        "kept": false
+      },
+      {
+        "id": "Q02",
+        "kept": false
+      },
+      {
+        "id": "Q03",
+        "kept": true,
+        "answer": "Sai",
+        "wrong": false,
+        "needs_review": true,
+        "notes": []
+      },
+      {
+        "id": "Q04",
+        "kept": true,
+        "answer": "Đúng",
+        "wrong": false,
+        "needs_review": true,
+        "notes": []
+      },
+      {
+        "id": "Q05",
+        "kept": true,
+        "answer": "M3",
+        "wrong": false,
+        "needs_review": true,
+        "notes": [
+          "Engine phải sửa đáp án AI chọn: đọc lại đề và lời giải."
+        ]
+      },
+      {
+        "id": "Q06",
+        "kept": true,
+        "answer": "m3",
+        "wrong": false,
+        "needs_review": false,
+        "notes": []
+      },
+      {
+        "id": "Q07",
+        "kept": true,
+        "answer": [
+          "G",
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F#"
+        ],
+        "wrong": false,
+        "needs_review": false,
+        "notes": []
+      },
+      {
+        "id": "Q08",
+        "kept": true,
+        "answer": "V7",
+        "wrong": false,
+        "needs_review": false,
+        "notes": []
+      },
+      {
+        "id": "Q09",
+        "kept": false
+      },
+      {
+        "id": "Q10",
+        "kept": false
+      },
+      {
+        "id": "Q11",
+        "kept": true,
+        "answer": "Đúng",
+        "wrong": false,
+        "needs_review": true,
+        "notes": []
+      },
+      {
+        "id": "Q12",
+        "kept": true,
+        "answer": "Sai",
+        "wrong": false,
+        "needs_review": true,
+        "notes": [
+          "Engine phải sửa đáp án AI chọn: đọc lại đề và lời giải."
+        ]
+      },
+      {
+        "id": "Q13",
+        "kept": false
+      },
+      {
+        "id": "Q14",
+        "kept": true,
+        "answer": "M3",
+        "wrong": false,
+        "needs_review": true,
+        "notes": [
+          "Đề không nêu ký hiệu nào nên máy không đối chiếu được với phần kiểm (lower=C, upper=E)."
+        ]
+      },
+      {
+        "id": "Q15",
+        "kept": true,
+        "answer": "P5",
+        "wrong": false,
+        "needs_review": true,
+        "notes": [
+          "Kỹ năng “chord.triad_build” không khớp loại câu Engine kiểm: chọn lại kỹ năng hoặc xác nhận."
+        ]
+      },
+      {
+        "id": "Q16",
+        "kept": true,
+        "answer": "Đúng",
+        "wrong": false,
+        "needs_review": false,
+        "notes": []
+      }
+    ]
+  },
+  "blocks_tfidf": {
+    "backend": "tfidf",
+    "page_ok_accuracy": 1.0,
+    "wrong_page_unflagged": [],
+    "ungrounded_flag": {
+      "tp": 4,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "verbatim_flag": {
+      "tp": 2,
+      "fp": 2,
+      "fn": 0,
+      "precision": 0.5,
+      "recall": 1.0
+    },
+    "figure_flag": {
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "rows": [
+      {
+        "id": "B01",
+        "flags": [
+          "source_figure"
+        ],
+        "gold": {
+          "grounded": true,
+          "verbatim": false,
+          "figure_ref": false,
+          "page_ok": true
+        }
+      },
+      {
+        "id": "B02",
+        "flags": [
+          "source_figure"
+        ],
+        "gold": {
+          "grounded": true,
+          "verbatim": false,
+          "figure_ref": false,
+          "page_ok": true
+        }
+      },
+      {
+        "id": "B03",
+        "flags": [
+          "source_figure",
+          "verbatim",
+          "wrong_page"
+        ],
+        "gold": {
+          "grounded": false,
+          "verbatim": false,
+          "figure_ref": false,
+          "page_ok": false
+        }
+      },
+      {
+        "id": "B04",
+        "flags": [
+          "low_grounding",
+          "source_figure"
+        ],
+        "gold": {
+          "grounded": false,
+          "verbatim": false,
+          "figure_ref": false,
+          "page_ok": true
+        }
+      },
+      {
+        "id": "B05",
+        "flags": [
+          "verbatim"
+        ],
+        "gold": {
+          "grounded": true,
+          "verbatim": true,
+          "figure_ref": false,
+          "page_ok": true
+        }
+      },
+      {
+        "id": "B06",
+        "flags": [],
+        "gold": {
+          "grounded": true,
+          "verbatim": false,
+          "figure_ref": false,
+          "page_ok": true
+        }
+      },
+      {
+        "id": "B07",
+        "flags": [
+          "figure_ref",
+          "source_figure"
+        ],
+        "gold": {
+          "grounded": true,
+          "verbatim": false,
+          "figure_ref": true,
+          "page_ok": true
+        }
+      },
+      {
+        "id": "B08",
+        "flags": [],
+        "gold": {
+          "grounded": true,
+          "verbatim": false,
+          "figure_ref": false,
+          "page_ok": true
+        }
+      },
+      {
+        "id": "B09",
+        "flags": [
+          "low_grounding"
+        ],
+        "gold": {
+          "grounded": false,
+          "verbatim": false,
+          "figure_ref": false,
+          "page_ok": true
+        }
+      },
+      {
+        "id": "B10",
+        "flags": [
+          "page_out_of_range",
+          "source_figure"
+        ],
+        "gold": {
+          "grounded": true,
+          "verbatim": false,
+          "figure_ref": false,
+          "page_ok": false
+        }
+      },
+      {
+        "id": "B11",
+        "flags": [
+          "low_grounding"
+        ],
+        "gold": {
+          "grounded": false,
+          "verbatim": false,
+          "figure_ref": false,
+          "page_ok": false
+        }
+      },
+      {
+        "id": "B12",
+        "flags": [
+          "source_figure",
+          "verbatim"
+        ],
+        "gold": {
+          "grounded": true,
+          "verbatim": false,
+          "figure_ref": false,
+          "page_ok": true
+        }
+      },
+      {
+        "id": "B13",
+        "flags": [
+          "source_figure",
+          "verbatim"
+        ],
+        "gold": {
+          "grounded": true,
+          "verbatim": true,
+          "figure_ref": false,
+          "page_ok": true
+        }
+      }
+    ],
+    "grounding_sweep": [
+      {
+        "threshold": 0.046,
+        "tp": 0,
+        "fp": 0,
+        "fn": 4,
+        "precision": null,
+        "recall": 0.0
+      },
+      {
+        "threshold": 0.05,
+        "tp": 1,
+        "fp": 0,
+        "fn": 3,
+        "precision": 1.0,
+        "recall": 0.25
+      },
+      {
+        "threshold": 0.1,
+        "tp": 1,
+        "fp": 0,
+        "fn": 3,
+        "precision": 1.0,
+        "recall": 0.25
+      },
+      {
+        "threshold": 0.12,
+        "tp": 1,
+        "fp": 0,
+        "fn": 3,
+        "precision": 1.0,
+        "recall": 0.25
+      },
+      {
+        "threshold": 0.14,
+        "tp": 1,
+        "fp": 0,
+        "fn": 3,
+        "precision": 1.0,
+        "recall": 0.25
+      },
+      {
+        "threshold": 0.15,
+        "tp": 2,
+        "fp": 0,
+        "fn": 2,
+        "precision": 1.0,
+        "recall": 0.5
+      },
+      {
+        "threshold": 0.2,
+        "tp": 2,
+        "fp": 0,
+        "fn": 2,
+        "precision": 1.0,
+        "recall": 0.5
+      },
+      {
+        "threshold": 0.277,
+        "tp": 2,
+        "fp": 0,
+        "fn": 2,
+        "precision": 1.0,
+        "recall": 0.5
+      },
+      {
+        "threshold": 0.364,
+        "tp": 3,
+        "fp": 0,
+        "fn": 1,
+        "precision": 1.0,
+        "recall": 0.75
+      },
+      {
+        "threshold": 0.371,
+        "tp": 4,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.473,
+        "tp": 4,
+        "fp": 1,
+        "fn": 0,
+        "precision": 0.8,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.474,
+        "tp": 4,
+        "fp": 2,
+        "fn": 0,
+        "precision": 0.667,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.553,
+        "tp": 4,
+        "fp": 3,
+        "fn": 0,
+        "precision": 0.571,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.612,
+        "tp": 4,
+        "fp": 4,
+        "fn": 0,
+        "precision": 0.5,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.615,
+        "tp": 4,
+        "fp": 5,
+        "fn": 0,
+        "precision": 0.444,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.636,
+        "tp": 4,
+        "fp": 6,
+        "fn": 0,
+        "precision": 0.4,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.641,
+        "tp": 4,
+        "fp": 7,
+        "fn": 0,
+        "precision": 0.364,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.701,
+        "tp": 4,
+        "fp": 8,
+        "fn": 0,
+        "precision": 0.333,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.8,
+        "tp": 4,
+        "fp": 9,
+        "fn": 0,
+        "precision": 0.308,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.85,
+        "tp": 4,
+        "fp": 9,
+        "fn": 0,
+        "precision": 0.308,
+        "recall": 1.0
+      }
+    ],
+    "chosen_threshold": 0.371,
+    "current_threshold": 0.3,
+    "cited_scores": [
+      {
+        "id": "B01",
+        "score": 0.473,
+        "grounded": true
+      },
+      {
+        "id": "B02",
+        "score": 0.641,
+        "grounded": true
+      },
+      {
+        "id": "B03",
+        "score": 0.364,
+        "grounded": false
+      },
+      {
+        "id": "B04",
+        "score": 0.277,
+        "grounded": false
+      },
+      {
+        "id": "B05",
+        "score": 0.615,
+        "grounded": true
+      },
+      {
+        "id": "B06",
+        "score": 0.636,
+        "grounded": true
+      },
+      {
+        "id": "B07",
+        "score": 0.371,
+        "grounded": true
+      },
+      {
+        "id": "B08",
+        "score": 0.553,
+        "grounded": true
+      },
+      {
+        "id": "B09",
+        "score": 0.14,
+        "grounded": false
+      },
+      {
+        "id": "B10",
+        "score": 0.474,
+        "grounded": true
+      },
+      {
+        "id": "B11",
+        "score": 0.046,
+        "grounded": false
+      },
+      {
+        "id": "B12",
+        "score": 0.612,
+        "grounded": true
+      },
+      {
+        "id": "B13",
+        "score": 0.701,
+        "grounded": true
+      }
+    ]
+  },
+  "dedup_tfidf": {
+    "backend": "tfidf",
+    "current_threshold": 0.7,
+    "at_current": {
+      "tp": 4,
+      "fp": 0,
+      "fn": 2,
+      "precision": 1.0,
+      "recall": 0.667
+    },
+    "sweep": [
+      {
+        "threshold": 0.041,
+        "tp": 6,
+        "fp": 6,
+        "fn": 0,
+        "precision": 0.5,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.17,
+        "tp": 6,
+        "fp": 5,
+        "fn": 0,
+        "precision": 0.545,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.403,
+        "tp": 6,
+        "fp": 4,
+        "fn": 0,
+        "precision": 0.6,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.456,
+        "tp": 5,
+        "fp": 4,
+        "fn": 1,
+        "precision": 0.556,
+        "recall": 0.833
+      },
+      {
+        "threshold": 0.506,
+        "tp": 4,
+        "fp": 4,
+        "fn": 2,
+        "precision": 0.5,
+        "recall": 0.667
+      },
+      {
+        "threshold": 0.554,
+        "tp": 4,
+        "fp": 3,
+        "fn": 2,
+        "precision": 0.571,
+        "recall": 0.667
+      },
+      {
+        "threshold": 0.576,
+        "tp": 4,
+        "fp": 2,
+        "fn": 2,
+        "precision": 0.667,
+        "recall": 0.667
+      },
+      {
+        "threshold": 0.633,
+        "tp": 4,
+        "fp": 1,
+        "fn": 2,
+        "precision": 0.8,
+        "recall": 0.667
+      },
+      {
+        "threshold": 0.773,
+        "tp": 4,
+        "fp": 0,
+        "fn": 2,
+        "precision": 1.0,
+        "recall": 0.667
+      },
+      {
+        "threshold": 0.807,
+        "tp": 2,
+        "fp": 0,
+        "fn": 4,
+        "precision": 1.0,
+        "recall": 0.333
+      },
+      {
+        "threshold": 1.0,
+        "tp": 1,
+        "fp": 0,
+        "fn": 5,
+        "precision": 1.0,
+        "recall": 0.167
+      }
+    ],
+    "scores": [
+      {
+        "id": "D01",
+        "score": 0.773,
+        "duplicate": true
+      },
+      {
+        "id": "D02",
+        "score": 0.554,
+        "duplicate": false
+      },
+      {
+        "id": "D03",
+        "score": 0.576,
+        "duplicate": false
+      },
+      {
+        "id": "D04",
+        "score": 0.773,
+        "duplicate": true
+      },
+      {
+        "id": "D05",
+        "score": 0.17,
+        "duplicate": false
+      },
+      {
+        "id": "D06",
+        "score": 0.403,
+        "duplicate": true
+      },
+      {
+        "id": "D07",
+        "score": 0.807,
+        "duplicate": true
+      },
+      {
+        "id": "D08",
+        "score": 0.506,
+        "duplicate": false
+      },
+      {
+        "id": "D09",
+        "score": 1.0,
+        "duplicate": true
+      },
+      {
+        "id": "D10",
+        "score": 0.041,
+        "duplicate": false
+      },
+      {
+        "id": "D11",
+        "score": 0.456,
+        "duplicate": true
+      },
+      {
+        "id": "D12",
+        "score": 0.633,
+        "duplicate": false
+      }
+    ]
+  },
+  "blocks_e5": {
+    "backend": "e5",
+    "page_ok_accuracy": 1.0,
+    "wrong_page_unflagged": [],
+    "ungrounded_flag": {
+      "tp": 4,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "verbatim_flag": {
+      "tp": 2,
+      "fp": 2,
+      "fn": 0,
+      "precision": 0.5,
+      "recall": 1.0
+    },
+    "figure_flag": {
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "rows": [
+      {
+        "id": "B01",
+        "flags": [
+          "source_figure"
+        ],
+        "gold": {
+          "grounded": true,
+          "verbatim": false,
+          "figure_ref": false,
+          "page_ok": true
+        }
+      },
+      {
+        "id": "B02",
+        "flags": [
+          "source_figure"
+        ],
+        "gold": {
+          "grounded": true,
+          "verbatim": false,
+          "figure_ref": false,
+          "page_ok": true
+        }
+      },
+      {
+        "id": "B03",
+        "flags": [
+          "source_figure",
+          "verbatim",
+          "wrong_page"
+        ],
+        "gold": {
+          "grounded": false,
+          "verbatim": false,
+          "figure_ref": false,
+          "page_ok": false
+        }
+      },
+      {
+        "id": "B04",
+        "flags": [
+          "low_grounding",
+          "source_figure"
+        ],
+        "gold": {
+          "grounded": false,
+          "verbatim": false,
+          "figure_ref": false,
+          "page_ok": true
+        }
+      },
+      {
+        "id": "B05",
+        "flags": [
+          "verbatim"
+        ],
+        "gold": {
+          "grounded": true,
+          "verbatim": true,
+          "figure_ref": false,
+          "page_ok": true
+        }
+      },
+      {
+        "id": "B06",
+        "flags": [],
+        "gold": {
+          "grounded": true,
+          "verbatim": false,
+          "figure_ref": false,
+          "page_ok": true
+        }
+      },
+      {
+        "id": "B07",
+        "flags": [
+          "figure_ref",
+          "source_figure"
+        ],
+        "gold": {
+          "grounded": true,
+          "verbatim": false,
+          "figure_ref": true,
+          "page_ok": true
+        }
+      },
+      {
+        "id": "B08",
+        "flags": [],
+        "gold": {
+          "grounded": true,
+          "verbatim": false,
+          "figure_ref": false,
+          "page_ok": true
+        }
+      },
+      {
+        "id": "B09",
+        "flags": [
+          "low_grounding"
+        ],
+        "gold": {
+          "grounded": false,
+          "verbatim": false,
+          "figure_ref": false,
+          "page_ok": true
+        }
+      },
+      {
+        "id": "B10",
+        "flags": [
+          "page_out_of_range",
+          "source_figure"
+        ],
+        "gold": {
+          "grounded": true,
+          "verbatim": false,
+          "figure_ref": false,
+          "page_ok": false
+        }
+      },
+      {
+        "id": "B11",
+        "flags": [
+          "low_grounding"
+        ],
+        "gold": {
+          "grounded": false,
+          "verbatim": false,
+          "figure_ref": false,
+          "page_ok": false
+        }
+      },
+      {
+        "id": "B12",
+        "flags": [
+          "source_figure",
+          "verbatim"
+        ],
+        "gold": {
+          "grounded": true,
+          "verbatim": false,
+          "figure_ref": false,
+          "page_ok": true
+        }
+      },
+      {
+        "id": "B13",
+        "flags": [
+          "source_figure",
+          "verbatim"
+        ],
+        "gold": {
+          "grounded": true,
+          "verbatim": true,
+          "figure_ref": false,
+          "page_ok": true
+        }
+      }
+    ],
+    "grounding_sweep": [
+      {
+        "threshold": 0.05,
+        "tp": 0,
+        "fp": 0,
+        "fn": 4,
+        "precision": null,
+        "recall": 0.0
+      },
+      {
+        "threshold": 0.1,
+        "tp": 0,
+        "fp": 0,
+        "fn": 4,
+        "precision": null,
+        "recall": 0.0
+      },
+      {
+        "threshold": 0.12,
+        "tp": 0,
+        "fp": 0,
+        "fn": 4,
+        "precision": null,
+        "recall": 0.0
+      },
+      {
+        "threshold": 0.15,
+        "tp": 0,
+        "fp": 0,
+        "fn": 4,
+        "precision": null,
+        "recall": 0.0
+      },
+      {
+        "threshold": 0.2,
+        "tp": 0,
+        "fp": 0,
+        "fn": 4,
+        "precision": null,
+        "recall": 0.0
+      },
+      {
+        "threshold": 0.8,
+        "tp": 0,
+        "fp": 0,
+        "fn": 4,
+        "precision": null,
+        "recall": 0.0
+      },
+      {
+        "threshold": 0.849,
+        "tp": 0,
+        "fp": 0,
+        "fn": 4,
+        "precision": null,
+        "recall": 0.0
+      },
+      {
+        "threshold": 0.85,
+        "tp": 1,
+        "fp": 0,
+        "fn": 3,
+        "precision": 1.0,
+        "recall": 0.25
+      },
+      {
+        "threshold": 0.862,
+        "tp": 1,
+        "fp": 0,
+        "fn": 3,
+        "precision": 1.0,
+        "recall": 0.25
+      },
+      {
+        "threshold": 0.888,
+        "tp": 2,
+        "fp": 0,
+        "fn": 2,
+        "precision": 1.0,
+        "recall": 0.5
+      },
+      {
+        "threshold": 0.902,
+        "tp": 3,
+        "fp": 0,
+        "fn": 1,
+        "precision": 1.0,
+        "recall": 0.75
+      },
+      {
+        "threshold": 0.91,
+        "tp": 4,
+        "fp": 1,
+        "fn": 0,
+        "precision": 0.8,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.911,
+        "tp": 4,
+        "fp": 2,
+        "fn": 0,
+        "precision": 0.667,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.928,
+        "tp": 4,
+        "fp": 3,
+        "fn": 0,
+        "precision": 0.571,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.931,
+        "tp": 4,
+        "fp": 4,
+        "fn": 0,
+        "precision": 0.5,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.933,
+        "tp": 4,
+        "fp": 5,
+        "fn": 0,
+        "precision": 0.444,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.935,
+        "tp": 4,
+        "fp": 6,
+        "fn": 0,
+        "precision": 0.4,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.939,
+        "tp": 4,
+        "fp": 7,
+        "fn": 0,
+        "precision": 0.364,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.943,
+        "tp": 4,
+        "fp": 8,
+        "fn": 0,
+        "precision": 0.333,
+        "recall": 1.0
+      }
+    ],
+    "chosen_threshold": 0.91,
+    "current_threshold": 0.89,
+    "cited_scores": [
+      {
+        "id": "B01",
+        "score": 0.928,
+        "grounded": true
+      },
+      {
+        "id": "B02",
+        "score": 0.939,
+        "grounded": true
+      },
+      {
+        "id": "B03",
+        "score": 0.902,
+        "grounded": false
+      },
+      {
+        "id": "B04",
+        "score": 0.888,
+        "grounded": false
+      },
+      {
+        "id": "B05",
+        "score": 0.931,
+        "grounded": true
+      },
+      {
+        "id": "B06",
+        "score": 0.943,
+        "grounded": true
+      },
+      {
+        "id": "B07",
+        "score": 0.902,
+        "grounded": true
+      },
+      {
+        "id": "B08",
+        "score": 0.935,
+        "grounded": true
+      },
+      {
+        "id": "B09",
+        "score": 0.849,
+        "grounded": false
+      },
+      {
+        "id": "B10",
+        "score": 0.91,
+        "grounded": true
+      },
+      {
+        "id": "B11",
+        "score": 0.862,
+        "grounded": false
+      },
+      {
+        "id": "B12",
+        "score": 0.911,
+        "grounded": true
+      },
+      {
+        "id": "B13",
+        "score": 0.933,
+        "grounded": true
+      }
+    ]
+  },
+  "dedup_e5": {
+    "backend": "e5",
+    "current_threshold": 0.95,
+    "at_current": {
+      "tp": 6,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.857,
+      "recall": 1.0
+    },
+    "sweep": [
+      {
+        "threshold": 0.863,
+        "tp": 6,
+        "fp": 6,
+        "fn": 0,
+        "precision": 0.5,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.925,
+        "tp": 6,
+        "fp": 5,
+        "fn": 0,
+        "precision": 0.545,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.926,
+        "tp": 6,
+        "fp": 4,
+        "fn": 0,
+        "precision": 0.6,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.933,
+        "tp": 6,
+        "fp": 3,
+        "fn": 0,
+        "precision": 0.667,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.943,
+        "tp": 6,
+        "fp": 2,
+        "fn": 0,
+        "precision": 0.75,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.952,
+        "tp": 6,
+        "fp": 1,
+        "fn": 0,
+        "precision": 0.857,
+        "recall": 1.0
+      },
+      {
+        "threshold": 0.964,
+        "tp": 5,
+        "fp": 1,
+        "fn": 1,
+        "precision": 0.833,
+        "recall": 0.833
+      },
+      {
+        "threshold": 0.966,
+        "tp": 4,
+        "fp": 1,
+        "fn": 2,
+        "precision": 0.8,
+        "recall": 0.667
+      },
+      {
+        "threshold": 0.969,
+        "tp": 3,
+        "fp": 1,
+        "fn": 3,
+        "precision": 0.75,
+        "recall": 0.5
+      },
+      {
+        "threshold": 0.974,
+        "tp": 3,
+        "fp": 0,
+        "fn": 3,
+        "precision": 1.0,
+        "recall": 0.5
+      },
+      {
+        "threshold": 0.988,
+        "tp": 2,
+        "fp": 0,
+        "fn": 4,
+        "precision": 1.0,
+        "recall": 0.333
+      }
+    ],
+    "scores": [
+      {
+        "id": "D01",
+        "score": 0.988,
+        "duplicate": true
+      },
+      {
+        "id": "D02",
+        "score": 0.943,
+        "duplicate": false
+      },
+      {
+        "id": "D03",
+        "score": 0.933,
+        "duplicate": false
+      },
+      {
+        "id": "D04",
+        "score": 0.974,
+        "duplicate": true
+      },
+      {
+        "id": "D05",
+        "score": 0.925,
+        "duplicate": false
+      },
+      {
+        "id": "D06",
+        "score": 0.964,
+        "duplicate": true
+      },
+      {
+        "id": "D07",
+        "score": 0.966,
+        "duplicate": true
+      },
+      {
+        "id": "D08",
+        "score": 0.926,
+        "duplicate": false
+      },
+      {
+        "id": "D09",
+        "score": 0.988,
+        "duplicate": true
+      },
+      {
+        "id": "D10",
+        "score": 0.863,
+        "duplicate": false
+      },
+      {
+        "id": "D11",
+        "score": 0.952,
+        "duplicate": true
+      },
+      {
+        "id": "D12",
+        "score": 0.969,
+        "duplicate": false
+      }
+    ]
+  }
+}

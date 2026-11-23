@@ -50,7 +50,7 @@ CONTEXT_CHARS = 360        # mỗi đoạn ĐÃ CÓ gửi phần đầu nội du
 
 # Ngưỡng trùng (cosine). e5 nén điểm vào khoảng 0,7–1,0 nên ngưỡng cao hơn TF-IDF. ADR-033 hiệu chỉnh trên bộ cặp có nhãn
 # eval/ai_soan_bai/cases.jsonl (scripts/ai/danh_gia_ai_soan_bai.py); e5 so ĐỐI XỨNG ("query:" cả hai phía, V3).
-DUP_BLOCK = {"e5": 0.90, "tfidf": 0.55}
+DUP_BLOCK = {"e5": 0.95, "tfidf": 0.70}   # 0,90/0,55 trước đợt 3: bộ cặp cho P 0,55/0,57 (ADR-033 mục 4)
 DUP_QUESTION = {"e5": 0.95, "tfidf": 0.80}
 
 PART_STATUSES = ("pending", "running", "done", "no_new", "not_theory", "failed")

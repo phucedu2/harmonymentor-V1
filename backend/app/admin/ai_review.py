@@ -20,10 +20,11 @@ from typing import Any, Sequence
 
 from ..ai.tutor.bm25 import tokenize
 
-# Ngưỡng bám nguồn (cosine khối ↔ trang được trích). Chọn theo 3A: ưu tiên không bỏ sót khối bịa (ADR-033 mục 4).
-GROUND_MIN = {"tfidf": 0.12, "e5": 0.80}
-# Trang khác giống hơn trang được trích ít nhất chừng này thì gợi ý "có lẽ là trang n".
-BETTER_PAGE_MARGIN = {"tfidf": 0.10, "e5": 0.03}
+# Ngưỡng bám nguồn (cosine lời giảng của khối ↔ trang được trích). Chọn theo 3A trên bộ đánh giá: recall bắt khối bịa
+# >= 95% mà ít báo nhầm nhất (ADR-033 mục 4). e5-small nén điểm vào khoảng 0,83–0,96 nên ngưỡng e5 cao.
+GROUND_MIN = {"tfidf": 0.30, "e5": 0.89}
+# Trang khác trong phần giống hơn trang được trích ít nhất chừng này = AI ghi nhầm trang (cờ wrong_page).
+BETTER_PAGE_MARGIN = {"tfidf": 0.05, "e5": 0.02}
 VERBATIM_N = 12          # N4: chuỗi 12 từ liên tiếp trùng trang nguồn = chép nguyên văn
 _FIGURE = re.compile(
     r"(?<!\w)(?:(?:xem|như|theo)\s+)?(?:ví dụ|vd\.?|hình|bảng|sơ đồ|khuông nhạc|khuông|bản nhạc|example|figure|fig\.|table|staff|"
@@ -35,6 +36,7 @@ _VI = re.compile(r"[ăâđêôơưạảấầẩẫậắằẳẵặẹẻẽ�
 FLAG_TEXT = {
     "page_out_of_range": "Trang AI ghi nằm ngoài phần đang soạn",
     "low_grounding": "Ý trong khối ít giống trang được trích",
+    "wrong_page": "Ý trong khối giống trang khác hơn trang được trích",
     "grounding_unchecked": "Không đo được bám nguồn",
     "verbatim": "Có đoạn chép nguyên văn tài liệu",
     "figure_ref": "Nhắc tới ví dụ/hình mà bài không có",
@@ -154,12 +156,15 @@ def review_flags(pages: Sequence[str], content: dict[str, Any], page_from: int, 
             sc = scorer.scores(body)
             cited = sc.get(b.get("page"), 0.0)
             best_page = max(sc, key=lambda n: (sc[n], -n)) if sc else None
+            better = best_page is not None and best_page != b.get("page") and \
+                sc[best_page] - cited >= BETTER_PAGE_MARGIN[scorer.backend]
+            hint = f" Trang {best_page} giống hơn ({sc[best_page]:.2f})." if better else ""
             if cited < GROUND_MIN[scorer.backend]:
-                hint = ""
-                if best_page is not None and best_page != b.get("page") and sc[best_page] - cited >= BETTER_PAGE_MARGIN[scorer.backend]:
-                    hint = f" Trang {best_page} giống hơn ({sc[best_page]:.2f})."
                 out.append(flag("low_grounding", where, f"Độ giống với trang {b.get('page')}: {cited:.2f} "
                                                         f"(ngưỡng {GROUND_MIN[scorer.backend]:.2f}, {scorer.backend}).{hint}"))
+            elif better:
+                out.append(flag("wrong_page", where, f"Khối ghi trang {b.get('page')} ({cited:.2f}) nhưng trang {best_page} "
+                                                     f"giống hơn ({sc[best_page]:.2f}). Kiểm lại trang trích dẫn."))
         for hit in verbatim_hits(" ".join(b.get("paragraphs", [])), source_all)[:3]:
             out.append(flag("verbatim", where, f"“{hit[:160]}”: diễn đạt lại thay vì chép (nguyên tắc 11)."))
         for m in list(_FIGURE.finditer(text))[:2]:
