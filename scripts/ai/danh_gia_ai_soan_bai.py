@@ -165,7 +165,10 @@ def live(cases: list[dict], out_path: Path) -> None:
     provider = get_provider(replace(settings, ai_timeout_seconds=max(settings.ai_timeout_seconds, 60.0)))
     if provider is None:
         sys.exit("Cần AI_ENABLED=1 và GEMINI_API_KEY trong môi trường.")
-    pages = next(c["pages"] for c in cases if c["type"] == "block")
+    # Zip thầy G-25: chạy đánh giá cố định temperature=0 và seed để hai lần chạy so được với nhau.
+    provider.temperature, provider.seed = 0.0, 7
+    print(f"Lời nhắc {ai_service.prompt_version(ai_service.SYSTEM, ai_service.SCHEMA)}, temperature=0, seed=7")
+    pages =next(c["pages"] for c in cases if c["type"] == "block")
     text = "\n\n".join(f"[Trang {i + 1}]\n{t}" for i, t in enumerate(pages))
     user = (f"Nguồn: Trang mẫu tự viết (HarmonyMentor)\nKỹ năng được phép dùng: {', '.join(sorted(SKILLS))}\n"
             f"Chủ đề muốn tập trung: tự chọn theo nội dung\nHãy viết 2–5 khối lý thuyết và 10–20 câu luyện tập.\n"

@@ -15,7 +15,7 @@ import hashlib
 import json
 import re
 from datetime import datetime, timezone
-from typing import Any
+from typing import Any, Callable
 from uuid import uuid4
 
 from sqlalchemy import func, select
@@ -40,6 +40,7 @@ MAX_BYTES = 10 * 1024 * 1024         # giữ tên cũ cho test; giá trị thậ
 MAX_PROMPT_CHARS = 14000            # chặn lượng chữ gửi Gemini mỗi lần (API cũ /draft); vượt thì thu hẹp trang, không cắt lặng lẽ (V7)
 MAX_QUESTIONS = 20                  # 8A: mỗi bản nháp 10–20 câu luyện tập
 MORE_QUESTIONS = 10                 # mỗi lần bấm "AI sinh thêm câu"
+MIN_QUESTIONS = 10                  # 9A (zip thầy, 23/11): dưới mức này thì gọi bù 1 lần, vẫn thiếu thì gắn cờ few_questions
 SCALE_TYPES = aq.SCALE_TYPES
 
 
@@ -230,9 +231,16 @@ def call_json(db: Session, provider: LLMProvider, actor_id: str | None, target: 
                 return raw, result, calls
         except ValueError:
             pass
+        cut = result.finish_reason == "MAX_TOKENS"
+        if log is not None:
+            log.append({"node": "retry_json", "ok": False, "calls": calls, "finish_reason": result.finish_reason})
         if calls >= 2:
-            raise AdminContentError("AI_BAD_FORMAT", "AI trả về sai định dạng hai lần liền.", 502)
-        note = "\n\nLần trước bạn trả về không phải JSON hợp lệ theo schema. Chỉ trả về đúng một đối tượng JSON."
+            raise AdminContentError("AI_BAD_FORMAT", "AI trả về sai định dạng hai lần liền"
+                                    + (" (câu trả lời dài quá giới hạn nên bị cắt)." if cut else "."), 502)
+        # G-25: JSON hỏng vì hết token thì nhắc viết NGẮN hơn; nhắc "JSON hợp lệ" không giúp gì, lần sau vẫn bị cắt.
+        note = ("\n\nLần trước câu trả lời dài quá giới hạn nên bị cắt giữa chừng. Viết ngắn hơn: mỗi đoạn lý thuyết "
+                "tối đa 3 câu, lời giải tối đa 2 câu, ít câu hỏi hơn nếu cần. Chỉ trả về đúng một đối tượng JSON."
+                if cut else "\n\nLần trước bạn trả về không phải JSON hợp lệ theo schema. Chỉ trả về đúng một đối tượng JSON.")
 
 
 def document_text(doc: SourceDocument, page_numbers: list[int], limit: int) -> tuple[str, list[int], str | None]:
@@ -292,6 +300,9 @@ def generate_draft(db: Session, admin: User, provider: LLMProvider | None, doc_i
         raise AdminContentError("AI_UNAVAILABLE", "AI chưa trả lời được lúc này, thử lại sau.", 503) from exc
 
     content = normalize_content(db, raw, page_from, page_to)
+    top_up_questions(db, provider, admin.id, ("ai_lesson_draft", draft_id), doc.source_title, text, content, page_from, page_to)
+    mark_injection(doc, content)
+    content["prompt_version"] = prompt_version(SYSTEM, SCHEMA)
     if truncated:
         content["truncated"] = truncated
     content["flags"] = ai_review.review_flags(doc.pages, content, page_from, page_to)
@@ -299,7 +310,8 @@ def generate_draft(db: Session, admin: User, provider: LLMProvider | None, doc_i
                           content=content, engine_report=engine_check(content), model=result.model,
                           tokens_in=result.tokens_in, tokens_out=result.tokens_out)
     db.add(draft)
-    audit(db, admin, "ai.draft.create", "ai_lesson_draft", draft.id, {"document": doc.id, "pages": [page_from, page_to], "model": result.model})
+    audit(db, admin, "ai.draft.create", "ai_lesson_draft", draft.id, {"document": doc.id, "pages": [page_from, page_to], "model": result.model,
+                                                           "prompt_version": content["prompt_version"]})
     db.commit()
     return draft
 
@@ -356,11 +368,90 @@ def generate_more_questions(db: Session, admin: User, provider: LLMProvider | No
     if not added:
         raise AdminContentError("AI_EMPTY", "AI chưa soạn được câu hợp lệ nào, thử lại.", 502)
     content = {**draft.content, "questions": have + added, "dropped_questions": dropped[-40:]}
+    if content.get("question_shortfall"):
+        refresh_shortfall(content)
+        content["flags"] = ai_review.review_flags(doc.pages, content, draft.page_from, draft.page_to)
+        ids = {f["id"] for f in content["flags"]}
+        content["acknowledged_flags"] = [i for i in content.get("acknowledged_flags", []) if i in ids]
     draft.content = content
     draft.engine_report = engine_check(content)
     audit(db, admin, "ai.draft.more_questions", "ai_lesson_draft", draft.id, {"added": len(added), "model": result.model})
     db.commit()
     return draft
+
+
+def refresh_shortfall(content: dict[str, Any]) -> None:
+    """Sau khi Quản trị viên thêm câu (sửa tay hoặc "AI sinh thêm câu"): đủ mức thì gỡ cờ few_questions."""
+    n = len(content.get("questions", []))
+    if n >= MIN_QUESTIONS:
+        content.pop("question_shortfall", None)
+    else:
+        content["question_shortfall"] = f"Chỉ có {n}/{MIN_QUESTIONS} câu hợp lệ. Bấm “AI sinh thêm câu” hoặc tự thêm câu."
+
+
+def prompt_version(system: str, schema: dict[str, Any]) -> str:
+    """Mã phiên bản lời nhắc (zip thầy G-26): băm system + schema + lời nhắc gọi bù. Đổi chữ nào là đổi mã, không cần nhớ
+    tăng số tay. Lưu vào bản nháp để sau này so tỷ lệ duyệt/sửa giữa các phiên bản lời nhắc."""
+    raw = json.dumps([system, schema, MORE_SYSTEM, MORE_SCHEMA], ensure_ascii=False, sort_keys=True)
+    return "p-" + hashlib.sha256(raw.encode("utf-8")).hexdigest()[:10]
+
+
+def mark_injection(doc: SourceDocument, content: dict[str, Any]) -> None:
+    """Ghi số dòng giống lệnh mà cổng tải lên đã bỏ (relevance_detail) vào bản nháp để review_flags gắn cờ (7A)."""
+    n = (doc.relevance_detail or {}).get("injection_lines_removed")
+    if isinstance(n, int) and n > 0:
+        content["injection_lines_removed"] = n
+
+
+def top_up_questions(db: Session, provider: LLMProvider, actor_id: str | None, target: tuple[str, str], source_title: str,
+                     text: str, content: dict[str, Any], page_from: int, page_to: int, *,
+                     accept: Callable[[str], str | None] | None = None, log: Any = None) -> int:
+    """9A: AI trả ít hơn MIN_QUESTIONS câu hợp lệ (live 23/11: 8 câu, giữ 6) thì gọi bù ĐÚNG 1 lần, trong hạn mức soạn bài.
+    Hết hạn mức/AI lỗi/vẫn thiếu thì không chặn: ghi `question_shortfall` để review_flags gắn cờ cho người duyệt.
+    `accept(prompt)` trả lý do loại (vd trùng câu trên trang web) hoặc None. Trả số lần gọi AI đã dùng."""
+    have = content["questions"]
+    if len(have) >= MIN_QUESTIONS:
+        return 0
+    room = MAX_QUESTIONS - len(have)
+    blocks = content["blocks"]
+    theory = "\n".join(f"- Khối {i}. {b['title']}: {' '.join(b['paragraphs'])}" for i, b in enumerate(blocks, start=1))
+    existing = "\n".join(f"- {q['prompt']}" for q in have)
+    user = (f"Nguồn: {source_title}\nKỹ năng được phép dùng: {', '.join(_skill_ids(db))}\n"
+            f"Dạng câu cần soạn: {', '.join(aq.KINDS)}\nSố câu: {min(MORE_QUESTIONS, room)}, chia đều 3 mức nho/hieu/van_dung, "
+            f"câu nào cũng có lời giải.\nLý thuyết đã tóm tắt:\n{theory[:3000]}\n"
+            f"Câu đã có (đừng lặp lại):\n{existing[:2000] or '(chưa có)'}\n<<<DOCUMENT>>>\n{text}\n<<<END>>>")
+    calls, added, dropped, why_short = 0, 0, content["dropped_questions"], None
+    try:
+        raw, _, calls = call_json(db, provider, actor_id, target, "top_up", MORE_SYSTEM, user, MORE_SCHEMA)
+    except budget.BudgetExceeded:
+        why_short = "hết lượt Gemini dành cho soạn bài hôm nay nên chưa gọi bù được"
+        raw = {}
+    except (LLMUnavailable, AdminContentError):
+        why_short = "lần gọi bù bị lỗi"
+        calls, raw = 1, {}
+    skills = set(_skill_ids(db))
+    clamp = page_clamp(page_from, page_to)
+    seen = {q["prompt"].casefold() for q in have}
+    for item in (raw.get("questions") or [])[:MAX_QUESTIONS * 2]:
+        q, why = aq.normalize_question(item, skills, clamp, blocks=len(blocks))
+        if q is not None and q["prompt"].casefold() in seen:
+            continue   # AI chép lại câu đã có: bỏ lặng lẽ, không làm rối danh sách câu bị loại
+        if q is not None and accept is not None:
+            why = accept(q["prompt"]) or ""
+            q = None if why else q
+        if q is None:
+            dropped.append(why)
+        elif added < room:
+            seen.add(q["prompt"].casefold())
+            have.append(q)
+            added += 1
+    if log is not None:
+        log.add("top_up", out=added, calls=calls, note=why_short)
+    if len(have) < MIN_QUESTIONS:
+        content["question_shortfall"] = (f"Chỉ có {len(have)}/{MIN_QUESTIONS} câu hợp lệ"
+                                         + (f": {why_short}." if why_short else " sau khi đã gọi bù 1 lần.")
+                                         + " Bấm “AI sinh thêm câu” hoặc tự thêm câu.")
+    return calls
 
 
 # --- chuẩn hóa và soát ------------------------------------------------------------------------------
@@ -475,9 +566,11 @@ def update_draft(db: Session, admin: User, draft_id: str, edited: dict[str, Any]
                                      else edited.get("expansion")},
                                 draft.page_from, draft.page_to, trust_review=True)   # H1: trang theo bản nháp, không theo cả tài liệu
     # Báo cáo trùng, tên phần, nhật ký và ghi chú cắt chữ do máy tính lúc soạn, Quản trị viên không sửa: giữ nguyên.
-    for key in ("duplicates", "part", "log", "truncated"):
+    for key in ("duplicates", "part", "log", "truncated", "injection_lines_removed", "prompt_version"):
         if key in draft.content:
             content[key] = draft.content[key]
+    if draft.content.get("question_shortfall"):
+        refresh_shortfall(content)
     content["flags"] = ai_review.review_flags(doc.pages, content, draft.page_from, draft.page_to)
     ids = {f["id"] for f in content["flags"]}
     acked = edited.get("acknowledged_flags")

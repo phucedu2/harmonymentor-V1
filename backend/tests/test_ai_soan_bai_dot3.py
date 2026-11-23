@@ -58,13 +58,14 @@ def test_n1_de_lech_check_thi_loai_cau_khong_de_engine_sua_dap_an_dung_thanh_sai
 def test_n1_dung_hop_am_de_am7_ma_ky_hieu_c_thi_loai():
     q, why = norm({"kind": "build_chord", "prompt": "Dựng hợp âm Am7", "skill_id": "chord.seventh_build", "symbol": "C"})
     assert q is None and "không khớp" in why
-    ok, _ = norm({"kind": "build_chord", "prompt": "Dựng hợp âm Am7", "skill_id": "chord.seventh_build", "symbol": "Am7"})
+    ok, _ = norm({"kind": "build_chord", "prompt": "Dựng hợp âm Am7", "skill_id": "chord.seventh_build", "symbol": "Am7",
+                  "explanation": "Am7 = A C E G."})
     assert ok is not None and not ok["needs_review"] or ok["review_notes"] == ["Câu chưa gắn với khối lý thuyết nào của bài."]
 
 
 def test_n1_de_viet_ten_not_tieng_viet_van_doi_chieu_duoc():
     q, why = norm({"kind": "short", "prompt": "Quãng từ Đô lên Mi là gì?", "skill_id": "interval.naming",
-                   "check": {"type": "interval", "lower": "C", "upper": "E"}})
+                   "check": {"type": "interval", "lower": "C", "upper": "E"}, "explanation": "Đô lên Mi cách 4 nửa cung."})
     assert why == "" and q["engine_verified"] and not q["needs_review"]
 
 
@@ -153,7 +154,8 @@ def test_n4_xuat_ban_bi_chan_toi_khi_doi_chieu_tung_co(env):  # noqa: F811
     fake.script = [json.dumps({"title": "Quãng ba", "objectives": [], "blocks": [
         {"title": "Quãng ba", "paragraphs": ["Hợp âm bảy át giải quyết về chủ qua nốt cảm ở cuối câu nhạc."], "page": 7}],
         "questions": [{"kind": "short", "level": "nho", "prompt": "Quãng từ C lên E là gì?", "skill_id": "interval.naming",
-                       "check": {"type": "interval", "lower": "C", "upper": "E"}, "page": 1, "block_ref": 1}]})]
+                       "check": {"type": "interval", "lower": "C", "upper": "E"}, "page": 1, "block_ref": 1,
+                       "explanation": "C lên E cách 4 nửa cung."}]})]
     d = client.post(f"/api/v1/admin/ai/documents/{doc['id']}/draft", headers=h, json={"page_from": 1, "page_to": 1}).json()
     assert {"page_out_of_range", "low_grounding"} <= {f["type"] for f in d["flags"]}
     r = client.post(f"/api/v1/admin/ai/drafts/{d['id']}/publish", headers=h, json={})
