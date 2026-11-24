@@ -328,7 +328,7 @@ export default function LessonRunner({
     <button className={ui.textButton} onClick={onBack}>← Tất cả bài học</button>
     <header className="mt-2 mb-4">
       <p className={ui.kicker}>{lesson.track}</p>
-      <h1 className="mt-1 font-display text-3xl leading-tight font-semibold text-ink">Bài {lesson.order}. {lesson.title}</h1>
+      <h1 className="mt-1 font-display text-3xl leading-tight font-semibold text-ink">{lesson.order > 0 ? `Bài ${lesson.order}. ` : "Xem trước: "}{lesson.title}</h1>
     </header>
 
     {/* FE-004: điện thoại xếp 2 hàng (chữ + %, rồi thanh) thay vì 3 hàng để nhường chỗ cho nội dung bước. */}

@@ -163,6 +163,16 @@ def test_thong_ke_chi_tinh_nguoi_hoc_that_va_bo_luot_thu_cua_admin(client, admin
     assert all(0 <= s["first_try_correct_rate"] <= 1 for s in after["skills"])
 
 
+def test_thong_ke_khong_dem_tai_khoan_khong_email_khop_tab_nguoi_dung(client, admin):
+    """AUD-03: demo-user cũ không email không hiện ở tab Người dùng thì cũng không được đếm là người học."""
+    _, headers = admin
+    before = client.get("/api/v1/admin/stats", headers=headers).json()["totals"]["learners"]
+    with SessionLocal() as db:
+        db.add(User(id=f"adm-{uuid4().hex[:12]}", display_name="Demo cũ", email=None, role="learner"))
+        db.commit()
+    assert client.get("/api/v1/admin/stats", headers=headers).json()["totals"]["learners"] == before
+
+
 def test_sua_noi_dung_ghi_nhat_ky(client, admin):
     _, headers = admin
     block = first_theory(client, headers)

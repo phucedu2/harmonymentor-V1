@@ -334,9 +334,9 @@ export type AiJob = { id: string; document_id: string; status: "running" | "paus
     duplicates: AiDuplicate[]; note: string | null; log?: AiNodeLog[] }[];
   skipped_pages: { page: number; reason: string }[]; total: number; finished: number; drafts: number; created_at: string; updated_at: string; budget?: AiBudget };
 export type AiDraft = { id: string; status: "draft" | "published" | "rejected"; document: AiDocument | null; page_from: number; page_to: number;
-  model: string | null; published_lesson_id: string | null; content: AiDraftContent; engine: AdminEngineReport; created_at: string;
+  model: string | null; published_lesson_id: string | null; lesson_hidden?: boolean | null; content: AiDraftContent; engine: AdminEngineReport; created_at: string;
   flags?: AiFlag[]; budget?: AiBudget };
-export type AiDraftRow = { id: string; status: string; title: string | null; questions: number; flags: number; review_flags?: number; published_lesson_id: string | null; created_at: string };
+export type AiDraftRow = { id: string; status: string; title: string | null; questions: number; flags: number; review_flags?: number; published_lesson_id: string | null; lesson_hidden?: boolean | null; created_at: string };
 
 export const api = {
   aiStatus: () => apiCall<{ enabled: boolean }>("/admin/ai/status"),
