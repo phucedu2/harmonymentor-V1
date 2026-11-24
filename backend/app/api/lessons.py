@@ -75,7 +75,7 @@ def _preview_admin(request: Request, db: Session) -> bool:
 def get_lesson(lesson_id: str, request: Request, preview: bool = False, db: Session = Depends(get_db)):
     lesson = db.get(Lesson, lesson_id)
     hidden = lesson is not None and lesson_hidden(db, lesson_id)
-    if lesson is None or not lesson_visible(lesson) or (hidden and not (preview and _preview_admin(request, db))):
+    if lesson is None or lesson.deleted_at is not None or not lesson_visible(lesson) or (hidden and not (preview and _preview_admin(request, db))):
         raise HTTPException(status_code=404, detail={"code": "LESSON_NOT_FOUND"})
 
     sources = db.execute(

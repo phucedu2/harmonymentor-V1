@@ -75,6 +75,12 @@ def _check_legacy_users_table() -> None:
             "CSDL cũ thiếu cột users.avatar_key và bảng ai_summary_jobs (ADR-029). Giữ dữ liệu: "
             "`alembic -c alembic.ini upgrade head`. Không cần dữ liệu cũ: xóa harmonymentor_dev.db để tạo lại."
         )
+    # FR-ADM-15/16 (24/11/2026, migration d8e9f0a1b2c3): thiếu cột thì mọi truy vấn bài học lỗi 500.
+    if "sort_key" not in {c["name"] for c in inspector.get_columns("lessons")}:
+        raise RuntimeError(
+            "CSDL cũ thiếu cột lessons.sort_key/deleted_at (Quản trị viên sắp xếp và xóa bài). Giữ dữ liệu: "
+            "`alembic -c alembic.ini upgrade head`. Không cần dữ liệu cũ: xóa harmonymentor_dev.db để tạo lại."
+        )
     if "email" not in columns:
         raise RuntimeError(
             "CSDL cũ thiếu cột users.email (tạo trước Giai đoạn B). Với SQLite dev: xóa file harmonymentor_dev.db "
