@@ -339,7 +339,9 @@ export type AiDraft = { id: string; status: "draft" | "published" | "rejected"; 
 export type AiDraftRow = { id: string; status: string; title: string | null; questions: number; flags: number; review_flags?: number; published_lesson_id: string | null; created_at: string };
 
 export const api = {
-  aiStatus: () => apiCall<{ enabled: boolean }>("/admin/ai/status"),
+  aiStatus: () => apiCall<{ enabled: boolean; env_ready: boolean; switch_on: boolean }>("/admin/ai/status"),
+  adminSetAiSwitch: (on: boolean) =>
+    apiCall<{ switch_on: boolean; env_ready: boolean }>("/admin/ai/switch", { method: "PUT", body: JSON.stringify({ on }) }),
   aiDocuments: () => apiCall<AiDocument[]>("/admin/ai/documents"),
   aiUpload: (file: File, sourceTitle: string, sourceNote: string, consent: boolean) => {
     const form = new FormData();
@@ -380,6 +382,8 @@ export const api = {
   adminUsers: (q = "") => apiCall<{ total: number; items: AdminUser[] }>(`/admin/users?q=${encodeURIComponent(q)}`),
   adminSetActive: (id: string, isActive: boolean) =>
     apiCall<{ id: string; is_active: boolean }>(`/admin/users/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify({ is_active: isActive }) }),
+  adminSetRole: (id: string, role: "admin" | "learner") =>
+    apiCall<{ id: string; is_active: boolean; role: string }>(`/admin/users/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify({ role }) }),
   adminStats: (days = 30) => apiCall<AdminStats>(`/admin/stats?days=${days}`),
   adminAudit: () => apiCall<AdminAudit[]>("/admin/audit?limit=30"),
   // Legacy Practice routes retained during migration.

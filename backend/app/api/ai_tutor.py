@@ -19,6 +19,7 @@ from ..db.models import User
 from ..db.session import get_db
 from ..services import ai_tutor_service as ts
 
+from ..core.ai_switch import switch_on
 router = APIRouter(prefix="/api/v1/chat", tags=["ai-tutor"])
 
 _provider_cache: dict[tuple, LLMProvider | None] = {}
@@ -28,7 +29,7 @@ def embedder_dep() -> Embedder | None:
     """Mặc định e5-small cục bộ (ADR-017); thiếu file mô hình thì None → BM25, không hỏng yêu cầu."""
     choice = settings.tutor_embedder.lower()
     if choice == "gemini":
-        return get_embedder(settings)
+        return get_embedder(settings) if switch_on() else None   # ADR-036: tắt AI thì không gọi Gemini nhúng
     if choice == "bm25":
         return None
     return get_local_embedder()
@@ -53,7 +54,9 @@ if settings.ai_enabled:  # AI tắt thì không có gì để làm nóng (và te
 
 
 def provider_dep() -> LLMProvider | None:
-    """Tách thành dependency để test thay bằng FakeProvider, không gọi mạng."""
+    """Tách thành dependency để test thay bằng FakeProvider, không gọi mạng. Công tắc AI tắt (ADR-036) → None."""
+    if not switch_on():
+        return None
     key = (settings.ai_enabled, bool(settings.gemini_api_key), settings.gemini_model, settings.gemini_fallback_model)
     if key not in _provider_cache:
         _provider_cache[key] = get_provider(settings)

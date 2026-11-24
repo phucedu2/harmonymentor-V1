@@ -247,6 +247,7 @@ function JobPanel({ job, busy, onResume, onCancel, onOpen }: {
 
 export default function AiDraftTab() {
   const [enabled, setEnabled] = useState<boolean | null>(null);
+  const [ai, setAi] = useState<{ env_ready: boolean; switch_on: boolean } | null>(null);
   const [docs, setDocs] = useState<AiDocument[]>([]);
   const [drafts, setDrafts] = useState<AiDraftRow[]>([]);
   const [jobs, setJobs] = useState<AiJob[]>([]);
@@ -265,7 +266,17 @@ export default function AiDraftTab() {
     api.aiDrafts().then(setDrafts).catch(() => undefined);
     api.aiJobs().then(setJobs).catch(() => undefined);
   };
-  useEffect(() => { api.aiStatus().then((s) => setEnabled(s.enabled)).catch(() => setEnabled(false)); load(); }, []);
+  const loadStatus = () => api.aiStatus().then((s) => { setEnabled(s.enabled); setAi(s); }).catch(() => setEnabled(false));
+  useEffect(() => { loadStatus(); load(); }, []);
+  // ADR-036: công tắc lưu CSDL, tắt cả AI Tutor lẫn soạn bài; khóa Gemini vẫn chỉ nằm trong .env.
+  const flipSwitch = async () => {
+    if (!ai) return;
+    if (ai.switch_on && !window.confirm("Tắt AI cho toàn hệ thống? AI Tutor và AI soạn bài dừng gọi Gemini, app vẫn chạy bằng luật dự phòng.")) return;
+    setBusyKey("switch");
+    try { await api.adminSetAiSwitch(!ai.switch_on); await loadStatus(); }
+    catch (e) { setMsg((e as { message?: string }).message ?? "Không đổi được công tắc AI."); }
+    finally { setBusyKey(null); }
+  };
   // Việc đang chạy nền: hỏi tiến độ mỗi 3 giây; xong thì tải lại danh sách bản nháp.
   const anyRunning = jobs.some((j) => j.status === "running");
   useEffect(() => {
@@ -308,7 +319,12 @@ export default function AiDraftTab() {
   if (enabled === null) return <p className="text-muted">Đang tải…</p>;
 
   return <div className="grid gap-4">
-    {!enabled && <p role="status" className="rounded-lg border border-line p-3 text-sm">Tính năng AI đang tắt (chưa bật <code>AI_ENABLED</code> hoặc chưa có khóa Gemini). Bạn vẫn xem được các bản nháp cũ.</p>}
+    {ai && <Card className="flex flex-wrap items-center justify-between gap-2 p-3">
+      <p className="text-sm"><span className="font-semibold">Công tắc AI: {ai.switch_on ? "Đang bật" : "Đang tắt"}</span>
+        {!ai.env_ready && <span className="text-muted"> · máy chủ chưa có <code>AI_ENABLED=true</code> hoặc khóa Gemini trong .env, bật công tắc cũng chưa có AI</span>}</p>
+      <Button variant="secondary" loading={busyKey === "switch"} onClick={flipSwitch}>{ai.switch_on ? "Tắt AI" : "Bật AI"}</Button>
+    </Card>}
+    {!enabled && <p role="status" className="rounded-lg border border-line p-3 text-sm">Tính năng AI đang tắt ({ai && !ai.switch_on ? "Quản trị viên đã tắt công tắc" : <>chưa bật <code>AI_ENABLED</code> hoặc chưa có khóa Gemini</>}). Bạn vẫn xem được các bản nháp cũ.</p>}
     <Card className="p-4">
       <CardTitle>Tải tài liệu nhạc lý</CardTitle>
       <form onSubmit={upload} className="mt-2 grid gap-2">
