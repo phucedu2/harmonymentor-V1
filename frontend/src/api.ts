@@ -296,6 +296,10 @@ export type AdminBlock = { id: string; position: number; block_type: string; pay
   base_payload: Record<string, unknown>; edited: boolean; draft_revision_id: string | null; engine: AdminEngineReport };
 export type AdminLessonDetail = { lesson: AdminLessonRow; objectives: string[]; blocks: AdminBlock[];
   exercises: { id: string; version: number; skill_id: string; kind: string; prompt: string; status: string }[] };
+export type AdminSkill = { id: string; name: string; domain: string; seed: boolean; mvp: boolean; prerequisites: string[];
+  seed_prerequisites: string[]; lessons: string[] };
+export type AdminSource = { id: string; title: string; author: string | null; url: string | null; seed: boolean;
+  lessons: { id: number; lesson_id: string; locator: string; note: string | null }[] };
 export type AdminRevision = { id: string; status: string; note: string | null; created_by: string | null; created_at: string;
   published_at: string | null; payload: Record<string, unknown> };
 export type AdminUser = { id: string; email: string; display_name: string | null; role: string; is_active: boolean; created_at: string;
@@ -375,6 +379,19 @@ export const api = {
     apiCall<AdminRevision[]>(`/admin/lessons/${encodeURIComponent(lessonId)}/blocks/${encodeURIComponent(blockId)}/history`),
   adminRestore: (lessonId: string, blockId: string, revisionId: string | null) =>
     apiPost<{ revision_id: string }>(`/admin/lessons/${encodeURIComponent(lessonId)}/blocks/${encodeURIComponent(blockId)}/restore`, { revision_id: revisionId }),
+  adminSkills: () => apiCall<AdminSkill[]>("/admin/skills"),
+  adminCreateSkill: (body: { slug: string; name: string; domain: string }) => apiPost<{ id: string }>("/admin/skills", body),
+  adminUpdateSkill: (id: string, body: { name: string; domain: string }) =>
+    apiCall<{ id: string }>(`/admin/skills/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(body) }),
+  adminDeleteSkill: (id: string) => apiCall<void>(`/admin/skills/${encodeURIComponent(id)}`, { method: "DELETE" }),
+  adminAddPrereq: (id: string, pre: string) => apiPost<unknown>(`/admin/skills/${encodeURIComponent(id)}/prerequisites`, { prerequisite_id: pre }),
+  adminRemovePrereq: (id: string, pre: string) =>
+    apiCall<void>(`/admin/skills/${encodeURIComponent(id)}/prerequisites/${encodeURIComponent(pre)}`, { method: "DELETE" }),
+  adminSources: () => apiCall<AdminSource[]>("/admin/sources"),
+  adminCreateSource: (body: { title: string; author: string | null; url: string | null }) => apiPost<{ id: string }>("/admin/sources", body),
+  adminLinkSource: (lessonId: string, body: { source_id: string; locator: string; note: string | null }) =>
+    apiPost<unknown>(`/admin/lessons/${encodeURIComponent(lessonId)}/sources`, body),
+  adminUnlinkSource: (linkId: number) => apiCall<void>(`/admin/lesson-sources/${linkId}`, { method: "DELETE" }),
   adminVisibility: (lessonId: string, hidden: boolean) =>
     apiPost<{ id: string; hidden: boolean; tutor_index?: { qdrant: string; chunks: number } }>(`/admin/lessons/${encodeURIComponent(lessonId)}/visibility`, { hidden }),
   adminUsers: (q = "") => apiCall<{ total: number; items: AdminUser[] }>(`/admin/users?q=${encodeURIComponent(q)}`),

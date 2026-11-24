@@ -17,7 +17,7 @@ from ..ai.tutor.llm import LLMProvider, get_provider
 from ..core.ai_config import relevance_config
 from ..core.config import settings
 from ..db.models import SourceDocument
-from . import ai_job, ai_service, content_service, stats_service
+from . import ai_job, ai_service, content_service, skill_admin, stats_service
 from .content_service import AdminContentError
 
 # Mọi route /api/v1/admin/* gắn require_admin ở cấp router để không route nào quên kiểm tra quyền.
@@ -103,6 +103,92 @@ def lesson_visibility(lesson_id: str, body: VisibilityIn, admin: User = Depends(
         return content_service.set_hidden(db, admin, lesson_id, body.hidden)
     except AdminContentError as exc:
         raise _wrap(exc) from exc
+
+
+# --- kỹ năng, tiên quyết, nguồn tài liệu (FR-ADM-18..22, FR-ADM-38) ------------------------------------
+
+class SkillIn(BaseModel):
+    slug: str = Field(default="", max_length=100)
+    name: str = Field(min_length=1, max_length=200)
+    domain: str = Field(default="theory", max_length=80)
+
+
+class PrereqIn(BaseModel):
+    prerequisite_id: str = Field(min_length=1, max_length=120)
+
+
+class SourceIn(BaseModel):
+    title: str = Field(min_length=1, max_length=300)
+    author: str | None = Field(default=None, max_length=200)
+    url: str | None = Field(default=None, max_length=800)
+
+
+class SourceLinkIn(BaseModel):
+    source_id: str = Field(min_length=1, max_length=80)
+    locator: str = Field(default="", max_length=300)
+    note: str | None = Field(default=None, max_length=1000)
+
+
+def _sk(fn, *args):
+    try:
+        return fn(*args)
+    except AdminContentError as exc:
+        raise _wrap(exc) from exc
+
+
+@router.get("/skills")
+def list_skills(db: Session = Depends(get_db)):
+    return skill_admin.list_skills(db)
+
+
+@router.post("/skills", status_code=201)
+def create_skill(body: SkillIn, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return _sk(skill_admin.create_skill, db, admin, body.slug, body.name, body.domain)
+
+
+@router.put("/skills/{skill_id}")
+def update_skill(skill_id: str, body: SkillIn, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return _sk(skill_admin.update_skill, db, admin, skill_id, body.name, body.domain)
+
+
+@router.delete("/skills/{skill_id}", status_code=204)
+def delete_skill(skill_id: str, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    _sk(skill_admin.delete_skill, db, admin, skill_id)
+
+
+@router.post("/skills/{skill_id}/prerequisites", status_code=201)
+def add_prerequisite(skill_id: str, body: PrereqIn, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return _sk(skill_admin.add_prerequisite, db, admin, skill_id, body.prerequisite_id)
+
+
+@router.delete("/skills/{skill_id}/prerequisites/{prerequisite_id}", status_code=204)
+def remove_prerequisite(skill_id: str, prerequisite_id: str, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    _sk(skill_admin.remove_prerequisite, db, admin, skill_id, prerequisite_id)
+
+
+@router.get("/sources")
+def list_sources(db: Session = Depends(get_db)):
+    return skill_admin.list_sources(db)
+
+
+@router.post("/sources", status_code=201)
+def create_source(body: SourceIn, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return _sk(skill_admin.create_source, db, admin, body.title, body.author, body.url)
+
+
+@router.put("/sources/{source_id}")
+def update_source(source_id: str, body: SourceIn, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return _sk(skill_admin.update_source, db, admin, source_id, body.title, body.author, body.url)
+
+
+@router.post("/lessons/{lesson_id}/sources", status_code=201)
+def link_source(lesson_id: str, body: SourceLinkIn, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return _sk(skill_admin.link_source, db, admin, lesson_id, body.source_id, body.locator, body.note)
+
+
+@router.delete("/lesson-sources/{link_id}", status_code=204)
+def unlink_source(link_id: int, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    _sk(skill_admin.unlink_source, db, admin, link_id)
 
 
 # --- người dùng ---------------------------------------------------------------------------------
