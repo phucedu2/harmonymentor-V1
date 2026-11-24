@@ -29,6 +29,8 @@ class LLMResult:
     tokens_out: int | None
     latency_ms: int
     attempts: int = 1
+    # Lý do dừng của mô hình (STOP, MAX_TOKENS, SAFETY...). MAX_TOKENS = JSON bị cắt giữa chừng (zip thầy G-25).
+    finish_reason: str | None = None
 
 
 class LLMProvider(Protocol):
@@ -49,10 +51,23 @@ def _status(exc: Exception) -> int | None:
     return None
 
 
+def _finish_reason(resp: Any) -> str | None:
+    try:
+        reason = resp.candidates[0].finish_reason
+    except (AttributeError, IndexError, TypeError):
+        return None
+    if reason is None:
+        return None
+    return str(getattr(reason, "name", reason)).rsplit(".", 1)[-1]
+
+
 class GeminiProvider:
     def __init__(self, *, api_key: str, model: str, fallback_model: str | None = None, timeout_s: float = 8.0,
-                 client: Any | None = None, sleep: Callable[[float], None] = time.sleep):
+                 client: Any | None = None, sleep: Callable[[float], None] = time.sleep,
+                 temperature: float = 0.2, seed: int | None = None):
         self.model, self.fallback_model, self.timeout_s, self._sleep = model, fallback_model, timeout_s, sleep
+        # Chạy đánh giá đặt temperature=0 và seed cố định để hai lần chạy so được với nhau (zip thầy G-25).
+        self.temperature, self.seed = temperature, seed
         if client is None:
             from google import genai
             from google.genai import types
@@ -70,8 +85,8 @@ class GeminiProvider:
         return self._client.models.generate_content(
             model=model, contents=user,
             config=types.GenerateContentConfig(system_instruction=system, response_mime_type="application/json",
-                                               response_json_schema=schema, temperature=0.2,
-                                               max_output_tokens=max_output_tokens or 1024))
+                                               response_json_schema=schema, temperature=self.temperature,
+                                               seed=self.seed, max_output_tokens=max_output_tokens or 1024))
 
     def generate(self, system: str, user: str, schema: dict[str, Any], max_output_tokens: int | None = None) -> LLMResult:
         start = time.perf_counter()
@@ -86,7 +101,7 @@ class GeminiProvider:
                     raise LLMUnavailable("blocked")
                 return LLMResult(text, model, getattr(usage, "prompt_token_count", None),
                                  getattr(usage, "candidates_token_count", None),
-                                 int((time.perf_counter() - start) * 1000), attempt)
+                                 int((time.perf_counter() - start) * 1000), attempt, _finish_reason(resp))
             except LLMUnavailable:
                 raise
             except Exception as exc:  # SDK, httpx: nhiều loại lỗi

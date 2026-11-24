@@ -33,7 +33,7 @@ function NodeLog({ log }: { log?: { node: string; ms: number; in?: number; out?:
 }
 function FlagItem({ f, checked, disabled, onChange }: { f: AiFlag; checked: boolean; disabled: boolean; onChange: (v: boolean) => void }) {
   return <li className={`rounded border p-2 ${checked ? "border-line" : "border-warning"}`}>
-    <p><b>{f.label}</b>{f.where.startsWith("block:") ? ` (khối ${f.where.slice(6)})` : ""}: {f.detail}</p>
+    <p><b>{f.label}</b>{f.where.startsWith("block:") ? ` (khối ${f.where.slice(6)})` : f.where.startsWith("question:") ? ` (câu ${f.where.slice(9)})` : ""}: {f.detail}</p>
     <label className="mt-1 flex items-center gap-2 font-semibold"><input type="checkbox" checked={checked} disabled={disabled}
       onChange={(e) => onChange(e.target.checked)} />Đã đối chiếu với tài liệu gốc</label></li>;
 }

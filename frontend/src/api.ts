@@ -326,7 +326,7 @@ export type AiNodeLog = { node: string; ms: number; in?: number; out?: number; n
 export type AiBudget = { total: number; authoring: { limit: number; used: number }; tutor: { limit: number; used: number }; resets_at: string };
 export type AiDuplicate = { concept: string; where: string; by: "ai" | "e5" | "tfidf"; score: number | null };
 export type AiDraftContent = { title: string; objectives: string[]; blocks: { title: string; paragraphs: string[]; page: number; page_claimed?: number }[];
-  questions: AiQuestion[]; acknowledged_flags?: string[]; log?: AiNodeLog[]; truncated?: string; dropped_questions: string[]; expansion?: boolean; duplicates?: AiDuplicate[]; part?: { heading: string; index: number } };
+  questions: AiQuestion[]; acknowledged_flags?: string[]; log?: AiNodeLog[]; truncated?: string; question_shortfall?: string; prompt_version?: string; dropped_questions: string[]; expansion?: boolean; duplicates?: AiDuplicate[]; part?: { heading: string; index: number } };
 export type AiJobPartStatus = "pending" | "running" | "done" | "no_new" | "not_theory" | "failed";
 export type AiJob = { id: string; document_id: string; status: "running" | "paused" | "done" | "cancelled";
   pause_reason: "quota" | "daily_limit" | "unavailable" | "interrupted" | "admin" | "document_deleted" | null;

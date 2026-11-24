@@ -399,6 +399,15 @@ def run_part(db: Session, admin_id: str | None, provider: LLMProvider, doc: Sour
     content = ai_service.normalize_content(db, {**raw, "blocks": kept_blocks, "questions": kept_questions},
                                            part["page_from"], page_to)
     content["dropped_questions"] = dup_questions + content["dropped_questions"]
+
+    def _not_known(prompt: str) -> str | None:
+        score, hit = sim.best(prompt, "question")
+        return f"“{prompt[:40]}”: trùng câu đã có ở {hit.ref}" if hit is not None and score >= q_threshold else None
+
+    ai_service.top_up_questions(db, provider, admin_id, ("ai_document", doc.id), doc.source_title, text, content,
+                                part["page_from"], page_to, accept=_not_known, log=log)
+    ai_service.mark_injection(doc, content)
+    content["prompt_version"] = ai_service.prompt_version(PART_SYSTEM, ai_service.SCHEMA)
     content["duplicates"] = part["duplicates"]
     content["part"] = {"heading": part["heading"], "index": part["index"]}
     if truncated:

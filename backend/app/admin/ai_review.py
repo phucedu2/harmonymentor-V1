@@ -18,7 +18,7 @@ import re
 from collections import Counter
 from typing import Any, Sequence
 
-from ..ai.tutor.bm25 import tokenize
+from ..ai.tutor.bm25 import strip_accents, tokenize
 
 # Ngưỡng bám nguồn (cosine lời giảng của khối ↔ trang được trích). Chọn theo 3A trên bộ đánh giá: recall bắt khối bịa
 # >= 95% mà ít báo nhầm nhất (ADR-033 mục 4). e5-small nén điểm vào khoảng 0,83–0,96 nên ngưỡng e5 cao.
@@ -43,7 +43,20 @@ FLAG_TEXT = {
     "source_figure": "Trang nguồn có ví dụ/hình, chữ trích có thể thiếu ký âm",
     "mixed_block": "Khối có thể trộn ý trang web đã dạy",
     "truncated": "Chữ gửi AI bị cắt bớt",
+    "few_questions": "Ít câu luyện tập hơn mức tối thiểu",
+    "injection_stripped": "Tài liệu có dòng giống lệnh điều khiển AI đã bị lọc bỏ",
+    "injection_echo": "Bài có chữ giống lệnh điều khiển AI hoặc lộ khóa",
 }
+
+# 7A (zip thầy G-28, 23/11): kiểm cả ĐẦU RA. Cổng tải lên đã lọc dòng giống lệnh, nhưng biến thể lọt qua có thể được AI
+# chép vào bài. Chỉ dùng mẫu hẹp: mẫu "quên/bỏ qua … quy tắc" của Tutor bắt nhầm câu nhạc lý ("đừng quên quy tắc bè").
+_ECHO = re.compile(r"\b(system prompt|system instruction|developer mode|jailbreak|prompt he thong|api key|khoa api|"
+                   r"gemini_api_key|secret key|ignore (all |the )?previous|bo qua (moi |tat ca )?(chi dan|huong dan) (truoc|tren))\b"
+                   r"|<<<|>>>|hm_data|hm_end|<\s*/?\s*system\s*>")
+
+
+def _echo(text: str) -> bool:
+    return bool(_ECHO.search(" ".join(strip_accents(text.lower()).split())))
 
 
 def _id(kind: str, where: str, detail: str) -> str:
@@ -137,6 +150,18 @@ def review_flags(pages: Sequence[str], content: dict[str, Any], page_from: int, 
     out: list[dict[str, Any]] = []
     if content.get("truncated"):
         out.append(flag("truncated", "draft", str(content["truncated"])))
+    if content.get("question_shortfall"):
+        out.append(flag("few_questions", "draft", str(content["question_shortfall"])))
+    if content.get("injection_lines_removed"):
+        n = int(content["injection_lines_removed"])
+        out.append(flag("injection_stripped", "draft", f"Cổng tải lên đã bỏ {n} dòng của tài liệu. Đọc lại bài xem có ý lạ không."))
+    for i, b in enumerate(content.get("blocks", []), start=1):
+        if _echo(block_text(b)):
+            out.append(flag("injection_echo", f"block:{i}", "Khối có chữ giống lệnh điều khiển AI: xóa đoạn đó."))
+    for i, q in enumerate(content.get("questions", []), start=1):
+        parts = [q.get("prompt", ""), q.get("explanation") or "", *q.get("options", [])]
+        if _echo(" ".join(str(p) for p in parts)):
+            out.append(flag("injection_echo", f"question:{i}", "Câu có chữ giống lệnh điều khiển AI: xóa hoặc sửa câu."))
     lang_gap = scorer.backend == "tfidf" and bool(part) and \
         is_vietnamese(" ".join(block_text(b) for b in content.get("blocks", []))) != is_vietnamese(source_all)
     if lang_gap:

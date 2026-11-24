@@ -178,10 +178,12 @@ def test_engine_gan_co_noi_dung_sai_va_xuat_ban_can_xac_nhan(env):
     edited = client.put(f"/api/v1/admin/ai/drafts/{draft['id']}", headers=h, json={
         "title": draft["content"]["title"], "objectives": draft["content"]["objectives"],
         "blocks": [{"title": "Cmaj7", "paragraphs": ["Cmaj7 gồm các nốt C E G B."], "page": 1}],
-        "questions": [{**q, "reviewed": True} for q in draft["content"]["questions"]]})
+        "questions": [{**q, "reviewed": True} for q in draft["content"]["questions"]],
+        # Tài liệu mẫu cố ý có dòng giống lệnh điều khiển AI: cổng tải lên đã bỏ, bản nháp gắn cờ để người duyệt biết (7A).
+        "acknowledged_flags": [f["id"] for f in draft["content"]["flags"] if f["type"] == "injection_stripped"]})
     assert edited.status_code == 200 and edited.json()["engine"]["contradicted"] == []
     ok = client.post(f"/api/v1/admin/ai/drafts/{draft['id']}/publish", headers=h, json={})
-    assert ok.status_code == 200
+    assert ok.status_code == 200, ok.text
 
 
 def approve_all(client, h, draft):

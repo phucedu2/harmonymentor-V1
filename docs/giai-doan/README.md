@@ -63,6 +63,7 @@ Các giai đoạn 0.2 → 2.3 là lộ trình của bản code gốc (zip v0.1.0
 - [`ml-du-doan/`](ml-du-doan/BAO_CAO.md): model tự train dự đoán học sinh làm đúng câu tiếp theo, sau cờ PREDICT_ENABLED, theo quy trình handson-ml3 (19/11/2026, ADR-031).
 - [`nhan-dien-not-micro/`](nhan-dien-not-micro/BAO_CAO.md): trả lời Luyện tập bằng micro, YIN + model MLP tự train chạy trên trình duyệt, Engine đặt tên nốt (19/11/2026, ADR-032).
 - [`ai-soan-bai-dot3/`](ai-soan-bai-dot3/BAO_CAO.md): rà soát và sửa logic Admin AI soạn bài (đề khớp phần kiểm, cờ duyệt, xuất bản ẩn + xem trước, bài AI vào kho AI Tutor, hạn mức Gemini chung), bộ đánh giá 41 ca (23/11/2026, ADR-033).
+- [`ai-soan-bai-dot4/`](ai-soan-bai-dot4/BAO_CAO.md): AI soạn bài áp góp ý zip "ai-ra-soat" của thầy: bắt duyệt câu thiếu lời giải, gọi bù khi thiếu câu, cờ lệnh chèn, finish_reason, mã lời nhắc (23/11/2026, ADR-034).
 - Mỗi giai đoạn mới (ví dụ `gd2-goi-y`) tạo thư mục `docs/giai-doan/<tên giai đoạn>/`, đặt báo cáo triển khai và file kiểm chứng của giai đoạn đó vào đây, rồi thêm một dòng vào bảng trên.
 - Báo cáo PR vẫn ở [`docs/bao-cao/`](../bao-cao/), ảnh và minh chứng chấm điểm ở [`docs/minh-chung/`](../minh-chung/), quyết định ở [`docs/decisions/`](../decisions/).
 - Đặc tả dùng chung cho nhiều giai đoạn (`SKILL_GRAPH.md`, `LESSON_SPECIFICATIONS.md`, `CURRICULUM_SOURCE_MATRIX.md`) và minh chứng mốc chấm (`CP1_*.md`) giữ ở `docs/`.

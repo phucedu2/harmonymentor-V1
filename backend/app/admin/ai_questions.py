@@ -239,6 +239,9 @@ def skill_matches(q: dict[str, Any]) -> bool:
     return q["skill_id"].startswith(SKILL_FAMILY.get(family, ()))
 
 
+EXPLANATION_NOTE = "Câu chưa có lời giải: viết lời giải (vì sao đáp án đúng) rồi mới duyệt."
+
+
 # --- chuẩn hóa từng câu ----------------------------------------------------------------------------
 
 def normalize_question(item: Any, skills: set[str], clamp: Callable[[Any], int], *,
@@ -295,6 +298,9 @@ def normalize_question(item: Any, skills: set[str], clamp: Callable[[Any], int],
             review_notes.append("Câu chưa gắn với khối lý thuyết nào của bài.")
     if "page_claimed" in q:
         review_notes.append(f"AI ghi trang {q['page_claimed']}, nằm ngoài các trang của phần này.")
+    if kind != "open" and not q.get("explanation"):
+        # 8A (zip thầy, 23/11): học sinh làm sai mà không có lời giải thì câu chỉ chấm, không dạy. Câu mở có rubric riêng.
+        review_notes.append(EXPLANATION_NOTE)
     q["review_notes"] = review_notes
     q["needs_review"] = not q["engine_verified"] or bool(review_notes)
     q["reviewed"] = bool(trust_review and q["needs_review"] and item.get("reviewed") is True)
