@@ -6,7 +6,7 @@
     cd backend && AI_ENABLED=1 GEMINI_API_KEY=... python ../scripts/ai/danh_gia_ai_soan_bai.py --live \
         --live-out ../eval/ai_soan_bai/live_gemini.json
 
-Bộ ca do Claude soạn trên 4 trang mẫu tự viết (không chép tài liệu có bản quyền), status "draft" đến khi Đạt duyệt.
+Bộ ca do Claude soạn trên 4 trang mẫu tự viết (không chép tài liệu có bản quyền); Đạt đã duyệt nhãn 23/11/2026.
 Không phụ thuộc phiên bản code: chạy được cả trên code trước đợt 3 (thiếu ai_review thì coi như "không có cờ") để so trước/sau.
 
 Đo:
@@ -177,7 +177,8 @@ def live(cases: list[dict], out_path: Path) -> None:
     for item in raw.get("questions", []):
         q, why = aq.normalize_question(item, SKILLS, lambda p: p if isinstance(p, int) and 1 <= p <= len(pages) else 1,
                                        blocks=len(blocks))
-        (questions.append(q) if q else dropped.append(why))
+        # Lưu cả câu thô bị loại để người duyệt biết lỗi do AI hay do phần kiểm (lần chạy 23/11 thiếu thông tin này).
+        (questions.append(q) if q else dropped.append({"reason": why, "raw": item}))
     content = {"blocks": blocks, "questions": questions}
     flags = rv.review_flags(pages, content, 1, len(pages))
     out_path.write_text(json.dumps({"model": result.model, "content": content, "dropped": dropped, "flags": flags,

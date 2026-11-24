@@ -44,7 +44,7 @@ Không nghi vấn nào bị bác bỏ.
 ## 3. Đánh giá trước/sau
 
 Bộ `eval/ai_soan_bai/cases.jsonl`: 41 ca Claude soạn trên 4 trang mẫu tự viết (quãng, hợp âm ba, nhịp, âm giai),
-không chép tài liệu có bản quyền: 13 khối, 16 câu hỏi, 12 cặp trùng. Tất cả `status: draft`, **chờ Đạt duyệt nhãn**.
+không chép tài liệu có bản quyền: 13 khối, 16 câu hỏi, 12 cặp trùng. Đạt đã duyệt nhãn ngày 23/11/2026 (`status: reviewed`).
 
 ```bash
 cd backend && python ../scripts/ai/danh_gia_ai_soan_bai.py --out ../eval/ai_soan_bai/ket_qua_sau_tfidf.json
@@ -72,7 +72,20 @@ Một câu đúng tình cờ bị loại (Q09: đề D7 nhưng phần kiểm ghi
 cd backend && AI_ENABLED=1 python ../scripts/ai/danh_gia_ai_soan_bai.py --live --live-out ../eval/ai_soan_bai/live_gemini.json
 ```
 
-Lệnh ghi khối, câu, câu bị loại và cờ ra file để Đạt gắn nhãn. Chưa chạy (khóa chỉ ở máy Phúc).
+Đã chạy 23/11/2026 trên máy Phúc (Docker, commit 5ad7551, 1 lượt Gemini, `gemini-3.5-flash-lite`). Kết quả:
+`eval/ai_soan_bai/live_gemini.json`. Bản không gọi mạng trên cùng máy cho đúng số như CI (0 lọt, bịa P/R 1,0/1,0, trùng P/R 1,0/0,67).
+
+| Mục | Kết quả |
+|---|---|
+| Khối lý thuyết | 4/4 bám đúng trang, nhạc lý đúng, không chép nguyên văn, không nhắc hình; 2 cờ `source_figure` (trang 1, 2 có "Ví dụ 1.2", "Bảng 2.1") |
+| Câu giữ | 6 (3 Engine kiểm, 3 khái niệm bắt duyệt); cả 6 đúng nhạc lý, **0 lọt đáp án sai** |
+| Câu loại | 2: hợp âm giảm ("Engine thấy 0 phương án đúng"), chọn nhiều thiếu phương án |
+
+Vấn đề thấy khi chạy thật, chưa sửa (chờ nhóm quyết):
+- 3/6 câu không có lời giải nhưng vẫn qua (2 câu Engine kiểm được miễn duyệt). Có thể bắt duyệt câu thiếu lời giải, nhưng sẽ phải
+  sửa nhiều test và Admin phải viết lời giải cho mọi câu.
+- AI chỉ đưa 8 câu dù đề yêu cầu 10–20; sau lọc còn 6, dưới mức 8A.
+- Lần chạy không lưu câu thô bị loại. Script giờ lưu `raw` để lần sau biết câu hợp âm giảm bị loại vì AI sai đáp án hay vì phần kiểm.
 
 ## 4. Sơ đồ node trước/sau
 
@@ -115,7 +128,7 @@ CI: `--min-passed` SQLite nâng 1548 → 1571.
 
 ## 7. Rủi ro còn lại
 
-- Bộ đánh giá nhỏ, do Claude soạn và tự gắn nhãn; ngưỡng là tạm. Cần Đạt duyệt nhãn và một lần chạy Gemini thật.
+- Bộ đánh giá nhỏ (Đạt đã duyệt nhãn); mới có một lần chạy Gemini thật, ngưỡng vẫn là tạm.
 - e5-small nén điểm (0,83–0,96): ngưỡng e5 sát nhau, dễ báo nhầm trên sách thật nhiều trang giống nhau.
 - Câu "khái niệm" vẫn dựa vào người duyệt; Engine chỉ chặn được phần nốt/quãng/hợp âm/giọng.
 - Không đọc được ký âm trên khuông (V8), chỉ cờ.
