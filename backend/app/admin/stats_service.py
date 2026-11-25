@@ -30,7 +30,8 @@ def overview(db: Session, days: int = 30, now: datetime | None = None) -> dict[s
     since = now - timedelta(days=days)
     week = now - timedelta(days=7)
 
-    learners = db.scalars(select(User).where(User.role == "learner", User.is_synthetic.is_(False))).all()
+    # demo-user cũ (không email, không đăng nhập được) không phải người học thật; khớp với danh sách ở tab Người dùng (AUD-03).
+    learners = db.scalars(select(User).where(User.role == "learner", User.is_synthetic.is_(False), User.email.is_not(None))).all()
     learner_ids = {u.id for u in learners}
 
     attempts = [a for a in db.scalars(select(Attempt).where(Attempt.is_test.is_(False), Attempt.created_at >= since)).all()
