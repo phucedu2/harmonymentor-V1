@@ -9,6 +9,19 @@ def _chords(q):
     return {f["args"]["symbol"]: f["result"] for f in engine_answer(q).facts if f["tool"] == "get_chord_tones"}
 
 
+@pytest.mark.parametrize("q", ["G7 trong C là bậc mấy?", "Fmaj7 trong C là bậc mấy?"])
+def test_missing_major_minor_never_defaults_to_major(q):
+    result = engine_answer(q)
+    assert not any(f["tool"] == "get_roman_numeral" for f in result.facts)
+    assert result.context_note and "trưởng hay thứ" in result.context_note
+
+
+def test_explicit_matching_ui_mode_can_resolve_missing_mode():
+    result = engine_answer("G7 trong C là bậc mấy?", context={"selected_key": "C", "mode": "major"})
+    assert result.context_used
+    assert any(f["tool"] == "get_roman_numeral" and f["result"] == "V7" for f in result.facts)
+
+
 @pytest.mark.parametrize("q, sym, notes", [
     ("hợp âm B diminished bấm như thế nào", "Bdim", "B D F"),
     ("hop am F# giam gom not nao", "F#dim", "F# A C"),

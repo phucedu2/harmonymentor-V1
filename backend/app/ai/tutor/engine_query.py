@@ -14,22 +14,16 @@ Hàm chỉ NHẬN DIỆN rồi gọi Engine; không tự tính gì. Ký hiệu E
 from __future__ import annotations
 
 import re
-import unicodedata
 from dataclasses import dataclass, field
 from typing import Any
 
 from .guardrail import run_tool
-from .notes import NOTE, norm_accidentals, solfege_to_letters
-
-_SOLF1 = {"đô": "C", "do": "C", "rê": "D", "re": "D", "mi": "E", "fa": "F", "pha": "F", "sol": "G", "son": "G",
-          "la": "A", "si": "B"}
-_SOLF_ONE = re.compile(r"\b(Đô|Do|Rê|Re|Mi|Fa|Pha|Sol|Son|La|Si)(\s+(?:thăng|giáng))?(?=\s+(?:trưởng|thứ))",
-                       re.IGNORECASE)
+from .notes import NOTE, ROMAN_MODE, roman_mode, norm_accidentals, normalize_key_names
 
 # Hậu tố có thể gặp trong câu hỏi, kể cả loại Engine chưa hỗ trợ (để báo "không biết" chứ không bỏ sót).
 _SUFFIX = (r"(?:maj9|maj7|M7|Δ7|mM7|m7b5|m7\(b5\)|ø7|ø|dim7|°7|o7|dim|°|aug|\+|m9|m7|m6|min7|min|mi7|7sus4|"
            r"7b9|7#9|7b5|sus2|sus4|add9|add2|add11|13|11|9|6|7|m)")
-_SYM = re.compile(rf"(?<![A-Za-z0-9#])(?P<sym>[A-G](?:#|b|♯|♭)?{_SUFFIX})(?![A-Za-z0-9#])")
+_SYM = re.compile(rf"(?<![A-Za-z0-9#])(?P<sym>{NOTE}{_SUFFIX})(?![A-Za-z0-9#])")
 # Gõ thường cả tên nốt ("cmaj7 la gi"): chỉ nhận khi hậu tố dài, tránh hiểu "a", "em", "do" thành hợp âm.
 _SYM_LOWER = re.compile(r"(?<![A-Za-z0-9#])(?P<root>[a-g])(?P<acc>#|b)?(?P<suf>maj7|m7b5|dim7|m7|dim|aug|sus2|sus4)"
                         r"(?![A-Za-z0-9#])")
@@ -66,10 +60,10 @@ _ROMAN_TOKEN = r"(?:vii|VII|iii|III|iv|IV|vi|VI|ii|II|v|V|i|I)(?:maj7|M7|ø7|°7
 # "V7 trong G trưởng gồm những nốt nào?", "bậc ii của C trưởng là hợp âm gì"
 _ROMAN_TO_CHORD = re.compile(
     rf"(?<![A-Za-z])(?P<rn>{_ROMAN_TOKEN})(?![A-Za-z0-9])\s+(?i:trong|của|cua|of|in)\s+(?i:giọng\s+|giong\s+)?"
-    rf"(?P<key>{NOTE})(?![A-Za-z0-9#])\s*(?i:trưởng|truong|major)")
+    rf"(?P<key>{NOTE})(?![A-Za-z0-9#])\s*(?P<mode>(?i:{ROMAN_MODE}))(?![\wÀ-ỹ])")
 _ROMAN_Q = re.compile(
-    rf"(?<![A-Za-z0-9#])(?P<chord>[A-G](?:#|b)?{_SUFFIX}?)(?![A-Za-z0-9#])\s+(?:trong|của|o|ở)\s+(?:giọng\s+|giong\s+)?"
-    rf"(?P<key>{NOTE})(?![A-Za-z0-9#])\s*(?:trưởng|truong|major)?[^.?!]{{0,30}}(?:bậc|bac|số la mã|so la ma|roman)",
+    rf"(?<![A-Za-z0-9#])(?P<chord>{NOTE}{_SUFFIX}?)(?![A-Za-z0-9#])\s+(?:trong|của|o|ở)\s+(?:giọng\s+|giong\s+)?"
+    rf"(?P<key>{NOTE})(?![A-Za-z0-9#])\s*(?P<mode>{ROMAN_MODE})?(?![\wÀ-ỹ])[^.?!]{{0,30}}(?:bậc|bac|số la mã|so la ma|roman)",
     re.IGNORECASE)
 
 
@@ -78,30 +72,25 @@ class EngineAnswer:
     facts: list[dict[str, Any]] = field(default_factory=list)     # {tool, args, result, sourced}
     unknown: list[str] = field(default_factory=list)              # ký hiệu/khái niệm Engine không tính được
 
+    context_used: bool = False
+    context_note: str | None = None
+
     @property
     def any(self) -> bool:
         return bool(self.facts)
 
 
 def _vn_names(text: str) -> str:
-    """'Rê trưởng' → 'D trưởng', 'Si giáng thứ' → 'Bb thứ' (một tên nốt đứng trước trưởng/thứ)."""
+    return normalize_key_names(text)
 
-    def one(m: re.Match) -> str:
-        base = _SOLF1[unicodedata.normalize("NFC", m[1]).lower()]
-        acc = m[2] or ""
-        return base + ("#" if "thăng" in acc else "b" if "giáng" in acc else "")
-
-    return _SOLF_ONE.sub(one, solfege_to_letters(text))
-
-
-def _chord_for_numeral(key: str, numeral: str) -> str | None:
+def _chord_for_numeral(key: str, numeral: str, mode: str = "major") -> str | None:
     """Hợp âm thuận giọng của một số La Mã, lấy từ Music Engine (diatonic_chords), không tự tính."""
     from ...music_engine.roman import diatonic_chords
 
     want = numeral.replace("maj7", "M7").replace("ø", "ø7").replace("ø77", "ø7")
     for sevenths in (False, True):
         try:
-            for rn in diatonic_chords(key, sevenths=sevenths):
+            for rn in diatonic_chords(key, sevenths=sevenths, mode=mode):
                 if rn.numeral == want or rn.numeral.replace("M7", "maj7") == numeral:
                     return str(rn.chord)
         except Exception:
@@ -117,25 +106,69 @@ def _add(out: EngineAnswer, seen: set, tool: str, args: dict[str, str]) -> None:
     value, raw = run_tool(tool, args)
     if value is None:
         code = (raw.get("error") or {}).get("code")
-        if code in {"UNKNOWN_QUALITY", "INVALID_SYMBOL", "UNKNOWN_SCALE", "NOT_DIATONIC", "UNSUPPORTED"} or tool == "get_chord_tones":
-            out.unknown.append(args.get("symbol") or args.get("chord") or " ".join(args.values()))
+        if code in {"UNKNOWN_QUALITY", "INVALID_SYMBOL", "UNKNOWN_SCALE", "NOT_DIATONIC", "NOT_SUPPORTED_IN_MVP", "UNSUPPORTED"} or tool == "get_chord_tones":
+            if tool == "get_roman_numeral" and args.get("mode") == "unspecified_minor":
+                out.unknown.append("Cần làm rõ giọng thứ tự nhiên, hòa âm hay giai điệu trước khi phân tích số La Mã")
+            elif tool == "get_roman_numeral" and args.get("mode") == "natural_minor" and code == "NOT_DIATONIC":
+                out.unknown.append(f"{args['chord']} không thuộc tập hợp âm thuận giọng {args['key']} thứ tự nhiên; không đồng nghĩa sai nhạc lý")
+            else:
+                out.unknown.append(args.get("symbol") or args.get("chord") or " ".join(args.values()))
         return
     sourced = bool(raw.get("verified")) if tool == "get_chord_tones" else True
     out.facts.append({"tool": tool, "args": args, "result": value, "sourced": sourced})
 
 
-def engine_answer(question: str, limit: int = 4) -> EngineAnswer:
+# "Em đếm / Em muốn…" là cách người học tự xưng, không phải hợp âm Mi thứ.
+# Xét từng lần xuất hiện để vẫn nhận hợp âm trong "Em hỏi về hợp âm Em".
+_EM_PRONOUN_TAIL = re.compile(r"\s+(?:đếm|dem|hỏi|hoi|muốn|muon|đang|dang|chưa|chua|cần|can|nên|nen)\b", re.I)
+_EXPLICIT_CHORD_PREFIX = re.compile(r"\b(?:hợp âm|hop am|chord)\s+$", re.I)
+
+
+def _symbol_matches(text: str):
+    for match in _SYM.finditer(text):
+        if (match["sym"] == "Em" and _EM_PRONOUN_TAIL.match(text, match.end())
+                and not _EXPLICIT_CHORD_PREFIX.search(text, 0, match.start())):
+            continue
+        yield match
+
+
+def engine_answer(question: str, limit: int = 4, *, context: dict | None = None) -> EngineAnswer:
+    from .context import clean_context
+    context = clean_context(context)
     text = _vn_names(question)
     out, seen = EngineAnswer(), set()
+    def question_mode(match):
+        if match["mode"] is None:
+            if (norm_accidentals(match["key"]) == context.get("selected_key")
+                    and context.get("mode") in ("major", "natural_minor")):
+                out.context_used = True
+                return context["mode"]
+            return None
+        mode = roman_mode(match["mode"])
+        if mode == "unspecified_minor" and norm_accidentals(match["key"]) == context.get("selected_key"):
+            if context.get("mode") == "natural_minor":
+                out.context_used = True
+                return "natural_minor"
+        return mode
 
     for m in _ROMAN_Q.finditer(text):
-        _add(out, seen, "get_roman_numeral", {"key": norm_accidentals(m["key"]), "chord": norm_accidentals(m["chord"])})
-    for m in _ROMAN_TO_CHORD.finditer(text):
-        chord = _chord_for_numeral(norm_accidentals(m["key"]), m["rn"])
-        if chord is None:
-            out.unknown.append(f"{m['rn']} trong {m['key']}")
+        mode = question_mode(m)
+        if mode is None:
+            out.context_note = "Bạn cho mình biết giọng trưởng hay thứ; nếu là thứ, bạn muốn xét dạng thứ nào nhé."
             continue
-        _add(out, seen, "get_roman_numeral", {"key": norm_accidentals(m["key"]), "chord": chord})
+        args = {"key": norm_accidentals(m["key"]), "chord": norm_accidentals(m["chord"])}
+        if mode != "major":
+            args["mode"] = mode
+        _add(out, seen, "get_roman_numeral", args)
+    for m in _ROMAN_TO_CHORD.finditer(text):
+        mode = question_mode(m)
+        chord = _chord_for_numeral(norm_accidentals(m["key"]), m["rn"], mode=mode)
+        if chord is None:
+            reason = ("cần làm rõ loại giọng thứ" if mode == "unspecified_minor"
+                      else "ngoài phạm vi hợp âm thuận giọng đang hỗ trợ")
+            out.unknown.append(f"{m['rn']} trong {m['key']} {m['mode']}: {reason}")
+            continue
+        _add(out, seen, "get_roman_numeral", {"key": norm_accidentals(m["key"]), "chord": chord, **({"mode": mode} if mode != "major" else {})})
         _add(out, seen, "get_chord_tones", {"symbol": chord})
     roman_chords = {f["args"]["chord"] for f in out.facts if f["tool"] == "get_roman_numeral"}
     roman_keys = {f["args"]["key"] for f in out.facts if f["tool"] == "get_roman_numeral"}
@@ -154,7 +187,7 @@ def engine_answer(question: str, limit: int = 4) -> EngineAnswer:
         for m in _INTERVAL.finditer(text):
             _add(out, seen, "identify_interval", {"lower": norm_accidentals(m["lo"]), "upper": norm_accidentals(m["hi"])})
 
-    for m in _SYM.finditer(text):
+    for m in _symbol_matches(text):
         sym = norm_accidentals(m["sym"])
         if sym not in roman_chords:
             _add(out, seen, "get_chord_tones", {"symbol": sym})
@@ -168,6 +201,10 @@ def engine_answer(question: str, limit: int = 4) -> EngineAnswer:
                                                f["args"].get("symbol") != sym for f in out.facts):
             _add(out, seen, "get_chord_tones", {"symbol": sym})
 
+    if context:
+        before = len(out.facts)
+        _add_context_facts(text, out, seen, context)
+        out.context_used = out.context_used or len(out.facts) > before
     out.facts = out.facts[:limit]
     return out
 
@@ -184,6 +221,55 @@ def fact_text(f: dict[str, Any]) -> str:
                  "melodic_minor": "thứ giai điệu (đi lên)", "dorian": "Dorian"}
         return f"Âm giai {a['tonic']} {names.get(a['scale_type'], a['scale_type'])}: {' '.join(r.split())}."
     if f["tool"] == "get_roman_numeral":
-        return f"Trong giọng {a['key']} trưởng, {a['chord']} là {r}."
+        label = "thứ tự nhiên" if a.get("mode") == "natural_minor" else "trưởng"
+        return f"Trong giọng {a['key']} {label}, {a['chord']} là {r.replace('M7', 'maj7')}."
     return f"{f['tool']}: {r}."
 
+
+
+def _add_context_facts(text, out, seen, context):
+    """Resolve deictic questions without modifying the original user message."""
+    from .context import clean_context
+    ctx = clean_context(context)
+    if not ctx:
+        return
+    roman_request = re.search(r"bậc|bac|la mã|la ma|roman", text, re.I)
+    referent = re.search(r"này|nay|đang chọn|dang chon|đang xem|dang xem|hiện tại|hien tai|this|selected", text, re.I)
+    key, mode = ctx.get("selected_key"), ctx.get("mode")
+    # Explicit key/mode in the question always overrides UI. Bare/unsupported
+    # explicit keys must not fall back to a different selected key.
+    explicit = re.search(rf"(?:giọng|giong|trong|ở|o|của|cua|in|of|gam|scale|âm giai|am giai)\s+(?:giọng\s+|giong\s+)?(?P<key>{NOTE})(?![A-Za-z0-9#])\s*(?P<mode>{ROMAN_MODE})?", text, re.I)
+    if explicit:
+        key = norm_accidentals(explicit["key"])
+        mode = roman_mode(explicit["mode"]) if explicit["mode"] else None
+        if mode == "unspecified_minor" and key == ctx.get("selected_key") and ctx.get("mode") == "natural_minor":
+            mode = "natural_minor"
+        elif mode not in ("major", "natural_minor"):
+            return
+    chords = [f["args"].get("symbol") for f in out.facts if f["tool"] == "get_chord_tones"]
+    chord = chords[0] if len(chords) == 1 else None
+    # Unknown explicitly named chords must not become the selected chord.
+    if (not chord and referent and not out.unknown
+            and next(_symbol_matches(text), None) is None and not _CHORD_WORD.search(text)):
+        chord = ctx.get("selected_chord")
+    if roman_request and referent and (not key or not mode or not chord):
+        out.context_note = ("Bạn chọn giọng và loại giọng để mình xác định bậc của hợp âm nhé. Nốt gốc của hợp âm không tự xác định giọng."
+                            if not key or not mode else "Bạn chọn hợp âm ở phần khám phá hoặc ghi rõ tên hợp âm nhé.")
+        return
+    if referent and re.search(r"hợp âm|hop am|chord", text, re.I) and not chord:
+        out.context_note = "Bạn chọn loại hợp âm ở phần khám phá hoặc ghi rõ tên hợp âm nhé; chỉ nốt gốc chưa đủ để xác định hợp âm."
+        return
+    if roman_request and key and mode and chord:
+        if not any(f["tool"] == "get_roman_numeral" for f in out.facts):
+            _add(out, seen, "get_roman_numeral", {"key": key, "mode": mode, "chord": chord})
+    elif referent and re.search(r"hợp âm|hop am|chord", text, re.I) and chord and not chords:
+        _add(out, seen, "get_chord_tones", {"symbol": chord})
+    # Roman -> chord for a selected explicit key, e.g. 'bậc iiø7 gồm nốt nào?'.
+    rn = re.search(rf"(?<![A-Za-z])(?P<rn>{_ROMAN_TOKEN})(?![A-Za-z0-9])", text)
+    if rn and key and mode and not any(f["tool"] == "get_roman_numeral" for f in out.facts) and not out.unknown:
+        symbol = _chord_for_numeral(key, rn["rn"], mode)
+        if symbol:
+            _add(out, seen, "get_roman_numeral", {"key": key, "mode": mode, "chord": symbol})
+            _add(out, seen, "get_chord_tones", {"symbol": symbol})
+    if referent and re.search(r"âm giai|am giai|scale", text, re.I) and key and mode and not any(f["tool"] == "get_scale" for f in out.facts):
+        _add(out, seen, "get_scale", {"tonic": key, "scale_type": mode})

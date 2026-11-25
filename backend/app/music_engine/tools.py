@@ -47,10 +47,10 @@ def identify_interval(lower: str, upper: str) -> dict:
 
 
 @_safe
-def get_roman_numeral(key: str, chord: str) -> dict:
-    """Số La Mã của hợp âm thuận giọng trong giọng trưởng, ví dụ ('G', 'D7') → V7. Hợp âm ngoài giọng → lỗi."""
-    rn = roman_numeral(key, chord)
-    return {"key": rn.key, "chord": rn.chord.symbol, "numeral": rn.numeral, "degree": rn.degree}
+def get_roman_numeral(key: str, chord: str, mode: str = "major") -> dict:
+    """Số La Mã của hợp âm thuận giọng trong giọng trưởng hoặc thứ tự nhiên (mode=natural_minor), ví dụ ('G', 'D7') → V7. Hợp âm ngoài giọng → lỗi."""
+    rn = roman_numeral(key, chord, mode=mode)
+    return {"key": rn.key, "chord": rn.chord.symbol, "numeral": rn.numeral, "degree": rn.degree, "mode": rn.mode}
 
 
 TOOL_DECLARATIONS = [
@@ -68,7 +68,8 @@ TOOL_DECLARATIONS = [
 ]
 TOOL_DECLARATIONS.append(
     {"name": "get_roman_numeral", "description": get_roman_numeral.__doc__,
-     "parameters": {"type": "object", "properties": {"key": {"type": "string"}, "chord": {"type": "string"}},
+     "parameters": {"type": "object", "properties": {"key": {"type": "string"}, "chord": {"type": "string"},
+         "mode": {"type": "string", "enum": ["major", "natural_minor"]}},
                     "required": ["key", "chord"]}})
 
 TOOLS = {"get_chord_tones": get_chord_tones, "get_scale": get_scale, "identify_interval": identify_interval,

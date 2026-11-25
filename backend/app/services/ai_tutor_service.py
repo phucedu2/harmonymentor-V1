@@ -16,6 +16,7 @@ from __future__ import annotations
 import re
 import time
 import uuid
+import unicodedata
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import Any, Sequence
@@ -28,6 +29,8 @@ from ..ai.mastery import vn_day
 from ..ai.tutor import faq
 from ..ai.tutor import fallback as fb
 from ..ai.tutor import prompt as pr
+from ..ai.tutor import supplemental
+from ..ai.tutor.context import clean_context, prompt_context
 from ..ai.tutor.guardrail import GuardResult, check_answer, engine_facts_for, run_tool, scan_reply
 from ..ai.tutor.injection import looks_like_injection
 from ..ai.tutor.intent import classify
@@ -46,7 +49,7 @@ from ..db.models import (Attempt, AttemptError, ChatFeedback, ChatMessage, ChatS
 
 HISTORY_LIMIT = 6
 SKILL_NAMES = {s: name for s, name, _ in SKILLS}
-VERIFIED_LABEL = "Đã kiểm bằng Music Engine"
+VERIFIED_LABEL = "Đã kiểm tra dữ kiện nhạc lý hiển thị bằng Music Engine"
 
 
 class ChatNotFound(LookupError):
@@ -86,6 +89,7 @@ class Draft:
     source_label: str | None = None       # nhãn nhỏ dưới câu trả lời: "Từ bài học", "Ngoài bài học, theo Music Engine"...
     suggested_lesson: str | None = None   # bài để mở khi "không biết"
     help_page: dict[str, str] | None = None
+    supplemental_source: dict[str, str] | None = None
 
 
 # --- Phiên và lịch sử --------------------------------------------------------------------------
@@ -163,28 +167,28 @@ def _fact_claims(facts: Sequence[dict[str, Any]]) -> list[dict[str, Any]]:
 
 
 def _fact_lines(facts: Sequence[dict[str, Any]]) -> str:
-    return " ".join(f"{f['args']['symbol']} = {f['result']}." for f in facts if f["tool"] == "get_chord_tones")
+    return " ".join(fact_text(f) for f in facts)
 
 
 def offline_answer(question_hits: Sequence[Hit], facts: Sequence[dict[str, Any]], titles: dict[str, str],
                    reason: str, lead: str | None = None) -> Draft:
     """Câu viết sẵn: dữ kiện Music Engine + trích đoạn bài học gần nhất. Không suy diễn gì thêm."""
     # "Tạm nghỉ" chỉ khi AI tắt; còn lại (quá tải, hết giờ, câu bị chặn) thì nói thật là chưa trả lời được.
-    parts = [lead or (fb.UNAVAILABLE if reason == "ai_disabled" else fb.BUSY)]
+    parts = [lead or (("AI đang tắt; mình trả lời bằng dữ kiện Music Engine." if reason == "ai_disabled" else "AI chưa trả lời được; mình dùng dữ kiện Music Engine.") if facts else (fb.UNAVAILABLE if reason == "ai_disabled" else fb.BUSY))]
     if facts:
         parts.append(f"Theo Music Engine: {_fact_lines(facts)}")
     cites = []
-    if question_hits:
+    if question_hits and not facts:
         h = question_hits[0]
         excerpt = h.chunk.text if len(h.chunk.text) <= 420 else h.chunk.text[:420].rsplit(" ", 1)[0] + "…"
         parts.append(f"Trong bài “{titles.get(h.chunk.lesson_id, h.chunk.lesson_id)}”, phần “{h.chunk.title}”: {excerpt}")
         cites = [_citation(h, titles)]
     text = " ".join(parts)
-    # Trích đoạn bài học cũng được quét: nhãn "đã kiểm" chỉ hiện khi mọi khẳng định trong câu đều khớp Engine.
-    fact_keys = {(f["tool"], f["args"].get("symbol"), f["result"]) for f in facts}
-    scanned = [c.as_dict() for c in scan_reply(text) if (c.tool, c.args.get("symbol"), c.claimed) not in fact_keys]
-    return Draft(text, "concept", cites, _fact_claims(facts) + scanned, "fallback", "ai_off", 0,
+    # Only facts actually expressed in the reply can earn a verification badge.
+    scanned = [c.as_dict() for c in scan_reply(text)]
+    return Draft(text, "concept", cites, scanned, "fallback", "ai_off", 0,
                  [f"Mở bài {cites[0]['lesson_id']}"] if cites else [], fallback_reason=reason)
+
 
 
 def _check(ans: TutorAnswer, allowed: dict[str, Hit]) -> tuple[GuardResult, list[str], bool]:
@@ -192,6 +196,51 @@ def _check(ans: TutorAnswer, allowed: dict[str, Hit]) -> tuple[GuardResult, list
     bad_cites = [c.block_id for c in ans.citations if c.block_id not in allowed]
     leaked_prompt = pr.CANARY in ans.reply
     return guard, bad_cites, leaked_prompt
+
+
+def _fold_text(text: str) -> str:
+    return "".join(c for c in unicodedata.normalize("NFD", text or "") if unicodedata.category(c) != "Mn").lower()
+
+
+def _required_engine_fact_ok(question: str, facts: Sequence[dict[str, Any]]) -> bool:
+    from ..ai.tutor.engine_query import engine_answer
+
+    expected = [f for f in engine_answer(question).facts if f.get("tool") == "get_roman_numeral"]
+    # Fail closed if the question cannot be resolved or the result is for another chord/key/mode.
+    return bool(expected) and any(
+        supplied.get("tool") == "get_roman_numeral"
+        and supplied.get("args") == wanted.get("args")
+        and supplied.get("result") == wanted.get("result")
+        for wanted in expected for supplied in facts
+    )
+
+
+def _chat_behavior_issue(answer: TutorAnswer, question: str, *, has_lesson_hits: bool, has_engine_facts: bool,
+                         engine_facts: Sequence[dict[str, Any]] | None = None) -> str | None:
+    """Fail closed for semantic violations that schema/engine checks cannot detect."""
+    q, reply = _fold_text(question), _fold_text(answer.reply)
+    facts = list(engine_facts or [])
+    if any(t in q for t in ("dau dau", "trieu chung", "chan doan benh", "chan doan giup",
+                            "dieu tri benh", "bao hiem", "tai chinh")) and answer.intent != "out_of_scope":
+        return "Câu hỏi ngoài phạm vi phải có intent out_of_scope."
+    from ..ai.tutor.semantic_checks import asks_lesson, safe_lesson_abstention, conflicting_degree_statements
+    if asks_lesson(question) and not answer.citations and not safe_lesson_abstention(answer.reply):
+        return "Không có nguồn bài học: chỉ nói chưa có trích đoạn để xác minh và đề nghị người học cung cấp."
+    # A related Engine result is not enough: degree questions need a Roman-numeral result.
+    if any(t in q for t in ("bac may", "bac nao", "so la ma", "roman")) or ("thu may" in q and "hop am" in q):
+        if not has_engine_facts or not _required_engine_fact_ok(question, facts):
+            return "Không thể xác minh bậc hợp âm: thiếu dữ kiện số La Mã phù hợp từ Music Engine."
+        from ..ai.tutor.engine_query import engine_answer
+        expected = [str(f["result"]) for f in engine_answer(question).facts
+                    if f.get("tool") == "get_roman_numeral"]
+        # Conservatively require the exact Engine result in the answer. Alternatives such as
+        # Arabic numerals or incomplete chord qualities fall back rather than being guessed.
+        if not any(re.search(r"(?<![A-Za-z0-9])" + re.escape(value) + r"(?![A-Za-z0-9])", answer.reply)
+                   for value in expected):
+            return "Câu trả lời phải nêu chính xác số La Mã do Music Engine cung cấp."
+        if any(conflicting_degree_statements(answer.reply, value) for value in expected):
+            return "Câu trả lời chứa bậc hợp âm mâu thuẫn với Music Engine."
+    return None
 
 
 def _llm_round(provider: LLMProvider, build, allowed: dict[str, Hit], titles: dict[str, str],
@@ -209,7 +258,11 @@ def _llm_round(provider: LLMProvider, build, allowed: dict[str, Hit], titles: di
             correction = pr.correction_note([], [], True)
             continue
         guard, bad_cites, leaked = _check(ans, allowed)
-        extra = extra_check(ans) if extra_check else None
+        # Semantic checks must see only citations that will survive the final filter.
+        # Otherwise a fabricated citation can satisfy grounding on the second try
+        # and then be silently removed while its unsupported answer is retained.
+        checked_ans = ans.model_copy(update={"citations": [c for c in ans.citations if c.block_id in allowed]})
+        extra = extra_check(checked_ans) if extra_check else None
         if leaked:
             reason = "prompt_leak"
             return None, guard, results, reason  # không cho cơ hội thứ hai khi đã lộ lệnh hệ thống
@@ -293,8 +346,7 @@ def _faq_answer(question: str, titles: dict[str, str], reason: str) -> Draft | N
 
 
 def _b_without_ai(dec, titles: dict[str, str], reason: str, question: str = "") -> Draft:
-    """Luồng B khi không gọi được AI (ADR-020, trả lời 4A): có dữ kiện Engine thì trả dữ kiện, không thì nói thật
-    là chưa trả lời được lúc này kèm bài gần nhất. Không nói "không biết" vì thật ra là AI đang lỗi."""
+    """Dùng dữ kiện Engine, FAQ hoặc bài đã biết; không gợi ý bài chỉ khớp từ khóa."""
     if dec.kind == "engine":
         d = _engine_only_answer(dec, titles)
         d.fallback_reason = reason
@@ -302,15 +354,21 @@ def _b_without_ai(dec, titles: dict[str, str], reason: str, question: str = "") 
     hit = _faq_answer(question, titles, reason)
     if hit is not None:
         return hit
-    text = (fb.B_OFF if reason == "ai_disabled" else fb.B_BUSY) + _pointer(dec, titles)
-    actions = [f"Mở bài {dec.nearest_lesson}"] if dec.nearest_lesson else []
-    return Draft(text, "concept", [], [], "fallback", "ai_off", 0, actions, flow="B", source_label=fb.LABEL_UNKNOWN,
-                 suggested_lesson=dec.nearest_lesson, fallback_reason=reason)
+    lesson = dec.later_lesson
+    text = fb.B_OFF if reason == "ai_disabled" else fb.B_BUSY
+    if lesson:
+        text += fb.later_lesson_line(lesson, titles)
+    else:
+        text = fb.B_NO_SOURCE + " " + text
+    actions = [f"Mở bài {lesson}"] if lesson else []
+    return Draft(text, "concept", [], [], "fallback", "ai_off", 0, actions, flow="B",
+                 source_label=fb.LABEL_LATER if lesson else fb.LABEL_NO_SOURCE,
+                 suggested_lesson=lesson, fallback_reason=reason)
 
 
 def _general_answer(db: Session, user: User, question: str, turns: Sequence[tuple[str, str]], dec,
                     titles: dict[str, str], facts: Sequence[dict[str, Any]], provider: LLMProvider | None,
-                    now: datetime) -> Draft:
+                    now: datetime, context: dict | None = None) -> Draft:
     """Luồng B (ADR-020): câu âm nhạc mà kho bài chưa dạy. Gemini trả lời bằng kiến thức chung, kèm nhãn rõ "chưa có
     trong bài học"; mọi nốt/hợp âm/âm giai/quãng trong câu được Music Engine quét lại. Sai thì soạn lại 1 lần,
     vẫn sai thì bỏ câu AI và trả dữ kiện Engine (hoặc "chưa trả lời được")."""
@@ -323,10 +381,14 @@ def _general_answer(db: Session, user: User, question: str, turns: Sequence[tupl
         raise QuotaExceeded(used, settings.ai_daily_quota)
 
     def build(correction: str | None) -> str:
-        return pr.general_prompt(question, turns, facts, correction)
+        return pr.general_prompt(question, turns, facts, correction) + prompt_context(context)
+
+    def general_check(ans: TutorAnswer) -> str | None:
+        return _chat_behavior_issue(ans, question, has_lesson_hits=False, has_engine_facts=bool(facts),
+                                    engine_facts=facts)
 
     try:
-        ans, guard, results, reason = _llm_round(provider, build, {}, titles, system=pr.SYSTEM_GENERAL)
+        ans, guard, results, reason = _llm_round(provider, build, {}, titles, general_check, system=pr.SYSTEM_GENERAL)
     except LLMUnavailable as exc:
         d = _b_without_ai(dec, titles, exc.reason, question)
         d.llm_calls = 1
@@ -404,7 +466,8 @@ def _study_advice_answer(db: Session, user: User, embedder: Embedder | None, now
 
 
 def answer_question(db: Session, user: User, question: str, turns: Sequence[tuple[str, str]],
-                    embedder: Embedder | None, provider: LLMProvider | None, now: datetime) -> tuple[Draft, dict]:
+                    embedder: Embedder | None, provider: LLMProvider | None, now: datetime,
+                    context: dict | None = None) -> tuple[Draft, dict]:
     titles = lesson_titles()
     meta: dict[str, Any] = {}
     if looks_like_injection(question):
@@ -412,8 +475,16 @@ def answer_question(db: Session, user: User, question: str, turns: Sequence[tupl
                      source_label=fb.LABEL_REFUSE), meta
     if is_study_advice(question):
         return _study_advice_answer(db, user, embedder, now), meta
-    dec = decide(question, embedder, top_k=settings.rag_top_k)
+    entry = supplemental.answer(question)
+    if entry is not None:
+        return Draft(entry.reply, "concept", [], [], "ok", "supplemental", flow="B",
+                     source_label="Ngoài giáo trình · Nguồn tham khảo",
+                     supplemental_source={"title": entry.source_title, "url": entry.source_url}), meta
+    dec = decide(question, embedder, top_k=settings.rag_top_k, context=clean_context(context))
     meta["router"] = dec.log()
+    if dec.engine.context_note:
+        return Draft(dec.engine.context_note, "concept", [], [], "ok", "clarify_context", flow="B",
+                     source_label=fb.LABEL_UNKNOWN), meta
     intent = classify(question)
     meta["intent_local"] = {"intent": intent.intent, "confidence": intent.confidence}
     meta["retrieval"] = {"method": dec.lesson.method, "best_score": dec.lesson.best_score,
@@ -429,20 +500,20 @@ def answer_question(db: Session, user: User, question: str, turns: Sequence[tupl
     if dec.flow == "D":
         return _help_answer(dec), meta
     if dec.flow == "B":
-        return _general_answer(db, user, question, turns, dec, titles, facts, provider, now), meta
+        return _general_answer(db, user, question, turns, dec, titles, facts, provider, now, context=context), meta
 
     # Luồng A: có đoạn bài đủ điểm.
     hits = dec.hits
     if provider is None:
-        hit = _faq_answer(question, titles, "ai_disabled")
+        hit = _faq_answer(question, titles, "ai_disabled") if not facts else None
         if hit is not None:
             return hit, meta
         d = offline_answer(hits, facts, titles, "ai_disabled")
-        d.flow, d.source_label = "A", fb.LABEL_LESSON
+        d.flow, d.source_label = "A", ("Theo Music Engine" if facts else fb.LABEL_LESSON)
         return d, meta
     if _llm_rows_today(db, now, None) >= settings.ai_global_daily_budget:
         d = offline_answer(hits, facts, titles, "global_budget")
-        d.flow, d.source_label = "A", fb.LABEL_LESSON
+        d.flow, d.source_label = "A", ("Theo Music Engine" if facts else fb.LABEL_LESSON)
         return d, meta
     used = _llm_rows_today(db, now, user.id)
     if used >= settings.ai_daily_quota:
@@ -451,18 +522,22 @@ def answer_question(db: Session, user: User, question: str, turns: Sequence[tupl
     weak = _weak_skill_names(db, user.id)
 
     def build(correction: str | None) -> str:
-        return pr.chat_prompt(question, hits, titles, turns, facts, user.goal_text, weak, correction)
+        return pr.chat_prompt(question, hits, titles, turns, facts, user.goal_text, weak, correction) + prompt_context(context)
+
+    def chat_check(ans: TutorAnswer) -> str | None:
+        return _chat_behavior_issue(ans, question, has_lesson_hits=bool(hits), has_engine_facts=bool(facts),
+                                    engine_facts=facts)
 
     try:
-        ans, guard, results, reason = _llm_round(provider, build, allowed, titles)
+        ans, guard, results, reason = _llm_round(provider, build, allowed, titles, chat_check)
     except LLMUnavailable as exc:
         d = offline_answer(hits, facts, titles, exc.reason)
-        d.llm_calls, d.flow, d.source_label = 1, "A", fb.LABEL_LESSON
+        d.llm_calls, d.flow, d.source_label = 1, "A", ("Theo Music Engine" if facts else fb.LABEL_LESSON)
         return d, meta
     if ans is None:
         d = offline_answer(hits, facts, titles, reason or "invalid")
         d.llm_calls, d.llm = len(results), results[-1] if results else None
-        d.flow, d.source_label = "A", fb.LABEL_LESSON
+        d.flow, d.source_label = "A", ("Theo Music Engine" if facts else fb.LABEL_LESSON)
         return d, meta
     d = _finish(ans, guard, allowed, titles, results, facts)
     # Câu LLM không trích được đoạn nào (trích dẫn bịa đã bị bỏ, hoặc LLM tự nói "không biết") thì không gắn nhãn
@@ -475,7 +550,7 @@ def answer_question(db: Session, user: User, question: str, turns: Sequence[tupl
         # Kho có đoạn "giống chữ" nhưng AI không trích được đoạn nào (thường là "bài chưa dạy", ví dụ "piano có bao
         # nhiêu phím"): hỏi lại theo kiến thức chung như luồng B (ADR-020). AI lỗi hoặc hết hạn mức thì giữ câu cũ.
         try:
-            g = _general_answer(db, user, question, turns, dec, titles, facts, provider, now)
+            g = _general_answer(db, user, question, turns, dec, titles, facts, provider, now, context=context)
         except QuotaExceeded:
             return d, meta
         if g.route in ("general_llm", "out_of_scope"):
@@ -487,7 +562,7 @@ def answer_question(db: Session, user: User, question: str, turns: Sequence[tupl
 def _save(db: Session, session: ChatSession, draft: Draft, meta: dict, started: float, now: datetime) -> ChatMessage:
     tool_calls = {"route": draft.route, "llm_calls": draft.llm_calls, "flow": draft.flow,
                   "source_label": draft.source_label, "suggested_lesson": draft.suggested_lesson,
-                  "help_page": draft.help_page, **meta}
+                  "help_page": draft.help_page, "supplemental_source": draft.supplemental_source, **meta}
     if draft.llm:
         tool_calls["model"] = draft.llm.model
     if draft.fallback_reason:
@@ -512,7 +587,11 @@ def _lesson_ref(lesson_id: str | None) -> dict[str, str] | None:
 
 def out(msg: ChatMessage, session: ChatSession, remaining: int) -> dict[str, Any]:
     claims = msg.engine_claims or []
-    verified = bool(claims) and all(c.get("status") == "verified" for c in claims)
+    # Re-scan stored text, including legacy messages: metadata alone is not evidence
+    # that a fact was shown. Conservative when prose cannot be parsed.
+    visible = scan_reply(msg.content)
+    verified = (bool(claims) and all(c.get("status") == "verified" for c in claims)
+                and bool(visible) and all(c.status == "verified" for c in visible))
     tc = msg.tool_calls or {}
     return {"message_id": msg.id, "session_id": session.id, "reply": msg.content, "citations": msg.citations or [],
             "engine_claims": claims, "verified": verified, "verified_label": VERIFIED_LABEL if verified else None,
@@ -521,6 +600,7 @@ def out(msg: ChatMessage, session: ChatSession, remaining: int) -> dict[str, Any
             "retrieval_method": (tc.get("retrieval") or {}).get("method"), "quiz": None,
             "flow": tc.get("flow"), "source_label": tc.get("source_label"),
             "suggested_lesson": _lesson_ref(tc.get("suggested_lesson")), "help_page": tc.get("help_page"),
+            "supplemental_source": tc.get("supplemental_source"),
             "quota_remaining_today": remaining}
 
 
@@ -536,7 +616,7 @@ def handle_message(db: Session, user: User, text: str, *, session_id: str | None
     db.flush()
     turns = recent_turns(db, session.id, before_id=user_msg.id)
     try:
-        draft, meta = answer_question(db, user, text, turns, embedder, provider, now)
+        draft, meta = answer_question(db, user, text, turns, embedder, provider, now, context=_clean_context(context))
     except QuotaExceeded:
         db.commit()  # tin nhắn vẫn được lưu (04 Bảng 11, mã 429)
         raise
@@ -547,8 +627,7 @@ def handle_message(db: Session, user: User, text: str, *, session_id: str | None
 
 def _clean_context(context: dict[str, Any] | None) -> dict[str, str]:
     # Chỉ giữ khóa đã biết, để client không nhét dữ liệu tùy ý vào CSDL hay prompt.
-    ctx = context or {}
-    return {k: str(ctx[k])[:40] for k in ("page", "lesson_id", "block_id") if ctx.get(k)}
+    return clean_context(context)
 
 
 # --- Giải thích lượt làm sai -------------------------------------------------------------------
@@ -587,6 +666,10 @@ def leaks_answer(reply: str, answer_key: dict[str, Any]) -> bool:
 
 def _grader_facts(cfg: dict[str, Any]) -> list[dict[str, Any]]:
     kind = cfg.get("kind")
+    if kind == "roman_numeral" and cfg.get("key") and cfg.get("chord"):
+        args = {"key": cfg["key"], "chord": cfg["chord"], "mode": cfg.get("mode", "major")}
+        value, _ = run_tool("get_roman_numeral", args)
+        return [{"tool": "get_roman_numeral", "args": args, "result": value}] if value else []
     if kind == "build_chord" and cfg.get("symbol"):
         value, _ = run_tool("get_chord_tones", {"symbol": cfg["symbol"]})
         return [{"tool": "get_chord_tones", "args": {"symbol": cfg["symbol"]}, "result": value}] if value else []

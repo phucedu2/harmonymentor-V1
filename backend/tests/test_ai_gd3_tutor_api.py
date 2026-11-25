@@ -96,8 +96,12 @@ def test_message_length_rules(msg):
 def test_ai_off_answers_from_lesson_with_engine_facts():
     body = ask(make_user(), "Cmaj7 với C7 khác gì nhau?")
     assert body["status"] == "fallback" and body["fallback_reason"] == "ai_disabled"
-    assert "C7 = C E G Bb" in body["reply"] and body["citations"][0]["lesson_id"] in {"L02", "L08"}  # BM25: L08 (shell voicing) gần hòa với L02 sau 10/11
-    assert body["verified_label"] == "Đã kiểm bằng Music Engine"
+    assert "C7 gồm các nốt C, E, G, Bb" in body["reply"]
+    assert body["citations"] == []  # Dữ kiện Engine không được gán nhầm nguồn bài học.
+    assert body["source_label"] == "Theo Music Engine"
+    assert body["verified"] and body["verified_label"] == "Đã kiểm tra dữ kiện nhạc lý hiển thị bằng Music Engine"
+    assert any(c["args"].get("symbol") == "C7" and c["engine"] == "C E G Bb" and c["status"] == "verified"
+               for c in body["engine_claims"])
     assert body["retrieval_method"] == "bm25"
 
 
@@ -148,10 +152,13 @@ def test_engine_contradiction_regenerates_then_succeeds():
 
 def test_engine_contradiction_twice_falls_back():
     wrong = reply_citing_first("G7 = G B D F# là hợp âm át.")
-    use(FakeProvider([wrong, wrong]))
+    fake = use(FakeProvider([wrong, wrong]))
     body = ask(make_user(), "G7 gồm những nốt nào?")
+    assert len(fake.calls) == 2
     assert body["status"] == "fallback" and body["fallback_reason"] == "engine_contradiction"
-    assert "F#" not in body["reply"] and "G7 = G B D F" in body["reply"]
+    assert "F#" not in body["reply"] and "G7 gồm các nốt G, B, D, F" in body["reply"]
+    assert any(c["args"].get("symbol") == "G7" and c["engine"] == "G B D F" and c["status"] == "verified"
+               for c in body["engine_claims"])
 
 
 def test_format_error_regenerates_once_then_fallback():

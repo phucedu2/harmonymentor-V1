@@ -1,0 +1,83 @@
+{
+  "scope": "12 legacy + 4 B + 26 A + 8 C + HM6-01..04",
+  "counts": {
+    "train": 50,
+    "dev": 2,
+    "test": 2
+  },
+  "total": 54,
+  "reviewed_by_human_count": 54,
+  "rights_cleared_count": 54,
+  "engine_verified": true,
+  "token_min": 243,
+  "token_max": 869,
+  "near_90": [
+    {
+      "a": "context-008",
+      "b": "context-004",
+      "similarity": 0.93,
+      "splits": [
+        "train",
+        "train"
+      ]
+    },
+    {
+      "a": "context-012",
+      "b": "context-001",
+      "similarity": 0.964,
+      "splits": [
+        "train",
+        "train"
+      ]
+    },
+    {
+      "a": "context-013",
+      "b": "context-004",
+      "similarity": 0.93,
+      "splits": [
+        "dev",
+        "train"
+      ]
+    },
+    {
+      "a": "context-013",
+      "b": "context-008",
+      "similarity": 0.919,
+      "splits": [
+        "dev",
+        "train"
+      ]
+    },
+    {
+      "a": "context-014",
+      "b": "context-004",
+      "similarity": 0.93,
+      "splits": [
+        "dev",
+        "train"
+      ]
+    },
+    {
+      "a": "context-014",
+      "b": "context-008",
+      "similarity": 0.919,
+      "splits": [
+        "dev",
+        "train"
+      ]
+    },
+    {
+      "a": "context-014",
+      "b": "context-013",
+      "similarity": 0.973,
+      "splits": [
+        "dev",
+        "dev"
+      ]
+    }
+  ],
+  "dev_decision": "keep context-013 and context-014; dev diversity limitation documented",
+  "production_ready": true,
+  "output_sha256": "b7ca5f19ee47ec183b2955cff2c7ef46ce1020e603a5bcb3a455a9ae3763ad99",
+  "full_training_not_started": true
+}

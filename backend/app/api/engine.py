@@ -22,6 +22,7 @@ from ..music_engine.tools import TOOL_DECLARATIONS
 
 router = APIRouter(prefix="/api/v1/engine", tags=["legacy-engine"])
 GradingMode = Literal["strict_spelling", "pitch_class_only"]
+RomanMode = Literal["major", "natural_minor"]
 
 
 @router.get("/chord/{symbol}")
@@ -56,15 +57,15 @@ def get_key(tonic: str, mode: Literal["major", "minor"] = "major"):
 
 
 @router.get("/diatonic/{tonic}")
-def get_diatonic(tonic: str, sevenths: bool = False):
+def get_diatonic(tonic: str, sevenths: bool = False, mode: RomanMode = "major"):
     return [{"degree": r.degree, "numeral": r.numeral, "chord": r.chord.symbol,
              "convention_id": r.convention_id, "convention_verified": r.convention_verified}
-            for r in diatonic_chords(tonic, sevenths)]
+            for r in diatonic_chords(tonic, sevenths, mode=mode)]
 
 
 @router.get("/roman")
-def get_roman(key: str, chord: str):
-    r = roman_numeral(key, chord)
+def get_roman(key: str, chord: str, mode: RomanMode = "major"):
+    r = roman_numeral(key, chord, mode=mode)
     return {"numeral": r.numeral, "degree": r.degree, "convention_id": r.convention_id,
             "convention_verified": r.convention_verified}
 
@@ -106,6 +107,7 @@ class IdentifyChordIn(BaseModel):
 
 
 class RomanIn(BaseModel):
+    mode: RomanMode = "major"
     key: str = Field(examples=["C"])
     chord: str = Field(examples=["Dm7"])
     answer: str = Field(examples=["ii7"])
@@ -145,7 +147,7 @@ def grade_identify_chord(body: IdentifyChordIn):
 
 @router.post("/grade/roman-numeral")
 def grade_roman_numeral(body: RomanIn):
-    return grading.grade_roman_numeral(body.key, body.chord, body.answer)
+    return grading.grade_roman_numeral(body.key, body.chord, body.answer, mode=body.mode)
 
 
 @router.post("/grade/tap-rhythm")

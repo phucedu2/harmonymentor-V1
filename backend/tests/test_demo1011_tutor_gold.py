@@ -156,10 +156,11 @@ def test_roman_statements_are_checked(text, chord, claimed, status):
     assert (c.args["chord"], c.claimed, c.status) == (chord, claimed, status)
 
 
-def test_roman_in_minor_key_is_ignored_and_unknown_numeral_unsupported():
+def test_ambiguous_minor_key_and_unknown_numeral_are_unsupported():
     from app.ai.tutor.guardrail import check_roman
 
-    assert not [x for x in scan_reply("ii7 trong A thứ là Bm7b5") if x.tool == "get_roman_numeral"]
+    rows = [x for x in scan_reply("ii7 trong A thứ là Bm7b5") if x.tool == "get_roman_numeral"]
+    assert len(rows) == 1 and rows[0].status == "unsupported"
     assert check_roman("C", "D7", "V/V").status == "unsupported"  # Engine MVP chưa đặt tên át phụ
 
 

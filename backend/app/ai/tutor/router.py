@@ -303,8 +303,8 @@ class Signals:
     broad_music: bool = False      # từ khóa âm nhạc rộng (nhạc cụ, thể loại, lịch sử...), ADR-020
 
 
-def gather(question: str, embedder: Embedder | None, *, top_k: int = 4) -> Signals:
-    eng = engine_answer(question)
+def gather(question: str, embedder: Embedder | None, *, top_k: int = 4, context: dict | None = None) -> Signals:
+    eng = engine_answer(question, context=context)
     return Signals(question, classify_route(question), eng,
                    retrieve(question, embedder, top_k=top_k, min_score=-1.0, bm25_min_score=-1.0),
                    retrieve(question, embedder, top_k=2, min_score=-1.0, bm25_min_score=-1.0, chunks=list(help_base())),
@@ -314,6 +314,9 @@ def gather(question: str, embedder: Embedder | None, *, top_k: int = 4) -> Signa
 
 def route(sig: Signals, th: dict[str, float]) -> Decision:
     dec = _route(sig, th)
+    if sig.engine.context_used or sig.engine.context_note:
+        return Decision("B", "engine" if sig.engine.facts and not sig.engine.unknown else "unknown",
+                        sig.label, sig.lesson, sig.help, sig.engine, "explicit_ui_context")
     # ADR-020: mọi câu liên quan âm nhạc đều được trả lời. Tầng 1 học phạm vi hẹp nên có thể từ chối nhầm câu về nhạc
     # cụ, thể loại, lịch sử; câu có từ khóa âm nhạc (và không thuộc nhóm cấm) đi luồng B thay vì bị từ chối.
     if sig.broad_music and (dec.flow == "C" or (dec.flow == "D" and not about_app(sig.question))):
@@ -397,5 +400,5 @@ def _route(sig: Signals, th: dict[str, float]) -> Decision:
     return d("B", "unknown", "no_lesson_hit")
 
 
-def decide(question: str, embedder: Embedder | None, *, top_k: int = 4) -> Decision:
-    return route(gather(question, embedder, top_k=top_k), _th(embedder))
+def decide(question: str, embedder: Embedder | None, *, top_k: int = 4, context: dict | None = None) -> Decision:
+    return route(gather(question, embedder, top_k=top_k, context=context), _th(embedder))

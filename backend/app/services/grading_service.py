@@ -179,6 +179,7 @@ def grade_payload(strategy: str, answer_key: dict[str, Any], grader_config: dict
                 grader_config.get("key"),
                 grader_config.get("chord"),
                 typed,
+                mode=grader_config.get("mode", "major"),
             )
         else:
             return GradeOutcome(False, 0.0, "UNSUPPORTED_GRADER", "Dạng chấm bằng Music Engine này chưa được hỗ trợ.", [

@@ -1,0 +1,40 @@
+{
+  "step": 2,
+  "source_file": "data/hm_training/examples.context.draft.jsonl",
+  "output_file": "data/hm_training/examples.context.step2-dedup.draft.jsonl",
+  "duplicate_groups": [
+    [
+      "context-001",
+      "context-003"
+    ],
+    [
+      "context-002",
+      "context-006"
+    ],
+    [
+      "context-009",
+      "context-010",
+      "context-011"
+    ]
+  ],
+  "removed_to_kept": {
+    "context-003": "context-001",
+    "context-006": "context-002",
+    "context-009": "context-010",
+    "context-011": "context-010"
+  },
+  "dedup_policy": "Exact QUESTION or EXERCISE.prompt after NFC, casefold and whitespace normalization, regardless of UI context or hint level. Keeps hint level 2 for the repeated exercise, without disclosing the full answer.",
+  "split_counts": {
+    "train": 8,
+    "dev": 2,
+    "test": 2
+  },
+  "total": 12,
+  "reviewed_by_human_count": 0,
+  "rights_cleared_count": 0,
+  "structural_validation_passed": true,
+  "engine_verified": true,
+  "production_ready": false,
+  "source_sha256": "cf7e34d3f0044ae829d97d7a3e94ece517c4d67fc3aacf9f601e5e987192e9ee",
+  "output_sha256": "de3c65c36f666f7d923ab620fd1bf32eaea28aa2353be5f1747173ce8b6ac1d6"
+}

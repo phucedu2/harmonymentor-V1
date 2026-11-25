@@ -24,7 +24,8 @@ import {
   type Lesson1TheoryState,
   type TriadQuality,
 } from "../../theory/lesson1Theory";
-import type { Lesson1Theory } from "../../api";
+import type { Lesson1Theory, Lesson1Triad } from "../../api";
+import { useTutorSelection } from "../../lib/useTutorSelection";
 
 export function RootKeySelector({ value, onChange, compact = false }: { value: string; onChange: (root: string) => void; compact?: boolean }) {
   const option = ROOT_KEY_OPTIONS.find((item) => item.spellings.includes(value)) ?? ROOT_KEY_OPTIONS[0];
@@ -61,9 +62,10 @@ export function IntervalExplorer({ root, onRootChange, prompt }: { root: string;
   const [active, setActive] = useState<IntervalCode>("M3");
   const theory = useLesson1Theory(root);
   const data = theory.data;
+  const tutorSelection = useTutorSelection(root, undefined);
   const example = data ? intervalOf(data, active) : null;
 
-  return <article className={`${ui.block} ${ui.blockTone.explorer}`}>
+  return <article {...tutorSelection} className={`${ui.block} ${ui.blockTone.explorer}`}>
     <span className={ui.kicker}>Khám phá tương tác</span>
     <h3>4. Khám phá M3, m3, P5 và d5 trên 12 nốt gốc</h3>
     {prompt && <p>{prompt}</p>}
@@ -95,8 +97,9 @@ export function TriadExplorer({ root, onRootChange, prompt, note }: { root: stri
   const [active, setActive] = useState<TriadQuality>("major");
   const theory = useLesson1Theory(root);
   const data = theory.data;
+  const tutorSelection = useTutorSelection(root, data && data.root === root ? triadOf(data, active).symbol : undefined);
 
-  return <article className={`${ui.block} ${ui.blockTone.explorer}`}>
+  return <article {...tutorSelection} className={`${ui.block} ${ui.blockTone.explorer}`}>
     <span className={ui.kicker}>Dựng hợp âm ba nốt</span>
     <h3>6. Dựng triad trên bất kỳ nốt gốc nào</h3>
     {prompt && <p>{prompt}</p>}
@@ -137,7 +140,8 @@ export function TriadNotationExplorer({ root, onRootChange, prompt }: { root: st
   const [active, setActive] = useState<TriadQuality>("major");
   const theory = useLesson1Theory(root);
   const data = theory.data;
-  return <article className={`${ui.block} ${ui.blockTone.explorer}`}>
+  const tutorSelection = useTutorSelection(root, data && data.root === root ? triadOf(data, active).symbol : undefined);
+  return <article {...tutorSelection} className={`${ui.block} ${ui.blockTone.explorer}`}>
     <span className={ui.kicker}>Ký âm + piano</span><h3>7. So sánh chất lượng hợp âm bằng cùng một nốt gốc</h3>
     {prompt && <p>{prompt}</p>}
     <RootKeySelector value={root} onChange={onRootChange} compact />
@@ -159,7 +163,8 @@ export function TriadNotationExplorer({ root, onRootChange, prompt }: { root: st
 export function TriadAudioExplorer({ root, onRootChange, prompt }: { root: string; onRootChange: (root: string) => void; prompt?: string }) {
   const theory = useLesson1Theory(root);
   const data = theory.data;
-  return <article className={`${ui.block} ${ui.blockTone.explorer}`}>
+  const tutorSelection = useTutorSelection(root, undefined);
+  return <article {...tutorSelection} className={`${ui.block} ${ui.blockTone.explorer}`}>
     <span className={ui.kicker}>Nghe</span><h3>8. Nghe sự thay đổi khi giữ nguyên nốt gốc</h3>
     {prompt && <p>{prompt}</p>}
     <RootKeySelector value={root} onChange={onRootChange} compact />
@@ -167,10 +172,15 @@ export function TriadAudioExplorer({ root, onRootChange, prompt }: { root: strin
     {data && <div className="mt-3 flex flex-wrap items-center gap-2">
       {QUALITY_ORDER.map((quality) => {
         const triad = triadOf(data, quality);
-        return <NoteAudioButton key={quality} notes={pitchNames(triad)} label={`${triad.symbol} · ${TRIAD_LABELS[quality]}`} />;
+        return <TutorTriadAudio key={quality} root={root} triad={triad} label={`${triad.symbol} · ${TRIAD_LABELS[quality]}`} />;
       })}
     </div>}
   </article>;
+}
+
+function TutorTriadAudio({ root, triad, label }: { root: string; triad: Lesson1Triad; label: string }) {
+  const selection = useTutorSelection(root, triad.symbol);
+  return <span {...selection}><NoteAudioButton notes={pitchNames(triad)} label={label} /></span>;
 }
 
 export function KeyOverview24({ prompt }: { prompt?: string }) {
@@ -184,12 +194,19 @@ export function KeyOverview24({ prompt }: { prompt?: string }) {
     </div>
     <p className={ui.muted}>{tier.note}</p>
     <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
-      {tier.keys.map((item) => <div className="flex min-w-0 items-center justify-between gap-2 rounded-xl border border-line bg-bg p-2.5" key={item.symbol}>
-        <span className="text-xs font-semibold">{item.label}</span>
-        <ChordInspector symbol={item.symbol} displayLabel={item.symbol} compact />
-      </div>)}
+      {tier.keys.map((item) => <TutorChordCard key={item.symbol} item={item} />)}
     </div>
   </article>;
+}
+
+function TutorChordCard({ item }: { item: { symbol: string; label: string } }) {
+  // A tonic chord card is still a chord selection, NOT an explicit key/mode.
+  const root = item.symbol.match(/^[A-G](?:#|b)?/)?.[0] ?? "";
+  const selection = useTutorSelection(root, item.symbol);
+  return <div {...selection} className="flex min-w-0 items-center justify-between gap-2 rounded-xl border border-line bg-bg p-2.5">
+    <span className="text-xs font-semibold">{item.label}</span>
+    <ChordInspector symbol={item.symbol} displayLabel={item.symbol} compact />
+  </div>;
 }
 
 function splitAnswerNotes(text: string) {

@@ -1,0 +1,112 @@
+{
+  "step": 3,
+  "source_file": "data/hm_training/examples.context.step2-dedup.draft.jsonl",
+  "output_file": "data/hm_training/examples.context.step3-compact.draft.jsonl",
+  "source_sha256": "de3c65c36f666f7d923ab620fd1bf32eaea28aa2353be5f1747173ce8b6ac1d6",
+  "output_sha256": "3da21c3b49caee6711241a235190f77d922614ef1b283e055749ed61c103a70a",
+  "snapshot_revision": "7744afa8566e264af1a92a806d8d9aae00cc7c78",
+  "split_counts": {
+    "train": 8,
+    "dev": 2,
+    "test": 2
+  },
+  "length_limit": 1024,
+  "removed_empty_blocks": {
+    "LESSON_CHUNKS": 12,
+    "HISTORY": 11,
+    "ENGINE_FACTS": 3
+  },
+  "retained_hint_level": 2,
+  "structural_validation_passed": true,
+  "engine_verified": true,
+  "assistant_token_ids_unchanged": true,
+  "reviewed_by_human_count": 0,
+  "rights_cleared_count": 0,
+  "production_ready": false,
+  "measurements": [
+    {
+      "id": "context-001",
+      "split": "train",
+      "before": 1894,
+      "after": 516,
+      "assistant_tokens": 82
+    },
+    {
+      "id": "context-002",
+      "split": "train",
+      "before": 1998,
+      "after": 620,
+      "assistant_tokens": 85
+    },
+    {
+      "id": "context-004",
+      "split": "train",
+      "before": 2011,
+      "after": 633,
+      "assistant_tokens": 98
+    },
+    {
+      "id": "context-005",
+      "split": "train",
+      "before": 1839,
+      "after": 445,
+      "assistant_tokens": 66
+    },
+    {
+      "id": "context-007",
+      "split": "train",
+      "before": 1963,
+      "after": 585,
+      "assistant_tokens": 80
+    },
+    {
+      "id": "context-008",
+      "split": "train",
+      "before": 1922,
+      "after": 544,
+      "assistant_tokens": 97
+    },
+    {
+      "id": "context-010",
+      "split": "train",
+      "before": 2023,
+      "after": 660,
+      "assistant_tokens": 73
+    },
+    {
+      "id": "context-012",
+      "split": "train",
+      "before": 1898,
+      "after": 520,
+      "assistant_tokens": 84
+    },
+    {
+      "id": "context-013",
+      "split": "dev",
+      "before": 1915,
+      "after": 537,
+      "assistant_tokens": 94
+    },
+    {
+      "id": "context-014",
+      "split": "dev",
+      "before": 1915,
+      "after": 537,
+      "assistant_tokens": 94
+    },
+    {
+      "id": "context-015",
+      "split": "test",
+      "before": 1855,
+      "after": 461,
+      "assistant_tokens": 74
+    },
+    {
+      "id": "context-016",
+      "split": "test",
+      "before": 1841,
+      "after": 447,
+      "assistant_tokens": 65
+    }
+  ]
+}

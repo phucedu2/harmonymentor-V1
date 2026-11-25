@@ -47,3 +47,7 @@ data/hm_training/private/
 
 # Downloaded starter archive
 harmonymentor_ai_training_starter.zip
+
+# Unsloth compiled cache
+unsloth_compiled_cache/
+*.zip

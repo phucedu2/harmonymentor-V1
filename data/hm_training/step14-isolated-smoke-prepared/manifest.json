@@ -1,0 +1,22 @@
+{
+  "counts": {
+    "train": 3,
+    "dev": 5
+  },
+  "total": 8,
+  "groups": 8,
+  "demo_or_unapproved": 8,
+  "source_ids": [
+    "synthetic-smoke-step14"
+  ],
+  "created_utc": "2026-11-23T17:33:22.653338+00:00",
+  "input_sha256": "98cde0ec440983fdcf04763b4c1c5875a0f8f53a812ea8002eccd0e06e239396",
+  "outputs_sha256": {
+    "train": "0a4dc70d1f5624922f2328e4ce767302980d7c172cea6b2a360a5f5d244805aa",
+    "dev": "af08e7118edfb1985dc9a658e1ed9b61e3c373a31eab9cfe3307a24fdcc66ff8",
+    "test": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "engine_verified": true,
+  "production_ready": false,
+  "warning": "Examples are for workflow testing only"
+}

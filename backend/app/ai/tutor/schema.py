@@ -26,7 +26,8 @@ LLM_SCHEMA: dict[str, Any] = {
             "args": {"type": "object", "properties": {
                 "symbol": {"type": "string"}, "tonic": {"type": "string"}, "scale_type": {"type": "string"},
                 "lower": {"type": "string"}, "upper": {"type": "string"},
-                "key": {"type": "string"}, "chord": {"type": "string"}}},
+                "key": {"type": "string"}, "chord": {"type": "string"},
+                "mode": {"type": "string", "enum": ["major", "natural_minor"]}}},
             "result": {"type": "string", "description": "Kết quả AI khẳng định, ví dụ 'C E G Bb', 'P5' hoặc 'V7'."}},
             "required": ["tool", "args", "result"]}},
         "hint_level": {"type": "integer", "minimum": 0, "maximum": 3},

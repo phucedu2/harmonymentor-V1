@@ -127,10 +127,11 @@ def test_roman_numeral():
     assert grade_roman_numeral("C", "Bdim", "viio")["correct"]
 
 
-# Quyết định đã chốt: giọng thứ, thể đảo, hồ sơ jazz-pop, hợp âm ngoài giọng
+# Phạm vi B: thứ tự nhiên được hỗ trợ; thứ hòa âm, thể đảo, jazz-pop vẫn để sau.
 def test_mvp_guards():
+    assert roman_numeral("A", "Am", mode="natural_minor").numeral == "i"
     with pytest.raises(NotSupportedInMvp):
-        roman_numeral("A", "Am", mode="minor")   # QĐ-2.2
+        roman_numeral("A", "Am", mode="harmonic_minor")
     with pytest.raises(NotSupportedInMvp):
         roman_numeral("C", "C/E")                # QĐ-2.3 (khuyến nghị)
     with pytest.raises(ConventionNotVerified):

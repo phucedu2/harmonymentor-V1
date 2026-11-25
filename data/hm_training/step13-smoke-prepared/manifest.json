@@ -1,0 +1,28 @@
+{
+  "counts": {
+    "train": 53,
+    "dev": 14,
+    "test": 2
+  },
+  "total": 69,
+  "groups": 43,
+  "demo_or_unapproved": 3,
+  "source_ids": [
+    "HM-ORIGINAL-CONTEXT-DRAFT-V1",
+    "HM-ORIGINAL-SYNTHETIC-STEP6-V1",
+    "HM-STEP4-B-SOURCES",
+    "HM-STEP5-AC-CANDIDATE",
+    "HM-STEP9-NEW-DEV-INTERNAL",
+    "synthetic-smoke-step13"
+  ],
+  "created_utc": "2026-11-23T17:26:18.364435+00:00",
+  "input_sha256": "c927c3c2aadcc4b7effd68a73ccf0f7b575b2d1db5ba52062a1c3cf74dd85122",
+  "outputs_sha256": {
+    "train": "f4e85b9befe5295d3a754b09d87daebff5ad52026d606bc138b74325484a2b14",
+    "dev": "efe0d1d0dcb157d9a6b73c2cb28f10a9707be2c64316d0c3c2bbc810ac64224a",
+    "test": "aa4fbd7c1f76aeacd10823ac259ba7ebb0e9f1bff4894ea2c9d6051b010c1ac8"
+  },
+  "engine_verified": true,
+  "production_ready": false,
+  "warning": "Examples are for workflow testing only"
+}

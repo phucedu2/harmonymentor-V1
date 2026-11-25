@@ -271,9 +271,10 @@ export type ChatReply = {
   status: "ok" | "failed" | "fallback"; suggested_actions: string[]; fallback_reason: string | null;
   retrieval_method: string | null; quota_remaining_today: number; attempt_id?: string | null; next_hint_level?: number | null;
   flow?: ChatFlow | null; source_label?: string | null;
+  supplemental_source?: { title: string; url: string } | null;
   suggested_lesson?: { lesson_id: string; title: string } | null; help_page?: { path: string; title: string } | null;
 };
-export type ChatContext = { page?: string; lesson_id?: string; block_id?: string };
+export type ChatContext = { page?: string; lesson_id?: string; block_id?: string; selected_root?: string; selected_chord?: string; selected_key?: string; mode?: "major" | "natural_minor" };
 
 // --- Quản trị (ADR-023) ---
 export type AdminEngineReport = { checked: number; verified: number; unsupported: number; contradicted: EngineClaim[] };

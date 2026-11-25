@@ -62,6 +62,16 @@ def answer_checks(raw: str, allowed_ids: set[str], row_id: str) -> None:
         isinstance(s, str) for s in answer["suggested_actions"]
     ):
         raise ValueError(f"{row_id}: invalid suggested_actions")
+    # Reuse the application's schema without importing app startup, services or DB.
+    if str(REPO_ROOT / "backend") not in sys.path:
+        sys.path.insert(0, str(REPO_ROOT / "backend"))
+    from app.ai.tutor.schema import TutorAnswer
+    try:
+        TutorAnswer.model_validate(answer)
+    except ValueError as exc:
+        raise ValueError(f"{row_id}: runtime TutorAnswer validation failed: {exc}") from exc
+    if answer.get("quiz") is not None or "verified" in answer:
+        raise ValueError(f"{row_id}: model may not self-declare verified or supply quiz")
     if len(answer["citations"]) > 8 or len(answer["engine_claims"]) > 12:
         raise ValueError(f"{row_id}: exceeding TutorAnswer limits")
     for cite in answer["citations"]:
@@ -134,16 +144,26 @@ def validate(rows: list[dict], allow_demo: bool) -> dict:
 
 
 def verify_engine(rows: list[dict]) -> None:
-    """Re-evaluate every declared model claim using the existing deterministic Engine."""
+    """Check declared AND recognizable displayed claims. Not proof of all prose."""
     sys.path.insert(0, str(REPO_ROOT / "backend"))
-    from app.ai.tutor.guardrail import check_declared
+    from app.ai.tutor.guardrail import check_answer, check_declared, scan_reply
     from app.ai.tutor.schema import Claim
     for row in rows:
-        claims = json.loads(row["messages"][-1]["content"])["engine_claims"]
-        checked = check_declared([Claim.model_validate(c) for c in claims])
+        answer = json.loads(row["messages"][-1]["content"])
+        declared = check_declared([Claim.model_validate(c) for c in answer["engine_claims"]])
+        scanned = scan_reply(answer["reply"])
+        checked = check_answer(answer["reply"], [Claim.model_validate(c) for c in answer["engine_claims"]]).claims
         invalid = [c for c in checked if c.status != "verified"]
         if invalid:
             raise ValueError(f"{row['id']}: {len(invalid)} Engine claim(s) are contradicted or unsupported")
+        def claim_key(c):
+            args = dict(c.args)
+            if c.tool == "get_roman_numeral":
+                args.setdefault("mode", "major")
+            return c.tool, tuple(sorted(args.items())), c.engine
+        declared_keys = {claim_key(c) for c in declared}
+        if any(claim_key(c) not in declared_keys for c in scanned):
+            raise ValueError(f"{row['id']}: recognizable reply claim missing from engine_claims")
 
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()

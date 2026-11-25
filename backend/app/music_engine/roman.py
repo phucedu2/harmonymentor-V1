@@ -1,7 +1,7 @@
 """Số La Mã cho hợp âm thuận giọng, hồ sơ quy ước CONV-ROMAN-CLASSICAL.
 
 Phạm vi theo quyết định:
-- QĐ-2.2 = A: MVP chỉ giọng trưởng. Giọng thứ → NOT_SUPPORTED_IN_MVP.
+- Phạm vi B: giọng trưởng và thứ tự nhiên; bậc tính theo chính âm giai được chọn.
 - QĐ-2.3 (khuyến nghị, chờ bạn chốt): chỉ thể gốc. Hợp âm có bass khác nốt gốc → NOT_SUPPORTED_IN_MVP.
 - Hồ sơ jazz-pop chưa có nguồn cho cách viết số La Mã → CONVENTION_NOT_VERIFIED.
 
@@ -39,14 +39,15 @@ class RomanNumeral:
     key: str              # ví dụ "C"
     convention_id: str = CONVENTION_ID
     convention_verified: bool = True
+    mode: str = "major"
 
 
 def _guard(mode: str, profile: str) -> None:
     if profile != "classical":
         raise ConventionNotVerified(
             "Hồ sơ số La Mã jazz-pop chưa có nguồn đã xác minh", profile=profile)
-    if mode != "major":
-        raise NotSupportedInMvp("MVP chỉ dạy số La Mã trong giọng trưởng (QĐ-2.2)", mode=mode)
+    if mode not in {"major", "natural_minor"}:
+        raise NotSupportedInMvp("Chỉ phân tích giọng trưởng hoặc thứ tự nhiên; hãy chọn mode rõ ràng", mode=mode)
 
 
 def _numeral_for(degree: int, chord_type: str) -> str:
@@ -58,10 +59,10 @@ def _numeral_for(degree: int, chord_type: str) -> str:
 
 def diatonic_chords(key: str | Note, sevenths: bool = False, mode: str = "major",
                     profile: str = "classical") -> list[RomanNumeral]:
-    """Bảy hợp âm thuận giọng xếp chồng quãng 3 trên mỗi bậc của âm giai trưởng."""
+    """Bảy hợp âm thuận giọng xếp chồng quãng 3 trên mỗi bậc của âm giai được chọn (major hoặc natural_minor)."""
     _guard(mode, profile)
     tonic = parse_note(key).with_octave(None)
-    scale = build_scale(tonic, "major")
+    scale = build_scale(tonic, mode)
     result = []
     for degree, root in enumerate(scale, start=1):
         size = 4 if sevenths else 3
@@ -69,7 +70,7 @@ def diatonic_chords(key: str | Note, sevenths: bool = False, mode: str = "major"
         ct = _type_from_tones(root, tones)
         numeral = _numeral_for(degree, ct)
         result.append(RomanNumeral(numeral, degree, build_chord(root, ct), tonic.name,
-                                   convention_verified=_SUFFIX[ct] in _VERIFIED_SUFFIXES))
+                                   convention_verified=_SUFFIX[ct] in _VERIFIED_SUFFIXES, mode=mode))
     return result
 
 
@@ -92,13 +93,14 @@ def roman_numeral(key: str | Note, chord: str | ChordSymbol, mode: str = "major"
         raise NotSupportedInMvp("MVP chỉ hỏi số La Mã ở thể gốc (QĐ-2.3)", chord=cs.symbol)
     tonic = parse_note(key).with_octave(None)
     sevenths = len(cs.type.intervals) == 4
-    for rn in diatonic_chords(tonic, sevenths=sevenths):
+    label = "trưởng" if mode == "major" else "thứ tự nhiên"
+    for rn in diatonic_chords(tonic, sevenths=sevenths, mode=mode, profile=profile):
         if rn.chord.root.same_spelling(cs.root):
             if rn.chord.type.id != cs.type.id:
                 raise NotDiatonic(
-                    f"{cs.symbol} không thuộc giọng {tonic.name} trưởng; hợp âm thuận giọng trên bậc "
+                    f"{cs.symbol} không thuộc giọng {tonic.name} {label}; hợp âm thuận giọng trên bậc "
                     f"{rn.degree} là {rn.chord.symbol}",
-                    chord=cs.symbol, key=tonic.name, expected=rn.chord.symbol)
+                    chord=cs.symbol, key=tonic.name, mode=mode, expected=rn.chord.symbol)
             return rn
-    raise NotDiatonic(f"Nốt gốc {cs.root.name} không thuộc giọng {tonic.name} trưởng",
-                      chord=cs.symbol, key=tonic.name)
+    raise NotDiatonic(f"Nốt gốc {cs.root.name} không thuộc giọng {tonic.name} {label}",
+                      chord=cs.symbol, key=tonic.name, mode=mode)

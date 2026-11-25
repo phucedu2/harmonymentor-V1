@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any, Literal, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 class SkillMasteryOut(BaseModel):
@@ -134,6 +134,29 @@ class ChatContextIn(BaseModel):
     lesson_id: Optional[str] = Field(None, max_length=16)
     block_id: Optional[str] = Field(None, max_length=40)
 
+    # UI hints only. Never used as the authoritative exercise grading config.
+    selected_root: Optional[str] = Field(None, pattern=r"^[A-G](?:#{1,2}|b{1,2})?$")
+    selected_chord: Optional[str] = Field(None, max_length=24)
+    selected_key: Optional[str] = Field(None, pattern=r"^[A-G](?:#{1,2}|b{1,2})?$")
+    mode: Optional[Literal["major", "natural_minor"]] = None
+
+    @field_validator("selected_chord")
+    @classmethod
+    def valid_chord(cls, value):
+        if value is not None:
+            from ..music_engine.chord import parse_chord_symbol
+            try:
+                parse_chord_symbol(value)
+            except Exception as exc:
+                raise ValueError("Invalid selected chord") from exc
+        return value
+
+    @model_validator(mode="after")
+    def key_requires_mode(self):
+        if bool(self.selected_key) != bool(self.mode):
+            raise ValueError("selected_key and mode must be supplied together")
+        return self
+
 
 class ChatMessageIn(BaseModel):
     session_id: Optional[str] = Field(None, max_length=36)
@@ -189,6 +212,7 @@ class ChatReplyOut(BaseModel):
     source_label: Optional[str] = None
     suggested_lesson: Optional[dict[str, Any]] = None
     help_page: Optional[dict[str, str]] = None
+    supplemental_source: Optional[dict[str, str]] = None
 
 
 class ChatSessionOut(BaseModel):

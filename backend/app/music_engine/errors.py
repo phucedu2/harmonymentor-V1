@@ -62,7 +62,7 @@ class NotDiatonic(MusicEngineError):
 
 
 class NotSupportedInMvp(MusicEngineError):
-    """Tính năng có trong nhạc lý nhưng đã quyết định để sau MVP (ví dụ giọng thứ ở K08)."""
+    """Tính năng có trong nhạc lý nhưng đã quyết định để sau MVP (ví dụ số La Mã giọng thứ hòa âm/giai điệu)."""
 
     code = "NOT_SUPPORTED_IN_MVP"
 

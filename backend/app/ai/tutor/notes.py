@@ -44,16 +44,31 @@ INTERVAL_PAIR_WITH_NAME = re.compile(
     rf"(?:(?:tạo\s+(?:thành|nên)|tạo|là|=|:)\s*)(?:một\s+)?quãng\s*{_IV_TAIL}")
 
 
-# "V7 trong G trưởng là D7", "V7 của G là G7", "Am7 là vi7 trong C trưởng". Chỉ giọng trưởng: giọng thứ
-# ("trong A thứ", "Am") bị bỏ qua vì Engine MVP chỉ đặt số La Mã cho giọng trưởng.
+# Số La Mã: giữ mode; "thứ" không rõ loại cần làm rõ, không mặc định thành trưởng.
 ROMAN = r"(?:vii|VII|iii|III|iv|IV|vi|VI|ii|II|v|V|i|I)(?:maj7|M7|ø7|°7|7|°|ø)?"
-_KEY = rf"(?:giọng\s+)?(?P<key>{NOTE})(?![A-Za-z0-9#♯♭])(?!\s*(?:thứ|minor))(?:\s*(?:trưởng|major))?"
+ROMAN_MODE = r"thứ tự nhiên|thu tu nhien|natural minor|thứ hòa âm|thu hoa am|harmonic minor|thứ giai điệu|thu giai dieu|melodic minor|trưởng|truong|major|thứ|thu|minor"
+
+def roman_mode(text: str | None) -> str:
+    value = (text or "major").lower().strip()
+    if value in {"major", "trưởng", "truong"}:
+        return "major"
+    if value in {"natural minor", "thứ tự nhiên", "thu tu nhien"}:
+        return "natural_minor"
+    return "unspecified_minor" if value in {"minor", "thứ", "thu"} else "unsupported_minor"
+
+_KEY = rf"(?:giọng\s+|giong\s+)?(?P<key>{NOTE})(?![A-Za-z0-9#♯♭])(?:\s*(?P<mode>(?i:{ROMAN_MODE}))(?![\wÀ-ỹ]))?"
 ROMAN_IN_KEY_IS_CHORD = re.compile(
     rf"(?<![A-Za-z])(?P<rn>{ROMAN})(?![A-Za-z0-9])\s+(?:trong|của)\s+{_KEY}\s*(?:là|=|:)\s*(?:hợp âm\s+)?"
     rf"(?P<chord>{CHORD})(?![A-Za-z0-9#])")
 CHORD_IS_ROMAN_IN_KEY = re.compile(
     rf"(?<![A-Za-z0-9#])(?P<chord>{CHORD})(?![A-Za-z0-9#])\s*(?:là|=)\s*(?:hợp âm\s+)?(?P<rn>{ROMAN})"
     rf"(?![A-Za-z0-9])\s+(?:trong|của)\s+{_KEY}")
+
+
+# Prefix format emitted by fact_text: "Trong giọng A thứ tự nhiên, Am là i."
+KEY_CHORD_IS_ROMAN = re.compile(
+    rf"(?i:trong)\s+{_KEY}\s*[,;:]\s*(?P<chord>{CHORD})(?![A-Za-z0-9#])\s+(?:là|=)\s+"
+    rf"(?P<rn>{ROMAN})(?![A-Za-z0-9])")
 
 
 def interval_name(match: re.Match) -> str:
@@ -93,3 +108,19 @@ def solfege_to_letters(text: str) -> str:
         return " ".join(one(t) for t in toks)
 
     return _SOLF_SEQ.sub(repl, unicodedata.normalize("NFC", text))
+
+
+_SOLF1 = {"đô": "C", "do": "C", "rê": "D", "re": "D", "mi": "E", "fa": "F", "pha": "F", "sol": "G", "son": "G",
+          "la": "A", "si": "B"}
+_SOLF_ONE = re.compile(r"\b(Đô|Do|Rê|Re|Mi|Fa|Pha|Sol|Son|La|Si)(\s+(?:thăng|giáng))?(?=\s+(?:trưởng|thứ|truong|thu|major|minor|natural minor))",
+                       re.IGNORECASE)
+
+def normalize_key_names(text: str) -> str:
+    """'Rê trưởng' → 'D trưởng', 'Si giáng thứ' → 'Bb thứ' (một tên nốt đứng trước trưởng/thứ)."""
+
+    def one(m: re.Match) -> str:
+        base = _SOLF1[unicodedata.normalize("NFC", m[1]).lower()]
+        acc = (m[2] or "").lower()
+        return base + ("#" if "thăng" in acc else "b" if "giáng" in acc else "")
+
+    return _SOLF_ONE.sub(one, solfege_to_letters(text))

@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { api, type ApiError, type ChatReply } from "../../api";
 import { TUTOR_EXPLAIN_EVENT, type TutorExplainDetail } from "../../lib/tutorBus";
 import { Button, Spinner } from "../ui/Button";
+import { activateTutorScope, patchTutorContext, readTutorContext, subscribeTutorContext } from "../../lib/tutorContext";
+import { ROOT_KEY_OPTIONS } from "../../content/lessons";
 
 // Khung AI Tutor nổi ở góc phải dưới trên mọi trang /app/* (04 Bảng 25, đề GĐ3 mục 11).
 // Mọi phán đoán nhạc lý, trích dẫn và nhãn "Đã kiểm bằng Music Engine" đều do máy chủ quyết; ở đây chỉ hiển thị.
@@ -13,11 +15,11 @@ type Item =
   | { kind: "error"; id: string; text: string; retry?: () => void };
 
 const FALLBACK_NOTE: Record<string, string> = {
-  ai_disabled: "AI đang tắt, đây là câu trả lời lấy từ bài học.",
-  timeout: "AI trả lời quá lâu, mình dùng câu trả lời lấy từ bài học.",
-  rate_limited: "AI đang quá tải, mình dùng câu trả lời lấy từ bài học.",
-  unavailable: "AI đang lỗi, mình dùng câu trả lời lấy từ bài học.",
-  global_budget: "Hôm nay hệ thống đã dùng hết lượt AI, mình dùng câu trả lời lấy từ bài học.",
+  ai_disabled: "Trợ lý AI đang tắt.",
+  timeout: "AI trả lời quá lâu.",
+  rate_limited: "AI đang quá tải.",
+  unavailable: "AI đang tạm thời không khả dụng.",
+  global_budget: "Hôm nay hệ thống đã dùng hết lượt AI.",
   engine_contradiction: "Câu AI soạn sai với Music Engine nên đã được thay bằng câu trả lời an toàn.",
   answer_leak: "Câu AI soạn để lộ đáp án nên đã được thay bằng gợi ý viết sẵn.",
   format_error: "AI trả lời sai định dạng nên đã được thay bằng câu trả lời lấy từ bài học.",
@@ -60,6 +62,7 @@ export function AssistantBubble({ data, onCite, onOpen, onMoreHint, busy }: {
   onMoreHint?: () => void; busy: boolean;
 }) {
   const contradicted = data.engine_claims.some((c) => c.status !== "verified");
+  const showVerified = data.verified && !!data.verified_label && data.engine_claims.length > 0 && !contradicted;
   const lessonCites = data.citations.filter((c) => c.lesson_id !== "HELP");
   return <div className="max-w-[92%] rounded-2xl rounded-bl-sm border border-line bg-surface px-3 py-2 text-sm text-ink">
     {data.source_label && data.flow && <p className={`mb-1 inline-block rounded-full px-2 py-0.5 text-xs font-semibold ${FLOW_STYLE[data.flow] ?? "text-muted"}`}>
@@ -67,6 +70,11 @@ export function AssistantBubble({ data, onCite, onOpen, onMoreHint, busy }: {
     </p>}
     {data.hint_level > 0 && <p className="mb-1 text-xs font-semibold text-muted">Gợi ý mức {data.hint_level}/3</p>}
     <p className="whitespace-pre-line">{data.reply}</p>
+    {data.supplemental_source && data.supplemental_source.url.startsWith("https://") && <a
+      className="mt-2 inline-block text-xs font-semibold text-primary underline"
+      href={data.supplemental_source.url} target="_blank" rel="noopener noreferrer">
+      {data.supplemental_source.title}
+    </a>}
     {lessonCites.length > 0 && <div className="mt-2 flex flex-wrap gap-1.5" aria-label="Nguồn trong bài học">
       {lessonCites.map((c) => <button key={c.block_id} type="button" title={`${c.lesson_title} · ${c.title}`}
         className="rounded-md border border-primary/40 bg-primary-soft px-2 py-0.5 text-xs font-semibold text-primary hover:border-primary"
@@ -82,8 +90,8 @@ export function AssistantBubble({ data, onCite, onOpen, onMoreHint, busy }: {
         Mở bài {data.suggested_lesson.lesson_id}: {data.suggested_lesson.title}</button>}
     </div>}
     <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
-      {data.verified_label && <span className="rounded-full bg-success-soft px-2 py-0.5 font-semibold text-success">✓ {data.verified_label}</span>}
-      {!data.verified_label && contradicted && <span className="rounded-full bg-warning-soft px-2 py-0.5 font-semibold text-warning">Có chỗ chưa kiểm được bằng Music Engine</span>}
+      {showVerified && <span title="Chỉ xác minh các dữ kiện nhận diện được trong câu trả lời; không xác minh toàn bộ lời giải hoặc mức độ phù hợp với câu hỏi." className="rounded-full bg-success-soft px-2 py-0.5 font-semibold text-success">✓ Đã kiểm tra dữ kiện nhạc lý hiển thị bằng Music Engine</span>}
+      {!showVerified && contradicted && <span className="rounded-full bg-warning-soft px-2 py-0.5 font-semibold text-warning">Có chỗ chưa kiểm được bằng Music Engine</span>}
       {data.status !== "ok" && <span className="text-muted">{FALLBACK_NOTE[data.fallback_reason ?? ""] ?? "Câu trả lời dự phòng."}</span>}
     </div>
     {onMoreHint && data.next_hint_level && <Button variant="ghost" className="mt-1 !min-h-8 !px-2 text-xs" onClick={onMoreHint} disabled={busy}>
@@ -104,6 +112,9 @@ export default function FloatingTutorDrawer() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const contextScope = location.pathname + location.search;
+  const musicContext = useSyncExternalStore(subscribeTutorContext, () => readTutorContext(contextScope));
+  useEffect(() => { activateTutorScope(contextScope); }, [contextScope]);
 
   useEffect(() => { listRef.current?.scrollTo({ top: listRef.current.scrollHeight }); }, [items, busy]);
   useEffect(() => { if (open) inputRef.current?.focus(); }, [open]);
@@ -132,7 +143,9 @@ export default function FloatingTutorDrawer() {
     if (!message || busy) return;
     setText("");
     push({ kind: "user", id: nextId(), text: message });
-    void run(() => api.chatMessage(message, sessionId, contextFromPath(location.pathname, location.search)));
+    // Capture the context now: retry must not inherit a later selection.
+    const context = { ...contextFromPath(location.pathname, location.search), ...readTutorContext(contextScope) };
+    void run(() => api.chatMessage(message, sessionId, context));
   };
 
   const explain = (attemptId: string, prompt: string, level?: number) => {
@@ -165,7 +178,7 @@ export default function FloatingTutorDrawer() {
       <header className="flex items-center justify-between gap-2 border-b border-line bg-surface px-4 py-3">
         <div>
           <h2 className="font-display text-base font-semibold text-ink">AI Tutor</h2>
-          <p className="text-xs text-muted">Trả lời dựa trên bài học, nốt nhạc kiểm bằng Music Engine{remaining !== null ? ` · còn ${remaining} lượt hôm nay` : ""}</p>
+          <p className="text-xs text-muted">Trả lời dựa trên bài học, Music Engine và nguồn tham khảo đã duyệt{remaining !== null ? ` · còn ${remaining} lượt hôm nay` : ""}</p>
         </div>
         <button type="button" className="rounded-md px-2 py-1 text-lg leading-none text-muted hover:text-ink" aria-label="Đóng AI Tutor" onClick={() => setOpen(false)}>×</button>
       </header>
@@ -185,6 +198,21 @@ export default function FloatingTutorDrawer() {
         {busy && <p className="flex items-center gap-2 text-sm text-muted"><Spinner /> Mình đang soạn câu trả lời…</p>}
       </div>
       <form onSubmit={send} className="border-t border-line bg-surface p-3">
+        <fieldset className="mb-2 grid gap-1 text-xs">
+          <legend>Giọng để hỏi AI (không đổi đề bài)</legend>
+          <div className="flex gap-2">
+            <select aria-label="Giọng ngữ cảnh AI" value={musicContext.selected_key ?? ""}
+              onChange={(e) => patchTutorContext(contextScope, { selected_key: e.target.value || undefined, mode: e.target.value ? musicContext.mode ?? "major" : undefined })}>
+              <option value="">Chưa chọn giọng</option>
+              {ROOT_KEY_OPTIONS.flatMap((item) => item.spellings).map((key) => <option key={key} value={key}>{key}</option>)}
+            </select>
+            <select aria-label="Loại giọng ngữ cảnh AI" disabled={!musicContext.selected_key} value={musicContext.mode ?? "major"}
+              onChange={(e) => patchTutorContext(contextScope, { mode: e.target.value as "major" | "natural_minor" })}>
+              <option value="major">Trưởng</option><option value="natural_minor">Thứ tự nhiên</option>
+            </select>
+          </div>
+          <span>Đang xem: {musicContext.selected_chord ? `hợp âm ${musicContext.selected_chord}` : musicContext.selected_root ? `nốt gốc ${musicContext.selected_root}` : "chưa chọn hợp âm"}. Nốt gốc không tự xác định giọng.</span>
+        </fieldset>
         <label htmlFor="tutor-input" className="sr-only">Câu hỏi cho AI Tutor</label>
         <textarea id="tutor-input" ref={inputRef} rows={2} maxLength={1000} value={text} onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}

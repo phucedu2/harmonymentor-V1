@@ -327,9 +327,10 @@ def _normalize_roman(text: str) -> str:
             .replace("dim", "°"))
 
 
-def grade_roman_numeral(key: str, chord: str, answer: str) -> dict:
+def grade_roman_numeral(key: str, chord: str, answer: str, mode: str = "major") -> dict:
     """Bài roman_numeral: {key: "C", chord: "Dm7"} → "ii7". Hoa/thường và ký hiệu phải khớp."""
-    expected = roman_numeral(key, chord)
+    expected = roman_numeral(key, chord, mode=mode)
+    label = "trưởng" if mode == "major" else "thứ tự nhiên"
     got = _normalize_roman(answer)
     if got == expected.numeral:
         return _result(True, expected.numeral, [], convention_id=ROMAN_CONVENTION,
@@ -338,7 +339,7 @@ def grade_roman_numeral(key: str, chord: str, answer: str) -> dict:
     exp_letters = "".join(ch for ch in expected.numeral if ch.upper() in "IV")
     if letters.upper() != exp_letters.upper():
         code = _err("ROMAN_DEGREE", f"{expected.chord.symbol} nằm trên bậc {expected.degree} của giọng "
-                                    f"{expected.key} trưởng.", answered=answer)
+                                    f"{expected.key} {label}.", answered=answer)
     else:
         code = _err("ROMAN_QUALITY_MARK",
                     f"Đúng bậc nhưng sai ký hiệu chất lượng: chữ hoa = trưởng, chữ thường = thứ, ° = giảm. "

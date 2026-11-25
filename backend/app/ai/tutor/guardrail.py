@@ -16,9 +16,11 @@ from typing import Any, Iterable
 from ...music_engine import tools as engine
 from ...music_engine.errors import MusicEngineError
 from ...music_engine.roman import diatonic_chords
-from .notes import (CHORD_IS_ROMAN_IN_KEY, CHORD_WITH_NOTES, INTERVAL_PAIR_WITH_NAME, INTERVAL_WITH_NAME, NOTE_SEQ, ROMAN_IN_KEY_IS_CHORD,
-                    SCALE_WITH_NOTES, SYMBOL_IN_QUESTION, interval_name, norm_accidentals, solfege_to_letters,
-                    split_notes)
+from .notes import (
+    CHORD_IS_ROMAN_IN_KEY, CHORD_WITH_NOTES, INTERVAL_PAIR_WITH_NAME, INTERVAL_WITH_NAME,
+    KEY_CHORD_IS_ROMAN, NOTE_SEQ, ROMAN_IN_KEY_IS_CHORD, SCALE_WITH_NOTES, SYMBOL_IN_QUESTION,
+    interval_name, norm_accidentals, normalize_key_names, roman_mode, solfege_to_letters, split_notes,
+)
 from .schema import Claim
 
 _SCALE_KIND = {"major": "major", "trưởng": "major", "natural minor": "natural_minor", "thứ tự nhiên": "natural_minor",
@@ -61,7 +63,7 @@ def run_tool(tool: str, args: dict[str, str]) -> tuple[str | None, dict]:
     if fn is None:
         return None, {"ok": False, "error": {"code": "UNKNOWN_TOOL"}}
     allowed = {"get_chord_tones": ("symbol",), "get_scale": ("tonic", "scale_type"),
-               "identify_interval": ("lower", "upper"), "get_roman_numeral": ("key", "chord")}[tool]
+               "identify_interval": ("lower", "upper"), "get_roman_numeral": ("key", "chord", "mode")}[tool]
     try:
         out = fn(**{k: v for k, v in args.items() if k in allowed})
     except TypeError:
@@ -94,13 +96,15 @@ def _norm_roman(text: str) -> str:
     return text.strip().replace("maj7", "M7").replace("∅", "ø")
 
 
-def check_roman(key: str, chord: str, claimed: str) -> CheckedClaim:
-    """Khẳng định "<số La Mã> trong giọng <key> trưởng là <chord>".
+def check_roman(key: str, chord: str, claimed: str, mode: str = "major") -> CheckedClaim:
+    """Khẳng định "<số La Mã> trong giọng <key> (mode) là <chord>".
 
     Hợp âm thuận giọng: so số La Mã Engine trả. Hợp âm ngoài giọng (ví dụ G7 trong G trưởng): nếu số La Mã AI
     nêu là một bậc thuận giọng thì hợp âm của bậc đó khác chord → contradicted; còn lại (V/V, I7...) Engine
     chưa đặt tên được → unsupported, không bao giờ verified."""
     args = {"key": norm_accidentals(key), "chord": norm_accidentals(chord)}
+    if mode != "major":
+        args["mode"] = mode
     rn = _norm_roman(claimed)
     value, _ = run_tool("get_roman_numeral", args)
     if value is not None:
@@ -108,7 +112,7 @@ def check_roman(key: str, chord: str, claimed: str) -> CheckedClaim:
                             "scanned")
     try:
         seventh = any(ch in rn for ch in "7ø")
-        match = next((d for d in diatonic_chords(args["key"], sevenths=seventh) if d.numeral == rn), None)
+        match = next((d for d in diatonic_chords(args["key"], sevenths=seventh, mode=mode) if d.numeral == rn), None)
     except MusicEngineError:
         match = None
     if match is None:
@@ -120,7 +124,7 @@ def check_declared(claims: Iterable[Claim]) -> list[CheckedClaim]:
     out = []
     for c in claims:
         if c.tool == "get_roman_numeral":
-            checked = check_roman(c.args.get("key", ""), c.args.get("chord", ""), c.result)
+            checked = check_roman(c.args.get("key", ""), c.args.get("chord", ""), c.result, c.args.get("mode", "major"))
             out.append(CheckedClaim(checked.tool, checked.args, checked.claimed, checked.engine, checked.status,
                                     "declared"))
             continue
@@ -130,7 +134,7 @@ def check_declared(claims: Iterable[Claim]) -> list[CheckedClaim]:
 
 
 def scan_reply(reply: str) -> list[CheckedClaim]:
-    text = solfege_to_letters(reply)
+    text = normalize_key_names(reply)
     out = []
     for m in CHORD_WITH_NOTES.finditer(text):
         args = {"symbol": norm_accidentals(m["sym"])}
@@ -162,11 +166,11 @@ def scan_reply(reply: str) -> list[CheckedClaim]:
                                 "scanned"))
     # "Dm7: D F A C là ii7": chữ C cuối dãy nốt không phải hợp âm C, nên bỏ khớp nằm trong một dãy nốt.
     seqs = [m.span() for m in re.finditer(NOTE_SEQ, text)]
-    for pattern in (ROMAN_IN_KEY_IS_CHORD, CHORD_IS_ROMAN_IN_KEY):
+    for pattern in (ROMAN_IN_KEY_IS_CHORD, CHORD_IS_ROMAN_IN_KEY, KEY_CHORD_IS_ROMAN):
         for m in pattern.finditer(text):
             if any(a <= m.start("chord") < b for a, b in seqs):
                 continue
-            out.append(check_roman(m["key"], m["chord"], m["rn"]))
+            out.append(check_roman(m["key"], m["chord"], m["rn"], roman_mode(m["mode"])))
     return out
 
 

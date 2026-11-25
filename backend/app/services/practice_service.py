@@ -60,7 +60,8 @@ def grade_practice(kind: str, question: dict[str, Any], answer: str | list[str],
     elif kind == "interval":
         return grading.grade_identify_interval(question["lower"], question["upper"], _as_text(answer))
     else:
-        return grading.grade_roman_numeral(question["key"], question["chord"], _as_text(answer))
+        return grading.grade_roman_numeral(question["key"], question["chord"], _as_text(answer),
+                                           mode=question.get("mode", "major"))
     if input_mode == "piano" and result["correct"]:
         expected = " ".join(result["expected"]) if isinstance(result["expected"], list) else result["expected"]
         result = {**result, "message_vi": f"Đúng phím. Khi viết tên nốt, cách viết chuẩn là: {expected}."}
@@ -73,6 +74,8 @@ def record_practice(db: Session, user: User, kind: str, level: str | None, quest
     # Chỉ lưu đúng các trường của đề, không lưu thứ client gửi kèm. Lượt bấm piano ghi thêm "input" để lịch sử
     # biết lượt đó chấm theo lớp cao độ (dễ hơn chấm chính tả), không trộn lẫn khi thống kê.
     clean_question = {name: question[name] for name in _REQUIRED[kind]}
+    if kind == "roman":
+        clean_question["mode"] = question.get("mode", "major")
     if input_mode == "piano":
         clean_question["input"] = "piano"
     row = PracticeAttempt(

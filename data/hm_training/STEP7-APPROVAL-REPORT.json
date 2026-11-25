@@ -1,0 +1,18 @@
+{
+  "scope": "12 legacy rows + HM6-01..04",
+  "counts": {
+    "train": 12,
+    "dev": 2,
+    "test": 2
+  },
+  "total": 16,
+  "engine_verified": true,
+  "token_min": 445,
+  "token_max": 660,
+  "dev_decision": "keep context-013 and context-014; same seventh-alias family; do not treat 2-row dev as generalization estimate",
+  "production_ready": false,
+  "minimum_train_required": 50,
+  "train_shortfall": 38,
+  "candidate_A_C_not_included": 34,
+  "output_sha256": "c3b17b478e3da52775a9097423ea2551ba257523ba5a3ce94f8a6ff026b84420"
+}

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { browserTutorScope, resetTutorLesson, clearTutorLesson } from "../../lib/tutorContext";
 import {
   api,
   type ApiError,
@@ -149,6 +150,11 @@ export default function LessonRunner({
   // "Xem cả bài" (bố cục cuộn một trang của v0.5.3) và "Từng bước" (PR #6) dùng chung một danh sách
   // bước và cùng trạng thái chấm, nên đổi chế độ không làm mất câu đã đúng.
   const [viewAll, setViewAll] = useState(() => readStoredView());
+  useEffect(() => {
+    const route = browserTutorScope();
+    resetTutorLesson(route, lesson.id);
+    return () => clearTutorLesson(route);
+  }, [lesson.id, stepIndex, viewAll]);
   const topRef = useRef<HTMLDivElement>(null);
   const indexRef = useRef<HTMLDetailsElement>(null);
 

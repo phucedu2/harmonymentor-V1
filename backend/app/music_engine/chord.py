@@ -88,7 +88,7 @@ EXTENDED_ALIASES: dict[str, str] = {
 ALIAS_PROFILES = {"srs": SRS_ALIASES, "extended": EXTENDED_ALIASES}
 DEFAULT_ALIAS_PROFILE = "extended"  # theo khuyến nghị QĐ-2.11; đổi thành "srs" nếu bạn chọn Không
 
-_SYMBOL_RE = re.compile(r"^\s*([A-G])(#|b|♯|♭)?([^/]*?)(?:/([A-G])(#|b|♯|♭)?)?\s*$")
+_SYMBOL_RE = re.compile(r"^\s*([A-G])(##|bb|#|b|♯|♭)?([^/]*?)(?:/([A-G])(##|bb|#|b|♯|♭)?)?\s*$")
 
 
 def _normalize_quality(q: str) -> str:
