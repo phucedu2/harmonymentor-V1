@@ -674,3 +674,15 @@ class AiSummaryJob(Base):
     skipped_pages: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
+
+
+class AppSetting(Base):
+    """Cài đặt hệ thống Quản trị viên đổi qua web (ADR-036). Hiện chỉ có công tắc AI: tắt thì không gọi Gemini dù .env
+    có khóa. Khóa API KHÔNG lưu ở đây, chỉ ở .env (Phúc 8A)."""
+
+    __tablename__ = "app_settings"
+
+    key: Mapped[str] = mapped_column(String(64), primary_key=True)
+    value: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    updated_by: Mapped[Optional[str]] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)

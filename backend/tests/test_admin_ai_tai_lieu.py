@@ -127,7 +127,7 @@ def test_ai_tat_thi_503_va_hoc_sinh_bi_chan(env):
     app.dependency_overrides[draft_provider_dep] = lambda: None
     r = client.post(f"/api/v1/admin/ai/documents/{doc['id']}/draft", headers=h, json={"page_from": 1, "page_to": 1})
     assert r.status_code == 503 and r.json()["error"]["code"] == "AI_DISABLED"
-    assert client.get("/api/v1/admin/ai/status", headers=h).json() == {"enabled": False}
+    assert client.get("/api/v1/admin/ai/status", headers=h).json()["enabled"] is False
     uid = f"lrn-{uuid4().hex[:10]}"
     with SessionLocal() as db:
         db.add(User(id=uid, display_name="Học sinh", email=f"{uid}@example.test", role="learner", is_active=True))

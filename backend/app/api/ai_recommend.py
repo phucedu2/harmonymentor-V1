@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, Query, Response
 from sqlalchemy.orm import Session
 
 from ..ai.embedder import Embedder, get_embedder
+from ..core.ai_switch import switch_on
 from ..auth.deps import get_current_user
 from ..contracts.ai import GoalIn, GoalOut, RecClickIn, RecommendOut
 from ..core.errors import AppError
@@ -17,8 +18,8 @@ router = APIRouter(prefix="/api/v1", tags=["ai-recommend"])
 
 
 def embedder_dep() -> Embedder | None:
-    """Tách thành dependency để test thay bằng FakeEmbedder, không gọi mạng."""
-    return get_embedder(rs.settings)
+    """Tách thành dependency để test thay bằng FakeEmbedder, không gọi mạng. Công tắc AI tắt (ADR-036) → None."""
+    return get_embedder(rs.settings) if switch_on() else None
 
 
 @router.get("/recommend", response_model=RecommendOut)

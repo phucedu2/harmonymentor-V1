@@ -15,6 +15,7 @@ from ..db.models import AdminAuditLog, Attempt, LessonProgress, User
 from ..db.session import SessionLocal, get_db
 from ..ai.tutor.llm import LLMProvider, get_provider
 from ..core.ai_config import relevance_config
+from ..core import ai_switch
 from ..core.config import settings
 from ..db.models import SourceDocument
 from . import ai_job, ai_service, content_service, lesson_admin, skill_admin, stats_service
@@ -260,7 +261,8 @@ def retire_exercise(exercise_id: str, admin: User = Depends(require_admin), db: 
 # --- người dùng ---------------------------------------------------------------------------------
 
 class UserPatchIn(BaseModel):
-    is_active: bool
+    is_active: bool | None = None
+    role: str | None = Field(default=None, pattern="^(admin|learner)$")
 
 
 @router.get("/users")
@@ -288,16 +290,26 @@ def list_users(q: str = Query("", max_length=80), limit: int = Query(50, ge=1, l
 
 @router.patch("/users/{user_id}")
 def patch_user(user_id: str, body: UserPatchIn, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
-    """Khóa hoặc mở khóa tài khoản. Không đổi vai trò qua web (tạo admin chỉ bằng lệnh seed_admin) và không tự khóa mình."""
+    """Khóa/mở khóa tài khoản và đổi vai trò (ADR-036, Phúc 7A). Không tự khóa và không tự đổi vai trò của mình, nên
+    hệ thống luôn còn ít nhất người đang thao tác là Quản trị viên. Mọi thay đổi ghi nhật ký."""
     target = db.get(User, user_id)
-    if target is None or target.is_synthetic:
+    if target is None or target.is_synthetic or target.email is None:
         raise AppError(404, "USER_NOT_FOUND", "Không có người dùng này.")
+    if body.is_active is None and body.role is None:
+        raise AppError(422, "NOTHING_TO_CHANGE", "Không có gì để đổi.")
     if target.id == admin.id:
-        raise AppError(409, "CANNOT_LOCK_SELF", "Bạn không thể tự khóa tài khoản của mình.")
-    target.is_active = body.is_active
-    content_service.audit(db, admin, "user.unlock" if body.is_active else "user.lock", "user", target.id)
+        if body.is_active is False:
+            raise AppError(409, "CANNOT_LOCK_SELF", "Bạn không thể tự khóa tài khoản của mình.")
+        if body.role is not None and body.role != admin.role:
+            raise AppError(409, "CANNOT_CHANGE_OWN_ROLE", "Bạn không thể tự đổi vai trò của mình. Nhờ Quản trị viên khác.")
+    if body.is_active is not None and body.is_active != target.is_active:
+        target.is_active = body.is_active
+        content_service.audit(db, admin, "user.unlock" if body.is_active else "user.lock", "user", target.id)
+    if body.role is not None and body.role != target.role:
+        content_service.audit(db, admin, "user.role", "user", target.id, {"from": target.role, "to": body.role})
+        target.role = body.role
     db.commit()
-    return {"id": target.id, "is_active": target.is_active}
+    return {"id": target.id, "is_active": target.is_active, "role": target.role}
 
 
 # --- thống kê và nhật ký --------------------------------------------------------------------------
@@ -321,7 +333,9 @@ _draft_provider_cache: dict[tuple, LLMProvider | None] = {}
 
 
 def draft_provider_dep() -> LLMProvider | None:
-    """Tách thành dependency để test thay bằng FakeProvider, không gọi mạng."""
+    """Tách thành dependency để test thay bằng FakeProvider, không gọi mạng. Công tắc AI tắt (ADR-036) → None."""
+    if not ai_switch.switch_on():
+        return None
     key = (settings.ai_enabled, bool(settings.gemini_api_key), settings.gemini_model)
     if key not in _draft_provider_cache:
         _draft_provider_cache[key] = get_provider(dc_replace(settings, ai_timeout_seconds=max(settings.ai_timeout_seconds, 60.0)))
@@ -346,7 +360,28 @@ class DraftEditIn(BaseModel):
 
 @router.get("/ai/status")
 def ai_status(provider: LLMProvider | None = Depends(draft_provider_dep)):
-    return {"enabled": provider is not None}
+    # ADR-036: env_ready = .env có AI_ENABLED + khóa; switch_on = công tắc Quản trị viên. AI chạy khi cả hai cùng bật.
+    return {"enabled": provider is not None, "env_ready": bool(settings.ai_enabled and settings.gemini_api_key),
+            "switch_on": ai_switch.switch_on()}
+
+
+class AiSwitchIn(BaseModel):
+    on: bool
+
+
+@router.put("/ai/switch")
+def set_ai_switch(body: AiSwitchIn, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    """FR-ADM-AI-04 (Phúc 8A): bật/tắt mọi lệnh gọi Gemini. Chỉ lưu cờ; khóa API vẫn chỉ ở .env."""
+    from ..db.models import AppSetting
+    row = db.get(AppSetting, ai_switch.SETTING_KEY)
+    if row is None:
+        row = AppSetting(key=ai_switch.SETTING_KEY, value={})
+        db.add(row)
+    row.value, row.updated_by = {"on": body.on}, admin.id
+    content_service.audit(db, admin, "ai.switch.on" if body.on else "ai.switch.off", "setting", ai_switch.SETTING_KEY)
+    db.commit()
+    ai_switch.reset_cache()
+    return {"switch_on": body.on, "env_ready": bool(settings.ai_enabled and settings.gemini_api_key)}
 
 
 @router.post("/ai/documents")

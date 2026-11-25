@@ -54,6 +54,7 @@ Các giai đoạn 0.2 → 2.3 là lộ trình của bản code gốc (zip v0.1.0
 | [gop-y-thay](gop-y-thay/) | v0.5.4-dev | Góp ý thầy T1–T6, cổng G7: bản đồ góp ý, demo 5 phút, tổng kết, 15/11 | [G7_BAO_CAO.md](gop-y-thay/G7_BAO_CAO.md) |
 | [../review123](../review123/) | v0.5.4-dev | Tài liệu eProject Review 01–03 song ngữ (.docx dựng bằng script), test thật và 27 ca thủ công, 17/11 | [BAO_CAO_BAN_GIAO.md](../review123/BAO_CAO_BAN_GIAO.md) |
 | [gop-y-thay](gop-y-thay/) | v0.5.4-dev | Góp ý thầy T1–T6, G8: chấm nhạc lý 300 câu AI Tutor với Gemini thật (92,3% đúng), 19/11 | [G8_BAO_CAO.md](gop-y-thay/G8_BAO_CAO.md) |
+| [admin-quyen-ai](admin-quyen-ai/) | v0.5.4-dev | Hoàn thiện Admin PR 4: nâng/hạ quyền Admin qua web, công tắc AI lưu CSDL, ADR-036 (không course/module), 24/11 | [BAO_CAO.md](admin-quyen-ai/BAO_CAO.md) |
 
 ## Quy ước cho giai đoạn sau
 
