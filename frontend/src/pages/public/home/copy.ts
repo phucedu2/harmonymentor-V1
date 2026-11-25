@@ -126,8 +126,7 @@ export const curriculum = {
 
 export const footer = {
   about: "HarmonyMentor dạy nhạc lý cho người bắt đầu từ con số 0: học lý thuyết ngắn, làm bài ngay, hỏi AI Tutor khi bí, rồi tự viết vòng hợp âm trong Harmony Lab.",
-  // Nhóm tự sửa thành họ tên đầy đủ.
-  team: ["Trần Thiên Phúc", "Thắng", "Đạt"],
+  team: ["Trần Thiên Phúc", "Huỳnh Toàn Thắng", "Nguyễn Tiến Đạt"],
   github: "https://github.com/phucedu2/harmonymentor-V1",
   email: "HarmonyMentor@gmail.com",
   note: "Đồ án sinh viên",
