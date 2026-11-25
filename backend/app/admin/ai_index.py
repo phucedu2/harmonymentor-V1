@@ -20,6 +20,8 @@ from sqlalchemy.orm import Session
 
 log = logging.getLogger(__name__)
 AI_TRACK = "AI soạn từ tài liệu"
+ADMIN_TRACK = "Quản trị viên soạn"          # bài tạo bằng form hoặc nhập file (ADR-035)
+TUTOR_TRACKS = (AI_TRACK, ADMIN_TRACK)       # Phúc 9A (25/11/2026): bài M- đang hiện cũng vào kho AI Tutor
 
 
 def _source_label(db: Session, lesson_id: str) -> str:
@@ -27,28 +29,31 @@ def _source_label(db: Session, lesson_id: str) -> str:
 
     row = db.execute(select(LessonSource, SourceWork).join(SourceWork, SourceWork.id == LessonSource.source_work_id)
                      .where(LessonSource.lesson_id == lesson_id)).first()
-    return f"{row[1].title} · {row[0].locator}" if row else "Tài liệu do Quản trị viên tải lên"
+    if row:
+        return f"{row[1].title} · {row[0].locator}"
+    return "Giáo trình do Quản trị viên soạn" if lesson_id.startswith("M-") else "Tài liệu do Quản trị viên tải lên"
 
 
 def ai_lessons(db: Session) -> list[Any]:
-    """Bài AI học sinh đang thấy (đã xuất bản, không ẩn)."""
+    """Bài do AI hoặc Quản trị viên soạn mà học sinh đang thấy (đã xuất bản, không ẩn, không xóa)."""
     from ..content.overrides import hidden_lesson_ids
     from ..db.models import Lesson
 
     hidden = hidden_lesson_ids(db)
-    return [lesson for lesson in db.scalars(select(Lesson).where(Lesson.track == AI_TRACK).order_by(Lesson.order_index, Lesson.id))
+    return [lesson for lesson in db.scalars(select(Lesson).where(Lesson.track.in_(TUTOR_TRACKS)).order_by(Lesson.order_index, Lesson.id))
             if lesson.id not in hidden]
 
 
 def ai_lesson_chunks(db: Session) -> list[Any]:
     from ..ai.tutor.chunker import block_text, chunk_block
+    from ..content.overrides import effective_blocks
 
     out = []
     for lesson in ai_lessons(db):
         source = _source_label(db, lesson.id)
         title = source.split(" · ")[0]
-        for block in sorted(lesson.blocks, key=lambda b: b.position):
-            payload = block.payload or {}
+        # Chữ đã sửa và xuất bản (ADR-023) thắng chữ gốc: Tutor trả lời đúng điều học sinh đang đọc.
+        for block, payload in effective_blocks(db, lesson):
             if block.block_type != "theory":
                 continue
             # Trích dẫn theo trang của KHỐI (publish ghi source_page) để Tutor nói "sách X, trang n", không cả khoảng trang.

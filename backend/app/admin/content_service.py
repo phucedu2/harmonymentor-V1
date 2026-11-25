@@ -159,6 +159,14 @@ def save_draft(db: Session, actor: User, lesson_id: str, block_id: str, payload:
     return {"revision_id": revision.id, "engine": engine_report(clean)}
 
 
+def _sync_tutor(db: Session, actor: User, lesson_id: str) -> None:
+    """Bài AI/M- đang ở kho AI Tutor mà chữ khối vừa đổi thì nạp lại (trước đây Tutor giữ chữ cũ tới lần hiện/ẩn sau)."""
+    lesson = db.get(Lesson, lesson_id)
+    if lesson is not None and lesson.track in ai_index.TUTOR_TRACKS:
+        audit(db, actor, "ai.lesson.index", "lesson", lesson_id, ai_index.sync_lesson(db, lesson_id))
+        db.commit()
+
+
 def publish(db: Session, actor: User, revision_id: str, acknowledge_engine_flags: bool) -> dict[str, Any]:
     revision = db.get(ContentRevision, revision_id)
     if revision is None or revision.kind != "block":
@@ -172,6 +180,7 @@ def publish(db: Session, actor: User, revision_id: str, acknowledge_engine_flags
     audit(db, actor, "content.publish", "lesson_block", f"{revision.lesson_id}/{revision.target}",
           {"revision": revision.id, "engine_flags": len(report["contradicted"])})
     db.commit()
+    _sync_tutor(db, actor, revision.lesson_id)
     return {"revision_id": revision.id, "engine": report}
 
 
@@ -195,6 +204,7 @@ def restore(db: Session, actor: User, lesson_id: str, block_id: str, revision_id
         db.delete(old)
     audit(db, actor, "content.restore", "lesson_block", f"{lesson.id}/{block.id}", {"from": revision_id or "seed"})
     db.commit()
+    _sync_tutor(db, actor, lesson.id)
     return {"revision_id": revision.id}
 
 
@@ -216,7 +226,7 @@ def set_hidden(db: Session, actor: User, lesson_id: str, hidden: bool) -> dict[s
     db.commit()
     out: dict[str, Any] = {"id": lesson_id, "hidden": bool(hidden)}
     lesson = db.get(Lesson, lesson_id)
-    if lesson is not None and lesson.track == ai_index.AI_TRACK:
+    if lesson is not None and lesson.track in ai_index.TUTOR_TRACKS:
         # ADR-033 (N5, 6A): hiện bài AI thì nạp vào kho AI Tutor, ẩn thì gỡ.
         out["tutor_index"] = ai_index.sync_lesson(db, lesson_id)
         audit(db, actor, "ai.lesson.index", "lesson", lesson_id, out["tutor_index"])

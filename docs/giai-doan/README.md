@@ -69,6 +69,7 @@ Các giai đoạn 0.2 → 2.3 là lộ trình của bản code gốc (zip v0.1.0
 - [`admin-bai-hoc/`](admin-bai-hoc/BAO_CAO.md): Admin tạo/xóa/sắp xếp bài, soạn câu luyện tập bằng form, Engine tính đáp án, sửa tăng phiên bản (24/11/2026, ADR-035).
 - [`admin-ky-nang/`](admin-ky-nang/BAO_CAO.md): Admin quản lý kỹ năng, tiên quyết (chặn vòng lặp), nguồn tài liệu (24/11/2026).
 - [`admin-sua-bai-nhap-file/`](admin-sua-bai-nhap-file/BAO_CAO.md): Admin sửa tên/mục tiêu mọi bài, xóa và đổi thứ tự khối bài tự tạo, nhập nội dung từ file YAML/JSON (FR-ADM-14, FR-ADM-39), 25/11/2026.
+- [`admin-ky-nang-goi-y/`](admin-ky-nang-goi-y/BAO_CAO.md): kỹ năng tự tạo vào mastery và hệ gợi ý, bài tự tạo vào kho AI Tutor, ngưỡng thành thạo theo kỹ năng (FR-ADM-23, ADR-037), 25/11/2026.
 - Mỗi giai đoạn mới (ví dụ `gd2-goi-y`) tạo thư mục `docs/giai-doan/<tên giai đoạn>/`, đặt báo cáo triển khai và file kiểm chứng của giai đoạn đó vào đây, rồi thêm một dòng vào bảng trên.
 - Báo cáo PR vẫn ở [`docs/bao-cao/`](../bao-cao/), ảnh và minh chứng chấm điểm ở [`docs/minh-chung/`](../minh-chung/), quyết định ở [`docs/decisions/`](../decisions/).
 - Đặc tả dùng chung cho nhiều giai đoạn (`SKILL_GRAPH.md`, `LESSON_SPECIFICATIONS.md`, `CURRICULUM_SOURCE_MATRIX.md`) và minh chứng mốc chấm (`CP1_*.md`) giữ ở `docs/`.

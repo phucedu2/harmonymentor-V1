@@ -55,8 +55,52 @@ MAPPING_ROWS: list[tuple[str, str, str]] = [
 SKILL_MAPPING: dict[str, tuple[str, str]] = {skill: (srs, group) for skill, srs, group in MAPPING_ROWS}
 
 
-def is_mvp(skill_id: str) -> bool:
+# Kỹ năng Quản trị viên tự thêm (ADR-037, Phúc 9A 25/11/2026): chọn một trong 10 nhóm MVP nên tính mastery và vào vector
+# gợi ý như kỹ năng gốc. Bảng gốc ở trên bất biến; phần này đọc từ cột skills.srs_code/group_code, nhớ tạm 30 giây để
+# `is_mvp` (gọi theo từng dòng mastery) không truy vấn CSDL mỗi lần. Admin đổi thì `reload_custom_mapping()` làm mới ngay.
+CUSTOM_PREFIX = "custom."
+CUSTOM_TTL_SECONDS = 30.0
+_custom: dict[str, tuple[str, str]] = {}
+_custom_at = float("-inf")
+
+
+def reload_custom_mapping() -> None:
+    global _custom, _custom_at
+    import time
+
+    _custom_at = time.monotonic()
+    try:
+        from sqlalchemy import select
+
+        from ..db.models import Skill
+        from ..db.session import SessionLocal
+
+        with SessionLocal() as db:
+            rows = db.execute(select(Skill.id, Skill.srs_code, Skill.group_code).where(Skill.id.like(CUSTOM_PREFIX + "%"))).all()
+        # Chỉ nhận kỹ năng có nhóm MVP hợp lệ và group = srs (quy tắc validate_mapping); dòng khác coi như "ngoài hệ gợi ý".
+        _custom = {sid: (srs, grp) for sid, srs, grp in rows if srs in SRS_CODES and grp == srs}
+    except Exception:   # noqa: BLE001 - CSDL chưa sẵn sàng (lệnh dựng chỉ mục, test thuần): giữ bảng cũ, thử lại sau TTL
+        pass
+
+
+def custom_mapping() -> dict[str, tuple[str, str]]:
+    import time
+
+    if time.monotonic() - _custom_at > CUSTOM_TTL_SECONDS:
+        reload_custom_mapping()
+    return _custom
+
+
+def mapping_of(skill_id: str) -> tuple[str, str] | None:
+    """(srs_code, group_code) của kỹ năng gốc hoặc kỹ năng tự thêm đã có nhóm; None nếu không có trong bảng nào."""
     entry = SKILL_MAPPING.get(skill_id)
+    if entry is None and skill_id.startswith(CUSTOM_PREFIX):
+        entry = custom_mapping().get(skill_id)
+    return entry
+
+
+def is_mvp(skill_id: str) -> bool:
+    entry = mapping_of(skill_id)
     return entry is not None and entry[0] != POST_MVP
 
 

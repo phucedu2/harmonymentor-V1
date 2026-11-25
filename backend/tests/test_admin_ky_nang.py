@@ -23,12 +23,14 @@ A = "/api/v1/admin"
 def client():
     with TestClient(app) as c:
         yield c
+    from app.ai.skill_mapping import reload_custom_mapping
     with SessionLocal() as db:   # dọn kỹ năng/nguồn thử nghiệm
         ids = list(db.scalars(select(Skill.id).where(Skill.id.like("custom.%"))))
         db.execute(delete(SkillPrerequisite).where(SkillPrerequisite.skill_id.in_(ids) | SkillPrerequisite.prerequisite_skill_id.in_(ids)))
         db.execute(delete(Skill).where(Skill.id.in_(ids)))
         db.execute(delete(SourceWork).where(SourceWork.id.like("src-thu-%")))
         db.commit()
+    reload_custom_mapping()
 
 
 @pytest.fixture()
@@ -37,7 +39,7 @@ def h():
 
 
 def skill(client, h, name="Quãng ghép"):
-    r = client.post(f"{A}/skills", headers=h, json={"slug": f"thu_{uuid4().hex[:6]}", "name": name})
+    r = client.post(f"{A}/skills", headers=h, json={"slug": f"thu_{uuid4().hex[:6]}", "name": name, "group_code": "intervals"})
     assert r.status_code == 201, r.text
     return r.json()["id"]
 
