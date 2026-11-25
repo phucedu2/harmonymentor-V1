@@ -17,7 +17,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from ..ai.skill_mapping import is_mvp
+from ..ai.skill_mapping import SRS_CODES, is_mvp, reload_custom_mapping
 from ..content.skill_graph import PREREQUISITES, SKILLS
 from ..content.source_registry import SOURCE_REGISTRY
 from ..content.versioning import current_version
@@ -51,13 +51,22 @@ def list_skills(db: Session) -> list[dict[str, Any]]:
     out = []
     for s in db.scalars(select(Skill).order_by(Skill.domain, Skill.id)):
         out.append({"id": s.id, "name": s.name, "domain": s.domain, "seed": s.id in SEED_SKILLS, "mvp": is_mvp(s.id),
+                    "group_code": s.group_code, "ready_threshold": s.ready_threshold, "mastery_threshold": s.mastery_threshold,
                     "prerequisites": sorted(p for k, p in edges if k == s.id),
                     "seed_prerequisites": sorted(p for k, p in SEED_EDGES if k == s.id),
                     "lessons": sorted(used.get(s.id, set()))})
     return out
 
 
-def create_skill(db: Session, admin: User, slug: str, name: str, domain: str) -> dict[str, Any]:
+def _group(raw: Any) -> str:
+    group = _clean(raw, 40)
+    if group not in SRS_CODES:
+        raise AdminContentError("SKILL_GROUP", "Chọn nhóm kỹ năng trong 10 nhóm MVP để kỹ năng được tính mastery và gợi ý: "
+                                + ", ".join(SRS_CODES) + ".")
+    return group
+
+
+def create_skill(db: Session, admin: User, slug: str, name: str, domain: str, group_code: str | None = None) -> dict[str, Any]:
     name, domain = _clean(name, 200), _clean(domain, 80) or "theory"
     tail = _SLUG.sub("_", _ascii(_clean(slug, 100)).lower()).strip("._")
     if not name or not tail:
@@ -65,10 +74,12 @@ def create_skill(db: Session, admin: User, slug: str, name: str, domain: str) ->
     skill_id = tail if tail.startswith(CUSTOM_PREFIX) else CUSTOM_PREFIX + tail
     if db.get(Skill, skill_id) is not None:
         raise AdminContentError("SKILL_EXISTS", f"Đã có kỹ năng “{skill_id}”.", 409)
-    db.add(Skill(id=skill_id, name=name, domain=domain))
-    audit(db, admin, "skill.create", "skill", skill_id, {"name": name})
+    group = _group(group_code)   # Phúc 9A: kỹ năng tự tạo phải thuộc một nhóm MVP (srs = group, như bảng ADR-008)
+    db.add(Skill(id=skill_id, name=name, domain=domain, srs_code=group, group_code=group))
+    audit(db, admin, "skill.create", "skill", skill_id, {"name": name, "group": group})
     db.commit()
-    return {"id": skill_id, "name": name, "domain": domain}
+    reload_custom_mapping()
+    return {"id": skill_id, "name": name, "domain": domain, "group_code": group}
 
 
 def _custom(db: Session, skill_id: str) -> Skill:
@@ -80,15 +91,43 @@ def _custom(db: Session, skill_id: str) -> Skill:
     return skill
 
 
-def update_skill(db: Session, admin: User, skill_id: str, name: str, domain: str) -> dict[str, Any]:
+def update_skill(db: Session, admin: User, skill_id: str, name: str, domain: str, group_code: str | None = None) -> dict[str, Any]:
     skill = _custom(db, skill_id)
     name = _clean(name, 200)
     if not name:
         raise AdminContentError("SKILL_INCOMPLETE", "Kỹ năng cần tên.")
     skill.name, skill.domain = name, _clean(domain, 80) or skill.domain
-    audit(db, admin, "skill.update", "skill", skill_id, {"name": name})
+    detail: dict[str, Any] = {"name": name}
+    if group_code:
+        group = _group(group_code)
+        if group != skill.group_code:
+            # Đổi nhóm = đổi chiều trong vector gợi ý của mọi người đã có mastery kỹ năng này; vector tính lại ở lần gợi ý sau.
+            detail["group"] = {"from": skill.group_code, "to": group}
+            skill.srs_code = skill.group_code = group
+    audit(db, admin, "skill.update", "skill", skill_id, detail)
     db.commit()
-    return {"id": skill.id, "name": skill.name, "domain": skill.domain}
+    reload_custom_mapping()
+    return {"id": skill.id, "name": skill.name, "domain": skill.domain, "group_code": skill.group_code}
+
+
+def set_thresholds(db: Session, admin: User, skill_id: str, ready: Any, mastered: Any) -> dict[str, Any]:
+    """FR-ADM-23: ngưỡng sẵn sàng/thành thạo riêng của MỌI kỹ năng. Seed chỉ điền ngưỡng khi trống nên không ghi đè."""
+    skill = db.get(Skill, skill_id)
+    if skill is None:
+        raise AdminContentError("SKILL_NOT_FOUND", "Không có kỹ năng này.", 404)
+    try:
+        r, m = float(ready), float(mastered)
+    except (TypeError, ValueError) as exc:
+        raise AdminContentError("THRESHOLD_INVALID", "Ngưỡng phải là số.") from exc
+    if not (0.0 < r < m <= 1.0):
+        raise AdminContentError("THRESHOLD_INVALID", "Cần 0 < ngưỡng sẵn sàng < ngưỡng thành thạo ≤ 1 (ví dụ 0,60 và 0,80).")
+    before = {"ready": skill.ready_threshold, "mastered": skill.mastery_threshold}
+    if (r, m) == (skill.ready_threshold, skill.mastery_threshold):
+        return {"id": skill.id, "ready_threshold": r, "mastery_threshold": m, "changed": False}
+    skill.ready_threshold, skill.mastery_threshold = r, m
+    audit(db, admin, "skill.thresholds", "skill", skill_id, {"from": before, "to": {"ready": r, "mastered": m}})
+    db.commit()
+    return {"id": skill.id, "ready_threshold": r, "mastery_threshold": m, "changed": True}
 
 
 def delete_skill(db: Session, admin: User, skill_id: str) -> None:
@@ -101,6 +140,7 @@ def delete_skill(db: Session, admin: User, skill_id: str) -> None:
     db.delete(skill)
     audit(db, admin, "skill.delete", "skill", skill_id)
     db.commit()
+    reload_custom_mapping()
 
 
 # --- tiên quyết ------------------------------------------------------------------------------------------

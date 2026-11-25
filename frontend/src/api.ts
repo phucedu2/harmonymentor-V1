@@ -298,7 +298,8 @@ export type AdminImportRow = { id: string; title: string; created: boolean; bloc
   exercises_revised: string[]; exercises_not_in_file: string[]; sources_added: number };
 export type AdminLessonDetail = { lesson: AdminLessonRow; objectives: string[]; blocks: AdminBlock[]; meta_edited?: boolean;
   exercises: { id: string; version: number; skill_id: string; kind: string; prompt: string; status: string }[] };
-export type AdminSkill = { id: string; name: string; domain: string; seed: boolean; mvp: boolean; prerequisites: string[];
+export type AdminSkill = { id: string; name: string; domain: string; seed: boolean; mvp: boolean; group_code?: string | null;
+  ready_threshold?: number; mastery_threshold?: number; prerequisites: string[];
   seed_prerequisites: string[]; lessons: string[] };
 export type AdminSource = { id: string; title: string; author: string | null; url: string | null; seed: boolean;
   lessons: { id: number; lesson_id: string; locator: string; note: string | null }[] };
@@ -393,8 +394,10 @@ export const api = {
   adminRestore: (lessonId: string, blockId: string, revisionId: string | null) =>
     apiPost<{ revision_id: string }>(`/admin/lessons/${encodeURIComponent(lessonId)}/blocks/${encodeURIComponent(blockId)}/restore`, { revision_id: revisionId }),
   adminSkills: () => apiCall<AdminSkill[]>("/admin/skills"),
-  adminCreateSkill: (body: { slug: string; name: string; domain: string }) => apiPost<{ id: string }>("/admin/skills", body),
-  adminUpdateSkill: (id: string, body: { name: string; domain: string }) =>
+  adminCreateSkill: (body: { slug: string; name: string; domain: string; group_code: string }) => apiPost<{ id: string }>("/admin/skills", body),
+  adminSetThresholds: (id: string, ready: number, mastery: number) =>
+    apiCall<{ id: string; changed: boolean }>(`/admin/skills/${encodeURIComponent(id)}/thresholds`, { method: "PUT", body: JSON.stringify({ ready_threshold: ready, mastery_threshold: mastery }) }),
+  adminUpdateSkill: (id: string, body: { name: string; domain: string; group_code?: string }) =>
     apiCall<{ id: string }>(`/admin/skills/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(body) }),
   adminDeleteSkill: (id: string) => apiCall<void>(`/admin/skills/${encodeURIComponent(id)}`, { method: "DELETE" }),
   adminAddPrereq: (id: string, pre: string) => apiPost<unknown>(`/admin/skills/${encodeURIComponent(id)}/prerequisites`, { prerequisite_id: pre }),

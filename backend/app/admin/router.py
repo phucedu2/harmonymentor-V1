@@ -112,6 +112,12 @@ class SkillIn(BaseModel):
     slug: str = Field(default="", max_length=100)
     name: str = Field(min_length=1, max_length=200)
     domain: str = Field(default="theory", max_length=80)
+    group_code: str | None = Field(default=None, max_length=40)
+
+
+class ThresholdIn(BaseModel):
+    ready_threshold: float
+    mastery_threshold: float
 
 
 class PrereqIn(BaseModel):
@@ -175,12 +181,17 @@ def list_skills(db: Session = Depends(get_db)):
 
 @router.post("/skills", status_code=201)
 def create_skill(body: SkillIn, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
-    return _sk(skill_admin.create_skill, db, admin, body.slug, body.name, body.domain)
+    return _sk(skill_admin.create_skill, db, admin, body.slug, body.name, body.domain, body.group_code)
 
 
 @router.put("/skills/{skill_id}")
 def update_skill(skill_id: str, body: SkillIn, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
-    return _sk(skill_admin.update_skill, db, admin, skill_id, body.name, body.domain)
+    return _sk(skill_admin.update_skill, db, admin, skill_id, body.name, body.domain, body.group_code)
+
+
+@router.put("/skills/{skill_id}/thresholds")
+def set_thresholds(skill_id: str, body: ThresholdIn, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return _sk(skill_admin.set_thresholds, db, admin, skill_id, body.ready_threshold, body.mastery_threshold)
 
 
 @router.delete("/skills/{skill_id}", status_code=204)

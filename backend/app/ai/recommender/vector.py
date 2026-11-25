@@ -7,7 +7,7 @@ from typing import Iterable, Mapping
 
 import numpy as np
 
-from ..skill_mapping import GROUP_CODES, SKILL_MAPPING, is_mvp
+from ..skill_mapping import GROUP_CODES, SKILL_MAPPING, is_mvp, mapping_of
 
 
 @dataclass(frozen=True)
@@ -27,6 +27,14 @@ _DIM = {skill: GROUP_CODES.index(group) for skill, (_, group) in SKILL_MAPPING.i
 _EMPTY = frozenset()
 
 
+def _dim(skill: str) -> int | None:
+    """Chiều của kỹ năng MVP: bảng gốc đã tính sẵn; kỹ năng Quản trị viên tự thêm tra theo nhóm đã chọn (ADR-037)."""
+    d = _DIM.get(skill)
+    if d is None and skill not in SKILL_MAPPING and is_mvp(skill):
+        d = GROUP_CODES.index(mapping_of(skill)[1])
+    return d
+
+
 def build_vector(mastery: Mapping[str, float]) -> GroupVector:
     """mastery chỉ chứa kỹ năng đã đánh giá. Chiều chưa đánh giá để value 0 cho đủ hình dạng,
     không có nghĩa mastery bằng 0; kỹ năng chưa đánh giá trong một nhóm không kéo trung bình xuống."""
@@ -34,9 +42,9 @@ def build_vector(mastery: Mapping[str, float]) -> GroupVector:
     total = [0.0] * n
     names: list[list[str]] = [[] for _ in range(n)]
     for skill, score in mastery.items():
-        i = _DIM.get(skill)
+        i = _dim(skill)
         if i is None:
-            if skill not in SKILL_MAPPING:
+            if mapping_of(skill) is None:
                 raise KeyError(f"Kỹ năng {skill} không có trong bảng ánh xạ ADR-008")
             continue  # post_mvp: không thuộc vector (V5)
         total[i] += float(score)
@@ -63,9 +71,9 @@ def build_pool(rows: Iterable[tuple[str, str, float]]) -> PoolMatrix:
     d_idx: list[int] = []
     scores: list[float] = []
     for uid, skill, score in rows:
-        d = _DIM.get(skill)
+        d = _dim(skill)
         if d is None:
-            if skill not in SKILL_MAPPING:
+            if mapping_of(skill) is None:
                 raise KeyError(f"Kỹ năng {skill} không có trong bảng ánh xạ ADR-008")
             continue
         r_idx.append(uid)

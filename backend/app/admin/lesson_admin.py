@@ -25,7 +25,7 @@ from . import ai_index
 from . import ai_questions as aq
 from .content_service import AdminContentError, audit
 
-ADMIN_TRACK = "Quản trị viên soạn"
+ADMIN_TRACK = ai_index.ADMIN_TRACK
 ADMIN_WORK_ID = "admin-authored"
 EDITABLE_PREFIXES = ("M-", "AI-")
 
@@ -217,8 +217,8 @@ def reorder(db: Session, admin: User, lesson_ids: list[str]) -> list[str]:
 
 
 def _reindex(db: Session, admin: User, lesson: Lesson) -> None:
-    """Bài AI đang ở kho AI Tutor: xóa/khôi phục/thêm khối thì đồng bộ lại (bài đã xóa được tính là ẩn)."""
-    if lesson.track == ai_index.AI_TRACK:
+    """Bài AI và bài M- có thể đang ở kho AI Tutor: sửa/xóa/khôi phục/thêm khối thì đồng bộ lại (bài đã xóa được tính là ẩn)."""
+    if lesson.track in ai_index.TUTOR_TRACKS:
         out = ai_index.sync_lesson(db, lesson.id)
         audit(db, admin, "ai.lesson.index", "lesson", lesson.id, out)
         db.commit()
