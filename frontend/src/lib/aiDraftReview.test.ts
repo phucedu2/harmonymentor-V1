@@ -6,7 +6,7 @@ const q = (block_ref: number | null | undefined): AiQuestion =>
   ({ kind: "mcq", prompt: "p", skill_id: "s", explanation: "", page: 1, block_ref, reviewed: true });
 const f = (id: string): AiFlag => ({ id, type: "verbatim", label: "x", where: "block:1", detail: "d" });
 
-describe("duyệt bản nháp AI (ADR-033)", () => {
+describe("duyệt bản nháp AI (ADR-039)", () => {
   it("xóa khối 2: câu khối 2 mất chỗ gắn và cần duyệt lại, câu khối 3 thành khối 2", () => {
     const out = remapAfterBlockRemoved([q(1), q(2), q(3), q(undefined)], 1);
     expect(out.map((x) => x.block_ref)).toEqual([1, null, 2, undefined]);

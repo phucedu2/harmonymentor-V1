@@ -18,12 +18,14 @@ import argparse
 import json
 import subprocess
 import sys
+import zlib
 from pathlib import Path
 
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from dac_trung import FRAME, SILENCE_RMS, features, rms  # noqa: E402
+from on_nhieu import NOISE_TYPES, hpf, loa_laptop, make_noise  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[3]
 SAMPLES = ROOT / "frontend" / "public" / "samples"
@@ -132,19 +134,65 @@ def background(rng: np.random.Generator) -> np.ndarray:
     return x / rms(x) * 10 ** rng.uniform(-2.2, -0.7)  # RMS ≈ 0,006 → 0,2
 
 
-def build(seed: int = 7):
+def giu_rieng(file: str) -> bool:
+    """Bản thu "giữ riêng" để đo công bằng (ADR-039): luong_thu_on.py chỉ lấy nốt từ các bản này."""
+    return zlib.crc32(file.encode()) % 5 == 0
+
+
+NOISE_BANK_S = 12          # mỗi loại tạp âm sinh sẵn vài đoạn dài, lúc train cắt ngẫu nhiên từng khung
+NOISE_SNR = (-3.0, 25.0)   # dB, đều: huấn luyện cả vùng rất ồn lẫn gần sạch
+
+
+def noise_bank(rng, pool, clips: int = 6):
+    """Ngân hàng tạp âm đã lọc trầm (lọc tuyến tính nên lọc trước rồi cộng với nốt đã lọc là như nhau)."""
+    return {k: [hpf(make_noise(k, NOISE_BANK_S * SR, rng, pool)) for _ in range(clips)] for k in NOISE_TYPES}
+
+
+def noisy_frames(audio, bank, rng):
+    """Mỗi khung có nốt, trộn từng loại tạp âm ở SNR ngẫu nhiên; riêng "loa" = piano ảo qua loa laptop."""
+    for off in OFFSETS_S:
+        start = int(off * SR)
+        if start + FRAME > len(audio):
+            break
+        fr = audio[start:start + FRAME]
+        if rms(fr) < SILENCE_RMS * 2:
+            continue
+        for kind in NOISE_TYPES:
+            clip = bank[kind][int(rng.integers(0, len(bank[kind])))]
+            seg = clip[int(rng.integers(0, len(clip) - FRAME)):][:FRAME]
+            snr = rng.uniform(*NOISE_SNR)
+            yield (fr + seg * (rms(fr) / (rms(seg) + 1e-9) / 10 ** (snr / 20))).astype(np.float32), f"on_{kind}"
+
+
+def build(seed: int = 7, held_out: bool = True, on: bool = False):
+    """held_out=True: bỏ các bản thu giữ riêng (xem giu_rieng). on=True: thêm tạp âm + lọc trầm (ADR-039)."""
     rng = np.random.default_rng(seed)
     manifest = json.loads((SAMPLES / "manifest.json").read_text())
     X, y, groups, inst, raw, conds = [], [], [], [], [], []
+    bank, pool = None, []
+    if on:  # nhạc nền = nốt của các nhạc cụ khác; lấy từ bản thu dùng để train
+        for n in ["piano", "guitar", "epiano", "clav", "cello"]:
+            zs = [z for z in manifest["instruments"][n]["pieces"]["notes"] if z["midi"] is not None and not giu_rieng(z["file"])]
+            pool += [decode(SAMPLES / z["file"]) for z in zs[:12]]
+        bank = noise_bank(rng, pool)
     for name in INSTRUMENTS:
         zones = [z for z in manifest["instruments"][name]["pieces"]["notes"] if z["midi"] is not None]
         for z in zones:
+            if held_out and giu_rieng(z["file"]):
+                continue
             audio = decode(SAMPLES / z["file"])
             for s in (-1, 0, 1):
                 midi = z["midi"] + s
                 if not MIDI_LO <= midi <= MIDI_HI:
                     continue
-                for fr, cond in frames_of(shift(audio, s), rng):
+                shifted = shift(audio, s)
+                if on:
+                    shifted = hpf(shifted)
+                variants = list(frames_of(shifted, rng))
+                if on:
+                    variants += list(noisy_frames(shifted, bank, rng))
+                    variants += [(fr, "loa") for fr, _ in frames_of(hpf(loa_laptop(shift(audio, s), rng)), rng) if _ == "sach"]
+                for fr, cond in variants:
                     X.append(features(fr, SR)[0]); y.append(midi); groups.append(f"{name}/{z['file']}"); inst.append(name)
                     raw.append(fr); conds.append(cond)
     for midi in range(MIDI_LO, 80):  # giọng người thường không lên quá ~G5
@@ -157,6 +205,14 @@ def build(seed: int = 7):
         fr = background(rng).astype(np.float32)
         X.append(features(fr, SR)[0]); y.append(NONE); groups.append(f"nen/{i // 10}"); inst.append("nen")
         raw.append(fr); conds.append("khong_not")
+    if on:  # tiếng quạt, người nói, gõ bàn ở nhiều mức to nhỏ = "không có nốt". Nhạc nền KHÔNG vào lớp 0 (nó là nốt thật).
+        for kind, n in (("quat", 1500), ("giong_noi", 2000), ("tieng_dong", 1200)):
+            for i in range(n):
+                clip = bank[kind][int(rng.integers(0, len(bank[kind])))]
+                seg = clip[int(rng.integers(0, len(clip) - FRAME)):][:FRAME]
+                fr = (seg / (rms(seg) + 1e-9) * 10 ** rng.uniform(-2.2, -0.7)).astype(np.float32)
+                X.append(features(fr, SR)[0]); y.append(NONE); groups.append(f"nen_{kind}/{i // 10}"); inst.append("nen")
+                raw.append(fr); conds.append("khong_not")
     return (np.array(X, dtype=np.float32), np.array(y), np.array(groups), np.array(inst), np.array(raw, dtype=np.float32),
             np.array(conds))
 
@@ -165,7 +221,9 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="/tmp/pitch_data.npz")
     ap.add_argument("--seed", type=int, default=7)
+    ap.add_argument("--tat-ca", action="store_true", help="dùng cả các bản thu giữ riêng (mặc định bỏ để đo công bằng)")
+    ap.add_argument("--on", action="store_true", help="thêm tạp âm + lọc trầm (ADR-039)")
     a = ap.parse_args()
-    X, y, g, inst, raw, cond = build(a.seed)
+    X, y, g, inst, raw, cond = build(a.seed, not a.tat_ca, a.on)
     np.savez_compressed(a.out, X=X, y=y, groups=g, inst=inst, raw=raw, cond=cond)
     print(f"{len(y)} khung, {len(set(g))} bản thu, nhạc cụ: " + ", ".join(f"{k}={int((inst == k).sum())}" for k in sorted(set(inst))))

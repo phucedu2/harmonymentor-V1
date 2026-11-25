@@ -34,9 +34,11 @@ from dac_trung import N_FEATURES, features, refine_hz, yin_hz  # noqa: E402
 
 SR = 48000
 ABSTAIN = 0.5   # xác suất cao nhất < 0,5 thì model "không chắc", không trả lời (giống YIN trả null)
-COND_ORDER = ["sach", "nhieu15", "nhieu5", "micro_laptop", "u_dien"]
+COND_ORDER = ["sach", "nhieu15", "nhieu5", "micro_laptop", "u_dien", "loa", "on_quat", "on_giong_noi", "on_nhac_nen", "on_tieng_dong"]
 COND_VI = {"sach": "Sạch", "nhieu15": "Nhiễu trắng 15 dB", "nhieu5": "Nhiễu trắng 5 dB (rất ồn)",
-           "micro_laptop": "Micro laptop (mất trầm < 250 Hz + nhiễu hồng)", "u_dien": "Tiếng ù điện 50 Hz"}
+           "micro_laptop": "Micro laptop (mất trầm < 250 Hz + nhiễu hồng)", "u_dien": "Tiếng ù điện 50 Hz",
+           "loa": "Piano ảo qua loa laptop (vang phòng)", "on_quat": "Quạt/điều hòa, SNR −3…25 dB", "on_giong_noi": "Người nói chuyện/TV, SNR −3…25 dB",
+           "on_nhac_nen": "Nhạc nền, SNR −3…25 dB", "on_tieng_dong": "Gõ bàn/đóng cửa, SNR −3…25 dB"}
 PCS = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 
 
@@ -84,6 +86,9 @@ def export(model, path: Path) -> dict:
             "activation": mlp.activation, "mean": b64(scaler.mean_), "scale": b64(scaler.scale_), "layers": layers}
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, separators=(",", ":")))
+    kb = path.stat().st_size / 1024
+    print(f"model {kb:.0f} KB")
+    assert kb < 500, "model phải < 500 KB để tải nhanh (Phúc 8A)"
     return data
 
 
@@ -117,7 +122,7 @@ def main():
     tr, te = next(GroupShuffleSplit(n_splits=1, test_size=0.2, random_state=a.seed).split(X, y, groups))
     pipe = Pipeline([("scale", StandardScaler()),
                      ("mlp", MLPClassifier(max_iter=300, early_stopping=True, random_state=a.seed))])
-    grid = {"mlp__hidden_layer_sizes": [(64,), (128,), (128, 64)], "mlp__alpha": [1e-4, 1e-2]}
+    grid = {"mlp__hidden_layer_sizes": [(64,), (128,), (128, 64), (192, 96)], "mlp__alpha": [1e-4, 1e-2]}
     t0 = time.time()
     search = GridSearchCV(pipe, grid, cv=GroupKFold(n_splits=4), n_jobs=-1, return_train_score=True)
     search.fit(X[tr], y[tr], groups=groups[tr])

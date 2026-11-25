@@ -10,6 +10,10 @@ import VirtualPiano from "./VirtualPiano";
 
 type Heard = { note: string; cents: number };
 
+/** Nền ồn (RMS) từ mức này trở lên ≈ −34 dBFS: gần bằng tiếng đàn bình thường (≈ 0,05), tỉ lệ tín hiệu/ồn dưới ~8 dB. */
+export const NOISY_FLOOR = 0.02;
+export const noisyRoom = (floor: number) => floor >= NOISY_FLOOR;
+
 const ERROR_TEXT: Record<MicError, string> = {
   unsupported: "Trình duyệt này không cho dùng micro. Hãy mở bằng Chrome, Edge hoặc Firefox bản mới, qua https hoặc localhost.",
   denied: "Trình duyệt đang chặn micro. Bấm biểu tượng ổ khóa cạnh thanh địa chỉ, cho phép Micro rồi bấm Bật micro lại.",
@@ -21,13 +25,16 @@ export default function MicNoteInput(props: {
   notes: string[]; onChange: (notes: string[]) => void; disabled?: boolean;
   highlighted?: string[]; incorrect?: string[];
 }) {
-  const [kind, setKind] = useState<DetectorKind>("hybrid");
+  const [kind, setKind] = useState<DetectorKind>("model");
   const [modelMissing, setModelMissing] = useState(false);
   const [listening, setListening] = useState(false);
   const [starting, setStarting] = useState(false);
   const [error, setError] = useState<MicError | null>(null);
   const [level, setLevel] = useState(0);
   const [liveHz, setLiveHz] = useState<number | null>(null);
+  const [floor, setFloor] = useState(0);
+  const [calibrating, setCalibrating] = useState(false);
+  const [calibrated, setCalibrated] = useState<number | null>(null);
   const [last, setLast] = useState<Heard | null>(null);
   const [engineDown, setEngineDown] = useState(false);
   const session = useRef<MicSession | null>(null);
@@ -37,7 +44,7 @@ export default function MicNoteInput(props: {
   const onChange = useRef(props.onChange);
   onChange.current = props.onChange;
 
-  const stop = () => { session.current?.stop(); session.current = null; setListening(false); setLevel(0); setLiveHz(null); };
+  const stop = () => { session.current?.stop(); session.current = null; setListening(false); setLevel(0); setLiveHz(null); setFloor(0); setCalibrating(false); };
   useEffect(() => stop, []);
   useEffect(() => { if (props.disabled) stop(); }, [props.disabled]);
 
@@ -48,7 +55,7 @@ export default function MicNoteInput(props: {
     try {
       session.current = await startMic({
         detector: makeDetector(kind, model),
-        onFrame: ({ level: l, hz }) => { setLevel(l); setLiveHz(hz); },
+        onFrame: ({ level: l, hz, floor: f }) => { setLevel(l); setLiveHz(hz); setFloor(f); },
         onNote: ({ hz }) => {
           api.noteFromFrequency(hz).then((r) => {
             setEngineDown(false);
@@ -64,8 +71,16 @@ export default function MicNoteInput(props: {
     } finally { setStarting(false); }
   };
 
+  const measureNoise = async () => {
+    if (!session.current || calibrating) return;
+    setCalibrating(true);
+    try { setCalibrated(await session.current.calibrate(1500)); } finally { setCalibrating(false); }
+  };
+
   // Thanh âm lượng: RMS 0,1 (đàn to gần micro) ≈ đầy thanh.
   const pct = Math.min(100, Math.round((level / 0.1) * 100));
+  const floorPct = Math.min(100, Math.round((floor / 0.1) * 100));
+  const noisy = listening && !calibrating && noisyRoom(floor);
   return <div className="mt-4 grid gap-3">
     <div className="flex flex-wrap items-center gap-3">
       {listening
@@ -74,9 +89,15 @@ export default function MicNoteInput(props: {
       <div className="flex min-w-40 flex-1 items-center gap-2 text-sm text-muted">
         <span>Âm lượng</span>
         <div className="h-2 flex-1 overflow-hidden rounded-full bg-line" role="meter" aria-label="Âm lượng micro" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct}>
-          <div className="h-full rounded-full bg-primary transition-[width] duration-75" style={{ width: `${listening ? pct : 0}%` }} />
+          <div className="relative h-full">
+            <div className="h-full rounded-full bg-primary transition-[width] duration-75" style={{ width: `${listening ? pct : 0}%` }} />
+            {/* Vạch đứng = mức ồn nền máy đang tính; tiếng đàn cần vượt vạch này mới được nghe. */}
+            {listening && floor > 0 && <div className="absolute inset-y-0 w-0.5 bg-ink/60" style={{ left: `${floorPct}%` }} aria-hidden="true" />}
+          </div>
         </div>
       </div>
+      {listening && <Button type="button" variant="secondary" onClick={() => void measureNoise()} loading={calibrating}>
+        {calibrating ? "Giữ im lặng…" : "Đo nền ồn"}</Button>}
     </div>
     <p className="text-sm text-muted" aria-live="polite">
       {listening
@@ -88,6 +109,9 @@ export default function MicNoteInput(props: {
         className="min-h-10 rounded-lg border border-line bg-surface px-2 font-normal">
         {(Object.keys(DETECTOR_LABEL) as DetectorKind[]).map((k) => <option key={k} value={k}>{DETECTOR_LABEL[k]}</option>)}
       </select></label>
+    {calibrating && <Alert tone="info">Đang đo tiếng ồn của phòng. Đừng đàn, đừng nói trong khoảng 1,5 giây.</Alert>}
+    {!calibrating && calibrated !== null && listening && !noisy && <p className="text-sm text-muted" aria-live="polite">Đã đo nền ồn: phòng đủ yên để nghe nốt.</p>}
+    {noisy && <Alert tone="info">Phòng hơi ồn. Hãy đàn mạnh hơn hoặc lại gần micro; máy sẽ bỏ qua tiếng không rõ thay vì chấm sai.</Alert>}
     {modelMissing && <Alert tone="info">Chưa tải được model AI, đang dùng thuật toán YIN.</Alert>}
     {last && <p className="text-sm text-ink" aria-live="polite">Vừa nghe: <b className="font-mono">{last.note}</b>
       {" "}<span className="text-muted">{Math.abs(last.cents) >= 45

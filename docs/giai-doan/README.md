@@ -63,6 +63,7 @@ Các giai đoạn 0.2 → 2.3 là lộ trình của bản code gốc (zip v0.1.0
 - [`ml-dinh-tuyen/`](ml-dinh-tuyen/BAO_CAO.md): train lại bộ phân loại câu hỏi AI Tutor theo quy trình handson-ml3 (chia 3 tập, loại câu rò, GridSearchCV, F1, khoảng tin cậy); bật công thức cũ trên dữ liệu đã bỏ câu rò theo quyết định nhóm (19/11/2026, ADR-030).
 - [`ml-du-doan/`](ml-du-doan/BAO_CAO.md): model tự train dự đoán học sinh làm đúng câu tiếp theo, sau cờ PREDICT_ENABLED, theo quy trình handson-ml3 (19/11/2026, ADR-031).
 - [`nhan-dien-not-micro/`](nhan-dien-not-micro/BAO_CAO.md): trả lời Luyện tập bằng micro, YIN + model MLP tự train chạy trên trình duyệt, Engine đặt tên nốt (19/11/2026, ADR-032).
+- [`nhan-dien-not-micro/BAO_CAO_TAP_AM.md`](nhan-dien-not-micro/BAO_CAO_TAP_AM.md): nghe nốt khi có tạp âm: lọc trầm, ngưỡng theo nền ồn, nút Đo nền, model train có tạp âm, số đo trước/sau (25/11/2026, ADR-039).
 - [`ai-soan-bai-dot3/`](ai-soan-bai-dot3/BAO_CAO.md): rà soát và sửa logic Admin AI soạn bài (đề khớp phần kiểm, cờ duyệt, xuất bản ẩn + xem trước, bài AI vào kho AI Tutor, hạn mức Gemini chung), bộ đánh giá 41 ca (23/11/2026, ADR-033).
 - [`ai-soan-bai-dot4/`](ai-soan-bai-dot4/BAO_CAO.md): AI soạn bài áp góp ý zip "ai-ra-soat" của thầy: bắt duyệt câu thiếu lời giải, gọi bù khi thiếu câu, cờ lệnh chèn, finish_reason, mã lời nhắc (23/11/2026, ADR-034).
 - [`admin-kiem-soat/`](admin-kiem-soat/BAO_CAO.md): kiểm soát khu Admin bằng trình duyệt với AI giả, cả vòng AI soạn bài → học sinh → AI Tutor; sửa AUD-01..07 (24/11/2026).

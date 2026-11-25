@@ -1,4 +1,4 @@
-// Logic thuần của màn duyệt bản nháp AI (ADR-033), tách ra để test bằng Vitest.
+// Logic thuần của màn duyệt bản nháp AI (ADR-039), tách ra để test bằng Vitest.
 import type { AiFlag, AiQuestion } from "../api";
 
 /** Số cờ duyệt chưa tick "Đã đối chiếu": còn > 0 thì chưa xuất bản được. */
