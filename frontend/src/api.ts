@@ -224,6 +224,13 @@ export type ComposeProjectSummary = { id: string; name: string; key: string; bar
 const engineCall = <T,>(path: string, init?: RequestInit) => http<T>("/engine" + path, init, { auth: false });
 const apiCall = <T,>(path: string, init?: RequestInit) => http<T>(path, init);
 const enginePost = <T,>(path: string, data: unknown) => engineCall<T>(path, { method: "POST", body: JSON.stringify(data) });
+export type AdminTemplateParam = { key: string; label: string; example: string };
+export type AdminTemplate = { id: string; title: string; pattern: string; skill_hint: string; params: AdminTemplateParam[] };
+export type AdminTemplateCatalogue = { templates: AdminTemplate[]; skills: string[]; levels: string[] };
+export type AdminTemplateBody = { template: string; params: Record<string, string>; skill_id: string; level: string };
+export type AdminTemplatePreview = {
+  items: { prompt: string; answer: string; explanation: string }[]; skipped: { prompt: string; reason: string }[];
+};
 const apiPost = <T,>(path: string, data: unknown) => apiCall<T>(path, { method: "POST", body: JSON.stringify(data) });
 
 // Pipeline AI GĐ1: mastery và bài kiểm tra đầu vào (UC-06).
@@ -438,6 +445,22 @@ export const api = {
   adminUpdateCard: (id: string, f: AdminCardForm) =>
     apiCall<AdminCard>(`/admin/cards/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(f) }),
   adminDeleteCard: (id: string) => apiCall<{ id: string }>(`/admin/cards/${encodeURIComponent(id)}`, { method: "DELETE" }),
+  adminQuestionTemplates: () => apiCall<AdminTemplateCatalogue>("/admin/question-templates"),
+  adminTemplatePreview: (lessonId: string, body: AdminTemplateBody) =>
+    apiPost<AdminTemplatePreview>(`/admin/lessons/${encodeURIComponent(lessonId)}/exercise-templates/preview`, body),
+  adminTemplateSave: (lessonId: string, body: AdminTemplateBody) =>
+    apiPost<{ added: string[]; duplicates: string[]; skipped: { prompt: string; reason: string }[] }>(
+      `/admin/lessons/${encodeURIComponent(lessonId)}/exercise-templates`, body),
+  adminAddChordExample: (lessonId: string, body: { symbol: string; title?: string; note?: string }) =>
+    apiPost<{ id: string }>(`/admin/lessons/${encodeURIComponent(lessonId)}/examples/chord`, body),
+  adminAddScaleExample: (lessonId: string, body: { tonic: string; scale_type: string; title?: string; note?: string }) =>
+    apiPost<{ id: string }>(`/admin/lessons/${encodeURIComponent(lessonId)}/examples/scale`, body),
+  adminAddAudioExample: (lessonId: string, file: File, f: { title: string; source: string; license: string; note: string }) => {
+    const form = new FormData();
+    form.append("file", file);
+    Object.entries(f).forEach(([k, v]) => form.append(k, v));
+    return apiCall<{ id: string }>(`/admin/lessons/${encodeURIComponent(lessonId)}/examples/audio`, { method: "POST", body: form });
+  },
   adminExercises: (id: string) => apiCall<AdminExerciseList>(`/admin/lessons/${encodeURIComponent(id)}/exercises`),
   adminAddExercise: (id: string, q: AdminQuestion) => apiPost<AdminExercise>(`/admin/lessons/${encodeURIComponent(id)}/exercises`, q),
   adminUpdateExercise: (id: string, q: AdminQuestion) =>

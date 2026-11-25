@@ -1,3 +1,4 @@
+import { AudioExampleBlock, ChordExampleBlock, ScaleExampleBlock } from "./ExampleBlocks";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { scrollBehavior } from "../ui/motion";
 import {
@@ -100,6 +101,9 @@ const BLOCK_LABELS: Record<string, string> = {
   progression: "Vòng hợp âm",
   notation: "Ký âm",
   audio: "Nghe",
+  example_chord: "Ví dụ hợp âm",
+  example_scale: "Ví dụ âm giai",
+  example_audio: "Nghe ví dụ",
   summary: "Tóm tắt",
   interactive: "Thực hành có hướng dẫn",
 };
@@ -512,6 +516,10 @@ function BlockRenderer({
         </>}
     </article>;
   }
+
+  if (block.block_type === "example_chord") return <ChordExampleBlock payload={block.payload} />;
+  if (block.block_type === "example_scale") return <ScaleExampleBlock payload={block.payload} />;
+  if (block.block_type === "example_audio") return <AudioExampleBlock payload={block.payload} />;
 
   if (block.block_type === "piano") {
     const selectionMode = block.payload.selection_mode === true;

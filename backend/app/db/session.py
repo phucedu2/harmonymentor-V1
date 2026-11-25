@@ -93,6 +93,12 @@ def _check_legacy_users_table() -> None:
             "CSDL cũ thiếu cột review_items.deleted_at (Quản trị viên xóa mềm thẻ ôn). Giữ dữ liệu: "
             "`alembic -c alembic.ini upgrade head`. Không cần dữ liệu cũ: xóa harmonymentor_dev.db để tạo lại."
         )
+    # FR-ADM-37 (25/11/2026, migration b2c3d4e5f6a8): thiếu bảng thì tải/phát âm thanh ví dụ lỗi 500.
+    if "media_files" not in inspector.get_table_names():
+        raise RuntimeError(
+            "CSDL cũ thiếu bảng media_files (âm thanh ví dụ của Quản trị viên). Giữ dữ liệu: "
+            "`alembic -c alembic.ini upgrade head`. Không cần dữ liệu cũ: xóa harmonymentor_dev.db để tạo lại."
+        )
     if "email" not in columns:
         raise RuntimeError(
             "CSDL cũ thiếu cột users.email (tạo trước Giai đoạn B). Với SQLite dev: xóa file harmonymentor_dev.db "

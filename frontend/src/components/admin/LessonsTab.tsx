@@ -3,6 +3,8 @@ import { api, type AdminBlock, type AdminImportRow, type AdminLessonDetail, type
 import { Button } from "../ui/Button";
 import { Badge, Card } from "../ui/Page";
 import CardsPanel from "./CardsPanel";
+import ExamplesPanel from "./ExamplesPanel";
+import TemplatesPanel from "./TemplatesPanel";
 import ExercisesPanel from "./ExercisesPanel";
 
 // Trường chữ sửa được: khớp danh sách ở backend (content_service). Trường khác (loại khối, mã bài tập, hợp âm…) bị khóa.
@@ -16,7 +18,7 @@ type Term = Partial<Record<(typeof TERM_FIELDS)[number], string>>;
 const FIELD_VI: Record<string, string> = { title: "Tiêu đề", prompt: "Đề bài", note: "Ghi chú", intro: "Mở đầu", kicker: "Dòng nhỏ phía trên tiêu đề",
   paragraphs: "Các đoạn văn", items: "Các ý", symbol: "Ký hiệu", term: "Thuật ngữ", definition: "Định nghĩa", example: "Ví dụ" };
 const BLOCK_VI: Record<string, string> = { theory: "Lý thuyết", callout: "Ô lưu ý", piano: "Đàn piano", glossary: "Thuật ngữ", summary: "Tóm tắt",
-  audio: "Nghe ví dụ", checkpoint: "Câu hỏi kiểm tra", compose_link: "Liên kết Sáng tác", interactive: "Tương tác", notation: "Khuông nhạc",
+  audio: "Nghe ví dụ", example_chord: "Ví dụ hợp âm", example_scale: "Ví dụ âm giai", example_audio: "Ví dụ nghe (file)", checkpoint: "Câu hỏi kiểm tra", compose_link: "Liên kết Sáng tác", interactive: "Tương tác", notation: "Khuông nhạc",
   progression: "Vòng hợp âm", key_overview: "Tổng quan giọng", interval_explorer: "Khám phá quãng", triad_explorer: "Khám phá hợp âm ba",
   triad_audio_explorer: "Nghe hợp âm ba", triad_notation_explorer: "Hợp âm ba trên khuông" };
 const fieldName = (k: string) => FIELD_VI[k] ?? k;
@@ -117,6 +119,7 @@ function BlockEditor({ lessonId, block, onChanged, controls }: { lessonId: strin
 function LessonEditor({ id, onBack, onChanged }: { id: string; onBack: () => void; onChanged: () => void }) {
   const [detail, setDetail] = useState<AdminLessonDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [exVersion, setExVersion] = useState(0);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const load = () => api.adminLesson(id).then(setDetail).catch(() => setError("Chưa tải được bài."));
   useEffect(() => { load(); }, [id]);
@@ -161,7 +164,9 @@ function LessonEditor({ id, onBack, onChanged }: { id: string; onBack: () => voi
         <Button variant="ghost" aria-label={`Xóa khối #${b.position}`} disabled={n === 1} onClick={() => dropBlock(b)}>Xóa khối</Button>
       </> : undefined} />)}</ul>
     {editable && <AddBlock lessonId={id} onAdded={() => { load(); onChanged(); }} />}
-    <ExercisesPanel lessonId={id} />
+    {editable && <ExamplesPanel lessonId={id} onAdded={() => { load(); onChanged(); }} />}
+    <ExercisesPanel key={`ex-${exVersion}`} lessonId={id} />
+    {editable && <TemplatesPanel lessonId={id} onSaved={() => setExVersion((n) => n + 1)} />}
     <CardsPanel lessonId={id} />
     <div className="border-t border-line pt-3"><Button variant="ghost" onClick={remove}>Xóa bài này</Button>
       <span className="ml-2 text-xs text-muted">Xóa mềm: học sinh không thấy nữa, khôi phục được ở cuối danh sách bài.</span></div>
