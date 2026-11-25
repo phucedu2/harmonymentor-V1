@@ -11,6 +11,7 @@ from .attempts import router as attempts_router
 from .engine import router as engine_router
 from .lessons import router as lessons_router
 from .learning import router as learning_router
+from .media import router as media_router
 from .music import router as music_router
 from .practice import router as practice_router
 from .review import router as review_router
@@ -30,3 +31,4 @@ api_router.include_router(ai_learning_router)
 api_router.include_router(ai_recommend_router)
 api_router.include_router(ai_tutor_router)
 api_router.include_router(ai_predict_router)
+api_router.include_router(media_router)

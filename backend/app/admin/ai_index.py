@@ -54,7 +54,8 @@ def ai_lesson_chunks(db: Session) -> list[Any]:
         title = source.split(" · ")[0]
         # Chữ đã sửa và xuất bản (ADR-023) thắng chữ gốc: Tutor trả lời đúng điều học sinh đang đọc.
         for block, payload in effective_blocks(db, lesson):
-            if block.block_type != "theory":
+            # Ví dụ hợp âm/âm giai do Admin thêm (FR-ADM-35/36) có đoạn mô tả do Engine dựng: Tutor trích được.
+            if block.block_type not in ("theory", "example_chord", "example_scale"):
                 continue
             # Trích dẫn theo trang của KHỐI (publish ghi source_page) để Tutor nói "sách X, trang n", không cả khoảng trang.
             label = f"{title} · trang {payload['source_page']}" if isinstance(payload.get("source_page"), int) else source

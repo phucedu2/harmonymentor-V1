@@ -18,7 +18,8 @@ from ..core.ai_config import relevance_config
 from ..core import ai_switch
 from ..core.config import settings
 from ..db.models import SourceDocument
-from . import ai_job, ai_service, card_admin, content_import, content_service, lesson_admin, skill_admin, stats_service
+from . import ai_job, ai_service, card_admin, content_import, content_service, example_blocks, lesson_admin, question_templates, skill_admin, stats_service
+from . import ai_questions as aq
 from .content_service import AdminContentError
 
 # Mọi route /api/v1/admin/* gắn require_admin ở cấp router để không route nào quên kiểm tra quyền.
@@ -309,6 +310,48 @@ async def import_content(file: UploadFile = File(...), dry_run: bool = Form(defa
         raise AppError(422, "IMPORT_TYPE", "Chỉ nhận file .json, .yaml hoặc .yml.")
     raw = await file.read(content_import.MAX_BYTES + 1)
     return _do(content_import.import_content, db, admin, raw, name, dry_run)
+
+
+@router.get("/question-templates")
+def question_template_catalogue(db: Session = Depends(get_db)):
+    return {"templates": question_templates.catalogue(), "skills": sorted(lesson_admin._skills(db)), "levels": list(aq.LEVELS)}
+
+
+@router.post("/lessons/{lesson_id}/exercise-templates/preview")
+def preview_template(lesson_id: str, body: dict[str, Any], db: Session = Depends(get_db)):
+    lesson_admin._lesson(db, lesson_id)
+    return _do(question_templates.generate, db, body.get("template"), body.get("params"), str(body.get("skill_id") or ""),
+               str(body.get("level") or "hieu"))
+
+
+@router.post("/lessons/{lesson_id}/exercise-templates", status_code=201)
+def save_template(lesson_id: str, body: dict[str, Any], admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return _do(question_templates.save, db, admin, lesson_id, body.get("template"), body.get("params"),
+               str(body.get("skill_id") or ""), str(body.get("level") or "hieu"))
+
+
+@router.post("/lessons/{lesson_id}/examples/chord", status_code=201)
+def add_chord_example(lesson_id: str, body: dict[str, Any], admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return _do(example_blocks.add_chord, db, admin, lesson_id, body)
+
+
+@router.post("/lessons/{lesson_id}/examples/scale", status_code=201)
+def add_scale_example(lesson_id: str, body: dict[str, Any], admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return _do(example_blocks.add_scale, db, admin, lesson_id, body)
+
+
+@router.post("/lessons/{lesson_id}/examples/audio", status_code=201)
+async def add_audio_example(lesson_id: str, file: UploadFile = File(...), title: str = Form(default=""), source: str = Form(default=""),
+                            license: str = Form(default=""), note: str = Form(default=""),
+                            admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    data = await file.read(example_blocks.MAX_AUDIO + 1)
+    return _do(example_blocks.add_audio, db, admin, lesson_id, file.filename or "", data,
+               {"title": title, "source": source, "license": license, "note": note})
+
+
+@router.put("/lessons/{lesson_id}/examples/{block_id}")
+def update_example(lesson_id: str, block_id: str, body: dict[str, Any], admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return _do(example_blocks.update, db, admin, lesson_id, block_id, body)
 
 
 @router.get("/lessons/{lesson_id}/exercises")
