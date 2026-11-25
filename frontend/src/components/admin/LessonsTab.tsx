@@ -243,7 +243,7 @@ function ImportCard({ onDone }: { onDone: () => void }) {
         {r.created ? "Tạo bài mới" : "Cập nhật bài"} “{r.title}” ({r.id}){r.created ? ", đang ẩn" : ""}
         {r.blocks_changed ? " · dựng lại khối" : ""}{r.exercises_added.length ? ` · thêm ${r.exercises_added.length} câu` : ""}
         {r.exercises_revised.length ? ` · sửa ${r.exercises_revised.length} câu (tăng phiên bản)` : ""}
-        {r.cards_added.length ? ` · thêm ${r.cards_added.length} thẻ ôn` : ""}{r.cards_revised.length ? ` · sửa ${r.cards_revised.length} thẻ ôn` : ""}
+        {r.cards_added.length ? ` · thêm ${r.cards_added.length} thẻ ôn${r.cards_activated_for ? ` (đã kích hoạt cho ${r.cards_activated_for} người học xong bài)` : ""}` : ""}{r.cards_revised.length ? ` · sửa ${r.cards_revised.length} thẻ ôn` : ""}
         {r.sources_added ? ` · thêm ${r.sources_added} nguồn` : ""}
         {!r.created && !r.blocks_changed && !r.exercises_added.length && !r.exercises_revised.length && !r.sources_added && !r.cards_added.length && !r.cards_revised.length ? " · không đổi gì" : ""}
         {r.exercises_not_in_file.length > 0 && <span className="text-warning"> · {r.exercises_not_in_file.length} câu không còn trong file (giữ nguyên, bỏ tay nếu cần)</span>}

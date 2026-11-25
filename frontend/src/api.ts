@@ -296,7 +296,7 @@ export type AdminBlock = { id: string; position: number; block_type: string; pay
   base_payload: Record<string, unknown>; edited: boolean; draft_revision_id: string | null; engine: AdminEngineReport };
 export type AdminImportRow = { id: string; title: string; created: boolean; blocks_changed: boolean; exercises_added: string[];
   exercises_revised: string[]; exercises_not_in_file: string[]; sources_added: number; cards_added: string[]; cards_revised: string[];
-  cards_not_in_file: string[] };
+  cards_not_in_file: string[]; cards_activated_for?: number };
 // Thẻ ôn soạn bằng form (FR-ADM-31..34). Loại do Engine tính (build_chord, build_scale, interval, roman) không gửi đáp án.
 export type AdminCardForm = { kind: string; front: string; skill_id: string; back?: string; expected?: string; case_sensitive?: boolean;
   keywords?: string[]; symbol?: string; tonic?: string; scale_type?: string; check?: Record<string, string> };

@@ -129,6 +129,17 @@ def _next_id(db: Session, lesson_id: str) -> str:
     return f"{lesson_id}-R{max(nums, default=0) + 1:02d}"
 
 
+def activate_for_completed(db: Session, lesson_id: str) -> int:
+    """Người học đã hoàn thành bài từ trước sẽ không bao giờ chạy lại lúc "hoàn thành": kích hoạt thẻ mới cho họ.
+    Dùng chung cho form và nhập file; trả số người được kích hoạt."""
+    done = db.scalars(select(LessonProgress.user_id).join(User, User.id == LessonProgress.user_id)
+                      .where(LessonProgress.lesson_id == lesson_id, LessonProgress.status == "completed",
+                             User.email.is_not(None))).all()
+    for uid in done:
+        activate_lesson_reviews(db, uid, lesson_id)
+    return len(done)
+
+
 def add_card(db: Session, admin: User, lesson_id: str, item: Any) -> dict[str, Any]:
     lesson = la._lesson(db, lesson_id)
     n = _normalize(db, item)
@@ -138,15 +149,10 @@ def add_card(db: Session, admin: User, lesson_id: str, item: Any) -> dict[str, A
                       provenance=[{"source_id": la.ADMIN_WORK_ID, "locator": None, "note": "Quản trị viên soạn bằng form"}])
     db.add(card)
     db.flush()
-    # Người học đã hoàn thành bài từ trước sẽ không bao giờ chạy lại lúc "hoàn thành": kích hoạt thẻ mới cho họ.
-    done = db.scalars(select(LessonProgress.user_id).join(User, User.id == LessonProgress.user_id)
-                      .where(LessonProgress.lesson_id == lesson.id, LessonProgress.status == "completed",
-                             User.email.is_not(None))).all()
-    for uid in done:
-        activate_lesson_reviews(db, uid, lesson.id)
-    audit(db, admin, "card.create", "review_item", card.id, {"lesson": lesson.id, "kind": item.get("kind"), "activated_for": len(done)})
+    done = activate_for_completed(db, lesson.id)
+    audit(db, admin, "card.create", "review_item", card.id, {"lesson": lesson.id, "kind": item.get("kind"), "activated_for": done})
     db.commit()
-    return {**_view(card), "activated_for": len(done)}
+    return {**_view(card), "activated_for": done}
 
 
 def _card(db: Session, card_id: str) -> ReviewItem:

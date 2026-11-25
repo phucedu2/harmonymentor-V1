@@ -168,3 +168,29 @@ def test_nhap_file_co_the_on_theo_ma_va_nhap_lai_khong_trung(client, h):
     doc["lessons"][0]["cards"] = [{"key": "cb", "kind": "build_chord", "front": "Dựng C.", "symbol": "G", "skill_id": "chord.triad_build"}]
     bad = post(doc)
     assert bad.status_code == 422 and "thẻ “cb”" in bad.json()["error"]["message"]
+
+
+def test_nhap_file_them_the_moi_kich_hoat_cho_nguoi_da_hoc_xong(client, h):
+    import yaml
+    from uuid import uuid4
+    from app.content.source_registry import SOURCE_REGISTRY
+    code = f"kh-{uuid4().hex[:8]}"
+    lid = f"M-{code}"
+    card = {"key": "ca", "kind": "build_scale", "front": "Viết âm giai G trưởng.", "tonic": "G", "scale_type": "major", "skill_id": "scale.major"}
+    doc = {"format": "harmonymentor/1", "lessons": [{
+        "code": code, "title": "Kích hoạt", "blocks": [{"title": "Khối", "paragraphs": ["Nội dung."]}],
+        "sources": [{"source_id": next(iter(SOURCE_REGISTRY)), "locator": "c1"}], "cards": [card]}]}
+
+    def post(d):
+        return client.post(f"{A}/import", headers=h, files={"file": ("t.yaml", yaml.safe_dump(d, allow_unicode=True).encode(), "text/plain")})
+    assert post(doc).status_code == 200
+    uid = make_user()
+    with SessionLocal() as db:
+        db.add(LessonProgress(user_id=uid, lesson_id=lid, status="completed", completed_at=datetime.now(timezone.utc)))
+        db.commit()
+    doc["lessons"][0]["cards"] = [card, {**card, "key": "cb", "front": "Viết âm giai D trưởng.", "tonic": "D"}]
+    row = post(doc).json()["lessons"][0]
+    assert row["cards_added"] == [f"{lid}-R-cb"] and row["cards_activated_for"] >= 1
+    with SessionLocal() as db:
+        got = db.scalars(select(ReviewState).where(ReviewState.user_id == uid, ReviewState.review_item_id == f"{lid}-R-cb")).all()
+        assert len(got) == 1

@@ -249,6 +249,7 @@ def import_content(db: Session, admin: User, raw: bytes, filename: str, dry_run:
                 if changed:
                     row["cards_revised"].append(cid)
         db.flush()
+        row["cards_activated_for"] = ca.activate_for_completed(db, lesson_id) if row["cards_added"] else 0
         db.refresh(lesson)
         row["cards_not_in_file"] = sorted(c.id for c in lesson.review_items
                                           if c.deleted_at is None and ca._is_admin_card(c) and c.id not in want_cards)
