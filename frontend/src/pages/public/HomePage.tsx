@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router";
 import { useQuery } from "@tanstack/react-query";
-import { api, type LessonSummary } from "../../api";
+import { api } from "../../api";
 import { useAuth } from "../../auth/AuthProvider";
 import Piano from "../../Piano";
 import { prettyNote } from "../../lib/notation";
@@ -11,16 +11,15 @@ import { Link } from "react-router";
 import { SoundProvider, SoundToggle, useSound } from "./wow/sound";
 import { Hero, ProgressionScene, StaffScene, useReducedMotion, useReveal, useSmoothScroll } from "./wow/WowScenes";
 import { pitchClassesToAscendingNotes } from "../../audio/musicUtils";
+import { CurriculumDetail } from "./home/CurriculumDetail";
+import { RoadmapSection } from "./home/RoadmapSection";
+import { OutcomesSection } from "./home/OutcomesSection";
+import { FeatureBento } from "./home/FeatureBento";
+import { curriculum, features, outcomes, roadmap } from "./home/copy";
+import "./home/home.css";
 
 // Các hợp âm để bấm thử; nốt luôn lấy từ Music Engine, không viết sẵn ở đây.
 const DEMO_CHORDS = ["C", "Am", "G7", "Ebm7b5"];
-
-const FEATURES = [
-  { title: "Luyện tập có chẩn đoán", body: "Làm sai không chỉ nhận chữ “Sai”: hệ thống chỉ ra nốt nào lệch và vì sao, ví dụ dùng quãng 7 trưởng thay cho quãng 7 thứ.", ready: true },
-  { title: "Ôn tập đúng lúc", body: "Thẻ ghi nhớ tự hẹn ngày ôn lại: nhớ tốt thì giãn ra, quên thì ôn sớm hơn.", ready: true },
-  { title: "AI Tutor có trích dẫn", body: "Hỏi bằng tiếng Việt; câu trả lời dẫn về đúng bài học, nốt nhạc được bộ chấm nhạc lý kiểm tra.", ready: true },
-  { title: "Composition Lab", body: "Ghép vòng hợp âm, giai điệu và nhịp trống rồi nghe ngay thành quả của mình.", ready: true },
-];
 
 function ChordDemo() {
   const [symbol, setSymbol] = useState(DEMO_CHORDS[0]);
@@ -68,55 +67,6 @@ function ChordDemo() {
   );
 }
 
-function groupByTrack(lessons: LessonSummary[]) {
-  const groups = new Map<string, LessonSummary[]>();
-  [...lessons].sort((a, b) => a.order - b.order).forEach((lesson) => {
-    groups.set(lesson.track, [...(groups.get(lesson.track) ?? []), lesson]);
-  });
-  return [...groups.entries()];
-}
-
-function Curriculum() {
-  // FR-VIS-02: chương trình học lấy từ API, không viết sẵn danh sách bài ở frontend.
-  const lessons = useQuery({ queryKey: ["lessons", "public"], queryFn: api.listLessons });
-  const groups = useMemo(() => groupByTrack(lessons.data ?? []), [lessons.data]);
-
-  if (lessons.isPending) {
-    return (
-      <div className="grid gap-4 md:grid-cols-2" aria-busy="true" aria-label="Đang tải chương trình học">
-        {[0, 1].map((i) => <div key={i} className="h-40 animate-pulse rounded-xl motion-reduce:animate-none bg-line/60" />)}
-      </div>
-    );
-  }
-  if (lessons.isError) {
-    return (
-      <Alert tone="danger" action={<Button variant="ghost" onClick={() => lessons.refetch()}>Thử lại</Button>}>
-        Chưa tải được chương trình học. {lessons.error.message}
-      </Alert>
-    );
-  }
-  if (groups.length === 0) return <Alert>Chương trình học đang được soạn, bạn quay lại sau nhé.</Alert>;
-
-  return (
-    <div className="grid gap-4 md:grid-cols-2">
-      {groups.map(([track, items]) => (
-        <article key={track} className="wow-panel reveal p-6">
-          <h3 className="display text-xl">{track}</h3>
-          <ol className="mt-3 space-y-2">
-            {items.map((lesson) => (
-              <li key={lesson.id} className="flex items-start gap-3 text-sm">
-                <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-md bg-[var(--w-ivory)] font-mono text-xs font-semibold text-[var(--w-deep-text)]">{lesson.order}</span>
-                <span className="flex-1 text-ink">{lesson.title}</span>
-                {lesson.exercise_count === 0 && <span className="shrink-0 rounded-full bg-bg px-2 py-0.5 text-xs text-muted">Sắp có</span>}
-              </li>
-            ))}
-          </ol>
-        </article>
-      ))}
-    </div>
-  );
-}
-
 function HomeContent() {
   const { status } = useAuth();
   const { hash } = useLocation();
@@ -142,7 +92,7 @@ function HomeContent() {
 
   return (
     <div ref={root} className="wow">
-      <Hero cta={cta} onExplore={() => goTo("chuong-trinh")} />
+      <Hero cta={cta} onExplore={() => goTo("lo-trinh")} />
       <StaffScene />
       <ProgressionScene />
 
@@ -158,29 +108,39 @@ function HomeContent() {
         </div>
       </section>
 
-      <section id="chuong-trinh" className="scroll-mt-6 border-t border-[var(--w-line)] py-20">
+      <section id="lo-trinh" className="scroll-mt-6 border-t border-[var(--w-line)] py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <p className="wow-kicker reveal">Lộ trình</p>
-          <h2 className="display reveal mt-3 text-4xl">Chương trình học</h2>
-          <p className="reveal mt-3 max-w-2xl text-[var(--w-ink-soft)]">Đi từ tên nốt, quãng, âm giai tới hợp âm và vòng hợp âm. Mỗi bài có lý thuyết ngắn, ví dụ nghe được và bài kiểm tra cuối bài.</p>
-          <div className="mt-10"><Curriculum /></div>
+          <p className="wow-kicker reveal">{roadmap.kicker}</p>
+          <h2 className="display reveal mt-3 text-4xl">{roadmap.title}</h2>
+          <p className="reveal mt-3 max-w-2xl text-[var(--w-ink-soft)]">{roadmap.lead}</p>
+          <div className="mt-12"><RoadmapSection /></div>
         </div>
       </section>
 
-      <section id="tinh-nang" className="scroll-mt-6 pb-20">
+      <section id="hoc-gi" className="scroll-mt-6 border-t border-[var(--w-line)] py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <h2 className="display reveal text-4xl">Tính năng</h2>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {FEATURES.map((f) => (
-              <article key={f.title} className="wow-panel reveal p-6">
-                <div className="flex items-center justify-between gap-2">
-                  <h3 className="font-semibold">{f.title}</h3>
-                  {!f.ready && <span className="shrink-0 rounded-full bg-[var(--w-ivory)] px-2 py-0.5 text-xs font-medium text-[var(--w-deep-text)]">Sắp ra mắt</span>}
-                </div>
-                <p className="mt-2 text-sm text-[var(--w-ink-soft)]">{f.body}</p>
-              </article>
-            ))}
-          </div>
+          <p className="wow-kicker reveal">{outcomes.kicker}</p>
+          <h2 className="display reveal mt-3 text-4xl">{outcomes.title}</h2>
+          <p className="reveal mt-3 max-w-2xl text-[var(--w-ink-soft)]">{outcomes.lead}</p>
+          <div className="mt-10"><OutcomesSection /></div>
+        </div>
+      </section>
+
+      <section id="tinh-nang" className="scroll-mt-6 border-t border-[var(--w-line)] py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <p className="wow-kicker reveal">{features.kicker}</p>
+          <h2 className="display reveal mt-3 text-4xl">{features.title}</h2>
+          <p className="reveal mt-3 max-w-2xl text-[var(--w-ink-soft)]">{features.lead}</p>
+          <div className="mt-10"><FeatureBento /></div>
+        </div>
+      </section>
+
+      <section id="chuong-trinh" className="scroll-mt-6 border-t border-[var(--w-line)] py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <p className="wow-kicker reveal">{curriculum.kicker}</p>
+          <h2 className="display reveal mt-3 text-4xl">{curriculum.title}</h2>
+          <p className="reveal mt-3 max-w-2xl text-[var(--w-ink-soft)]">{curriculum.lead}</p>
+          <div className="mt-10"><CurriculumDetail /></div>
         </div>
       </section>
 

@@ -5,6 +5,7 @@ import { ButtonLink } from "../ui/Button";
 import { PageLoader } from "../ui/PageLoader";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "../../theme/ThemeToggle";
+import { SiteFooter } from "../../pages/public/home/SiteFooter";
 
 export default function PublicLayout() {
   const { status } = useAuth();
@@ -17,7 +18,8 @@ export default function PublicLayout() {
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 py-3 sm:gap-4 sm:px-6">
           <Logo />
           <nav aria-label="Điều hướng trang chủ" className="flex items-center gap-1 sm:gap-2">
-            <Link to="/#chuong-trinh" className="hidden rounded-md px-3 py-2 text-sm text-muted hover:text-ink sm:block">Chương trình</Link>
+            <Link to="/#lo-trinh" className="hidden rounded-md px-3 py-2 text-sm text-muted hover:text-ink sm:block">Lộ trình</Link>
+            <Link to="/#chuong-trinh" className="hidden rounded-md px-3 py-2 text-sm text-muted hover:text-ink md:block">Chương trình</Link>
             <Link to="/#tinh-nang" className="hidden rounded-md px-3 py-2 text-sm text-muted hover:text-ink sm:block">Tính năng</Link>
             {status === "authenticated" ? (
               <ButtonLink to="/app">Vào học</ButtonLink>
@@ -35,9 +37,7 @@ export default function PublicLayout() {
       <main id="noi-dung" className="flex-1">
         <Suspense fallback={<PageLoader />}><Outlet /></Suspense>
       </main>
-      <footer className="border-t border-line py-6 text-center text-sm text-muted">
-        HarmonyMentor · Đồ án nhóm, học nhạc lý có AI Tutor · Ký hiệu nhạc theo chuẩn quốc tế
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
