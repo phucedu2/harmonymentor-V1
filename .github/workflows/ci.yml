@@ -243,10 +243,19 @@ jobs:
   # FE-028: test giao diện với backend THẬT (đăng ký/đăng nhập, làm bài, ôn thẻ). Playwright tự dựng backend SQLite mới
   # và bản build qua vite preview (xem frontend/playwright.live.config.ts). AI tắt, không gọi mạng ngoài.
   # Cũng KHÔNG nằm trong 3 check bắt buộc của ruleset bao-ve-main.
+  # ADR-040: thêm Mailpit (hộp thư thử) để chạy luồng quên/đổi mật khẩu đầu cuối (e2e-live/mat-khau.live.ts, truy-cap.live.ts).
   frontend-e2e-live:
     name: Frontend (Playwright + backend thật)
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    services:
+      mailpit:
+        image: axllent/mailpit:v1.33.1
+        ports:
+          - 1025:1025
+          - 8025:8025
+    env:
+      E2E_MAILPIT: "1"
     steps:
       - uses: actions/checkout@v5
 
