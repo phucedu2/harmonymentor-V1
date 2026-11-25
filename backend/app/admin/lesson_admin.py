@@ -230,13 +230,19 @@ def _skills(db: Session) -> set[str]:
     return set(db.scalars(select(Skill.id)))
 
 
+def human_why(why: str) -> str:
+    """Lý do loại câu do bộ chuẩn hóa của AI viết ("AI đưa cho Engine"); người soạn là Quản trị viên nên nói "bạn nhập"."""
+    return (why.replace("phần kiểm của AI", "phần kiểm bạn nhập").replace("ký hiệu AI đưa cho Engine", "ký hiệu bạn nhập cho Engine")
+            .replace("của AI", "của bạn"))
+
+
 def _normalize(db: Session, item: Any) -> dict[str, Any]:
     if not isinstance(item, dict):
         raise AdminContentError("QUESTION_INVALID", "Câu hỏi không hợp lệ.")
     # Người soạn là Quản trị viên: câu coi như đã duyệt; vẫn chạy đủ kiểm của Engine.
     q, why = aq.normalize_question({**item, "page": 1, "reviewed": True}, _skills(db), lambda p: 1, trust_review=True)
     if q is None:
-        raise AdminContentError("QUESTION_INVALID", f"Câu chưa lưu được: {why}.")
+        raise AdminContentError("QUESTION_INVALID", f"Câu chưa lưu được: {human_why(why)}.")
     if q.get("engine_note"):
         note = (q["engine_note"].replace("AI chọn", "Bạn chọn").replace("AI cho là", "Bạn cho là")
                 .replace("Engine sửa thành", "Engine tính là"))

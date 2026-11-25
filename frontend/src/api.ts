@@ -295,7 +295,13 @@ export type AdminLessonRow = { id: string; order: number; track: string; title: 
 export type AdminBlock = { id: string; position: number; block_type: string; payload: Record<string, unknown>;
   base_payload: Record<string, unknown>; edited: boolean; draft_revision_id: string | null; engine: AdminEngineReport };
 export type AdminImportRow = { id: string; title: string; created: boolean; blocks_changed: boolean; exercises_added: string[];
-  exercises_revised: string[]; exercises_not_in_file: string[]; sources_added: number };
+  exercises_revised: string[]; exercises_not_in_file: string[]; sources_added: number; cards_added: string[]; cards_revised: string[];
+  cards_not_in_file: string[] };
+// Thẻ ôn soạn bằng form (FR-ADM-31..34). Loại do Engine tính (build_chord, build_scale, interval, roman) không gửi đáp án.
+export type AdminCardForm = { kind: string; front: string; skill_id: string; back?: string; expected?: string; case_sensitive?: boolean;
+  keywords?: string[]; symbol?: string; tonic?: string; scale_type?: string; check?: Record<string, string> };
+export type AdminCard = { id: string; front: string; back: string; skill_id: string; mode: string; editable: boolean; form: AdminCardForm | null };
+export type AdminCardList = { cards: AdminCard[]; skills: string[]; kinds: string[] };
 export type AdminLessonDetail = { lesson: AdminLessonRow; objectives: string[]; blocks: AdminBlock[]; meta_edited?: boolean;
   exercises: { id: string; version: number; skill_id: string; kind: string; prompt: string; status: string }[] };
 export type AdminSkill = { id: string; name: string; domain: string; seed: boolean; mvp: boolean; group_code?: string | null;
@@ -427,6 +433,11 @@ export const api = {
     return apiCall<{ dry_run: boolean; lessons: AdminImportRow[] }>("/admin/import", { method: "POST", body: form });
   },
   adminImportTemplate: () => apiCall<{ filename: string; content: string }>("/admin/import/template"),
+  adminCards: (id: string) => apiCall<AdminCardList>(`/admin/lessons/${encodeURIComponent(id)}/cards`),
+  adminAddCard: (id: string, f: AdminCardForm) => apiPost<AdminCard & { activated_for: number }>(`/admin/lessons/${encodeURIComponent(id)}/cards`, f),
+  adminUpdateCard: (id: string, f: AdminCardForm) =>
+    apiCall<AdminCard>(`/admin/cards/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(f) }),
+  adminDeleteCard: (id: string) => apiCall<{ id: string }>(`/admin/cards/${encodeURIComponent(id)}`, { method: "DELETE" }),
   adminExercises: (id: string) => apiCall<AdminExerciseList>(`/admin/lessons/${encodeURIComponent(id)}/exercises`),
   adminAddExercise: (id: string, q: AdminQuestion) => apiPost<AdminExercise>(`/admin/lessons/${encodeURIComponent(id)}/exercises`, q),
   adminUpdateExercise: (id: string, q: AdminQuestion) =>

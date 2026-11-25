@@ -5,7 +5,8 @@ nên nhập lại cùng file là CẬP NHẬT chứ không tạo bản trùng:
 - bài mới → tạo bài M-<code>, ẩn tới khi Quản trị viên bấm hiện (giống bài tạo bằng form, ADR-035);
 - khối đổi → dựng lại các khối theo file (file là nguồn sự thật của bài nhập);
 - câu đổi đề/đáp án → thêm phiên bản mới (ADR-006), câu không đổi → giữ nguyên;
-- câu có trong CSDL mà file không còn → KHÔNG tự bỏ, chỉ báo để Quản trị viên quyết.
+- thẻ ôn (`cards`) cũng theo mã `key`: id `<bài>-R-<key>`, đổi nội dung thì ghi đè tại chỗ, thẻ từng xóa mềm mà file còn thì dùng lại;
+- câu và thẻ có trong CSDL mà file không còn → KHÔNG tự bỏ, chỉ báo để Quản trị viên quyết.
 
 Kiểm hết rồi mới ghi: một lỗi ở bất kỳ đâu (Engine tính khác đáp án, thiếu lời giải, nguồn không có…) thì không ghi gì
 và trả danh sách lỗi kèm vị trí, để file sửa một lần là nhập được.
@@ -22,7 +23,8 @@ import yaml
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
-from ..db.models import ContentRevision, Exercise, Lesson, LessonBlock, LessonSource, SourceWork, User
+from ..db.models import ContentRevision, Exercise, Lesson, LessonBlock, LessonSource, ReviewItem, SourceWork, User
+from . import card_admin as ca
 from . import lesson_admin as la
 from .content_service import AdminContentError, audit
 
@@ -53,6 +55,13 @@ lessons:
         prompt: Hợp âm C gồm những nốt nào?
         symbol: C
         explanation: C – E – G là gốc, quãng 3 trưởng và quãng 5 đúng.
+    cards:                           # thẻ ôn (không bắt buộc): recall | self_check | build_chord | build_scale | interval | roman
+      - key: t1
+        kind: build_scale
+        skill_id: scale.major
+        front: Viết âm giai G trưởng.
+        tonic: G
+        scale_type: major
 """
 
 
@@ -136,8 +145,22 @@ def _validate(db: Session, data: Any) -> tuple[list[dict[str, Any]], list[str]]:
                 errors.append(f"{where}, câu “{key}”: {exc.message}")
                 continue
             exercises.append({"key": key, "q": q})
+        cards, ckeys = [], set()
+        for j, item in enumerate(raw.get("cards") or [], start=1):
+            key = str((item or {}).get("key") or "").strip() if isinstance(item, dict) else ""
+            if not _CODE.match(key or "x"):
+                errors.append(f"{where}, thẻ {j}: `key` chỉ gồm chữ thường không dấu, số, gạch nối.")
+                continue
+            if key in ckeys:
+                errors.append(f"{where}, thẻ {j}: `key` “{key}” bị lặp.")
+                continue
+            ckeys.add(key)
+            try:
+                cards.append({"key": key, "n": ca._normalize(db, {k: v for k, v in item.items() if k != "key"})})
+            except AdminContentError as exc:
+                errors.append(f"{where}, thẻ “{key}”: {exc.message}")
         out.append({"code": code, "title": title, "objectives": la._clean_lines(raw.get("objectives"), 10, 300),
-                    "blocks": blocks, "sources": sources, "exercises": exercises})
+                    "blocks": blocks, "sources": sources, "exercises": exercises, "cards": cards})
     return out, errors
 
 
@@ -166,7 +189,8 @@ def import_content(db: Session, admin: User, raw: bytes, filename: str, dry_run:
         lesson_id = f"M-{item['code']}"
         lesson = db.get(Lesson, lesson_id)
         row: dict[str, Any] = {"id": lesson_id, "title": item["title"], "created": lesson is None, "blocks_changed": False,
-                               "exercises_added": [], "exercises_revised": [], "exercises_not_in_file": [], "sources_added": 0}
+                               "exercises_added": [], "exercises_revised": [], "exercises_not_in_file": [], "sources_added": 0,
+                               "cards_added": [], "cards_revised": [], "cards_not_in_file": []}
         if lesson is None:
             created = la.create_lesson(db, admin, item["title"], item["objectives"], item["blocks"][0]["title"],
                                        item["blocks"][0]["paragraphs"], lesson_id=lesson_id, commit=False)
@@ -204,6 +228,30 @@ def import_content(db: Session, admin: User, raw: bytes, filename: str, dry_run:
                     row["exercises_revised"].append(f"{ex_id} (bản {version})")
         db.refresh(lesson)
         row["exercises_not_in_file"] = sorted(e.id for e in lesson.exercises if e.deleted_at is None and e.id not in wanted)
+        la._ensure_work(db)
+        want_cards = set()
+        for c in item["cards"]:
+            cid = f"{lesson_id}-R-{c['key']}"
+            want_cards.add(cid)
+            n = c["n"]
+            fields = dict(skill_id=n["skill"], mode=n["mode"], front=n["grader_config"]["form"]["front"], back=n["back"],
+                          grading_strategy=n["strategy"], answer_key=n["answer_key"], grader_config=n["grader_config"])
+            card = db.get(ReviewItem, cid)
+            if card is None:
+                db.add(ReviewItem(id=cid, lesson_id=lesson_id, **fields,
+                                  provenance=[{"source_id": la.ADMIN_WORK_ID, "locator": None, "note": "Nhập từ file"}]))
+                row["cards_added"].append(cid)
+            else:
+                changed = card.deleted_at is not None or any(getattr(card, k) != v for k, v in fields.items())
+                for k, v in fields.items():
+                    setattr(card, k, v)
+                card.deleted_at = None
+                if changed:
+                    row["cards_revised"].append(cid)
+        db.flush()
+        db.refresh(lesson)
+        row["cards_not_in_file"] = sorted(c.id for c in lesson.review_items
+                                          if c.deleted_at is None and ca._is_admin_card(c) and c.id not in want_cards)
         report.append(row)
     if dry_run:
         db.rollback()

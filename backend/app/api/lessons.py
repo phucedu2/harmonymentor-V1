@@ -48,7 +48,7 @@ def _summary(lesson: Lesson, order: int, db: Session) -> LessonSummaryOut:
         id=lesson.id, order=order, track=lesson.track, title=lesson.title,
         status=lesson.status, objectives=lesson.objectives or [], block_count=len(_visible_blocks(lesson, db)),
         exercise_count=len(versions),
-        review_item_count=len(lesson.review_items),
+        review_item_count=len([r for r in lesson.review_items if r.deleted_at is None]),
         ai_generated=ai_generated,
         # Bài "Mở rộng" khi xuất bản đã ghi counts_for_mastery=false vào mọi câu; suy từ đó, không cần cột mới.
         expansion=ai_generated and bool(versions) and all(not counts_for_mastery(v.grader_config) for v in versions),
@@ -105,7 +105,7 @@ def get_lesson(lesson_id: str, request: Request, preview: bool = False, db: Sess
                 for b, payload in _visible_blocks(lesson, db)],
         exercises=exercises,
         review_items=[ReviewItemOut(id=r.id, mode=r.mode, front=r.front, back=r.back, skill_id=r.skill_id)
-                      for r in sorted(lesson.review_items, key=lambda x: x.id)],
+                      for r in sorted(lesson.review_items, key=lambda x: x.id) if r.deleted_at is None],
         sources=[SourceRefOut(source_id=work.id, title=work.title, author=work.author, locator=link.locator,
                               note=link.note, url=work.url) for link, work in sources],
         external_resources=resources_for(lesson_id),
