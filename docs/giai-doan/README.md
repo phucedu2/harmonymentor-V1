@@ -72,6 +72,7 @@ Các giai đoạn 0.2 → 2.3 là lộ trình của bản code gốc (zip v0.1.0
 - [`admin-ky-nang-goi-y/`](admin-ky-nang-goi-y/BAO_CAO.md): kỹ năng tự tạo vào mastery và hệ gợi ý, bài tự tạo vào kho AI Tutor, ngưỡng thành thạo theo kỹ năng (FR-ADM-23, ADR-037), 25/11/2026.
 - [`admin-the-on/`](admin-the-on/BAO_CAO.md): Admin soạn thẻ ôn Leitner, sáu loại thẻ, xóa mềm, nhập thẻ từ file (FR-ADM-31..34), 25/11/2026.
 - [`admin-mau-vi-du/`](admin-mau-vi-du/BAO_CAO.md): mẫu câu hỏi có tham số, khối ví dụ hợp âm/âm giai/âm thanh (FR-ADM-30, 35..37, ADR-038), 25/11/2026.
+- [`trang-chu/`](trang-chu/BAO_CAO.md): làm lại trang chủ công khai (lộ trình, đầu ra, bento tính năng, chương trình học chi tiết, footer), 25/11/2026.
 - Mỗi giai đoạn mới (ví dụ `gd2-goi-y`) tạo thư mục `docs/giai-doan/<tên giai đoạn>/`, đặt báo cáo triển khai và file kiểm chứng của giai đoạn đó vào đây, rồi thêm một dòng vào bảng trên.
 - Báo cáo PR vẫn ở [`docs/bao-cao/`](../bao-cao/), ảnh và minh chứng chấm điểm ở [`docs/minh-chung/`](../minh-chung/), quyết định ở [`docs/decisions/`](../decisions/).
 - Đặc tả dùng chung cho nhiều giai đoạn (`SKILL_GRAPH.md`, `LESSON_SPECIFICATIONS.md`, `CURRICULUM_SOURCE_MATRIX.md`) và minh chứng mốc chấm (`CP1_*.md`) giữ ở `docs/`.
