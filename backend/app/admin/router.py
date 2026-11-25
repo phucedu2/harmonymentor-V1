@@ -18,7 +18,7 @@ from ..core.ai_config import relevance_config
 from ..core import ai_switch
 from ..core.config import settings
 from ..db.models import SourceDocument
-from . import ai_job, ai_service, content_import, content_service, lesson_admin, skill_admin, stats_service
+from . import ai_job, ai_service, card_admin, content_import, content_service, lesson_admin, skill_admin, stats_service
 from .content_service import AdminContentError
 
 # Mọi route /api/v1/admin/* gắn require_admin ở cấp router để không route nào quên kiểm tra quyền.
@@ -272,6 +272,26 @@ def delete_block(lesson_id: str, block_id: str, admin: User = Depends(require_ad
 @router.post("/lessons/{lesson_id}/blocks/reorder")
 def reorder_blocks(lesson_id: str, body: BlockOrderIn, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
     return {"order": _do(lesson_admin.reorder_blocks, db, admin, lesson_id, body.block_ids)}
+
+
+@router.get("/lessons/{lesson_id}/cards")
+def list_cards(lesson_id: str, db: Session = Depends(get_db)):
+    return _do(card_admin.list_cards, db, lesson_id)
+
+
+@router.post("/lessons/{lesson_id}/cards", status_code=201)
+def add_card(lesson_id: str, body: dict[str, Any], admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return _do(card_admin.add_card, db, admin, lesson_id, body)
+
+
+@router.put("/cards/{card_id}")
+def update_card(card_id: str, body: dict[str, Any], admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return _do(card_admin.update_card, db, admin, card_id, body)
+
+
+@router.delete("/cards/{card_id}")
+def delete_card(card_id: str, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return _do(card_admin.delete_card, db, admin, card_id)
 
 
 @router.get("/import/template")

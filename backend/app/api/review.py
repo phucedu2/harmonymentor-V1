@@ -29,6 +29,7 @@ def due_reviews(
     stmt = select(ReviewState, ReviewItem).join(ReviewItem, ReviewItem.id == ReviewState.review_item_id).where(
         ReviewState.user_id == user.id,
         ReviewState.status == "active",
+        ReviewItem.deleted_at.is_(None),   # FR-ADM-33: thẻ Quản trị viên đã xóa mềm không còn trong hàng đợi
     )
     if not include_future:
         stmt = stmt.where(ReviewState.due_at <= datetime.now(timezone.utc))

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { api, type AdminBlock, type AdminImportRow, type AdminLessonDetail, type AdminLessonRow, type AdminRevision } from "../../api";
 import { Button } from "../ui/Button";
 import { Badge, Card } from "../ui/Page";
+import CardsPanel from "./CardsPanel";
 import ExercisesPanel from "./ExercisesPanel";
 
 // Trường chữ sửa được: khớp danh sách ở backend (content_service). Trường khác (loại khối, mã bài tập, hợp âm…) bị khóa.
@@ -161,6 +162,7 @@ function LessonEditor({ id, onBack, onChanged }: { id: string; onBack: () => voi
       </> : undefined} />)}</ul>
     {editable && <AddBlock lessonId={id} onAdded={() => { load(); onChanged(); }} />}
     <ExercisesPanel lessonId={id} />
+    <CardsPanel lessonId={id} />
     <div className="border-t border-line pt-3"><Button variant="ghost" onClick={remove}>Xóa bài này</Button>
       <span className="ml-2 text-xs text-muted">Xóa mềm: học sinh không thấy nữa, khôi phục được ở cuối danh sách bài.</span></div>
   </div>;
@@ -241,9 +243,11 @@ function ImportCard({ onDone }: { onDone: () => void }) {
         {r.created ? "Tạo bài mới" : "Cập nhật bài"} “{r.title}” ({r.id}){r.created ? ", đang ẩn" : ""}
         {r.blocks_changed ? " · dựng lại khối" : ""}{r.exercises_added.length ? ` · thêm ${r.exercises_added.length} câu` : ""}
         {r.exercises_revised.length ? ` · sửa ${r.exercises_revised.length} câu (tăng phiên bản)` : ""}
+        {r.cards_added.length ? ` · thêm ${r.cards_added.length} thẻ ôn${r.cards_activated_for ? ` (đã kích hoạt cho ${r.cards_activated_for} người học xong bài)` : ""}` : ""}{r.cards_revised.length ? ` · sửa ${r.cards_revised.length} thẻ ôn` : ""}
         {r.sources_added ? ` · thêm ${r.sources_added} nguồn` : ""}
-        {!r.created && !r.blocks_changed && !r.exercises_added.length && !r.exercises_revised.length && !r.sources_added ? " · không đổi gì" : ""}
+        {!r.created && !r.blocks_changed && !r.exercises_added.length && !r.exercises_revised.length && !r.sources_added && !r.cards_added.length && !r.cards_revised.length ? " · không đổi gì" : ""}
         {r.exercises_not_in_file.length > 0 && <span className="text-warning"> · {r.exercises_not_in_file.length} câu không còn trong file (giữ nguyên, bỏ tay nếu cần)</span>}
+        {r.cards_not_in_file.length > 0 && <span className="text-warning"> · {r.cards_not_in_file.length} thẻ không còn trong file (giữ nguyên, xóa tay nếu cần)</span>}
       </li>)}</ul></div>}
   </Card>;
 }

@@ -241,6 +241,8 @@ class ReviewItem(Base):
     answer_key: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
     grader_config: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
     provenance: Mapped[Optional[list[dict[str, Any]]]] = mapped_column(JSON, nullable=True)
+    # FR-ADM-33: xóa mềm thẻ do Quản trị viên soạn; thẻ seed không xóa được nên cột luôn rỗng ở thẻ seed.
+    deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
 
     lesson: Mapped[Lesson] = relationship(back_populates="review_items")
 

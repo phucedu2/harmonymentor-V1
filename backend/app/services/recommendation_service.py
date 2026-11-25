@@ -52,7 +52,7 @@ def user_vector(db: Session, user_id: str) -> GroupVector:
 def due_skills(db: Session, user_id: str, now: datetime) -> frozenset[str]:
     rows = db.execute(select(ReviewState.due_at, ReviewItem.skill_id)
                       .join(ReviewItem, ReviewItem.id == ReviewState.review_item_id)
-                      .where(ReviewState.user_id == user_id, ReviewState.status == "active")).all()
+                      .where(ReviewState.user_id == user_id, ReviewState.status == "active", ReviewItem.deleted_at.is_(None))).all()
     return frozenset(skill for due_at, skill in rows if _aware(due_at) <= now)
 
 

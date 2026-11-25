@@ -165,7 +165,7 @@ def answer_review(db: Session, user_id: str, review_item_id: str, answer, rating
     require_user(db, user_id)
     now = now or utcnow()
     item = db.get(ReviewItem, review_item_id)
-    if item is None:
+    if item is None or item.deleted_at is not None:
         raise LookupError("REVIEW_ITEM_NOT_FOUND")
     state = db.scalar(select(ReviewState).where(
         ReviewState.user_id == user_id,

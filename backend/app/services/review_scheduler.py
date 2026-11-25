@@ -33,7 +33,7 @@ def _aware(value: datetime) -> datetime:
 
 def activate_lesson_reviews(db: Session, user_id: str, lesson_id: str, now: datetime | None = None) -> list[ReviewState]:
     now = now or utcnow()
-    items = db.scalars(select(ReviewItem).where(ReviewItem.lesson_id == lesson_id).order_by(ReviewItem.id)).all()
+    items = db.scalars(select(ReviewItem).where(ReviewItem.lesson_id == lesson_id, ReviewItem.deleted_at.is_(None)).order_by(ReviewItem.id)).all()
     states: list[ReviewState] = []
     for item in items:
         state = db.scalar(select(ReviewState).where(

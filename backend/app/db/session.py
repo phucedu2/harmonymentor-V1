@@ -87,6 +87,12 @@ def _check_legacy_users_table() -> None:
             "CSDL cũ thiếu cột lessons.admin_meta (Quản trị viên sửa tên bài). Giữ dữ liệu: "
             "`alembic -c alembic.ini upgrade head`. Không cần dữ liệu cũ: xóa harmonymentor_dev.db để tạo lại."
         )
+    # FR-ADM-31..34 (25/11/2026, migration a1b2c3d4e5f7)
+    if "deleted_at" not in {c["name"] for c in inspector.get_columns("review_items")}:
+        raise RuntimeError(
+            "CSDL cũ thiếu cột review_items.deleted_at (Quản trị viên xóa mềm thẻ ôn). Giữ dữ liệu: "
+            "`alembic -c alembic.ini upgrade head`. Không cần dữ liệu cũ: xóa harmonymentor_dev.db để tạo lại."
+        )
     if "email" not in columns:
         raise RuntimeError(
             "CSDL cũ thiếu cột users.email (tạo trước Giai đoạn B). Với SQLite dev: xóa file harmonymentor_dev.db "
