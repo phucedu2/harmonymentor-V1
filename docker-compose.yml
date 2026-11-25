@@ -36,6 +36,17 @@ services:
       retries: 20
     # Không mở cổng ra máy; cần xem giao diện thì thêm: ports: ["127.0.0.1:6333:6333"]
 
+  # Hộp thư thử cho dev (ADR-040, A12): bắt mọi thư API gửi, xem ở http://localhost:8025. Không gửi ra Internet.
+  # Chỉ mở cổng cho chính máy đang chạy. Khi đã dùng Gmail thật, Mailpit vẫn chạy nhưng không nhận thư nào.
+  mailpit:
+    image: axllent/mailpit:v1.33.1
+    environment:
+      MP_MAX_MESSAGES: 500
+      MP_SMTP_AUTH_ACCEPT_ANY: "1"
+      MP_SMTP_AUTH_ALLOW_INSECURE: "1"
+    ports:
+      - "127.0.0.1:8025:8025"
+
   api:
     build:
       context: ./backend
@@ -50,6 +61,11 @@ services:
       QDRANT_URL: http://qdrant:6333
       RAG_ENABLED: ${RAG_ENABLED:-1}   # chatbot hỏi Qdrant (chưa nạp hoặc lỗi thì tự lùi về đường cũ); đặt 0 để tắt
       RAG_CORPUS_DIR: /data/corpus/raw
+      # ADR-040: mặc định gửi thư vào Mailpit (8A). Đặt EMAIL_BACKEND/SMTP_* trong .env để dùng Gmail thật.
+      EMAIL_BACKEND: ${EMAIL_BACKEND:-smtp}
+      SMTP_HOST: ${SMTP_HOST:-mailpit}
+      SMTP_PORT: ${SMTP_PORT:-1025}
+      EMAIL_FROM: ${EMAIL_FROM:-HarmonyMentor <no-reply@harmonymentor.local>}
     # Bộ đánh giá (python -m app.eval.run) đọc /eval và ghi eval/report.md; kho tài liệu thô nằm ngoài image (gitignore)
     volumes:
       - ./eval:/eval
@@ -61,6 +77,8 @@ services:
         condition: service_healthy
       qdrant:
         condition: service_healthy
+      mailpit:
+        condition: service_started
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
       interval: 10s
