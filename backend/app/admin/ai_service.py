@@ -385,6 +385,8 @@ def refresh_shortfall(content: dict[str, Any]) -> None:
     n = len(content.get("questions", []))
     if n >= MIN_QUESTIONS:
         content.pop("question_shortfall", None)
+    elif str(content.get("question_shortfall", "")).startswith(f"Chỉ có {n}/{MIN_QUESTIONS} "):
+        return   # số câu không đổi: giữ nguyên chữ để mã cờ không đổi, dấu "Đã đối chiếu" của người duyệt không mất (AUD-01)
     else:
         content["question_shortfall"] = f"Chỉ có {n}/{MIN_QUESTIONS} câu hợp lệ. Bấm “AI sinh thêm câu” hoặc tự thêm câu."
 
@@ -543,12 +545,14 @@ def draft_view(db: Session, draft: AiLessonDraft) -> dict[str, Any]:
     flags = [{**f, "acknowledged": f["id"] in ack} for f in draft.content.get("flags", [])]
     return {"flags": flags, "budget": budget.summary(db),"id": draft.id, "status": draft.status, "document": document_info(doc) if doc else None, "page_from": draft.page_from,
             "page_to": draft.page_to, "model": draft.model, "published_lesson_id": draft.published_lesson_id,
+            "lesson_hidden": overrides.lesson_hidden(db, draft.published_lesson_id) if draft.published_lesson_id else None,
             "content": {**draft.content, "questions": questions}, "engine": draft.engine_report, "created_at": draft.created_at}
 
 
 def list_drafts(db: Session) -> list[dict[str, Any]]:
     rows = db.scalars(select(AiLessonDraft).order_by(AiLessonDraft.created_at.desc()).limit(50)).all()
-    return [{"id": d.id, "status": d.status, "title": d.content.get("title"), "questions": len(d.content.get("questions", [])),
+    hidden = overrides.hidden_lesson_ids(db)   # AUD-04: danh sách cho biết bài đã xuất bản đang ẩn hay học sinh đã thấy
+    return [{"lesson_hidden": (d.published_lesson_id in hidden) if d.published_lesson_id else None,"id": d.id, "status": d.status, "title": d.content.get("title"), "questions": len(d.content.get("questions", [])),
              "flags": len(d.engine_report.get("contradicted", [])),
              "review_flags": len(ai_review.unacknowledged(d.content.get("flags", []), d.content.get("acknowledged_flags", []))),
              "published_lesson_id": d.published_lesson_id, "created_at": d.created_at}
@@ -570,6 +574,7 @@ def update_draft(db: Session, admin: User, draft_id: str, edited: dict[str, Any]
         if key in draft.content:
             content[key] = draft.content[key]
     if draft.content.get("question_shortfall"):
+        content["question_shortfall"] = draft.content["question_shortfall"]
         refresh_shortfall(content)
     content["flags"] = ai_review.review_flags(doc.pages, content, draft.page_from, draft.page_to)
     ids = {f["id"] for f in content["flags"]}

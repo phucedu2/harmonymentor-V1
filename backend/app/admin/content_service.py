@@ -99,16 +99,18 @@ def _block(db: Session, lesson_id: str, block_id: str):
 
 def lesson_list(db: Session) -> list[dict[str, Any]]:
     hidden = overrides.hidden_lesson_ids(db)
-    lessons = db.scalars(select(Lesson).order_by(Lesson.order_index)).unique().all()
+    lessons = db.scalars(select(Lesson).order_by(overrides.lesson_sort_key(), Lesson.id)).unique().all()
     published_counts = dict(db.execute(select(ContentRevision.lesson_id, func.count(func.distinct(ContentRevision.target)))
                                        .where(ContentRevision.kind == "block", ContentRevision.status == "published")
                                        .group_by(ContentRevision.lesson_id)).all())
     draft_counts = dict(db.execute(select(ContentRevision.lesson_id, func.count(func.distinct(ContentRevision.target)))
                                    .where(ContentRevision.kind == "block", ContentRevision.status == "draft")
                                    .group_by(ContentRevision.lesson_id)).all())
+    live = [x for x in lessons if x.deleted_at is None]
+    number = {x.id: i for i, x in enumerate(live, start=1)}   # "Bài n" theo thứ tự đang dùng, bài đã xóa không có số
     return [{
-        "id": lesson.id, "order": lesson.order_index, "track": lesson.track, "title": lesson.title, "status": lesson.status,
-        "hidden": lesson.id in hidden, "block_count": len(lesson.blocks),
+        "id": lesson.id, "order": number.get(lesson.id, 0), "track": lesson.track, "title": lesson.title, "status": lesson.status,
+        "hidden": lesson.id in hidden, "deleted": lesson.deleted_at is not None, "block_count": len(lesson.blocks),
         "exercise_count": len([e for e in lesson.exercises if current_version(e) is not None]),
         "edited_blocks": published_counts.get(lesson.id, 0), "draft_blocks": draft_counts.get(lesson.id, 0),
     } for lesson in lessons]

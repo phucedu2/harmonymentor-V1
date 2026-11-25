@@ -87,6 +87,10 @@ class Lesson(Base):
     title: Mapped[str] = mapped_column(String(240))
     status: Mapped[str] = mapped_column(String(32), default="draft")
     objectives: Mapped[list[str]] = mapped_column(JSON, default=list)
+    # FR-ADM-16: thứ tự Quản trị viên đặt. Seed ghi lại order_index mỗi lần khởi động nên thứ tự riêng nằm ở cột khác.
+    sort_key: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    # FR-ADM-15: xóa mềm (nguyên tắc 7); lượt làm và phiên bản câu hỏi cũ vẫn giữ.
+    deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
 

@@ -20,7 +20,7 @@ from ..db.models import (
     User,
 )
 from ..content import versioning
-from ..content.overrides import hidden_lesson_ids
+from ..content.overrides import hidden_lesson_ids, lesson_sort_key
 from . import mastery_service
 from .grading_service import GradeOutcome, InputRejected, grade_payload, is_open_question, is_self_check, validate_input  # noqa: F401
 from .review_scheduler import activate_lesson_reviews, apply_review_result
@@ -233,7 +233,7 @@ def _insert_progress_if_missing(db: Session, user_id: str, lesson_id: str, now: 
 
 def visible_lessons(db: Session) -> list[Lesson]:
     """Bài người học được thấy, theo thứ tự SRS Bảng 7; bài nháp chỉ hiện khi bật SHOW_DRAFT_CONTENT."""
-    lessons = db.scalars(select(Lesson).order_by(Lesson.order_index)).unique().all()
+    lessons = db.scalars(select(Lesson).order_by(lesson_sort_key(), Lesson.id)).unique().all()
     hidden = hidden_lesson_ids(db)  # bài Quản trị viên đã ẩn (ADR-023)
     return [lesson for lesson in lessons if versioning.lesson_visible(lesson) and lesson.id not in hidden]
 

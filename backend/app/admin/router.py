@@ -17,7 +17,7 @@ from ..ai.tutor.llm import LLMProvider, get_provider
 from ..core.ai_config import relevance_config
 from ..core.config import settings
 from ..db.models import SourceDocument
-from . import ai_job, ai_service, content_service, skill_admin, stats_service
+from . import ai_job, ai_service, content_service, lesson_admin, skill_admin, stats_service
 from .content_service import AdminContentError
 
 # Mọi route /api/v1/admin/* gắn require_admin ở cấp router để không route nào quên kiểm tra quyền.
@@ -129,11 +129,32 @@ class SourceLinkIn(BaseModel):
     note: str | None = Field(default=None, max_length=1000)
 
 
-def _sk(fn, *args):
+# --- tạo/xóa/sắp xếp bài, câu luyện tập bằng form (FR-ADM-13/15/16/24..29) ---------------------------
+
+class LessonCreateIn(BaseModel):
+    title: str = Field(min_length=1, max_length=240)
+    objectives: list[str] = Field(default_factory=list, max_length=10)
+    block_title: str = Field(min_length=1, max_length=200)
+    paragraphs: list[str] = Field(min_length=1, max_length=30)
+
+
+class BlockCreateIn(BaseModel):
+    title: str = Field(min_length=1, max_length=200)
+    paragraphs: list[str] = Field(min_length=1, max_length=30)
+
+
+class ReorderIn(BaseModel):
+    lesson_ids: list[str] = Field(min_length=1, max_length=500)
+
+
+def _do(fn, *args):
     try:
         return fn(*args)
     except AdminContentError as exc:
         raise _wrap(exc) from exc
+
+
+_sk = _do   # cùng cách đổi lỗi AdminContentError → HTTP
 
 
 @router.get("/skills")
@@ -189,6 +210,51 @@ def link_source(lesson_id: str, body: SourceLinkIn, admin: User = Depends(requir
 @router.delete("/lesson-sources/{link_id}", status_code=204)
 def unlink_source(link_id: int, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
     _sk(skill_admin.unlink_source, db, admin, link_id)
+
+
+@router.post("/lessons", status_code=201)
+def create_lesson(body: LessonCreateIn, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return _do(lesson_admin.create_lesson, db, admin, body.title, body.objectives, body.block_title, body.paragraphs)
+
+
+@router.post("/lessons/reorder")
+def reorder_lessons(body: ReorderIn, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return {"order": _do(lesson_admin.reorder, db, admin, body.lesson_ids)}
+
+
+@router.delete("/lessons/{lesson_id}")
+def delete_lesson(lesson_id: str, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return _do(lesson_admin.delete_lesson, db, admin, lesson_id)
+
+
+@router.post("/lessons/{lesson_id}/restore")
+def restore_lesson(lesson_id: str, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return _do(lesson_admin.restore_lesson, db, admin, lesson_id)
+
+
+@router.post("/lessons/{lesson_id}/blocks", status_code=201)
+def add_block(lesson_id: str, body: BlockCreateIn, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return _do(lesson_admin.add_block, db, admin, lesson_id, body.title, body.paragraphs)
+
+
+@router.get("/lessons/{lesson_id}/exercises")
+def list_exercises(lesson_id: str, db: Session = Depends(get_db)):
+    return _do(lesson_admin.list_exercises, db, lesson_id)
+
+
+@router.post("/lessons/{lesson_id}/exercises", status_code=201)
+def add_exercise(lesson_id: str, body: dict[str, Any], admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return _do(lesson_admin.add_exercise, db, admin, lesson_id, body)
+
+
+@router.put("/exercises/{exercise_id}")
+def update_exercise(exercise_id: str, body: dict[str, Any], admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return _do(lesson_admin.update_exercise, db, admin, exercise_id, body)
+
+
+@router.delete("/exercises/{exercise_id}")
+def retire_exercise(exercise_id: str, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return _do(lesson_admin.retire_exercise, db, admin, exercise_id)
 
 
 # --- người dùng ---------------------------------------------------------------------------------

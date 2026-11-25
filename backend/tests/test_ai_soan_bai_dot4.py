@@ -189,3 +189,39 @@ def test_ban_nhap_ghi_ma_phien_ban_loi_nhac(env):  # noqa: F811
     r = client.put(f"/api/v1/admin/ai/drafts/{d['id']}", headers=h, json={
         "title": c["title"], "objectives": c["objectives"], "blocks": c["blocks"], "questions": c["questions"]})
     assert r.status_code == 200 and r.json()["content"]["prompt_version"] == v
+
+
+@pytest.mark.top_up
+def test_luu_ban_nhap_khong_lam_mat_dau_doi_chieu_co_thieu_cau(env):  # noqa: F811
+    """AUD-01: lưu mà số câu không đổi thì cờ few_questions giữ mã cũ, nút Xuất bản (lưu rồi xuất bản) không bị chặn."""
+    client, fake = env
+    fake.script = [draft_json(4), more_json(0, 4)]
+    h = make_admin()
+    d = make_draft(client, h)
+    ids = [f["id"] for f in d["flags"]]
+    c = d["content"]
+    body = {"title": c["title"], "objectives": c["objectives"], "blocks": c["blocks"], "questions": c["questions"],
+            "acknowledged_flags": ids}
+    r = client.put(f"/api/v1/admin/ai/drafts/{d['id']}", headers=h, json=body)
+    assert r.status_code == 200, r.text
+    assert all(f["acknowledged"] for f in r.json()["flags"])
+    body["questions"] = c["questions"][:3]   # bớt câu: chữ cờ đổi, phải tick lại
+    r = client.put(f"/api/v1/admin/ai/drafts/{d['id']}", headers=h, json=body)
+    few = [f for f in r.json()["flags"] if f["type"] == "few_questions"]
+    assert few and not few[0]["acknowledged"] and "3/10" in few[0]["detail"]
+
+
+def test_ban_nhap_cho_biet_bai_da_xuat_ban_dang_an_hay_da_hien(env):  # noqa: F811
+    """AUD-04: sau "Hiện cho học sinh", bản nháp và danh sách báo học sinh đã thấy (trước đây vẫn hiện nút như lúc ẩn)."""
+    from tests.test_admin_ai_tai_lieu import approve_all, show
+    client, fake = env
+    fake.script = [draft_json(2)]
+    h = make_admin()
+    d = approve_all(client, h, make_draft(client, h))
+    assert d["lesson_hidden"] is None
+    lesson_id = client.post(f"/api/v1/admin/ai/drafts/{d['id']}/publish", headers=h, json={}).json()["lesson_id"]
+    assert client.get(f"/api/v1/admin/ai/drafts/{d['id']}", headers=h).json()["lesson_hidden"] is True
+    show(client, h, lesson_id)
+    assert client.get(f"/api/v1/admin/ai/drafts/{d['id']}", headers=h).json()["lesson_hidden"] is False
+    row = next(r for r in client.get("/api/v1/admin/ai/drafts", headers=h).json() if r["id"] == d["id"])
+    assert row["lesson_hidden"] is False
