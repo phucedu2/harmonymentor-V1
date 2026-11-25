@@ -294,7 +294,9 @@ export type AdminLessonRow = { id: string; order: number; track: string; title: 
   deleted?: boolean; block_count: number; exercise_count: number; edited_blocks: number; draft_blocks: number };
 export type AdminBlock = { id: string; position: number; block_type: string; payload: Record<string, unknown>;
   base_payload: Record<string, unknown>; edited: boolean; draft_revision_id: string | null; engine: AdminEngineReport };
-export type AdminLessonDetail = { lesson: AdminLessonRow; objectives: string[]; blocks: AdminBlock[];
+export type AdminImportRow = { id: string; title: string; created: boolean; blocks_changed: boolean; exercises_added: string[];
+  exercises_revised: string[]; exercises_not_in_file: string[]; sources_added: number };
+export type AdminLessonDetail = { lesson: AdminLessonRow; objectives: string[]; blocks: AdminBlock[]; meta_edited?: boolean;
   exercises: { id: string; version: number; skill_id: string; kind: string; prompt: string; status: string }[] };
 export type AdminSkill = { id: string; name: string; domain: string; seed: boolean; mvp: boolean; prerequisites: string[];
   seed_prerequisites: string[]; lessons: string[] };
@@ -410,6 +412,18 @@ export const api = {
   adminReorder: (ids: string[]) => apiPost<{ order: string[] }>("/admin/lessons/reorder", { lesson_ids: ids }),
   adminAddBlock: (id: string, title: string, paragraphs: string[]) =>
     apiPost<{ id: string }>(`/admin/lessons/${encodeURIComponent(id)}/blocks`, { title, paragraphs }),
+  adminUpdateLessonMeta: (id: string, body: { title?: string; objectives?: string[]; reset?: boolean }) =>
+    apiCall<{ id: string; title: string; objectives: string[]; changed: boolean }>(`/admin/lessons/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(body) }),
+  adminDeleteBlock: (id: string, blockId: string) =>
+    apiCall<{ id: string }>(`/admin/lessons/${encodeURIComponent(id)}/blocks/${encodeURIComponent(blockId)}`, { method: "DELETE" }),
+  adminReorderBlocks: (id: string, blockIds: string[]) =>
+    apiPost<{ order: string[] }>(`/admin/lessons/${encodeURIComponent(id)}/blocks/reorder`, { block_ids: blockIds }),
+  adminImport: (file: File, dryRun: boolean) => {
+    const form = new FormData();
+    form.append("file", file); form.append("dry_run", String(dryRun));
+    return apiCall<{ dry_run: boolean; lessons: AdminImportRow[] }>("/admin/import", { method: "POST", body: form });
+  },
+  adminImportTemplate: () => apiCall<{ filename: string; content: string }>("/admin/import/template"),
   adminExercises: (id: string) => apiCall<AdminExerciseList>(`/admin/lessons/${encodeURIComponent(id)}/exercises`),
   adminAddExercise: (id: string, q: AdminQuestion) => apiPost<AdminExercise>(`/admin/lessons/${encodeURIComponent(id)}/exercises`, q),
   adminUpdateExercise: (id: string, q: AdminQuestion) =>

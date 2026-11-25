@@ -55,12 +55,13 @@ def _clean_lines(raw: Any, limit: int, size: int) -> list[str]:
 
 # --- bài học ----------------------------------------------------------------------------------------------
 
-def create_lesson(db: Session, admin: User, title: str, objectives: Any, block_title: str, paragraphs: Any) -> dict[str, Any]:
+def create_lesson(db: Session, admin: User, title: str, objectives: Any, block_title: str, paragraphs: Any,
+                  lesson_id: str | None = None, commit: bool = True) -> dict[str, Any]:
     title, block_title = (title or "").strip()[:240], (block_title or "").strip()[:200]
     paras = _clean_lines(paragraphs, 30, 2000)
     if not title or not block_title or not paras:
         raise AdminContentError("LESSON_INCOMPLETE", "Bài cần tên, tiêu đề khối lý thuyết đầu tiên và ít nhất một đoạn văn.")
-    lesson_id = f"M-{uuid4().hex[:8]}"
+    lesson_id = lesson_id or f"M-{uuid4().hex[:8]}"
     order = (db.scalar(select(func.max(Lesson.order_index))) or 0) + 1
     has_custom = db.scalar(select(func.count()).select_from(Lesson).where(Lesson.sort_key.is_not(None))) or 0
     top = db.scalar(select(func.max(overrides.lesson_sort_key())))
@@ -75,7 +76,10 @@ def create_lesson(db: Session, admin: User, title: str, objectives: Any, block_t
                            payload={"hidden": True}, status="published", created_by=admin.id, published_by=admin.id,
                            published_at=_now(), note="Bài mới tạo: ẩn tới khi Quản trị viên bấm hiện"))
     audit(db, admin, "lesson.create", "lesson", lesson_id, {"title": title})
-    db.commit()
+    if commit:
+        db.commit()
+    else:
+        db.flush()
     return {"id": lesson_id, "title": title, "hidden": True}
 
 
@@ -86,13 +90,100 @@ def add_block(db: Session, admin: User, lesson_id: str, title: str, paragraphs: 
     if not title or not paras:
         raise AdminContentError("BLOCK_INCOMPLETE", "Khối cần tiêu đề và ít nhất một đoạn văn.")
     pos = max((b.position for b in lesson.blocks), default=0) + 1
-    block_id = f"{lesson_id}-B{pos:02d}"
+    block_id = _next_block_id(db, lesson_id)
     db.add(LessonBlock(id=block_id, lesson_id=lesson_id, position=pos, block_type="theory",
                        payload={"title": title, "paragraphs": paras}))
     audit(db, admin, "lesson.add_block", "lesson", lesson_id, {"block": block_id})
     db.commit()
     _reindex(db, admin, lesson)
     return {"id": block_id, "position": pos}
+
+
+def _seed_spec(lesson_id: str) -> dict[str, Any] | None:
+    from ..content.curriculum_specs import LESSON_SPECS
+    from ..content.draft_specs import DRAFT_LESSON_SPECS
+    return next((x for x in LESSON_SPECS + DRAFT_LESSON_SPECS if x["id"] == lesson_id), None)
+
+
+def update_lesson_meta(db: Session, admin: User, lesson_id: str, title: str | None, objectives: Any,
+                       reset: bool = False) -> dict[str, Any]:
+    """FR-ADM-14 (Phúc 3A): sửa tên và mục tiêu của MỌI bài. Bài gốc lưu thêm vào admin_meta để seed khởi động lại
+    không ghi đè; reset=True trả bài gốc về tên trong đặc tả."""
+    lesson = _lesson(db, lesson_id)
+    seed = not lesson.id.startswith(EDITABLE_PREFIXES)
+    before = {"title": lesson.title, "objectives": list(lesson.objectives or [])}
+    if reset:
+        spec = _seed_spec(lesson.id) if seed else None
+        if spec is None:
+            raise AdminContentError("NOTHING_TO_RESET", "Chỉ bài gốc của hệ thống mới có tên gốc để khôi phục.")
+        lesson.admin_meta, lesson.title, lesson.objectives = None, spec["title"], list(spec["objectives"])
+    else:
+        clean = (title or "").strip()[:240]
+        if not clean:
+            raise AdminContentError("LESSON_INCOMPLETE", "Bài cần có tên.")
+        objs = _clean_lines(objectives, 10, 300)
+        lesson.title, lesson.objectives = clean, objs
+        if seed:
+            lesson.admin_meta = {"title": clean, "objectives": objs}
+    after = {"title": lesson.title, "objectives": list(lesson.objectives or [])}
+    if after == before:
+        return {"id": lesson.id, **after, "changed": False}
+    audit(db, admin, "lesson.update", "lesson", lesson.id, {"from": before, "to": after, "reset": reset})
+    db.commit()
+    _reindex(db, admin, lesson)
+    return {"id": lesson.id, **after, "changed": True}
+
+
+def _next_block_id(db: Session, lesson_id: str) -> str:
+    # Mã khối lấy số lớn nhất đã từng dùng + 1 (không theo vị trí): xóa rồi thêm khối không trùng mã cũ.
+    ids = db.scalars(select(LessonBlock.id).where(LessonBlock.lesson_id == lesson_id)).all()
+    nums = [int(i.rsplit("-B", 1)[1]) for i in ids if "-B" in i and i.rsplit("-B", 1)[1].isdigit()]
+    return f"{lesson_id}-B{max(nums, default=0) + 1:02d}"
+
+
+def _renumber(db: Session, lesson: Lesson, order: list[LessonBlock]) -> None:
+    # Ràng buộc (lesson_id, position) là duy nhất: đẩy sang số âm trước rồi mới đặt 1..n.
+    for i, b in enumerate(order, start=1):
+        b.position = -i
+    db.flush()
+    for i, b in enumerate(order, start=1):
+        b.position = i
+    db.flush()
+
+
+def delete_block(db: Session, admin: User, lesson_id: str, block_id: str) -> dict[str, Any]:
+    """Xóa một khối (chỉ bài M-/AI-). Khối không gắn lượt làm nào (seed cũng dựng lại khối kiểu này), nên xóa hẳn;
+    nội dung khối lưu đủ trong nhật ký để khôi phục tay nếu cần."""
+    lesson = _lesson(db, lesson_id)
+    _editable(lesson)
+    blocks = sorted(lesson.blocks, key=lambda b: b.position)
+    block = next((b for b in blocks if b.id == block_id), None)
+    if block is None:
+        raise AdminContentError("BLOCK_NOT_FOUND", "Không có khối này trong bài.", 404)
+    if len(blocks) == 1:
+        raise AdminContentError("LAST_BLOCK", "Bài phải còn ít nhất một khối. Muốn bỏ cả bài thì dùng nút Xóa bài.", 409)
+    audit(db, admin, "lesson.delete_block", "lesson", lesson.id,
+          {"block": block.id, "block_type": block.block_type, "payload": block.payload})
+    lesson.blocks.remove(block)
+    db.flush()
+    _renumber(db, lesson, [b for b in blocks if b.id != block_id])
+    db.commit()
+    _reindex(db, admin, lesson)
+    return {"id": block_id, "deleted": True}
+
+
+def reorder_blocks(db: Session, admin: User, lesson_id: str, block_ids: list[str]) -> list[str]:
+    lesson = _lesson(db, lesson_id)
+    _editable(lesson)
+    by_id = {b.id: b for b in lesson.blocks}
+    if len(block_ids) != len(set(block_ids)) or set(block_ids) != set(by_id):
+        raise AdminContentError("ORDER_MISMATCH", "Danh sách khối phải gồm đúng mọi khối của bài, mỗi khối một lần. "
+                                "Tải lại trang rồi thử lại.", 409)
+    _renumber(db, lesson, [by_id[i] for i in block_ids])
+    audit(db, admin, "lesson.reorder_blocks", "lesson", lesson.id, {"order": block_ids})
+    db.commit()
+    _reindex(db, admin, lesson)
+    return block_ids
 
 
 def delete_lesson(db: Session, admin: User, lesson_id: str) -> dict[str, Any]:
@@ -185,25 +276,47 @@ def _view(ex: Exercise) -> dict[str, Any]:
             "skill_id": ex.skill_id, "question": q, "engine_answer": _engine_answer(q) if q else None}
 
 
-def add_exercise(db: Session, admin: User, lesson_id: str, item: Any) -> dict[str, Any]:
-    lesson = _lesson(db, lesson_id)
-    _editable(lesson)
-    q = _normalize(db, item)
+def _insert_exercise(db: Session, lesson: Lesson, ex_id: str, q: dict[str, Any]) -> Exercise:
+    """Thêm câu mới bản 1 (chưa commit). Dùng chung cho form và nhập từ file."""
     _ensure_work(db)
-    taken = {e.id for e in lesson.exercises}
-    n = 1
-    while f"{lesson_id}-M{n:02d}" in taken:
-        n += 1
-    ex_id = f"{lesson_id}-M{n:02d}"
     _, snap = _snapshot(ex_id, q)
     pos = max((e.position for e in lesson.exercises), default=0) + 1
-    ex = Exercise(id=ex_id, lesson_id=lesson_id, skill_id=q["skill_id"], position=pos, kind=snap["kind"], prompt=snap["prompt"],
+    ex = Exercise(id=ex_id, lesson_id=lesson.id, skill_id=q["skill_id"], position=pos, kind=snap["kind"], prompt=snap["prompt"],
                   options=snap["options"], grading_strategy=snap["grading_strategy"])
     db.add(ex)
     db.flush()
     db.add(ExerciseVersion(id=f"{ex_id}-v1", exercise_id=ex_id, version=1, **snap, status="published", published_at=_now(),
                            content_hash=content_hash(snap), snapshot_origin="seed"))
-    audit(db, admin, "exercise.create", "exercise", ex_id, {"lesson": lesson_id, "kind": q["kind"]})
+    db.flush()
+    return ex
+
+
+def _revise_exercise(db: Session, ex: Exercise, q: dict[str, Any]) -> int | None:
+    """Đề/đáp án đổi thì thêm phiên bản mới (chưa commit), trả số phiên bản mới; không đổi gì thì trả None."""
+    _, snap = _snapshot(ex.id, q)
+    latest = max(ex.versions, key=lambda v: v.version)
+    if content_hash(snap) == latest.content_hash:
+        return None
+    version = latest.version + 1
+    # ADR-006: phiên bản đã phát hành bất biến; sửa đề/đáp án/cách chấm = thêm bản mới, bản cũ giữ để chấm lại lượt cũ.
+    db.add(ExerciseVersion(id=f"{ex.id}-v{version}", exercise_id=ex.id, version=version, **snap, status="published",
+                           published_at=_now(), content_hash=content_hash(snap), snapshot_origin="seed"))
+    ex.skill_id, ex.kind, ex.prompt, ex.options, ex.grading_strategy = (q["skill_id"], snap["kind"], snap["prompt"],
+                                                                         snap["options"], snap["grading_strategy"])
+    db.flush()
+    return version
+
+
+def add_exercise(db: Session, admin: User, lesson_id: str, item: Any) -> dict[str, Any]:
+    lesson = _lesson(db, lesson_id)
+    _editable(lesson)
+    q = _normalize(db, item)
+    taken = {e.id for e in lesson.exercises}
+    n = 1
+    while f"{lesson_id}-M{n:02d}" in taken:
+        n += 1
+    ex = _insert_exercise(db, lesson, f"{lesson_id}-M{n:02d}", q)
+    audit(db, admin, "exercise.create", "exercise", ex.id, {"lesson": lesson_id, "kind": q["kind"]})
     db.commit()
     db.refresh(ex)
     return _view(ex)
@@ -222,16 +335,9 @@ def update_exercise(db: Session, admin: User, exercise_id: str, item: Any) -> di
     if ex.deleted_at is not None:
         raise AdminContentError("EXERCISE_RETIRED", "Câu đã bỏ, không sửa được.", 409)
     q = _normalize(db, item)
-    _, snap = _snapshot(ex.id, q)
-    latest = max(ex.versions, key=lambda v: v.version)
-    if content_hash(snap) == latest.content_hash:
+    version = _revise_exercise(db, ex, q)
+    if version is None:
         return _view(ex)   # không đổi gì thì không tạo phiên bản mới
-    version = latest.version + 1
-    # ADR-006: phiên bản đã phát hành bất biến; sửa đề/đáp án/cách chấm = thêm bản mới, bản cũ giữ để chấm lại lượt cũ.
-    db.add(ExerciseVersion(id=f"{ex.id}-v{version}", exercise_id=ex.id, version=version, **snap, status="published",
-                           published_at=_now(), content_hash=content_hash(snap), snapshot_origin="seed"))
-    ex.skill_id, ex.kind, ex.prompt, ex.options, ex.grading_strategy = (q["skill_id"], snap["kind"], snap["prompt"],
-                                                                         snap["options"], snap["grading_strategy"])
     audit(db, admin, "exercise.update", "exercise", ex.id, {"version": version})
     db.commit()
     db.refresh(ex)

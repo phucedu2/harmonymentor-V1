@@ -18,7 +18,7 @@ from ..core.ai_config import relevance_config
 from ..core import ai_switch
 from ..core.config import settings
 from ..db.models import SourceDocument
-from . import ai_job, ai_service, content_service, lesson_admin, skill_admin, stats_service
+from . import ai_job, ai_service, content_import, content_service, lesson_admin, skill_admin, stats_service
 from .content_service import AdminContentError
 
 # Mọi route /api/v1/admin/* gắn require_admin ở cấp router để không route nào quên kiểm tra quyền.
@@ -148,6 +148,16 @@ class ReorderIn(BaseModel):
     lesson_ids: list[str] = Field(min_length=1, max_length=500)
 
 
+class LessonMetaIn(BaseModel):
+    title: str | None = Field(default=None, max_length=240)
+    objectives: list[str] = Field(default_factory=list, max_length=10)
+    reset: bool = False
+
+
+class BlockOrderIn(BaseModel):
+    block_ids: list[str] = Field(min_length=1, max_length=200)
+
+
 def _do(fn, *args):
     try:
         return fn(*args)
@@ -236,6 +246,38 @@ def restore_lesson(lesson_id: str, admin: User = Depends(require_admin), db: Ses
 @router.post("/lessons/{lesson_id}/blocks", status_code=201)
 def add_block(lesson_id: str, body: BlockCreateIn, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
     return _do(lesson_admin.add_block, db, admin, lesson_id, body.title, body.paragraphs)
+
+
+@router.put("/lessons/{lesson_id}")
+def update_lesson_meta(lesson_id: str, body: LessonMetaIn, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return _do(lesson_admin.update_lesson_meta, db, admin, lesson_id, body.title, body.objectives, body.reset)
+
+
+@router.delete("/lessons/{lesson_id}/blocks/{block_id}")
+def delete_block(lesson_id: str, block_id: str, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return _do(lesson_admin.delete_block, db, admin, lesson_id, block_id)
+
+
+@router.post("/lessons/{lesson_id}/blocks/reorder")
+def reorder_blocks(lesson_id: str, body: BlockOrderIn, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return {"order": _do(lesson_admin.reorder_blocks, db, admin, lesson_id, body.block_ids)}
+
+
+@router.get("/import/template")
+def import_template():
+    # Trả JSON để trang Quản trị dùng chung apiCall (có token); trình duyệt tự dựng file tải về.
+    return {"filename": "mau-nhap-noi-dung.yaml", "content": content_import.TEMPLATE}
+
+
+@router.post("/import")
+async def import_content(file: UploadFile = File(...), dry_run: bool = Form(default=False),
+                         admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    """FR-ADM-39: nhập bài/khối/câu/nguồn từ JSON hoặc YAML. dry_run=true chỉ kiểm và báo sẽ đổi gì."""
+    name = file.filename or "noi-dung.yaml"
+    if not name.lower().endswith((".json", ".yaml", ".yml")):
+        raise AppError(422, "IMPORT_TYPE", "Chỉ nhận file .json, .yaml hoặc .yml.")
+    raw = await file.read(content_import.MAX_BYTES + 1)
+    return _do(content_import.import_content, db, admin, raw, name, dry_run)
 
 
 @router.get("/lessons/{lesson_id}/exercises")

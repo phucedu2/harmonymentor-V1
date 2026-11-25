@@ -36,3 +36,4 @@ pillow>=10.0
 pytesseract>=0.3.10
 pypdfium2>=4.0
 qdrant-client>=1.9,<1.13   # khớp server qdrant/qdrant:v1.12.4 trong docker-compose.yml (lệch quá 1 bản chính/phụ thì cảnh báo)
+PyYAML>=6.0,<7  # FR-ADM-39 nhập nội dung YAML (safe_load)
