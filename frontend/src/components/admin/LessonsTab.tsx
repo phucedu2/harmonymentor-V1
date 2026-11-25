@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { api, type AdminBlock, type AdminLessonDetail, type AdminLessonRow, type AdminRevision } from "../../api";
 import { Button } from "../ui/Button";
 import { Badge, Card } from "../ui/Page";
+import ExercisesPanel from "./ExercisesPanel";
 
 // Trường chữ sửa được: khớp danh sách ở backend (content_service). Trường khác (loại khối, mã bài tập, hợp âm…) bị khóa.
 const TEXT_KEYS = ["title", "prompt", "note", "intro", "kicker"];
@@ -124,31 +125,104 @@ function LessonEditor({ id, onBack, onChanged }: { id: string; onBack: () => voi
     if (!detail) return;
     try { await api.adminVisibility(id, !detail.lesson.hidden); await load(); onChanged(); } catch (e) { setError(errMsg(e)); }
   };
+  const remove = async () => {
+    if (!detail || !window.confirm(`Xóa bài “${detail.lesson.title}”? Học sinh sẽ không thấy bài này nữa.`)) return;
+    try { await api.adminDeleteLesson(id); onChanged(); onBack(); } catch (e) { setError(errMsg(e)); }
+  };
   if (error) return <p role="alert" className="text-danger">{error}</p>;
   if (!detail) return <p role="status" className="text-muted">Đang tải…</p>;
+  const editable = id.startsWith("M-") || id.startsWith("AI-");
   return <div className="grid gap-3">
     <div className="flex flex-wrap items-center gap-2">
       <Button variant="ghost" onClick={onBack}>← Danh sách bài</Button>
-      <h2 ref={headingRef} tabIndex={-1} className="text-lg font-bold outline-none">Bài {detail.lesson.order}. {detail.lesson.title}</h2>
+      <h2 ref={headingRef} tabIndex={-1} className="text-lg font-bold outline-none">{detail.lesson.order ? `Bài ${detail.lesson.order}. ` : ""}{detail.lesson.title}</h2>
       {detail.lesson.hidden && <Badge tone="warning">Đang ẩn</Badge>}
       <Button variant="secondary" className="ml-auto" onClick={toggleHidden}>{detail.lesson.hidden ? "Hiện lại cho học sinh" : "Ẩn khỏi học sinh"}</Button>
     </div>
-    <p className="text-sm text-muted">Chỉ sửa được chữ của khối lý thuyết. Câu hỏi ({detail.exercises.length}) không sửa ở đây để giữ nguyên đáp án và lịch sử chấm (ADR-006).</p>
     <ul className="grid gap-2">{detail.blocks.map((b) => <BlockEditor key={`${b.id}-${b.edited}`} lessonId={id} block={b} onChanged={() => { load(); onChanged(); }} />)}</ul>
+    {editable && <AddBlock lessonId={id} onAdded={() => { load(); onChanged(); }} />}
+    <ExercisesPanel lessonId={id} />
+    <div className="border-t border-line pt-3"><Button variant="ghost" onClick={remove}>Xóa bài này</Button>
+      <span className="ml-2 text-xs text-muted">Xóa mềm: học sinh không thấy nữa, khôi phục được ở cuối danh sách bài.</span></div>
   </div>;
+}
+
+function AddBlock({ lessonId, onAdded }: { lessonId: string; onAdded: () => void }) {
+  const [open, setOpen] = useState(false);
+  const [title, setTitle] = useState("");
+  const [text, setText] = useState("");
+  const [msg, setMsg] = useState<string | null>(null);
+  const add = async () => {
+    try { await api.adminAddBlock(lessonId, title, text.split("\n").filter((l) => l.trim())); setTitle(""); setText(""); setOpen(false); onAdded(); }
+    catch (e) { setMsg(errMsg(e)); }
+  };
+  if (!open) return <Button variant="secondary" onClick={() => setOpen(true)}>Thêm khối lý thuyết</Button>;
+  return <div className="grid gap-2 rounded-lg border border-line p-3">
+    <label className="text-sm font-semibold">Tiêu đề khối<input value={title} onChange={(e) => setTitle(e.target.value)} className="mt-1 min-h-10 w-full rounded-lg border border-line bg-surface px-3" /></label>
+    <label className="text-sm font-semibold">Các đoạn văn (mỗi dòng một đoạn)<textarea rows={5} value={text} onChange={(e) => setText(e.target.value)} className="mt-1 w-full rounded-lg border border-line bg-surface p-2" /></label>
+    <div className="flex gap-2"><Button disabled={!title.trim() || !text.trim()} onClick={add}>Thêm khối</Button><Button variant="ghost" onClick={() => setOpen(false)}>Hủy</Button></div>
+    {msg && <p role="status" className="text-sm">{msg}</p>}
+  </div>;
+}
+
+// FR-ADM-13: bài mới cần ít nhất một khối lý thuyết; bài ở trạng thái ẩn tới khi bấm "Hiện lại cho học sinh".
+function CreateLesson({ onCreated }: { onCreated: (id: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const [f, setF] = useState({ title: "", objectives: "", block_title: "", paragraphs: "" });
+  const [msg, setMsg] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const split = (s: string) => s.split("\n").map((x) => x.trim()).filter(Boolean);
+  const create = async () => {
+    setBusy(true); setMsg(null);
+    try { const r = await api.adminCreateLesson({ title: f.title, objectives: split(f.objectives), block_title: f.block_title, paragraphs: split(f.paragraphs) }); onCreated(r.id); }
+    catch (e) { setMsg(errMsg(e)); } finally { setBusy(false); }
+  };
+  if (!open) return <Button onClick={() => setOpen(true)}>Tạo bài mới</Button>;
+  const box = "mt-1 w-full rounded-lg border border-line bg-surface p-2";
+  return <Card className="grid gap-2 p-3">
+    <label className="text-sm font-semibold">Tên bài<input className={box} value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} /></label>
+    <label className="text-sm font-semibold">Mục tiêu (mỗi dòng một mục, không bắt buộc)<textarea rows={2} className={box} value={f.objectives} onChange={(e) => setF({ ...f, objectives: e.target.value })} /></label>
+    <label className="text-sm font-semibold">Tiêu đề khối lý thuyết đầu tiên<input className={box} value={f.block_title} onChange={(e) => setF({ ...f, block_title: e.target.value })} /></label>
+    <label className="text-sm font-semibold">Các đoạn văn (mỗi dòng một đoạn)<textarea rows={4} className={box} value={f.paragraphs} onChange={(e) => setF({ ...f, paragraphs: e.target.value })} /></label>
+    <p className="text-xs text-muted">Bài mới ở trạng thái ẩn. Thêm câu luyện tập, xem trước, rồi bấm “Hiện lại cho học sinh”.</p>
+    <div className="flex gap-2"><Button loading={busy} disabled={busy || !f.title.trim() || !f.block_title.trim() || !f.paragraphs.trim()} onClick={create}>Tạo bài</Button>
+      <Button variant="ghost" onClick={() => setOpen(false)}>Hủy</Button></div>
+    {msg && <p role="status" className="text-sm">{msg}</p>}
+  </Card>;
 }
 
 export default function LessonsTab() {
   const [rows, setRows] = useState<AdminLessonRow[] | null>(null);
   const [openId, setOpenId] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
   const load = () => api.adminLessons().then(setRows).catch(() => setFailed(true));
   useEffect(() => { load(); }, []);
   if (openId) return <LessonEditor id={openId} onBack={() => setOpenId(null)} onChanged={load} />;
   if (failed) return <p role="alert" className="text-danger">Chưa tải được danh sách bài.</p>;
   if (!rows) return <p role="status" className="text-muted">Đang tải…</p>;
-  return <ul className="grid gap-2">{rows.map((l) => <li key={l.id}><Card className="flex flex-wrap items-center justify-between gap-2 p-3">
-    <div><p className="font-semibold">Bài {l.order}. {l.title} {l.hidden && <Badge tone="warning">Ẩn</Badge>}</p>
-      <p className="text-sm text-muted">{l.block_count} khối · {l.exercise_count} câu hỏi · {l.edited_blocks} khối đã sửa · {l.draft_blocks} bản nháp</p></div>
-    <Button variant="secondary" aria-label={`Sửa nội dung bài ${l.order}`} onClick={() => setOpenId(l.id)}>Sửa nội dung</Button></Card></li>)}</ul>;
+  const live = rows.filter((l) => !l.deleted);
+  const gone = rows.filter((l) => l.deleted);
+  // FR-ADM-16: đổi chỗ hai bài liền nhau rồi gửi cả danh sách; máy chủ từ chối nếu danh sách đã cũ.
+  const move = async (i: number, d: -1 | 1) => {
+    const ids = live.map((l) => l.id);
+    [ids[i], ids[i + d]] = [ids[i + d], ids[i]];
+    try { await api.adminReorder(ids); setMsg(null); await load(); } catch (e) { setMsg(errMsg(e)); }
+  };
+  const restore = async (id: string) => { try { await api.adminRestoreLesson(id); await load(); } catch (e) { setMsg(errMsg(e)); } };
+  return <div className="grid gap-3">
+    <CreateLesson onCreated={(id) => { load(); setOpenId(id); }} />
+    {msg && <p role="alert" className="text-danger">{msg}</p>}
+    <ul className="grid gap-2">{live.map((l, i) => <li key={l.id}><Card className="flex flex-wrap items-center justify-between gap-2 p-3">
+      <div><p className="font-semibold">Bài {l.order}. {l.title} {l.hidden && <Badge tone="warning">Ẩn</Badge>}</p>
+        <p className="text-sm text-muted">{l.block_count} khối · {l.exercise_count} câu hỏi · {l.edited_blocks} khối đã sửa · {l.draft_blocks} bản nháp</p></div>
+      <div className="flex gap-1">
+        <Button variant="ghost" aria-label={`Đưa bài ${l.order} lên`} disabled={i === 0} onClick={() => move(i, -1)}>↑</Button>
+        <Button variant="ghost" aria-label={`Đưa bài ${l.order} xuống`} disabled={i === live.length - 1} onClick={() => move(i, 1)}>↓</Button>
+        <Button variant="secondary" aria-label={`Sửa nội dung bài ${l.order}`} onClick={() => setOpenId(l.id)}>Sửa nội dung</Button></div>
+    </Card></li>)}</ul>
+    {gone.length > 0 && <details><summary className="cursor-pointer text-sm font-semibold">Bài đã xóa ({gone.length})</summary>
+      <ul className="mt-2 grid gap-2">{gone.map((l) => <li key={l.id} className="flex items-center justify-between gap-2 rounded-lg border border-line p-2 text-sm">
+        <span>{l.title}</span><Button variant="ghost" onClick={() => restore(l.id)}>Khôi phục</Button></li>)}</ul></details>}
+  </div>;
 }

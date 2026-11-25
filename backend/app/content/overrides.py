@@ -42,13 +42,26 @@ def draft_by_target(db: Session, lesson_id: str) -> dict[str, ContentRevision]:
 
 
 def hidden_lesson_ids(db: Session) -> set[str]:
-    """Bài đang bị Quản trị viên ẩn: bản `visibility` mới nhất của bài có hidden = true."""
+    """Bài người học không thấy: bản `visibility` mới nhất có hidden = true, hoặc bài đã xóa mềm (FR-ADM-15).
+    Gộp chung một chỗ để mọi nơi đang lọc bài ẩn (lộ trình, quiz, gợi ý, kho AI Tutor) cũng lọc luôn bài đã xóa."""
     rows = db.scalars(select(ContentRevision).where(ContentRevision.kind == "visibility")).all()
     per_lesson: dict[str, list[ContentRevision]] = {}
     for row in rows:
         per_lesson.setdefault(row.lesson_id, []).append(row)
-    return {lesson_id for lesson_id, items in per_lesson.items()
-            if max(items, key=lambda r: r.created_at).payload.get("hidden") is True}
+    hidden = {lesson_id for lesson_id, items in per_lesson.items()
+              if max(items, key=lambda r: r.created_at).payload.get("hidden") is True}
+    return hidden | deleted_lesson_ids(db)
+
+
+def deleted_lesson_ids(db: Session) -> set[str]:
+    return set(db.scalars(select(Lesson.id).where(Lesson.deleted_at.is_not(None))).all())
+
+
+def lesson_sort_key():
+    """Thứ tự bài: thứ tự Quản trị viên đặt (FR-ADM-16), chưa đặt thì theo seed. order_index*10 để bài seed mới thêm sau
+    khi đã sắp xếp vẫn chen vào đúng khoảng (sort_key được đặt theo bước 10)."""
+    from sqlalchemy import func
+    return func.coalesce(Lesson.sort_key, Lesson.order_index * 10)
 
 
 def lesson_hidden(db: Session, lesson_id: str) -> bool:

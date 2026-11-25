@@ -291,11 +291,24 @@ export type ChatContext = { page?: string; lesson_id?: string; block_id?: string
 // --- Quản trị (ADR-023) ---
 export type AdminEngineReport = { checked: number; verified: number; unsupported: number; contradicted: EngineClaim[] };
 export type AdminLessonRow = { id: string; order: number; track: string; title: string; status: string; hidden: boolean;
-  block_count: number; exercise_count: number; edited_blocks: number; draft_blocks: number };
+  deleted?: boolean; block_count: number; exercise_count: number; edited_blocks: number; draft_blocks: number };
 export type AdminBlock = { id: string; position: number; block_type: string; payload: Record<string, unknown>;
   base_payload: Record<string, unknown>; edited: boolean; draft_revision_id: string | null; engine: AdminEngineReport };
 export type AdminLessonDetail = { lesson: AdminLessonRow; objectives: string[]; blocks: AdminBlock[];
   exercises: { id: string; version: number; skill_id: string; kind: string; prompt: string; status: string }[] };
+export type AdminSkill = { id: string; name: string; domain: string; seed: boolean; mvp: boolean; prerequisites: string[];
+  seed_prerequisites: string[]; lessons: string[] };
+export type AdminSource = { id: string; title: string; author: string | null; url: string | null; seed: boolean;
+  lessons: { id: number; lesson_id: string; locator: string; note: string | null }[] };
+// Câu luyện tập soạn bằng form (FR-ADM-24..29): cùng dạng câu với AI soạn bài, Music Engine tính đáp án.
+export type AdminCheck = { type: "interval"; lower: string; upper: string } | { type: "chord_tones"; symbol: string }
+  | { type: "chord_name"; notes: string } | { type: "roman"; key: string; chord: string } | { type: "scale"; tonic: string; scale_type: string };
+export type AdminQuestion = { kind: string; level: string; prompt: string; skill_id: string; explanation: string;
+  options?: string[]; answer?: string; answers?: string[]; check?: AdminCheck | null; symbol?: string; tonic?: string; scale_type?: string;
+  model_answer?: string; rubric?: string[] };
+export type AdminExercise = { id: string; version: number | null; position: number; skill_id: string; question: AdminQuestion | null;
+  engine_answer: string | string[] | null; prompt?: string };
+export type AdminExerciseList = { editable: boolean; exercises: AdminExercise[]; skills: string[]; levels: string[]; kinds: string[] };
 export type AdminRevision = { id: string; status: string; note: string | null; created_by: string | null; created_at: string;
   published_at: string | null; payload: Record<string, unknown> };
 export type AdminUser = { id: string; email: string; display_name: string | null; role: string; is_active: boolean; created_at: string;
@@ -334,9 +347,9 @@ export type AiJob = { id: string; document_id: string; status: "running" | "paus
     duplicates: AiDuplicate[]; note: string | null; log?: AiNodeLog[] }[];
   skipped_pages: { page: number; reason: string }[]; total: number; finished: number; drafts: number; created_at: string; updated_at: string; budget?: AiBudget };
 export type AiDraft = { id: string; status: "draft" | "published" | "rejected"; document: AiDocument | null; page_from: number; page_to: number;
-  model: string | null; published_lesson_id: string | null; content: AiDraftContent; engine: AdminEngineReport; created_at: string;
+  model: string | null; published_lesson_id: string | null; lesson_hidden?: boolean | null; content: AiDraftContent; engine: AdminEngineReport; created_at: string;
   flags?: AiFlag[]; budget?: AiBudget };
-export type AiDraftRow = { id: string; status: string; title: string | null; questions: number; flags: number; review_flags?: number; published_lesson_id: string | null; created_at: string };
+export type AiDraftRow = { id: string; status: string; title: string | null; questions: number; flags: number; review_flags?: number; published_lesson_id: string | null; lesson_hidden?: boolean | null; created_at: string };
 
 export const api = {
   aiStatus: () => apiCall<{ enabled: boolean; env_ready: boolean; switch_on: boolean }>("/admin/ai/status"),
@@ -377,6 +390,31 @@ export const api = {
     apiCall<AdminRevision[]>(`/admin/lessons/${encodeURIComponent(lessonId)}/blocks/${encodeURIComponent(blockId)}/history`),
   adminRestore: (lessonId: string, blockId: string, revisionId: string | null) =>
     apiPost<{ revision_id: string }>(`/admin/lessons/${encodeURIComponent(lessonId)}/blocks/${encodeURIComponent(blockId)}/restore`, { revision_id: revisionId }),
+  adminSkills: () => apiCall<AdminSkill[]>("/admin/skills"),
+  adminCreateSkill: (body: { slug: string; name: string; domain: string }) => apiPost<{ id: string }>("/admin/skills", body),
+  adminUpdateSkill: (id: string, body: { name: string; domain: string }) =>
+    apiCall<{ id: string }>(`/admin/skills/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(body) }),
+  adminDeleteSkill: (id: string) => apiCall<void>(`/admin/skills/${encodeURIComponent(id)}`, { method: "DELETE" }),
+  adminAddPrereq: (id: string, pre: string) => apiPost<unknown>(`/admin/skills/${encodeURIComponent(id)}/prerequisites`, { prerequisite_id: pre }),
+  adminRemovePrereq: (id: string, pre: string) =>
+    apiCall<void>(`/admin/skills/${encodeURIComponent(id)}/prerequisites/${encodeURIComponent(pre)}`, { method: "DELETE" }),
+  adminSources: () => apiCall<AdminSource[]>("/admin/sources"),
+  adminCreateSource: (body: { title: string; author: string | null; url: string | null }) => apiPost<{ id: string }>("/admin/sources", body),
+  adminLinkSource: (lessonId: string, body: { source_id: string; locator: string; note: string | null }) =>
+    apiPost<unknown>(`/admin/lessons/${encodeURIComponent(lessonId)}/sources`, body),
+  adminUnlinkSource: (linkId: number) => apiCall<void>(`/admin/lesson-sources/${linkId}`, { method: "DELETE" }),
+  adminCreateLesson: (body: { title: string; objectives: string[]; block_title: string; paragraphs: string[] }) =>
+    apiPost<{ id: string; title: string; hidden: boolean }>("/admin/lessons", body),
+  adminDeleteLesson: (id: string) => apiCall<{ id: string }>(`/admin/lessons/${encodeURIComponent(id)}`, { method: "DELETE" }),
+  adminRestoreLesson: (id: string) => apiPost<{ id: string }>(`/admin/lessons/${encodeURIComponent(id)}/restore`, {}),
+  adminReorder: (ids: string[]) => apiPost<{ order: string[] }>("/admin/lessons/reorder", { lesson_ids: ids }),
+  adminAddBlock: (id: string, title: string, paragraphs: string[]) =>
+    apiPost<{ id: string }>(`/admin/lessons/${encodeURIComponent(id)}/blocks`, { title, paragraphs }),
+  adminExercises: (id: string) => apiCall<AdminExerciseList>(`/admin/lessons/${encodeURIComponent(id)}/exercises`),
+  adminAddExercise: (id: string, q: AdminQuestion) => apiPost<AdminExercise>(`/admin/lessons/${encodeURIComponent(id)}/exercises`, q),
+  adminUpdateExercise: (id: string, q: AdminQuestion) =>
+    apiCall<AdminExercise>(`/admin/exercises/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(q) }),
+  adminRetireExercise: (id: string) => apiCall<{ id: string }>(`/admin/exercises/${encodeURIComponent(id)}`, { method: "DELETE" }),
   adminVisibility: (lessonId: string, hidden: boolean) =>
     apiPost<{ id: string; hidden: boolean; tutor_index?: { qdrant: string; chunks: number } }>(`/admin/lessons/${encodeURIComponent(lessonId)}/visibility`, { hidden }),
   adminUsers: (q = "") => apiCall<{ total: number; items: AdminUser[] }>(`/admin/users?q=${encodeURIComponent(q)}`),
