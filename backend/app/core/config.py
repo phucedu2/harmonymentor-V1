@@ -55,6 +55,8 @@ class Settings:
     frontend_base_url: str = os.getenv("FRONTEND_BASE_URL", "http://localhost:5173")
     password_reset_minutes: int = int(os.getenv("PASSWORD_RESET_MINUTES", "30"))
     email_verify_hours: int = int(os.getenv("EMAIL_VERIFY_HOURS", "24"))
+    # Đăng ký tối đa / IP / giờ (Phúc chọn A, 25/11). Test giao diện đặt cao vì mọi tài khoản thử đi từ 127.0.0.1.
+    register_per_ip_hour: int = int(os.getenv("REGISTER_PER_IP_HOUR", "10"))
     # Danh sách origin, phân tách bằng dấu phẩy (NFR-21). Rỗng vì frontend gọi API cùng origin.
     cors_origins: str = os.getenv("CORS_ORIGINS", "")
     # Hiện câu hỏi bản nháp (status=draft) cho người học. Chỉ bật tường minh ở dev/test (HM-003, ADR-006).

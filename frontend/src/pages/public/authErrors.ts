@@ -8,10 +8,12 @@ export function authErrorMessage(error: unknown): string {
       return "Email hoặc mật khẩu chưa đúng.";
     case "LOGIN_LOCKED": {
       const minutes = error.retryAfterSeconds ? Math.ceil(error.retryAfterSeconds / 60) : 15;
-      return `Bạn đã nhập sai quá 5 lần. Hãy thử lại sau khoảng ${minutes} phút.`;
+      return `Bạn đã nhập sai mật khẩu nhiều lần nên tài khoản tạm khóa để bảo vệ bạn. Hãy thử lại sau khoảng ${minutes} phút.`;
     }
-    case "EMAIL_TAKEN":
-      return "Email này đã có tài khoản. Bạn đăng nhập nhé.";
+    case "RATE_LIMITED": {
+      const minutes = error.retryAfterSeconds ? Math.max(1, Math.ceil(error.retryAfterSeconds / 60)) : 10;
+      return `Bạn thao tác hơi nhanh. Hãy thử lại sau khoảng ${minutes} phút.`;
+    }
     case "VALIDATION_ERROR":
       return "Thông tin chưa hợp lệ, bạn xem lại các ô được đánh dấu.";
     default:

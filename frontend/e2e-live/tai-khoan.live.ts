@@ -37,15 +37,16 @@ test("Tải lại trang vẫn giữ phiên đăng nhập (cookie refresh)", asyn
   await expect(page.getByRole("heading", { name: `Chào ${user.name}` })).toBeVisible();
 });
 
-test("Đăng ký trùng email bị từ chối, không tạo phiên", async ({ page }) => {
+test("Đăng ký trùng email không lộ email đã có tài khoản, không tạo phiên (ADR-040)", async ({ page }) => {
   const user = await dangKy(page);
   await dangXuat(page);
   await page.goto("/dang-ky");
   await page.getByLabel("Tên hiển thị").fill("Người trùng");
   await page.getByLabel("Email").fill(user.email);
   await page.getByLabel("Mật khẩu", { exact: true }).fill(PASSWORD);
-  await page.getByLabel("Nhập lại mật khẩu").fill(PASSWORD);
   await page.locator("form button[type=submit]").click();
-  await expect(page.getByRole("alert").or(page.getByText(/đã được dùng|đã tồn tại|đã đăng ký/i)).first()).toBeVisible();
-  await expect(page).toHaveURL(/\/dang-ky/);
+  await expect(page.getByRole("heading", { name: "Kiểm tra hộp thư của bạn" })).toBeVisible();
+  await expect(page.getByText(/đã có tài khoản|đã được dùng/i)).toHaveCount(0);
+  await page.goto("/app");
+  await expect(page).toHaveURL(/\/dang-nhap/);
 });

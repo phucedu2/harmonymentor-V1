@@ -15,8 +15,8 @@ export async function dangKy(page: Page, user = taiKhoanMoi()) {
   await page.goto("/dang-ky");
   await page.getByLabel("Tên hiển thị").fill(user.name);
   await page.getByLabel("Email").fill(user.email);
+  // ADR-040: không còn ô "Nhập lại mật khẩu" (đã có nút hiện mật khẩu).
   await page.getByLabel("Mật khẩu", { exact: true }).fill(PASSWORD);
-  await page.getByLabel("Nhập lại mật khẩu").fill(PASSWORD);
   await page.locator("form button[type=submit]").click();
   await expect(page).toHaveURL(/kiem-tra-dau-vao/);
   await page.getByRole("button", { name: /Chưa học/ }).click();
