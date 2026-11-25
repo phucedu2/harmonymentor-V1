@@ -16,7 +16,7 @@ const needsReview = (q: AiQuestion) => q.needs_review ?? !["build_chord", "build
 
 const NODE: Record<string, string> = {
   extract: "Lấy chữ", retrieve: "Tìm bài đã có", generate: "AI soạn", retry_json: "Thử lại JSON", dedup: "Bỏ ý trùng",
-  validate: "Kiểm câu bằng Engine", flags: "Tính cờ duyệt", draft: "Lưu bản nháp", error: "Lỗi",
+  validate: "Kiểm câu bằng Engine", flags: "Tính cờ duyệt", draft: "Lưu bản nháp", error: "Lỗi", top_up: "Gọi bù câu luyện tập",
 };
 // Hạn mức Gemini chung (ADR-033, V5): bản miễn phí 30 lượt/ngày, 40% soạn bài, 60% AI Tutor.
 function BudgetLine({ budget }: { budget?: AiBudget }) {
@@ -73,7 +73,8 @@ function DraftEditor({ draftId, onClose }: { draftId: string; onClose: () => voi
     setMsg(`Đã xuất bản bài “${r.title}” ở trạng thái ẨN. Bấm “Xem như học sinh” để kiểm, rồi “Hiện cho học sinh”.`); await load(); });
   const reveal = () => run("reveal", async () => {
     const r = await api.adminVisibility(draft.published_lesson_id!, false);
-    setMsg(`Học sinh đã thấy bài.${r.tutor_index ? ` AI Tutor đã nạp ${r.tutor_index.chunks} đoạn${r.tutor_index.qdrant === "error" ? " (Qdrant lỗi, AI Tutor vẫn tìm được bằng đường dự phòng)" : ""}.` : ""}`); });
+    setMsg(`Học sinh đã thấy bài.${r.tutor_index ? ` AI Tutor đã nạp ${r.tutor_index.chunks} đoạn${r.tutor_index.qdrant === "error" ? " (Qdrant lỗi, AI Tutor vẫn tìm được bằng đường dự phòng)" : ""}.` : ""}`);
+    setDraft({ ...draft, lesson_hidden: false }); });
   const pending = c.questions.filter((q) => needsReview(q) && !q.reviewed).length;
   const setQ = (i: number, patch: Partial<AiQuestion>) => set({ questions: c.questions.map((x, j) => (j === i ? { ...x, ...patch } : x)) });
   const more = () => run("more", async () => {
@@ -190,7 +191,8 @@ function DraftEditor({ draftId, onClose }: { draftId: string; onClose: () => voi
     </div>}
     {draft.status === "published" && draft.published_lesson_id && <div className="flex flex-wrap items-center gap-2 rounded-lg border border-line p-3 text-sm">
       <a className="font-semibold text-primary underline" href={`/app/hoc?xem_truoc=${encodeURIComponent(draft.published_lesson_id)}`} target="_blank" rel="noreferrer">Xem như học sinh</a>
-      <Button variant="secondary" loading={busy === "reveal"} disabled={busy !== null} onClick={reveal}>Hiện cho học sinh</Button>
+      {draft.lesson_hidden === false ? <Badge tone="success">Học sinh đã thấy bài</Badge>
+        : <Button variant="secondary" loading={busy === "reveal"} disabled={busy !== null} onClick={reveal}>Hiện cho học sinh</Button>}
       <span className="text-xs text-muted">Lượt làm thử của Quản trị viên không tính vào thống kê. Ẩn lại ở thẻ Bài học.</span></div>}
     {msg && <p role="status" className="text-sm">{msg}</p>}
   </div>;
@@ -252,6 +254,7 @@ export default function AiDraftTab() {
   const [jobs, setJobs] = useState<AiJob[]>([]);
   const [openId, setOpenId] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [fileKey, setFileKey] = useState(0);   // AUD-05: đổi key để ô chọn tệp trống lại sau khi tải lên xong
   const [title, setTitle] = useState("");
   const [note, setNote] = useState("");
   const [consent, setConsent] = useState(false);
@@ -286,7 +289,7 @@ export default function AiDraftTab() {
   const upload = (e: FormEvent) => {
     e.preventDefault();
     if (!file) return;
-    void act("upload", async () => { const d = await api.aiUpload(file, title, note, consent); setFile(null); setTitle(""); setNote(""); setConsent(false); load(); return d.relevance_reason ?? "Đã tải lên và trích chữ."; });
+    void act("upload", async () => { const d = await api.aiUpload(file, title, note, consent); setFile(null); setFileKey((k) => k + 1); setTitle(""); setNote(""); setConsent(false); load(); return d.relevance_reason ?? "Đã tải lên và trích chữ."; });
   };
   const paste = () => act("paste", async () => { const d = await api.aiPasteText(pasted, title, note, consent); setPasted(""); setTitle(""); setNote(""); setConsent(false); load(); return d.relevance_reason ?? "Đã nhận chữ."; });
   const review = (d: AiDocument, decision: "approve" | "reject") => act(`review:${d.id}`, async () => {
@@ -312,7 +315,7 @@ export default function AiDraftTab() {
     <Card className="p-4">
       <CardTitle>Tải tài liệu nhạc lý</CardTitle>
       <form onSubmit={upload} className="mt-2 grid gap-2">
-        <input type="file" accept=".pdf,.docx,.md,.txt,.png,.jpg,.jpeg,.webp,.xml,.musicxml,.mxl,.mid,.midi" aria-label="Tệp tài liệu" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+        <input key={fileKey} type="file" accept=".pdf,.docx,.md,.txt,.png,.jpg,.jpeg,.webp,.xml,.musicxml,.mxl,.mid,.midi" aria-label="Tệp tài liệu" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
         <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Nguồn: tên sách, tác giả, năm (bắt buộc)" aria-label="Nguồn tài liệu" className="min-h-10 rounded-lg border border-line bg-surface px-3" />
         <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Ghi chú nguồn (không bắt buộc)" aria-label="Ghi chú nguồn" className="min-h-10 rounded-lg border border-line bg-surface px-3" />
         <label className="flex items-start gap-2 text-sm"><input type="checkbox" className="mt-1" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
@@ -324,6 +327,8 @@ export default function AiDraftTab() {
         <textarea rows={5} value={pasted} onChange={(e) => setPasted(e.target.value)} aria-label="Chữ dán vào" placeholder="Dán đoạn lý thuyết nhạc lý vào đây (dùng chung nguồn và ô xác nhận ở trên)" className="mt-2 w-full rounded-lg border border-line bg-surface p-2" />
         <Button variant="secondary" loading={busyKey === "paste"} disabled={busyKey !== null || !pasted.trim() || !consent || !title.trim()} onClick={paste}>Kiểm tra và nhận chữ</Button>
       </details>
+      {/* AUD-06: thông báo ngay dưới khung tải lên; trước đây ở cuối trang dài, bấm xong không thấy kết quả. */}
+      {msg && <p role="status" className="mt-3 rounded-lg bg-primary-soft p-2 text-sm">{msg}</p>}
     </Card>
 
     {pending.length > 0 && <Card className="p-4"><CardTitle>Chờ duyệt nội dung nhạc lý ({pending.length})</CardTitle>
@@ -353,10 +358,9 @@ export default function AiDraftTab() {
       {drafts.length === 0 ? <p className="mt-2 text-sm text-muted">Chưa có bản nháp nào.</p> : <ul className="mt-2 grid gap-2">
         {drafts.map((d) => <li key={d.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-line p-2">
           <span>{d.title} <span className="text-sm text-muted">· {d.questions} câu{d.flags ? ` · ${d.flags} cờ Engine` : ""}{d.review_flags ? ` · ${d.review_flags} cờ chưa đối chiếu` : ""}</span>{" "}
-            <Badge tone={d.status === "published" ? "success" : d.status === "rejected" ? "muted" : "warning"}>{d.status === "published" ? "Đã xuất bản" : d.status === "rejected" ? "Từ chối" : "Nháp"}</Badge></span>
+            <Badge tone={d.status === "published" ? "success" : d.status === "rejected" ? "muted" : "warning"}>{d.status === "published" ? (d.lesson_hidden ? "Đã xuất bản · đang ẩn" : "Đã xuất bản · học sinh thấy") : d.status === "rejected" ? "Từ chối" : "Nháp"}</Badge></span>
           <Button variant="secondary" onClick={() => setOpenId(d.id)}>Mở</Button></li>)}
       </ul>}
     </Card>
-    {msg && <p role="status" className="text-sm">{msg}</p>}
   </div>;
 }
