@@ -144,7 +144,11 @@
 .hm-shot {
   display: block;
   width: 100%;
-  height: auto;
+  /* Khung ảnh cùng tỉ lệ cho mọi ô nên các ô trong một hàng cao bằng nhau; ảnh cắt từ góc trên bên trái
+     (chỗ có tiêu đề và nội dung chính) thay vì co méo. */
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  object-position: top left;
   border-radius: 14px;
   border: 1px solid var(--w-line);
   background: var(--w-ivory);

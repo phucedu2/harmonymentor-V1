@@ -2,9 +2,7 @@ import { useEffect, useState } from "react";
 import { readTheme, type Theme } from "../../../theme/theme";
 import { features } from "./copy";
 
-/** Kích thước thật của ảnh chụp trong frontend/public/home (scripts/chup-anh-trang-chu.cjs). */
-const SHOT_W = 1200;
-const SHOT_H = 780;
+import { SHOT_SIZE } from "./shots";
 
 function useThemeName(): Theme {
   const [theme, setTheme] = useState<Theme>(readTheme);
@@ -19,14 +17,16 @@ function useThemeName(): Theme {
 function Shot({ id, alt }: { id: string; alt: string }) {
   const theme = useThemeName();
   const [missing, setMissing] = useState(false);
-  if (missing) return null;
+  const size = SHOT_SIZE[id];
+  // Chưa chụp ảnh cho ô này thì bỏ qua, ô vẫn đủ chữ.
+  if (missing || !size) return null;
   return (
     <img
       className="hm-shot mt-5"
       src={`/home/${id}-${theme}.webp`}
       alt={alt}
-      width={SHOT_W}
-      height={SHOT_H}
+      width={size[0]}
+      height={size[1]}
       loading="lazy"
       decoding="async"
       onError={() => setMissing(true)}
