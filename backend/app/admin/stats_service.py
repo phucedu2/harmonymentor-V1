@@ -10,6 +10,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from ..content import overrides
 from ..db.models import (Attempt, Exercise, ExerciseVersion, Lesson, LessonProgress, MasteryState, ReviewAttempt, ReviewState,
                          Skill, User)
 
@@ -59,7 +60,7 @@ def overview(db: Session, days: int = 30, now: datetime | None = None) -> dict[s
         timeline.append({"date": d.isoformat(), "attempts": total, "correct": right, "reviews": review_per_day.get(d, 0)})
 
     # --- phễu từng bài ---
-    lessons = db.scalars(select(Lesson).order_by(Lesson.order_index)).unique().all()
+    lessons = [l for l in db.scalars(select(Lesson).order_by(overrides.lesson_sort_key(), Lesson.id)).unique().all() if l.deleted_at is None]
     progress = [p for p in db.scalars(select(LessonProgress)).all() if p.user_id in learner_ids]
     started = Counter(p.lesson_id for p in progress)
     completed = Counter(p.lesson_id for p in progress if p.status == "completed")
