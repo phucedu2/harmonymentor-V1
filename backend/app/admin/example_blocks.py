@@ -104,3 +104,49 @@ def add_audio(db: Session, admin: User, lesson_id: str, filename: str, data: byt
     if _s(form.get("note"), 600):
         payload["note"] = _s(form.get("note"), 600)
     return _append(db, admin, lesson_id, "example_audio", payload)
+
+
+def _block(db: Session, lesson_id: str, block_id: str, types: tuple[str, ...]) -> LessonBlock:
+    lesson = la._lesson(db, lesson_id)
+    la._editable(lesson)
+    block = next((b for b in lesson.blocks if b.id == block_id), None)
+    if block is None or block.block_type not in types:
+        raise AdminContentError("EXAMPLE_NOT_FOUND", "Không có khối ví dụ này trong bài.", 404)
+    return block
+
+
+def update(db: Session, admin: User, lesson_id: str, block_id: str, item: Any) -> dict[str, Any]:
+    """Sửa khối ví dụ tại chỗ (ví dụ hợp âm/âm giai tính lại bằng Engine; ví dụ nghe sửa chữ, giữ file). Giá trị cũ vào nhật ký."""
+    item = item if isinstance(item, dict) else {}
+    block = _block(db, lesson_id, block_id, ("example_chord", "example_scale", "example_audio"))
+    old = dict(block.payload)
+    note = _s(item.get("note"), 600)
+    if block.block_type == "example_audio":
+        title, source, licence = _s(item.get("title"), 200), _s(item.get("source"), 300), _s(item.get("license"), 200)
+        if not title or not source or not licence:
+            raise AdminContentError("AUDIO_LICENSE", "Ví dụ nghe cần tiêu đề, nguồn và giấy phép.")
+        new = {**old, "title": title, "source": source, "license": licence}
+    elif block.block_type == "example_chord":
+        symbol = _s(item.get("symbol"), 40)
+        out = engine.get_chord_tones(symbol=symbol) if symbol else {"ok": False}
+        if not out.get("ok"):
+            raise AdminContentError("EXAMPLE_CHORD", f"Music Engine không hiểu hợp âm “{symbol}”. Kiểm lại ký hiệu (ví dụ Cmaj7, Ebm7b5).")
+        new = {"title": _s(item.get("title"), 200) or f"Hợp âm {out['symbol']}", "symbol": out["symbol"], "notes": out["notes"],
+               "paragraphs": [f"Hợp âm {out['symbol']} gồm các nốt {'–'.join(out['notes'])}."]}
+    else:
+        tonic, st = _s(item.get("tonic"), 8), _s(item.get("scale_type"), 40)
+        out = engine.get_scale(tonic=tonic, scale_type=st) if tonic and st in SCALE_TYPES else {"ok": False}
+        if not out.get("ok"):
+            raise AdminContentError("EXAMPLE_SCALE", "Chủ âm hoặc loại âm giai không hợp lệ.")
+        name = f"{tonic} {SCALE_VI.get(st, st)}"
+        new = {"title": _s(item.get("title"), 200) or f"Âm giai {name}", "tonic": tonic, "scale_type": st, "notes": out["notes"],
+               "paragraphs": [f"Âm giai {name} gồm các nốt {'–'.join(out['notes'])}."]}
+    if note:
+        new["note"] = note
+    else:
+        new.pop("note", None)
+    block.payload = new
+    audit(db, admin, "lesson.update_example", "lesson", lesson_id, {"block": block_id, "from": old, "to": new})
+    db.commit()
+    la._reindex(db, admin, la._lesson(db, lesson_id))
+    return {"id": block_id, "block_type": block.block_type, "payload": new}

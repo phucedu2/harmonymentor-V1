@@ -87,3 +87,22 @@ def test_khoi_vi_du_nghe_kiem_dinh_dang_dung_luong_va_giay_phep(client, h):
     with SessionLocal() as db:
         assert len(db.scalars(select(MediaFile)).all()) >= 2
         assert [b.block_type for b in db.scalars(select(LessonBlock).where(LessonBlock.lesson_id == lid))].count("example_audio") == 2
+
+
+def test_sua_khoi_vi_du_tai_cho_va_xoa_khoi_nghe_xoa_file(client, h):
+    lid = new_lesson(client, h)
+    c = client.post(f"{A}/lessons/{lid}/examples/chord", headers=h, json={"symbol": "C"}).json()
+    r = client.put(f"{A}/lessons/{lid}/examples/{c['id']}", headers=h, json={"symbol": "Dm7", "note": "ii trong C"})
+    assert r.status_code == 200 and r.json()["payload"]["notes"] == ["D", "F", "A", "C"] and r.json()["payload"]["note"] == "ii trong C"
+    assert client.put(f"{A}/lessons/{lid}/examples/{c['id']}", headers=h, json={"symbol": "Hxyz"}).json()["error"]["code"] == "EXAMPLE_CHORD"
+    s = client.post(f"{A}/lessons/{lid}/examples/scale", headers=h, json={"tonic": "C", "scale_type": "major"}).json()
+    r = client.put(f"{A}/lessons/{lid}/examples/{s['id']}", headers=h, json={"tonic": "A", "scale_type": "natural_minor"})
+    assert r.json()["payload"]["notes"] == ["A", "B", "C", "D", "E", "F", "G"]
+    a = _upload(client, h, lid).json()
+    r = client.put(f"{A}/lessons/{lid}/examples/{a['id']}", headers=h, json={"title": "Đổi tên", "source": "Tự thu", "license": "CC0"})
+    assert r.json()["payload"]["title"] == "Đổi tên" and r.json()["payload"]["src"] == a["payload"]["src"]
+    assert client.put(f"{A}/lessons/{lid}/examples/{a['id']}", headers=h, json={"title": "x"}).json()["error"]["code"] == "AUDIO_LICENSE"
+    assert client.put(f"{A}/lessons/{lid}/examples/{lid}-B01", headers=h, json={}).json()["error"]["code"] == "EXAMPLE_NOT_FOUND"
+    assert client.get(a["payload"]["src"]).status_code == 200
+    assert client.delete(f"{A}/lessons/{lid}/blocks/{a['id']}", headers=h).status_code == 200
+    assert client.get(a["payload"]["src"]).status_code == 404   # file đi cùng khối, không mồ côi

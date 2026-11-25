@@ -13,5 +13,5 @@ Admin soạn từng câu bằng form (PR #77) nên tạo 20 câu "Hợp âm X g�
 4. Đường phát công khai theo mã ngẫu nhiên 32 ký tự hex, vì thẻ `<audio>` không gửi được token. Chấp nhận được với âm thanh ví dụ bài học (nội dung vốn dành cho người học); không dùng cho dữ liệu cá nhân.
 
 ## Hệ quả
-- Xóa khối ví dụ nghe không xóa file (file mồ côi, vài MB). Chưa có dọn rác; ghi vào danh sách chưa làm.
+- Xóa khối ví dụ nghe xóa luôn file; sửa khối ví dụ tại chỗ, chỉ đổi chữ với ví dụ nghe (đổi file thì xóa khối rồi thêm lại).
 - Chưa có mẫu cho câu nhiều lựa chọn, thêm mẫu mới phải sửa code.

@@ -3,7 +3,7 @@ import { api, type AdminBlock, type AdminImportRow, type AdminLessonDetail, type
 import { Button } from "../ui/Button";
 import { Badge, Card } from "../ui/Page";
 import CardsPanel from "./CardsPanel";
-import ExamplesPanel from "./ExamplesPanel";
+import ExamplesPanel, { ExampleEditor } from "./ExamplesPanel";
 import TemplatesPanel from "./TemplatesPanel";
 import ExercisesPanel from "./ExercisesPanel";
 
@@ -120,6 +120,7 @@ function LessonEditor({ id, onBack, onChanged }: { id: string; onBack: () => voi
   const [detail, setDetail] = useState<AdminLessonDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [exVersion, setExVersion] = useState(0);
+  const [editingEx, setEditingEx] = useState<string | null>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const load = () => api.adminLesson(id).then(setDetail).catch(() => setError("Chưa tải được bài."));
   useEffect(() => { load(); }, [id]);
@@ -161,8 +162,11 @@ function LessonEditor({ id, onBack, onChanged }: { id: string; onBack: () => voi
       controls={editable ? <>
         <Button variant="ghost" aria-label={`Đưa khối #${b.position} lên`} disabled={i === 0} onClick={() => moveBlock(i, -1)}>↑</Button>
         <Button variant="ghost" aria-label={`Đưa khối #${b.position} xuống`} disabled={i === n - 1} onClick={() => moveBlock(i, 1)}>↓</Button>
+        {b.block_type.startsWith("example_") && <Button variant="ghost" aria-label={`Sửa ví dụ #${b.position}`} onClick={() => setEditingEx(b.id)}>Sửa ví dụ</Button>}
         <Button variant="ghost" aria-label={`Xóa khối #${b.position}`} disabled={n === 1} onClick={() => dropBlock(b)}>Xóa khối</Button>
       </> : undefined} />)}</ul>
+    {editingEx && (() => { const eb = detail.blocks.find((x) => x.id === editingEx); return eb ? <ExampleEditor lessonId={id} block={eb}
+      onDone={(saved) => { setEditingEx(null); if (saved) { load(); onChanged(); } }} /> : null; })()}
     {editable && <AddBlock lessonId={id} onAdded={() => { load(); onChanged(); }} />}
     {editable && <ExamplesPanel lessonId={id} onAdded={() => { load(); onChanged(); }} />}
     <ExercisesPanel key={`ex-${exVersion}`} lessonId={id} />
@@ -248,7 +252,7 @@ function ImportCard({ onDone }: { onDone: () => void }) {
         {r.created ? "Tạo bài mới" : "Cập nhật bài"} “{r.title}” ({r.id}){r.created ? ", đang ẩn" : ""}
         {r.blocks_changed ? " · dựng lại khối" : ""}{r.exercises_added.length ? ` · thêm ${r.exercises_added.length} câu` : ""}
         {r.exercises_revised.length ? ` · sửa ${r.exercises_revised.length} câu (tăng phiên bản)` : ""}
-        {r.cards_added.length ? ` · thêm ${r.cards_added.length} thẻ ôn` : ""}{r.cards_revised.length ? ` · sửa ${r.cards_revised.length} thẻ ôn` : ""}
+        {r.cards_added.length ? ` · thêm ${r.cards_added.length} thẻ ôn${r.cards_activated_for ? ` (đã kích hoạt cho ${r.cards_activated_for} người học xong bài)` : ""}` : ""}{r.cards_revised.length ? ` · sửa ${r.cards_revised.length} thẻ ôn` : ""}
         {r.sources_added ? ` · thêm ${r.sources_added} nguồn` : ""}
         {!r.created && !r.blocks_changed && !r.exercises_added.length && !r.exercises_revised.length && !r.sources_added && !r.cards_added.length && !r.cards_revised.length ? " · không đổi gì" : ""}
         {r.exercises_not_in_file.length > 0 && <span className="text-warning"> · {r.exercises_not_in_file.length} câu không còn trong file (giữ nguyên, bỏ tay nếu cần)</span>}

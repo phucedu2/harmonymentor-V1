@@ -20,7 +20,7 @@ from sqlalchemy.orm import Session
 
 from ..content import overrides
 from ..content.versioning import content_hash, current_version, snapshot_from_spec
-from ..db.models import ContentRevision, Exercise, ExerciseVersion, Lesson, LessonBlock, Skill, SourceWork, User
+from ..db.models import ContentRevision, Exercise, ExerciseVersion, Lesson, LessonBlock, MediaFile, Skill, SourceWork, User
 from . import ai_index
 from . import ai_questions as aq
 from .content_service import AdminContentError, audit
@@ -165,6 +165,11 @@ def delete_block(db: Session, admin: User, lesson_id: str, block_id: str) -> dic
     audit(db, admin, "lesson.delete_block", "lesson", lesson.id,
           {"block": block.id, "block_type": block.block_type, "payload": block.payload})
     lesson.blocks.remove(block)
+    if block.block_type == "example_audio" and block.payload.get("media_id"):
+        # File âm thanh chỉ khối này dùng: xóa cùng khối, không để file mồ côi trong CSDL.
+        media = db.get(MediaFile, block.payload["media_id"])
+        if media is not None:
+            db.delete(media)
     db.flush()
     _renumber(db, lesson, [b for b in blocks if b.id != block_id])
     db.commit()

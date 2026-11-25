@@ -349,6 +349,11 @@ async def add_audio_example(lesson_id: str, file: UploadFile = File(...), title:
                {"title": title, "source": source, "license": license, "note": note})
 
 
+@router.put("/lessons/{lesson_id}/examples/{block_id}")
+def update_example(lesson_id: str, block_id: str, body: dict[str, Any], admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    return _do(example_blocks.update, db, admin, lesson_id, block_id, body)
+
+
 @router.get("/lessons/{lesson_id}/exercises")
 def list_exercises(lesson_id: str, db: Session = Depends(get_db)):
     return _do(lesson_admin.list_exercises, db, lesson_id)

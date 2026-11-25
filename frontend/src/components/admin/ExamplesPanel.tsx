@@ -51,3 +51,32 @@ export default function ExamplesPanel({ lessonId, onAdded }: { lessonId: string;
       <Button variant="ghost" onClick={() => { setKind(""); setMsg(null); }}>Hủy</Button></div>
   </div>;
 }
+
+// Sửa khối ví dụ tại chỗ: hợp âm/âm giai được Engine tính lại, ví dụ nghe giữ nguyên file (đổi file thì xóa khối rồi thêm lại).
+export function ExampleEditor({ lessonId, block, onDone }: { lessonId: string; block: { id: string; block_type: string; payload: Record<string, unknown> }; onDone: (saved: boolean) => void }) {
+  const p = block.payload;
+  const [f, setF] = useState<Record<string, string>>({
+    title: String(p.title ?? ""), note: String(p.note ?? ""), symbol: String(p.symbol ?? ""), tonic: String(p.tonic ?? ""),
+    scale_type: String(p.scale_type ?? "major"), source: String(p.source ?? ""), license: String(p.license ?? "") });
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+  const set = (patch: Record<string, string>) => setF({ ...f, ...patch });
+  const save = async () => {
+    setBusy(true); setMsg(null);
+    try { await api.adminUpdateExample(lessonId, block.id, f); onDone(true); } catch (e) { setMsg(errMsg(e)); } finally { setBusy(false); }
+  };
+  return <div className="grid gap-2 rounded-lg border border-primary/40 p-3" aria-label="Sửa ví dụ">
+    <label className="text-sm font-semibold">Tiêu đề<input className={input} value={f.title} onChange={(e) => set({ title: e.target.value })} /></label>
+    {block.block_type === "example_chord" && <label className="text-sm font-semibold">Ký hiệu hợp âm<input className={input} value={f.symbol} onChange={(e) => set({ symbol: e.target.value })} /></label>}
+    {block.block_type === "example_scale" && <div className="grid gap-2 sm:grid-cols-2">
+      <label className="text-sm font-semibold">Chủ âm<input className={input} value={f.tonic} onChange={(e) => set({ tonic: e.target.value })} /></label>
+      <label className="text-sm font-semibold">Loại âm giai<select className={input} value={f.scale_type} onChange={(e) => set({ scale_type: e.target.value })}>
+        {Object.entries(SCALES).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></label></div>}
+    {block.block_type === "example_audio" && <div className="grid gap-2 sm:grid-cols-2">
+      <label className="text-sm font-semibold">Nguồn<input className={input} value={f.source} onChange={(e) => set({ source: e.target.value })} /></label>
+      <label className="text-sm font-semibold">Giấy phép<input className={input} value={f.license} onChange={(e) => set({ license: e.target.value })} /></label></div>}
+    <label className="text-sm font-semibold">Ghi chú<textarea rows={2} className={input} value={f.note} onChange={(e) => set({ note: e.target.value })} /></label>
+    {msg && <p role="status" className="rounded-lg bg-primary-soft p-2 text-sm">{msg}</p>}
+    <div className="flex gap-2"><Button loading={busy} disabled={busy} onClick={save}>Lưu ví dụ</Button><Button variant="ghost" onClick={() => onDone(false)}>Hủy</Button></div>
+  </div>;
+}
