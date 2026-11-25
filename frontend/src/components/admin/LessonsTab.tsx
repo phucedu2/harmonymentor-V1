@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { api, type AdminBlock, type AdminLessonDetail, type AdminLessonRow, type AdminRevision } from "../../api";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { api, type AdminBlock, type AdminImportRow, type AdminLessonDetail, type AdminLessonRow, type AdminRevision } from "../../api";
 import { Button } from "../ui/Button";
 import { Badge, Card } from "../ui/Page";
 import ExercisesPanel from "./ExercisesPanel";
@@ -53,7 +53,7 @@ function Field({ k, value, onChange, idPrefix }: { k: string; value: unknown; on
   return <p className="text-xs text-muted">Trường “{fieldName(k)}” bị khóa (không sửa ở đây).</p>;
 }
 
-function BlockEditor({ lessonId, block, onChanged }: { lessonId: string; block: AdminBlock; onChanged: () => void }) {
+function BlockEditor({ lessonId, block, onChanged, controls }: { lessonId: string; block: AdminBlock; onChanged: () => void; controls?: ReactNode }) {
   const [open, setOpen] = useState(false);
   const [payload, setPayload] = useState<Payload>(block.payload);
   const [note, setNote] = useState("");
@@ -81,6 +81,7 @@ function BlockEditor({ lessonId, block, onChanged }: { lessonId: string; block: 
       {block.engine.contradicted.length > 0 && <Badge tone="warning">Engine nghi sai</Badge>}
       <span className="truncate text-sm text-muted">{String(block.payload.title ?? block.payload.prompt ?? "")}</span>
     </button>
+    {controls && <div className="mt-2 flex flex-wrap gap-1">{controls}</div>}
     {open && <div className="mt-3 grid gap-3">
       {Object.entries(payload).map(([k, v]) => <Field key={k} k={k} idPrefix={`f-${block.id}`} value={v} onChange={(nv) => setPayload({ ...payload, [k]: nv })} />)}
       <div><label htmlFor={`note-${block.id}`} className="text-sm font-semibold">Ghi chú thay đổi (không bắt buộc)</label>
@@ -129,9 +130,21 @@ function LessonEditor({ id, onBack, onChanged }: { id: string; onBack: () => voi
     if (!detail || !window.confirm(`Xóa bài “${detail.lesson.title}”? Học sinh sẽ không thấy bài này nữa.`)) return;
     try { await api.adminDeleteLesson(id); onChanged(); onBack(); } catch (e) { setError(errMsg(e)); }
   };
+  // FR-ADM-14 (Phúc 3A): xóa và đổi thứ tự khối chỉ ở bài M-/AI-; bài gốc dựng lại khối mỗi lần seed chạy.
+  const moveBlock = async (i: number, d: -1 | 1) => {
+    if (!detail) return;
+    const ids = detail.blocks.map((b) => b.id);
+    [ids[i], ids[i + d]] = [ids[i + d], ids[i]];
+    try { await api.adminReorderBlocks(id, ids); await load(); onChanged(); } catch (e) { setError(errMsg(e)); }
+  };
+  const dropBlock = async (b: AdminBlock) => {
+    if (!window.confirm(`Xóa khối #${b.position} “${String(b.payload.title ?? "")}”? Nội dung khối vẫn lưu trong nhật ký.`)) return;
+    try { await api.adminDeleteBlock(id, b.id); await load(); onChanged(); } catch (e) { setError(errMsg(e)); }
+  };
   if (error) return <p role="alert" className="text-danger">{error}</p>;
   if (!detail) return <p role="status" className="text-muted">Đang tải…</p>;
   const editable = id.startsWith("M-") || id.startsWith("AI-");
+  const n = detail.blocks.length;
   return <div className="grid gap-3">
     <div className="flex flex-wrap items-center gap-2">
       <Button variant="ghost" onClick={onBack}>← Danh sách bài</Button>
@@ -139,12 +152,100 @@ function LessonEditor({ id, onBack, onChanged }: { id: string; onBack: () => voi
       {detail.lesson.hidden && <Badge tone="warning">Đang ẩn</Badge>}
       <Button variant="secondary" className="ml-auto" onClick={toggleHidden}>{detail.lesson.hidden ? "Hiện lại cho học sinh" : "Ẩn khỏi học sinh"}</Button>
     </div>
-    <ul className="grid gap-2">{detail.blocks.map((b) => <BlockEditor key={`${b.id}-${b.edited}`} lessonId={id} block={b} onChanged={() => { load(); onChanged(); }} />)}</ul>
+    <LessonMeta id={id} detail={detail} onSaved={() => { load(); onChanged(); }} />
+    <ul className="grid gap-2">{detail.blocks.map((b, i) => <BlockEditor key={`${b.id}-${b.edited}-${b.position}`} lessonId={id} block={b} onChanged={() => { load(); onChanged(); }}
+      controls={editable ? <>
+        <Button variant="ghost" aria-label={`Đưa khối #${b.position} lên`} disabled={i === 0} onClick={() => moveBlock(i, -1)}>↑</Button>
+        <Button variant="ghost" aria-label={`Đưa khối #${b.position} xuống`} disabled={i === n - 1} onClick={() => moveBlock(i, 1)}>↓</Button>
+        <Button variant="ghost" aria-label={`Xóa khối #${b.position}`} disabled={n === 1} onClick={() => dropBlock(b)}>Xóa khối</Button>
+      </> : undefined} />)}</ul>
     {editable && <AddBlock lessonId={id} onAdded={() => { load(); onChanged(); }} />}
     <ExercisesPanel lessonId={id} />
     <div className="border-t border-line pt-3"><Button variant="ghost" onClick={remove}>Xóa bài này</Button>
       <span className="ml-2 text-xs text-muted">Xóa mềm: học sinh không thấy nữa, khôi phục được ở cuối danh sách bài.</span></div>
   </div>;
+}
+
+// FR-ADM-14: sửa tên và mục tiêu của mọi bài; bài gốc có thêm nút về tên gốc (seed không ghi đè bản sửa).
+function LessonMeta({ id, detail, onSaved }: { id: string; detail: AdminLessonDetail; onSaved: () => void }) {
+  const [open, setOpen] = useState(false);
+  const [title, setTitle] = useState(detail.lesson.title);
+  const [objectives, setObjectives] = useState(detail.objectives.join("\n"));
+  const [msg, setMsg] = useState<string | null>(null);
+  const seed = !(id.startsWith("M-") || id.startsWith("AI-"));
+  const save = async (reset = false) => {
+    setMsg(null);
+    try {
+      const r = await api.adminUpdateLessonMeta(id, reset ? { reset: true }
+        : { title, objectives: objectives.split("\n").map((x) => x.trim()).filter(Boolean) });
+      setTitle(r.title); setObjectives(r.objectives.join("\n"));
+      setMsg(r.changed ? "Đã lưu. Học sinh thấy tên mới ngay." : "Không có gì thay đổi."); onSaved();
+    } catch (e) { setMsg(errMsg(e)); }
+  };
+  if (!open) return <div><Button variant="ghost" onClick={() => setOpen(true)}>Sửa tên và mục tiêu bài</Button>
+    {detail.meta_edited && <Badge tone="warning">Tên đã sửa</Badge>}</div>;
+  const box = "mt-1 w-full rounded-lg border border-line bg-surface p-2";
+  return <Card className="grid gap-2 p-3">
+    <label className="text-sm font-semibold">Tên bài<input className={box} value={title} maxLength={240} onChange={(e) => setTitle(e.target.value)} /></label>
+    <label className="text-sm font-semibold">Mục tiêu (mỗi dòng một mục)<textarea rows={3} className={box} value={objectives} onChange={(e) => setObjectives(e.target.value)} /></label>
+    <div className="flex flex-wrap gap-2"><Button disabled={!title.trim()} onClick={() => save()}>Lưu tên và mục tiêu</Button>
+      {seed && detail.meta_edited && <Button variant="ghost" onClick={() => save(true)}>Về tên gốc</Button>}
+      <Button variant="ghost" onClick={() => setOpen(false)}>Đóng</Button></div>
+    {msg && <p role="status" className="text-sm">{msg}</p>}
+  </Card>;
+}
+
+// FR-ADM-39 (Phúc 4A): nhập JSON/YAML; "Kiểm thử" chỉ báo sẽ đổi gì, "Nhập" mới ghi. Bài nhập mới ở trạng thái ẩn.
+function ImportCard({ onDone }: { onDone: () => void }) {
+  const [file, setFile] = useState<File | null>(null);
+  const [fileKey, setFileKey] = useState(0);
+  const [busy, setBusy] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
+  const [result, setResult] = useState<{ dry: boolean; rows: AdminImportRow[] } | null>(null);
+  const run = async (dry: boolean) => {
+    if (!file) return;
+    setBusy(true); setErrors([]); setResult(null);
+    try {
+      const r = await api.adminImport(file, dry);
+      setResult({ dry, rows: r.lessons });
+      if (!dry) { setFile(null); setFileKey((k) => k + 1); onDone(); }
+    } catch (e) {
+      const m = errMsg(e);
+      const [head, ...rest] = m.split(" | ");
+      const [lead, first] = head.includes(": ") && head.includes("chưa nhập gì") ? [head.slice(0, head.indexOf(": ")), head.slice(head.indexOf(": ") + 2)] : [head, ""];
+      setErrors([lead, ...[first, ...rest].filter(Boolean)]);
+    } finally { setBusy(false); }
+  };
+  const template = async () => {
+    try {
+      const t = await api.adminImportTemplate();
+      const url = URL.createObjectURL(new Blob([t.content], { type: "text/yaml;charset=utf-8" }));
+      const a = document.createElement("a"); a.href = url; a.download = t.filename; a.click(); URL.revokeObjectURL(url);
+    } catch (e) { setErrors([errMsg(e)]); }
+  };
+  return <Card className="grid gap-2 p-3">
+    <p className="font-semibold">Nhập nội dung từ file</p>
+    <p className="text-sm text-muted">File .yaml hoặc .json theo mẫu: bài, khối lý thuyết, câu luyện tập, nguồn. Music Engine kiểm đáp án.
+      Nhập lại cùng mã bài thì cập nhật, không tạo bản trùng.</p>
+    <div className="flex flex-wrap items-center gap-2">
+      <input key={fileKey} type="file" accept=".yaml,.yml,.json" aria-label="File nội dung" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+      <Button variant="secondary" loading={busy} disabled={!file || busy} onClick={() => run(true)}>Kiểm thử</Button>
+      <Button loading={busy} disabled={!file || busy} onClick={() => run(false)}>Nhập</Button>
+      <Button variant="ghost" onClick={template}>Tải file mẫu</Button>
+    </div>
+    {errors.length > 0 && <div role="alert" className="text-sm text-danger"><p className="font-semibold">{errors[0]}</p>
+      {errors.length > 1 && <ul className="list-disc pl-5">{errors.slice(1).map((x, i) => <li key={i}>{x}</li>)}</ul>}</div>}
+    {result && <div role="status" className="text-sm">
+      <p className="font-semibold">{result.dry ? "Kiểm thử xong, chưa ghi gì. Nếu nhập sẽ:" : "Đã nhập:"}</p>
+      <ul className="list-disc pl-5">{result.rows.map((r) => <li key={r.id}>
+        {r.created ? "Tạo bài mới" : "Cập nhật bài"} “{r.title}” ({r.id}){r.created ? ", đang ẩn" : ""}
+        {r.blocks_changed ? " · dựng lại khối" : ""}{r.exercises_added.length ? ` · thêm ${r.exercises_added.length} câu` : ""}
+        {r.exercises_revised.length ? ` · sửa ${r.exercises_revised.length} câu (tăng phiên bản)` : ""}
+        {r.sources_added ? ` · thêm ${r.sources_added} nguồn` : ""}
+        {!r.created && !r.blocks_changed && !r.exercises_added.length && !r.exercises_revised.length && !r.sources_added ? " · không đổi gì" : ""}
+        {r.exercises_not_in_file.length > 0 && <span className="text-warning"> · {r.exercises_not_in_file.length} câu không còn trong file (giữ nguyên, bỏ tay nếu cần)</span>}
+      </li>)}</ul></div>}
+  </Card>;
 }
 
 function AddBlock({ lessonId, onAdded }: { lessonId: string; onAdded: () => void }) {
@@ -212,6 +313,7 @@ export default function LessonsTab() {
   const restore = async (id: string) => { try { await api.adminRestoreLesson(id); await load(); } catch (e) { setMsg(errMsg(e)); } };
   return <div className="grid gap-3">
     <CreateLesson onCreated={(id) => { load(); setOpenId(id); }} />
+    <ImportCard onDone={load} />
     {msg && <p role="alert" className="text-danger">{msg}</p>}
     <ul className="grid gap-2">{live.map((l, i) => <li key={l.id}><Card className="flex flex-wrap items-center justify-between gap-2 p-3">
       <div><p className="font-semibold">Bài {l.order}. {l.title} {l.hidden && <Badge tone="warning">Ẩn</Badge>}</p>

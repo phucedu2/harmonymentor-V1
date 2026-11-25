@@ -91,6 +91,8 @@ class Lesson(Base):
     sort_key: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     # FR-ADM-15: xóa mềm (nguyên tắc 7); lượt làm và phiên bản câu hỏi cũ vẫn giữ.
     deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    # FR-ADM-14: {"title", "objectives"} do Quản trị viên sửa; seed áp lại mỗi lần khởi động thay vì ghi đè.
+    admin_meta: Mapped[Optional[dict[str, Any]]] = mapped_column(JSON, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
 

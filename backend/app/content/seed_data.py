@@ -62,6 +62,11 @@ def _upsert_lesson(db: Session, spec: dict) -> Lesson:
         lesson.title = spec["title"]
         lesson.status = runtime_status
         lesson.objectives = spec["objectives"]
+        meta = lesson.admin_meta or {}   # FR-ADM-14: tên/mục tiêu Quản trị viên đã sửa thắng đặc tả
+        if meta.get("title"):
+            lesson.title = meta["title"]
+        if isinstance(meta.get("objectives"), list):
+            lesson.objectives = meta["objectives"]
     return lesson
 
 

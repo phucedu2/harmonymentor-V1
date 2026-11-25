@@ -138,7 +138,8 @@ def lesson_detail(db: Session, lesson_id: str) -> dict[str, Any]:
             exercises.append({"id": exercise.id, "version": version.version, "skill_id": exercise.skill_id, "kind": version.kind,
                               "prompt": version.prompt, "status": version.status})
     summary = next(item for item in lesson_list(db) if item["id"] == lesson.id)
-    return {"lesson": summary, "objectives": lesson.objectives or [], "blocks": blocks, "exercises": exercises}
+    return {"lesson": summary, "objectives": lesson.objectives or [], "blocks": blocks, "exercises": exercises,
+            "meta_edited": lesson.admin_meta is not None}
 
 
 def save_draft(db: Session, actor: User, lesson_id: str, block_id: str, payload: Any, note: str | None) -> dict[str, Any]:
