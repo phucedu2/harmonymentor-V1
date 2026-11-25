@@ -72,8 +72,10 @@ def test_invalid_email_and_duplicate_email(client):
 
     email = new_email()
     assert register(client, email=email).status_code == 201
+    # ADR-040 (1A): không còn 409 EMAIL_TAKEN (lộ email có tài khoản). Trả 202 "kiểm tra hộp thư", không cấp phiên.
     dup = register(client, email=email.upper())
-    assert dup.status_code == 409 and dup.json()["error"]["code"] == "EMAIL_TAKEN"
+    assert dup.status_code == 202 and dup.json()["status"] == "check_email"
+    assert "access_token" not in dup.json() and "hm_refresh" not in dup.headers.get("set-cookie", "")
 
 
 def test_login_me_and_wrong_password(client):

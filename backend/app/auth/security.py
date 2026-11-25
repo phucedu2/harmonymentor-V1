@@ -6,6 +6,7 @@ import hashlib
 import logging
 import re
 import secrets
+from pathlib import Path
 from datetime import datetime, timedelta, timezone
 
 import bcrypt
@@ -36,7 +37,20 @@ JWT_SECRET = _resolve_secret()
 BCRYPT_MAX_BYTES = 72
 
 
-def password_problem(password: str) -> str | None:
+def _load_common_passwords() -> frozenset[str]:
+    path = Path(__file__).with_name("data") / "common_passwords.txt"
+    lines = path.read_text(encoding="utf-8").splitlines()
+    return frozenset(line.strip() for line in lines if line.strip() and not line.startswith("#"))
+
+
+# B3/4A: chặn 1.000 mật khẩu phổ biến (danh sách cục bộ, không gọi dịch vụ ngoài như HIBP).
+COMMON_PASSWORDS = _load_common_passwords()
+# Mật khẩu chứa tên sản phẩm là thứ kẻ dò thử đầu tiên.
+PRODUCT_WORDS = ("harmonymentor",)
+
+
+def password_problem(password: str, email: str | None = None) -> str | None:
+    """Trả câu lỗi đầu tiên (tiếng Việt) hoặc None. `email` để chặn mật khẩu chứa phần trước @ (4A)."""
     if len(password) < 8:
         return "Mật khẩu cần ít nhất 8 ký tự."
     if not re.search(r"[^\W\d_]", password):
@@ -45,6 +59,14 @@ def password_problem(password: str) -> str | None:
         return "Mật khẩu cần ít nhất một chữ số."
     if len(password.encode("utf-8")) > BCRYPT_MAX_BYTES:
         return "Mật khẩu quá dài (tối đa 72 byte)."
+    lowered = password.lower()
+    if lowered in COMMON_PASSWORDS:
+        return "Mật khẩu này quá phổ biến, rất dễ bị đoán. Hãy chọn mật khẩu khác."
+    if any(word in lowered for word in PRODUCT_WORDS):
+        return "Mật khẩu không nên chứa tên HarmonyMentor. Hãy chọn mật khẩu khác."
+    local = (email or "").split("@", 1)[0].strip().lower()
+    if len(local) >= 4 and local in lowered:
+        return "Mật khẩu không nên chứa email của bạn. Hãy chọn mật khẩu khác."
     return None
 
 
@@ -66,12 +88,27 @@ def verify_password(password: str, hashed: str | None) -> bool:
 DUMMY_HASH = hash_password(secrets.token_urlsafe(16))
 
 
-def create_access_token(user_id: str, role: str, now: datetime | None = None) -> str:
+def new_one_time_token() -> str:
+    """Token 32 byte ngẫu nhiên cho liên kết trong email (A1)."""
+    return secrets.token_urlsafe(32)
+
+
+def password_stamp(changed_at: datetime | None) -> int:
+    """Mốc đổi mật khẩu tính bằng mili giây, gắn vào access token (claim "pwd", ADR-040 A2).
+    So bằng nhau thay vì so iat (chỉ chính xác tới giây) để token cấp trong cùng giây với lần đổi vẫn bị chặn."""
+    if changed_at is None:
+        return 0
+    aware = changed_at if changed_at.tzinfo else changed_at.replace(tzinfo=timezone.utc)
+    return int(aware.timestamp() * 1000)
+
+
+def create_access_token(user_id: str, role: str, now: datetime | None = None, pwd: int = 0) -> str:
     now = now or datetime.now(timezone.utc)
     payload = {
         "sub": user_id,
         "role": role,
         "type": "access",
+        "pwd": pwd,
         "iat": int(now.timestamp()),
         "exp": int((now + timedelta(minutes=settings.access_token_minutes)).timestamp()),
     }

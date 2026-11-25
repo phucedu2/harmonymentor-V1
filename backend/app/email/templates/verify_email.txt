@@ -1,0 +1,10 @@
+Verify your email
+
+Hi {{ name }},
+
+Welcome to HarmonyMentor! Please confirm that this is your email address, so you can always get back into your account:
+
+{{ link }}
+
+This link expires in {{ hours }} hours.
+If you didn't create a HarmonyMentor account, you can safely ignore this email.

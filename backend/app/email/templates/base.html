@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>{{ subject }}</title>
+</head>
+<body style="margin:0;padding:0;background:{{ c.bg }};">
+{% if preheader %}<div style="display:none;max-height:0;overflow:hidden;opacity:0;">{{ preheader }}</div>{% endif %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:{{ c.bg }};">
+  <tr>
+    <td align="center" style="padding:32px 16px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;">
+        <tr>
+          <td style="padding:0 0 20px 0;font-family:Arial,Helvetica,sans-serif;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="vertical-align:middle;"><img src="cid:{{ logo_cid }}" width="40" height="40" alt="" style="display:block;border:0;border-radius:8px;"></td>
+                <td style="vertical-align:middle;padding-left:10px;font-size:18px;font-weight:bold;color:{{ c.ink }};">Harmony Mentor</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:{{ c.surface }};border:1px solid {{ c.line }};border-top:4px solid {{ c.signature }};border-radius:12px;padding:32px;font-family:Arial,Helvetica,sans-serif;color:{{ c.ink }};font-size:16px;line-height:24px;">
+            {% block content %}{% endblock %}
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:20px 8px 0 8px;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;color:{{ c.muted }};text-align:center;">
+            You received this email because of an action on your HarmonyMentor account.<br>
+            HarmonyMentor will never ask for your password by email.
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>

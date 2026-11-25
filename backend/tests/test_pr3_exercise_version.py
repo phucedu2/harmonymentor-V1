@@ -320,7 +320,8 @@ def test_publish_draft_then_it_is_locked(factory):
 def test_production_refuses_draft_flag(monkeypatch):
     with pytest.raises(RuntimeError, match="SHOW_DRAFT_CONTENT"):
         check_runtime_settings(Settings(app_env="production", show_draft_content=True))
-    check_runtime_settings(Settings(app_env="production", show_draft_content=False))
+    # email_backend="smtp": từ ADR-040 production còn chặn EMAIL_BACKEND=console (test riêng ở test_auth_password.py).
+    check_runtime_settings(Settings(app_env="production", show_draft_content=False, email_backend="smtp"))
     check_runtime_settings(Settings(app_env="development", show_draft_content=True))
     # Không đặt biến môi trường thì bản nháp bị ẩn.
     monkeypatch.delenv("SHOW_DRAFT_CONTENT", raising=False)
