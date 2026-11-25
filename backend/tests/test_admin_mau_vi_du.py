@@ -106,3 +106,13 @@ def test_sua_khoi_vi_du_tai_cho_va_xoa_khoi_nghe_xoa_file(client, h):
     assert client.get(a["payload"]["src"]).status_code == 200
     assert client.delete(f"{A}/lessons/{lid}/blocks/{a['id']}", headers=h).status_code == 200
     assert client.get(a["payload"]["src"]).status_code == 404   # file đi cùng khối, không mồ côi
+
+
+def test_loi_nho_tu_ra_soat_tu_dong(client, h):
+    lid = new_lesson(client, h)
+    bad = {**TPL, "params": {"roots": 5, "qualities": "-"}}
+    r = client.post(f"{A}/lessons/{lid}/exercise-templates/preview", headers=h, json=bad)
+    assert r.status_code == 422 and r.json()["error"]["code"] == "TEMPLATE_PARAM"   # không còn lỗi 500
+    # Byte thứ hai của khung MPEG phải có 3 bit đầu = 111: 0xFF 0x01 không phải MP3.
+    assert _upload(client, h, lid, name="gia.mp3", data=b"\xff\x01" + b"\x00" * 30).json()["error"]["code"] == "AUDIO_CONTENT"
+    assert _upload(client, h, lid, name="that.mp3", data=b"\xff\xfb" + b"\x00" * 30).status_code == 201

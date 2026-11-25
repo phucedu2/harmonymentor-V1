@@ -50,6 +50,8 @@ def catalogue() -> list[dict[str, Any]]:
 def _values(raw: Any, label: str) -> list[str]:
     if isinstance(raw, str):
         raw = raw.split(",")
+    elif not isinstance(raw, (list, tuple)):
+        raw = []
     vals = list(dict.fromkeys(str(x).strip() for x in (raw or []) if str(x).strip()))[: MAX_VALUES + 1]
     if not vals:
         raise AdminContentError("TEMPLATE_PARAM", f"“{label}” cần ít nhất một giá trị.")

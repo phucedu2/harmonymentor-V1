@@ -132,7 +132,7 @@ def _validate(db: Session, data: Any) -> tuple[list[dict[str, Any]], list[str]]:
         exercises, keys = [], set()
         for j, item in enumerate(raw.get("exercises") or [], start=1):
             key = str((item or {}).get("key") or "").strip() if isinstance(item, dict) else ""
-            if not _CODE.match(key or "x"):
+            if not _CODE.match(key):
                 errors.append(f"{where}, câu {j}: `key` chỉ gồm chữ thường không dấu, số, gạch nối.")
                 continue
             if key in keys:
@@ -148,7 +148,7 @@ def _validate(db: Session, data: Any) -> tuple[list[dict[str, Any]], list[str]]:
         cards, ckeys = [], set()
         for j, item in enumerate(raw.get("cards") or [], start=1):
             key = str((item or {}).get("key") or "").strip() if isinstance(item, dict) else ""
-            if not _CODE.match(key or "x"):
+            if not _CODE.match(key):
                 errors.append(f"{where}, thẻ {j}: `key` chỉ gồm chữ thường không dấu, số, gạch nối.")
                 continue
             if key in ckeys:

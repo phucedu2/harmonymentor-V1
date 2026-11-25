@@ -77,7 +77,7 @@ def _sniff(ext: str, data: bytes) -> bool:
     """Đuôi file có thể bị đổi tên: kiểm byte đầu để không nhận file lạ làm âm thanh."""
     if ext == ".wav":
         return data[:4] == b"RIFF" and data[8:12] == b"WAVE"
-    return data[:3] == b"ID3" or (len(data) > 2 and data[0] == 0xFF and data[1] & 0xE0 == 0xE0)
+    return data[:3] == b"ID3" or (len(data) > 2 and data[0] == 0xFF and (data[1] & 0xE0) == 0xE0)
 
 
 def add_audio(db: Session, admin: User, lesson_id: str, filename: str, data: bytes, form: dict[str, Any]) -> dict[str, Any]:
