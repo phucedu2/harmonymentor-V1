@@ -18,7 +18,7 @@ const NODE: Record<string, string> = {
   extract: "Lấy chữ", retrieve: "Tìm bài đã có", generate: "AI soạn", retry_json: "Thử lại JSON", dedup: "Bỏ ý trùng",
   validate: "Kiểm câu bằng Engine", flags: "Tính cờ duyệt", draft: "Lưu bản nháp", error: "Lỗi", top_up: "Gọi bù câu luyện tập",
 };
-// Hạn mức Gemini chung (ADR-033, V5): bản miễn phí 30 lượt/ngày, 40% soạn bài, 60% AI Tutor.
+// Hạn mức Gemini chung (ADR-039, V5): bản miễn phí 30 lượt/ngày, 40% soạn bài, 60% AI Tutor.
 function BudgetLine({ budget }: { budget?: AiBudget }) {
   if (!budget || !budget.total) return null;
   const left = Math.max(0, budget.authoring.limit - budget.authoring.used);
@@ -53,7 +53,7 @@ function DraftEditor({ draftId, onClose }: { draftId: string; onClose: () => voi
   const open = draft.status === "draft";
   const flags = draft.engine.contradicted.length;
   const set = (patch: Partial<typeof c>) => setDraft({ ...draft, content: { ...c, ...patch } });
-  // ADR-033: cờ duyệt là cảnh báo; mỗi cờ phải tick "Đã đối chiếu" (lưu theo mã cờ) thì mới xuất bản được.
+  // ADR-039: cờ duyệt là cảnh báo; mỗi cờ phải tick "Đã đối chiếu" (lưu theo mã cờ) thì mới xuất bản được.
   const reviewFlags = draft.flags ?? [];
   const acked = c.acknowledged_flags ?? [];
   const unacked = unackedCount(reviewFlags, acked);

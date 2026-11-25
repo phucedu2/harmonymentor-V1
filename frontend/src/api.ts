@@ -349,7 +349,7 @@ export type AiQuestion = { kind: AiQuestionKind; level?: "nho" | "hieu" | "van_d
   check?: Record<string, string>; symbol?: string; tonic?: string; scale_type?: string; model_answer?: string; rubric?: string[];
   engine_answer?: string | string[] | null; engine_verified?: boolean; engine_note?: string; needs_review?: boolean; reviewed?: boolean;
   review_notes?: string[]; block_ref?: number | null; page_claimed?: number };
-// ADR-033: cờ cho người duyệt (cảnh báo, phải tick "Đã đối chiếu" từng cờ mới xuất bản được).
+// ADR-039: cờ cho người duyệt (cảnh báo, phải tick "Đã đối chiếu" từng cờ mới xuất bản được).
 export type AiFlag = { id: string; type: string; label: string; where: string; detail: string; acknowledged?: boolean };
 export type AiNodeLog = { node: string; ms: number; in?: number; out?: number; note?: string; ok?: boolean; calls?: number };
 export type AiBudget = { total: number; authoring: { limit: number; used: number }; tutor: { limit: number; used: number }; resets_at: string };
@@ -530,7 +530,7 @@ export const api = {
 
   // Phase 0.4B source-grounded learning contract.
   listLessons: () => apiCall<LessonSummary[]>("/lessons"),
-  // preview: Quản trị viên xem bài đang ẩn đúng như học sinh (ADR-033, N6); máy chủ chỉ cho khi token là admin.
+  // preview: Quản trị viên xem bài đang ẩn đúng như học sinh (ADR-039, N6); máy chủ chỉ cho khi token là admin.
   getLesson: (lessonId: string, preview = false) =>
     apiCall<LessonDetail>(`/lessons/${encodeURIComponent(lessonId)}${preview ? "?preview=true" : ""}`),
   // user_id không còn gửi từ client (N3): backend lấy từ token (ADR-004).

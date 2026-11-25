@@ -54,7 +54,7 @@ export default function LearnPage() {
     } finally { setLoading(false); }
   };
 
-  // ?xem_truoc=AI-…: Quản trị viên xem trước bài AI đang ẩn (ADR-033). Lượt làm của admin là is_test nên không tính mastery.
+  // ?xem_truoc=AI-…: Quản trị viên xem trước bài AI đang ẩn (ADR-039). Lượt làm của admin là is_test nên không tính mastery.
   useEffect(() => {
     const preview = params.get("xem_truoc");
     if (!preview || loading || handledLink.current === `preview|${preview}`) return;
