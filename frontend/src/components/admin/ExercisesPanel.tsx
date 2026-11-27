@@ -85,8 +85,9 @@ function ExerciseForm({ initial, meta, onSave, onCancel, busy }: {
     {q.kind === "open" && <>
       <label className="text-sm font-semibold">Đáp án mẫu<textarea className={input} rows={2} value={q.model_answer ?? ""} onChange={(e) => set({ model_answer: e.target.value })} /></label>
       <label className="text-sm font-semibold">Ý chấm (mỗi dòng một ý, 2–5 ý)<textarea className={input} rows={3} value={rubric} onChange={(e) => setRubric(e.target.value)} /></label></>}
-    <label className="text-sm font-semibold">Lời giải (vì sao đáp án đúng){q.kind !== "open" && " *"}
-      <textarea className={input} rows={2} value={q.explanation} onChange={(e) => set({ explanation: e.target.value })} /></label>
+    <label className="text-sm font-semibold">Lời giải (vì sao đáp án đúng)
+      <textarea className={input} rows={2} value={q.explanation} placeholder="Câu có phần kiểm Engine thì bỏ trống được: Music Engine tự viết lời giải"
+        onChange={(e) => set({ explanation: e.target.value })} /></label>
     <div className="flex flex-wrap gap-2">
       <Button loading={busy} disabled={busy || !q.prompt.trim()} onClick={submit}>Lưu và để Engine kiểm</Button>
       <Button variant="ghost" onClick={onCancel}>Hủy</Button></div>

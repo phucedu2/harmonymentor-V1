@@ -314,8 +314,6 @@ export type AdminLessonDetail = { lesson: AdminLessonRow; objectives: string[]; 
 export type AdminSkill = { id: string; name: string; domain: string; seed: boolean; mvp: boolean; group_code?: string | null;
   ready_threshold?: number; mastery_threshold?: number; prerequisites: string[];
   seed_prerequisites: string[]; lessons: string[] };
-export type AdminSource = { id: string; title: string; author: string | null; url: string | null; seed: boolean;
-  lessons: { id: number; lesson_id: string; locator: string; note: string | null }[] };
 // Câu luyện tập soạn bằng form (FR-ADM-24..29): cùng dạng câu với AI soạn bài, Music Engine tính đáp án.
 export type AdminCheck = { type: "interval"; lower: string; upper: string } | { type: "chord_tones"; symbol: string }
   | { type: "chord_name"; notes: string } | { type: "roman"; key: string; chord: string } | { type: "scale"; tonic: string; scale_type: string };
@@ -348,7 +346,9 @@ export type AiQuestion = { kind: AiQuestionKind; level?: "nho" | "hieu" | "van_d
   options?: string[]; answer?: string; answers?: string[]; option_feedback?: Record<string, string>;
   check?: Record<string, string>; symbol?: string; tonic?: string; scale_type?: string; model_answer?: string; rubric?: string[];
   engine_answer?: string | string[] | null; engine_verified?: boolean; engine_note?: string; needs_review?: boolean; reviewed?: boolean;
-  review_notes?: string[]; block_ref?: number | null; page_claimed?: number };
+  review_notes?: string[]; block_ref?: number | null; page_claimed?: number;
+  // 27/11/2026: edited = Quản trị viên đã sửa câu (tính là đã duyệt); explanation_source "engine" = lời giải Music Engine viết.
+  edited?: boolean; explanation_source?: "engine" };
 // ADR-039: cờ cho người duyệt (cảnh báo, phải tick "Đã đối chiếu" từng cờ mới xuất bản được).
 export type AiFlag = { id: string; type: string; label: string; where: string; detail: string; acknowledged?: boolean };
 export type AiNodeLog = { node: string; ms: number; in?: number; out?: number; note?: string; ok?: boolean; calls?: number };
@@ -392,6 +392,8 @@ export const api = {
   aiDraft: (id: string) => apiCall<AiDraft>(`/admin/ai/drafts/${encodeURIComponent(id)}`),
   aiSaveDraft: (id: string, content: Omit<AiDraftContent, "dropped_questions" | "duplicates" | "part" | "log" | "truncated">) =>
     apiCall<AiDraft>(`/admin/ai/drafts/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(content) }),
+  aiFillExplanations: (id: string) =>
+    apiPost<AiDraft & { filled: number; still_missing: number }>(`/admin/ai/drafts/${encodeURIComponent(id)}/fill-explanations`, {}),
   aiPublish: (id: string, acknowledge: boolean) =>
     apiPost<{ lesson_id: string; title: string }>(`/admin/ai/drafts/${encodeURIComponent(id)}/publish`, { acknowledge_engine_flags: acknowledge }),
   aiReject: (id: string) => apiPost<{ id: string }>(`/admin/ai/drafts/${encodeURIComponent(id)}/reject`, {}),
@@ -416,11 +418,6 @@ export const api = {
   adminAddPrereq: (id: string, pre: string) => apiPost<unknown>(`/admin/skills/${encodeURIComponent(id)}/prerequisites`, { prerequisite_id: pre }),
   adminRemovePrereq: (id: string, pre: string) =>
     apiCall<void>(`/admin/skills/${encodeURIComponent(id)}/prerequisites/${encodeURIComponent(pre)}`, { method: "DELETE" }),
-  adminSources: () => apiCall<AdminSource[]>("/admin/sources"),
-  adminCreateSource: (body: { title: string; author: string | null; url: string | null }) => apiPost<{ id: string }>("/admin/sources", body),
-  adminLinkSource: (lessonId: string, body: { source_id: string; locator: string; note: string | null }) =>
-    apiPost<unknown>(`/admin/lessons/${encodeURIComponent(lessonId)}/sources`, body),
-  adminUnlinkSource: (linkId: number) => apiCall<void>(`/admin/lesson-sources/${linkId}`, { method: "DELETE" }),
   adminCreateLesson: (body: { title: string; objectives: string[]; block_title: string; paragraphs: string[] }) =>
     apiPost<{ id: string; title: string; hidden: boolean }>("/admin/lessons", body),
   adminDeleteLesson: (id: string) => apiCall<{ id: string }>(`/admin/lessons/${encodeURIComponent(id)}`, { method: "DELETE" }),
@@ -473,8 +470,6 @@ export const api = {
   adminUsers: (q = "") => apiCall<{ total: number; items: AdminUser[] }>(`/admin/users?q=${encodeURIComponent(q)}`),
   adminSetActive: (id: string, isActive: boolean) =>
     apiCall<{ id: string; is_active: boolean }>(`/admin/users/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify({ is_active: isActive }) }),
-  adminSetRole: (id: string, role: "admin" | "learner") =>
-    apiCall<{ id: string; is_active: boolean; role: string }>(`/admin/users/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify({ role }) }),
   adminStats: (days = 30) => apiCall<AdminStats>(`/admin/stats?days=${days}`),
   adminAudit: () => apiCall<AdminAudit[]>("/admin/audit?limit=30"),
   // Legacy Practice routes retained during migration.

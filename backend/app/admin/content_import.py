@@ -26,6 +26,7 @@ from sqlalchemy.orm import Session
 from ..db.models import ContentRevision, Exercise, Lesson, LessonBlock, LessonSource, ReviewItem, SourceWork, User
 from . import card_admin as ca
 from . import lesson_admin as la
+from . import skill_admin
 from .content_service import AdminContentError, audit
 
 FORMAT = "harmonymentor/1"
@@ -44,8 +45,9 @@ lessons:
       - title: Cấu tạo
         paragraphs:
           - Hợp âm ba trưởng gồm nốt gốc, quãng 3 trưởng và quãng 5 đúng.
-    sources:                         # bắt buộc ít nhất một nguồn có sẵn (tab Kỹ năng & nguồn)
-      - source_id: src-vi-du
+    sources:                         # bắt buộc ít nhất một nguồn: `source_id` có sẵn, hoặc `title` (+ author, url) để tạo mới
+      - title: Giáo trình nhạc lý cơ bản
+        author: Tên tác giả
         locator: Chương 2, trang 14
     exercises:
       - key: q1                      # mã câu cố định trong bài
@@ -122,10 +124,19 @@ def _validate(db: Session, data: Any) -> tuple[list[dict[str, Any]], list[str]]:
         sources = []
         for j, src in enumerate(raw.get("sources") or [], start=1):
             sid = str((src or {}).get("source_id") or "").strip() if isinstance(src, dict) else ""
-            if not sid or db.get(SourceWork, sid) is None:
-                errors.append(f"{where}, nguồn {j}: không có nguồn “{sid}”. Thêm nguồn ở tab Kỹ năng & nguồn trước.")
+            src_title = str((src or {}).get("title") or "").strip()[:300] if isinstance(src, dict) else ""
+            # 27/11/2026 (Phúc 2A): bỏ mục Nguồn khỏi giao diện, nên file được tự khai nguồn mới bằng `title`.
+            if not sid and src_title:
+                found = db.scalar(select(SourceWork.id).where(SourceWork.title == src_title))
+                new = None if found else {"title": src_title, "author": str(src.get("author") or "").strip()[:200] or None,
+                                          "url": str(src.get("url") or "").strip()[:500] or None}
+                sources.append({"source_id": found, "new": new, "locator": str(src.get("locator") or "").strip()[:300] or "toàn bộ",
+                                "note": str(src.get("note") or "").strip()[:1000] or None})
                 continue
-            sources.append({"source_id": sid, "locator": str(src.get("locator") or "").strip()[:300] or "toàn bộ",
+            if not sid or db.get(SourceWork, sid) is None:
+                errors.append(f"{where}, nguồn {j}: không có nguồn “{sid}”. Ghi `title` (tên tài liệu) để tạo nguồn mới.")
+                continue
+            sources.append({"source_id": sid, "new": None, "locator": str(src.get("locator") or "").strip()[:300] or "toàn bộ",
                             "note": str(src.get("note") or "").strip()[:1000] or None})
         if not (raw.get("sources") or []):
             errors.append(f"{where}: cần ít nhất một nguồn trong `sources` (nguyên tắc 11: giữ nguồn của bài).")
@@ -202,6 +213,9 @@ def import_content(db: Session, admin: User, raw: bytes, filename: str, dry_run:
         changed = _sync_blocks(db, lesson, item["blocks"])
         row["blocks_changed"] = changed and not row["created"]
         for src in item["sources"]:
+            if src["new"] is not None:   # nguồn khai trong file: tạo một lần, lần nhập sau tìm theo tên
+                src["source_id"] = db.scalar(select(SourceWork.id).where(SourceWork.title == src["new"]["title"])) \
+                    or skill_admin.new_source(db, admin, **src["new"])
             exists = db.scalar(select(LessonSource.id).where(LessonSource.lesson_id == lesson_id,
                                                              LessonSource.source_work_id == src["source_id"],
                                                              LessonSource.locator == src["locator"]))

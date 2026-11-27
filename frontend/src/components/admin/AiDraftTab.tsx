@@ -18,12 +18,16 @@ const NODE: Record<string, string> = {
   extract: "Lấy chữ", retrieve: "Tìm bài đã có", generate: "AI soạn", retry_json: "Thử lại JSON", dedup: "Bỏ ý trùng",
   validate: "Kiểm câu bằng Engine", flags: "Tính cờ duyệt", draft: "Lưu bản nháp", error: "Lỗi", top_up: "Gọi bù câu luyện tập",
 };
-// Hạn mức Gemini chung (ADR-039, V5): bản miễn phí 30 lượt/ngày, 40% soạn bài, 60% AI Tutor.
+// Hạn mức Gemini chung (ADR-039, V5): GEMINI_DAILY_BUDGET lượt/ngày, 40% soạn bài, 60% AI Tutor.
+// 27/11/2026: hai bên cùng ghi "còn" (trước đây soạn bài ghi còn, Tutor ghi đã dùng nên dễ đọc nhầm) và nói rõ hết lượt thì sao.
 function BudgetLine({ budget }: { budget?: AiBudget }) {
   if (!budget || !budget.total) return null;
   const left = Math.max(0, budget.authoring.limit - budget.authoring.used);
+  const tutorLeft = Math.max(0, budget.tutor.limit - budget.tutor.used);
   const at = new Date(budget.resets_at).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
-  return <p className="text-xs text-muted">Lượt Gemini cho soạn bài hôm nay: còn {left}/{budget.authoring.limit} (AI Tutor {budget.tutor.used}/{budget.tutor.limit}), đặt lại lúc {at}.</p>;
+  return <p className={`text-xs ${left === 0 ? "text-warning" : "text-muted"}`}>
+    Lượt Gemini hôm nay: soạn bài còn {left}/{budget.authoring.limit} · AI Tutor còn {tutorLeft}/{budget.tutor.limit} · đặt lại lúc {at}.
+    {left === 0 && " Hết lượt soạn bài vẫn sửa, duyệt, tự điền lời giải và xuất bản được; chỉ AI soạn mới phải chờ."}</p>;
 }
 function NodeLog({ log }: { log?: { node: string; ms: number; in?: number; out?: number; note?: string }[] }) {
   if (!log?.length) return null;
@@ -77,6 +81,19 @@ function DraftEditor({ draftId, onClose }: { draftId: string; onClose: () => voi
     setDraft({ ...draft, lesson_hidden: false }); });
   const pending = c.questions.filter((q) => needsReview(q) && !q.reviewed).length;
   const setQ = (i: number, patch: Partial<AiQuestion>) => set({ questions: c.questions.map((x, j) => (j === i ? { ...x, ...patch } : x)) });
+  // 3A (27/11): sửa đề/đáp án/lời giải = đã đọc câu, tính luôn là đã duyệt (máy chủ kiểm lại khi lưu). Câu khái niệm vẫn cần lời giải.
+  const editQ = (i: number, patch: Partial<AiQuestion>) => {
+    const next = { ...c.questions[i], ...patch, edited: true };
+    if ("explanation" in patch) next.explanation_source = undefined;
+    next.reviewed = next.kind === "open" || Boolean(next.explanation?.trim());
+    setQ(i, next);
+  };
+  const fill = () => run("fill", async () => {
+    await api.aiSaveDraft(draft.id, body());   // nút đọc bản nháp đang lưu: lưu sửa đổi trước
+    const r = await api.aiFillExplanations(draft.id);
+    setDraft(r);
+    setMsg(`Music Engine đã điền lời giải cho ${r.filled} câu.` + (r.still_missing ? ` Còn ${r.still_missing} câu khái niệm Engine không tính được: bạn viết lời giải cho các câu này.` : ""));
+  });
   const more = () => run("more", async () => {
     setMsg("AI đang soạn thêm câu luyện tập, có thể mất đến một phút…");
     // Lưu sửa đổi trước, vì sinh thêm câu đọc bản nháp đang lưu trên máy chủ.
@@ -134,16 +151,16 @@ function DraftEditor({ draftId, onClose }: { draftId: string; onClose: () => voi
     </Card>)}
 
     <h3 className="font-semibold">Câu luyện tập ({c.questions.length})</h3>
-    <p className="text-sm text-muted">Câu có nhãn “Engine đã kiểm” có đáp án do Music Engine tính. Câu “Cần duyệt” là câu khái niệm Engine không kiểm được:
-      đọc kỹ đề, đáp án, giải thích rồi tick “Đã duyệt” thì mới xuất bản được.</p>
+    <p className="text-sm text-muted">Câu có nhãn “Engine đã kiểm” có đáp án và lời giải do Music Engine tính. Câu “Cần duyệt” là câu AI soạn mà Engine không kiểm
+      được: đọc kỹ rồi tick “Đã duyệt”. Câu nào bạn đã sửa thì tự tính là đã duyệt.</p>
     {c.questions.map((q, i) => <Card key={i} className={`grid gap-2 p-3 ${needsReview(q) && !q.reviewed ? "border-warning" : ""}`}>
       <p className="flex flex-wrap items-center gap-1.5 text-xs text-muted">
         <Badge tone="muted">{KIND[q.kind] ?? q.kind}</Badge>{q.level && <Badge tone="muted">{LEVEL[q.level]}</Badge>}
-        {needsReview(q) ? <Badge tone={q.reviewed ? "success" : "warning"}>{q.reviewed ? "Đã duyệt" : "Cần duyệt"}</Badge> : <Badge tone="success">Engine đã kiểm</Badge>}
+        {needsReview(q) ? <Badge tone={q.reviewed ? "success" : "warning"}>{q.reviewed ? (q.edited ? "Bạn đã sửa" : "Đã duyệt") : "Cần duyệt"}</Badge> : <Badge tone="success">Engine đã kiểm</Badge>}
         kỹ năng {q.skill_id} · trang {q.page}{typeof q.block_ref === "number" ? ` · khối ${q.block_ref}` : ""}</p>
       {(q.review_notes?.length ?? 0) > 0 && <ul className="list-disc pl-5 text-sm text-warning">{q.review_notes!.map((n, k) => <li key={k}>{n}</li>)}</ul>}
       <textarea aria-label={`Đề câu ${i + 1}`} rows={2} value={q.prompt} disabled={!open} className="rounded border border-line bg-surface p-2"
-        onChange={(e) => setQ(i, { prompt: e.target.value, reviewed: false })} />
+        onChange={(e) => editQ(i, { prompt: e.target.value })} />
       {q.engine_note && <p className="text-sm text-warning">{q.engine_note}</p>}
       {(q.kind === "mcq" || q.kind === "true_false") && <p className="text-sm">Phương án: {q.options?.map((o) => o === q.answer ? `✔ ${o}` : o).join(" · ")}</p>}
       {q.kind === "multi_select" && <p className="text-sm">Phương án: {q.options?.map((o) => q.answers?.includes(o) ? `✔ ${o}` : o).join(" · ")}</p>}
@@ -154,15 +171,17 @@ function DraftEditor({ draftId, onClose }: { draftId: string; onClose: () => voi
       {q.kind === "open" && <>
         <label className="text-sm font-semibold" htmlFor={`ai-model-${i}`}>Đáp án mẫu</label>
         <textarea id={`ai-model-${i}`} rows={3} value={q.model_answer ?? ""} disabled={!open} className="rounded border border-line bg-surface p-2 text-sm"
-          onChange={(e) => setQ(i, { model_answer: e.target.value, reviewed: false })} />
+          onChange={(e) => editQ(i, { model_answer: e.target.value })} />
         <label className="text-sm font-semibold" htmlFor={`ai-rubric-${i}`}>Ý chấm (mỗi dòng một ý, 2–5 ý)</label>
         <textarea id={`ai-rubric-${i}`} rows={3} value={(q.rubric ?? []).join("\n")} disabled={!open} className="rounded border border-line bg-surface p-2 text-sm"
-          onChange={(e) => setQ(i, { rubric: e.target.value.split("\n").filter((l) => l.trim()), reviewed: false })} />
+          onChange={(e) => editQ(i, { rubric: e.target.value.split("\n").filter((l) => l.trim()) })} />
       </>}
-      <textarea aria-label={`Lời giải câu ${i + 1}`} rows={2} value={q.explanation} disabled={!open} placeholder="Lời giải" className="rounded border border-line bg-surface p-2 text-sm"
-        onChange={(e) => setQ(i, { explanation: e.target.value })} />
+      <label className="text-sm font-semibold" htmlFor={`ai-why-${i}`}>Lời giải{q.explanation_source === "engine" && <span className="ml-2 font-normal text-success">do Music Engine viết</span>}</label>
+      <textarea id={`ai-why-${i}`} aria-label={`Lời giải câu ${i + 1}`} rows={2} value={q.explanation} disabled={!open}
+        placeholder={needsReview(q) && !q.engine_verified ? "Câu khái niệm: viết vì sao đáp án đúng" : "Bỏ trống rồi bấm “Tự điền lời giải” để Music Engine viết"}
+        className="rounded border border-line bg-surface p-2 text-sm" onChange={(e) => editQ(i, { explanation: e.target.value })} />
       {open && <div className="flex flex-wrap items-center gap-3">
-        {needsReview(q) && <label className="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" checked={Boolean(q.reviewed)}
+        {needsReview(q) && !q.edited && <label className="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" checked={Boolean(q.reviewed)}
           onChange={(e) => setQ(i, { reviewed: e.target.checked })} />Đã duyệt: tôi đã đọc đề, đáp án và lời giải</label>}
         <Button variant="ghost" onClick={() => set({ questions: c.questions.filter((_, j) => j !== i) })}>Xóa câu này</Button>
       </div>}
@@ -180,12 +199,14 @@ function DraftEditor({ draftId, onClose }: { draftId: string; onClose: () => voi
     {open && <div className="grid gap-2 rounded-lg border border-line p-3">
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" loading={busy === "save"} disabled={busy !== null} onClick={save}>Lưu và soát lại</Button>
+        <Button variant="secondary" loading={busy === "fill"} disabled={busy !== null} onClick={fill}>Tự điền lời giải</Button>
         <Button variant="ghost" disabled={busy !== null} onClick={reject}>Từ chối bản nháp</Button>
       </div>
       {flags > 0 && <label className="flex items-start gap-2 text-sm"><input type="checkbox" className="mt-1" checked={ack} onChange={(e) => setAck(e.target.checked)} />
         Tôi đã đối chiếu tài liệu gốc và vẫn muốn xuất bản dù Engine báo nghi sai.</label>}
       {unacked > 0 && <p className="text-sm text-warning" role="status">Còn {unacked} cờ chưa đối chiếu. Đọc lại trang gốc rồi tick “Đã đối chiếu” ở từng cờ.</p>}
-      {pending > 0 && <p className="text-sm text-warning" role="status">Còn {pending} câu cần duyệt. Đọc kỹ rồi tick “Đã duyệt” ở từng câu.</p>}
+      {pending > 0 && <p className="text-sm text-warning" role="status">Còn {pending} câu cần duyệt. Đọc kỹ rồi tick “Đã duyệt”, hoặc sửa câu cho đúng (sửa là tính đã duyệt).</p>}
+      <p className="text-xs text-muted">“Tự điền lời giải” không gọi Gemini nên không tốn lượt: Music Engine viết lời giải cho câu tính được và chỉ ra vì sao từng phương án sai.</p>
       <Button loading={busy === "publish"} disabled={busy !== null || (flags > 0 && !ack) || pending > 0 || unacked > 0} onClick={publish}>Xuất bản thành bài học</Button>
       <p className="text-xs text-muted">Bấm xuất bản sẽ tự lưu các sửa đổi rồi soát lại bằng Music Engine. Bài mới ở trạng thái ẩn: xem trước như học sinh rồi mới hiện.</p>
     </div>}

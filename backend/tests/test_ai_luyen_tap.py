@@ -39,7 +39,9 @@ def test_mcq_co_check_engine_chon_dap_an_va_sua_khi_ai_chon_sai():
                    "option_feedback": [{"option": "m3", "why": "m3 chỉ 3 nửa cung."}]})
     # ADR-033: Engine phải sửa đáp án AI chọn thì câu vẫn giữ nhưng bắt duyệt (trước đợt 3: miễn duyệt).
     assert why == "" and q["answer"] == "M3" and q["engine_verified"] and q["needs_review"]
-    assert "Engine sửa" in q["engine_note"] and q["option_feedback"] == {"m3": "m3 chỉ 3 nửa cung."}
+    # 27/11 (5A): lời AI cho phương án sai được giữ; phương án AI bỏ trống thì Engine chỉ ra chỗ sai.
+    assert "Engine sửa" in q["engine_note"] and q["option_feedback"]["m3"] == "m3 chỉ 3 nửa cung."
+    assert "quãng 3" in q["option_feedback"]["P4"] and "cùng 4 nửa cung" in q["option_feedback"]["d4"]
 
 
 def test_mcq_engine_khong_thay_dung_mot_phuong_an_thi_loai():

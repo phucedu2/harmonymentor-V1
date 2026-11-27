@@ -30,31 +30,22 @@ def client():
     ai_switch.reset_cache()
 
 
-def test_nang_nguoi_hoc_len_admin_co_hieu_luc_ngay_va_ghi_nhat_ky(client):
+def test_doi_vai_tro_qua_web_da_go(client):
+    """ADR-036 bổ sung (27/11/2026, Phúc 1A): không còn nâng/hạ Quản trị viên qua web; khóa/mở khóa vẫn dùng được."""
     admin_id = make_user("admin")
     h = auth(admin_id, "admin")
     target = make_user()
-    t = auth(target)   # token cũ của người học: quyền đọc từ CSDL nên đổi vai trò có hiệu lực ngay
-    assert client.get(f"{A}/stats", headers=t).status_code == 403
-    r = client.patch(f"{A}/users/{target}", headers=h, json={"role": "admin"})
-    assert r.status_code == 200 and r.json()["role"] == "admin"
-    assert client.get(f"{A}/stats", headers=t).status_code == 200
-    log = [a for a in client.get(f"{A}/audit", headers=h).json() if a["action"] == "user.role"]
-    assert log and log[0]["detail"] == {"from": "learner", "to": "admin"}
-    # Hạ lại vai trò Quản trị viên khác: được; mất quyền ngay.
-    assert client.patch(f"{A}/users/{target}", headers=h, json={"role": "learner"}).status_code == 200
-    assert client.get(f"{A}/stats", headers=t).status_code == 403
-
-
-def test_khong_tu_ha_quyen_minh_va_vai_tro_la_khong_hop_le(client):
-    admin_id = make_user("admin")
-    h = auth(admin_id, "admin")
-    r = client.patch(f"{A}/users/{admin_id}", headers=h, json={"role": "learner"})
-    assert r.status_code == 409 and r.json()["error"]["code"] == "CANNOT_CHANGE_OWN_ROLE"
-    assert client.patch(f"{A}/users/{make_user()}", headers=h, json={"role": "superadmin"}).status_code == 400
-    assert client.patch(f"{A}/users/{make_user()}", headers=h, json={}).status_code in (400, 422)
+    t = auth(target)
+    for body in ({"role": "admin"}, {"role": "learner", "is_active": True}):
+        assert client.patch(f"{A}/users/{target}", headers=h, json=body).status_code == 400
+    assert client.get(f"{A}/stats", headers=t).status_code == 403   # vẫn là người học
+    assert not [a for a in client.get(f"{A}/audit", headers=h).json() if a["action"] == "user.role"]
+    assert client.patch(f"{A}/users/{admin_id}", headers=h, json={"role": "learner"}).status_code == 400
+    assert client.patch(f"{A}/users/{target}", headers=h, json={}).status_code == 400
+    r = client.patch(f"{A}/users/{target}", headers=h, json={"is_active": False})
+    assert r.status_code == 200 and r.json()["role"] == "learner" and r.json()["is_active"] is False
     learner = auth(make_user())
-    assert client.patch(f"{A}/users/{admin_id}", headers=learner, json={"role": "learner"}).status_code == 403
+    assert client.patch(f"{A}/users/{admin_id}", headers=learner, json={"is_active": False}).status_code == 403
 
 
 def test_cong_tac_ai_tat_thi_khong_tra_provider_va_ghi_nhat_ky(client, monkeypatch):

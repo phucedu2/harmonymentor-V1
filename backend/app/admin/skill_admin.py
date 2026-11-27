@@ -211,7 +211,8 @@ def _url(raw: Any) -> str | None:
     return url
 
 
-def create_source(db: Session, admin: User, title: str, author: str | None, url: str | None) -> dict[str, Any]:
+def new_source(db: Session, admin: User, title: str, author: str | None, url: str | None) -> str:
+    """Thêm nguồn (chưa commit), trả id. Dùng chung cho API nguồn và cho file nhập bài tự khai nguồn."""
     title = _clean(title, 300)
     if not title:
         raise AdminContentError("SOURCE_INCOMPLETE", "Nguồn cần tên tài liệu.")
@@ -221,8 +222,14 @@ def create_source(db: Session, admin: User, title: str, author: str | None, url:
         work_id, n = f"{base}-{n}", n + 1
     db.add(SourceWork(id=work_id, title=title, author=_clean(author, 200) or None, url=_url(url)))
     audit(db, admin, "source.create", "source_work", work_id, {"title": title})
+    db.flush()
+    return work_id
+
+
+def create_source(db: Session, admin: User, title: str, author: str | None, url: str | None) -> dict[str, Any]:
+    work_id = new_source(db, admin, title, author, url)
     db.commit()
-    return {"id": work_id, "title": title}
+    return {"id": work_id, "title": _clean(title, 300)}
 
 
 def update_source(db: Session, admin: User, work_id: str, title: str, author: str | None, url: str | None) -> dict[str, Any]:

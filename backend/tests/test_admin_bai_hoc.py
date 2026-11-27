@@ -123,9 +123,23 @@ def test_them_cau_engine_tinh_dap_an_hoc_sinh_lam_duoc(client, h):
     assert build["engine_answer"] == ["Eb", "Gb", "Bbb", "Db"]
 
 
+def test_bo_trong_loi_giai_thi_engine_tu_viet(client, h):
+    """27/11/2026 (Phúc 4A, 5A): câu Engine tính được mà bỏ trống lời giải thì Engine viết lời giải và lời chỉ chỗ sai."""
+    lid = new_lesson(client, h)
+    r = client.post(f"{A}/lessons/{lid}/exercises", headers=h, json={**MCQ, "explanation": ""})
+    assert r.status_code == 201, r.text
+    q = r.json()["question"]
+    assert "4 nửa cung" in q["explanation"]
+    with SessionLocal() as db:
+        cfg = db.get(ExerciseVersion, f"{r.json()['id']}-v1").grader_config
+    assert "quãng 3 trưởng" in cfg["option_feedback"]["m3"]
+
+
 @pytest.mark.parametrize("patch,code", [
     ({"answer": "m3"}, "ENGINE_DISAGREES"),               # Engine tính M3: không tự sửa giúp, báo người soạn
-    ({"explanation": ""}, "NO_EXPLANATION"),               # 8A: câu phải có lời giải
+    # 8A: câu khái niệm (Engine không tính được) phải có lời giải; câu Engine tính được thì Engine tự viết (27/11, 4A).
+    ({"explanation": "", "check": None, "prompt": "Quãng nào nghe ổn định nhất?", "options": ["P8", "m2", "A4"], "answer": "P8"},
+     "NO_EXPLANATION"),
     ({"skill_id": "khong.co"}, "QUESTION_INVALID"),
     ({"prompt": "Quãng từ D lên F là quãng gì?"}, "QUESTION_INVALID"),   # đề lệch phần kiểm C–E
 ])

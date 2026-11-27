@@ -589,6 +589,24 @@ def update_draft(db: Session, admin: User, draft_id: str, edited: dict[str, Any]
     return draft
 
 
+def fill_explanations(db: Session, admin: User, draft_id: str) -> tuple[AiLessonDraft, int, int]:
+    """Nút "Tự điền lời giải" (Phúc 6A, 27/11/2026): chạy lại bộ chuẩn hóa trên bản nháp cũ để Music Engine viết lời giải
+    và lời chỉ chỗ sai còn thiếu, sửa luôn câu quãng kép. Không gọi Gemini nên không tốn lượt. Trả (bản nháp, số câu vừa
+    được điền lời giải, số câu khái niệm vẫn thiếu lời giải để người viết)."""
+    draft = _draft(db, draft_id)
+    before = sum(1 for q in draft.content.get("questions", []) if q.get("explanation"))
+    content = draft.content
+    update_draft(db, admin, draft_id, {"title": content.get("title"), "objectives": content.get("objectives"),
+                                       "blocks": content.get("blocks"), "questions": content.get("questions"),
+                                       "expansion": content.get("expansion", False)})
+    questions = draft.content["questions"]
+    after = sum(1 for q in questions if q.get("explanation"))
+    missing = sum(1 for q in questions if q["kind"] != "open" and not q.get("explanation"))
+    audit(db, admin, "ai.draft.fill_explanations", "ai_lesson_draft", draft.id, {"filled": max(0, after - before), "missing": missing})
+    db.commit()
+    return draft, max(0, after - before), missing
+
+
 def reject_draft(db: Session, admin: User, draft_id: str) -> None:
     draft = _draft(db, draft_id)
     if draft.status != "draft":
