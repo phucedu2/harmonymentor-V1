@@ -104,7 +104,7 @@ L07_DRAFT_BLOCKS: list[Block] = [
         "title": "2. Tension của ba hợp âm trong ii–V–I ở C major",
         "items": [
             "Dm7 (D–F–A–C): 9 = E, 11 = G, 13 = B.",
-            "G7 (G–B–D–F): 9 = A, 11 = C, 13 = E. Nốt 11 (C) cách quãng 3 (B) nửa cung, nên hai nốt này nghe rất gần nhau. Khi chọn tension, hãy nghe thử.",
+            "G7 (G–B–D–F): 9 = A, 11 = C, 13 = E. Nốt 11 (C) cao hơn quãng 3 (B) nửa cung, nên nghe chỏi khi ngân dài trên G7. Vì vậy nốt 11 được gọi là nốt tránh (avoid note) của G7. Khi chọn tension, hãy nghe thử.",
             "Cmaj7 (C–E–G–B): 9 = D, 11 = F, 13 = A.",
         ]}),
     ("L07-BCP1", "checkpoint", {
