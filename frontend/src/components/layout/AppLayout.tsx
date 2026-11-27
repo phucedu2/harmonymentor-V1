@@ -20,9 +20,6 @@ const NAV = [
 ];
 // "Hồ sơ" chuyển lên menu ảnh đại diện ở góc phải trên (ADR-029, 9A); trang /app/ho-so giữ nguyên.
 
-// Phiên bản hiện ở chân thanh bên, giống v0.5.3 ghi "v0.5.3-dev" dưới logo.
-const APP_VERSION = `v${__APP_VERSION__}`;
-
 // FE-009: dưới lg menu là một dòng cuộn ngang dính đầu màn hình (không xuống dòng như "Quiz kỹ năng" 3 dòng trước đây).
 // Không dùng thanh tab đáy vì đáy đã dành cho thanh "Bước tiếp" của bài học và thanh Phát của Harmony Lab.
 const linkClass = ({ isActive }: { isActive: boolean }) =>
@@ -75,9 +72,6 @@ export default function AppLayout() {
             ))}
           </ul>
         </nav>
-        <div className="hidden border-t border-shell-line pt-4 lg:mt-auto lg:block">
-          <p className="text-xs text-shell-muted">HarmonyMentor {APP_VERSION}</p>
-        </div>
       </aside>
       <div className="min-w-0">
         {/* Máy tính: thanh mỏng trên cùng chỉ chứa ảnh đại diện ở góc phải (điện thoại: ảnh nằm ở dòng logo). */}
