@@ -80,7 +80,7 @@ jobs:
       # Mức tối thiểu = số test đạt sau PR-3 (27/10/2026): 281 cũ + 38 test phiên bản câu hỏi; ai xóa test thì CI đỏ.
       - name: Kiểm số test (0 skip, ít nhất 966 đạt)
         if: ${{ !cancelled() }}
-        run: python ../scripts/ci/kiem_junit.py ../ket-qua-sqlite.xml --min-passed 1632 --title "Backend SQLite"
+        run: python ../scripts/ci/kiem_junit.py ../ket-qua-sqlite.xml --min-passed 1662 --title "Backend SQLite"
 
       - name: Lưu kết quả JUnit
         if: ${{ !cancelled() }}
@@ -160,7 +160,7 @@ jobs:
       # pytest vẫn trả mã 0 khi các test này bị skip, nên phải đếm riêng.
       - name: Kiểm số test (0 skip, ít nhất 21 đạt)
         if: ${{ !cancelled() }}
-        run: python ../scripts/ci/kiem_junit.py ../ket-qua-postgres.xml --min-passed 25 --title "PostgreSQL HM-010 + PR-3"
+        run: python ../scripts/ci/kiem_junit.py ../ket-qua-postgres.xml --min-passed 27 --title "PostgreSQL HM-010 + PR-3 + ADR-040"
 
       # Test tự xóa schema hm_pgtest_* của mình; còn sót là lớp dọn dẹp của PR-1 hỏng.
       - name: Không còn schema test sót lại
@@ -243,10 +243,19 @@ jobs:
   # FE-028: test giao diện với backend THẬT (đăng ký/đăng nhập, làm bài, ôn thẻ). Playwright tự dựng backend SQLite mới
   # và bản build qua vite preview (xem frontend/playwright.live.config.ts). AI tắt, không gọi mạng ngoài.
   # Cũng KHÔNG nằm trong 3 check bắt buộc của ruleset bao-ve-main.
+  # ADR-040: thêm Mailpit (hộp thư thử) để chạy luồng quên/đổi mật khẩu đầu cuối (e2e-live/mat-khau.live.ts, truy-cap.live.ts).
   frontend-e2e-live:
     name: Frontend (Playwright + backend thật)
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    services:
+      mailpit:
+        image: axllent/mailpit:v1.33.1
+        ports:
+          - 1025:1025
+          - 8025:8025
+    env:
+      E2E_MAILPIT: "1"
     steps:
       - uses: actions/checkout@v5
 

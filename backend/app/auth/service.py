@@ -21,6 +21,7 @@ from .security import (
     hash_refresh_token,
     new_refresh_token,
     password_problem,
+    password_stamp,
     verify_password,
 )
 
@@ -40,29 +41,37 @@ def normalize_email(email: str) -> str:
     return email.strip().lower()
 
 
-def register_user(db: Session, email: str, password: str, display_name: str) -> User:
+def register_user(db: Session, email: str, password: str, display_name: str) -> tuple[User, bool]:
+    """Trả (người dùng, đã_tạo_mới). Email đã có tài khoản thì KHÔNG báo lỗi 409 (lộ email, ADR-040 mục 1A):
+    trả người dùng cũ với cờ False để router hiện "kiểm tra hộp thư" và gửi thư báo cho chủ email."""
     email = normalize_email(email)
     fields: dict[str, str] = {}
     if not EMAIL_RE.match(email):
         fields["email"] = "Email chưa đúng định dạng."
-    problem = password_problem(password)
+    problem = password_problem(password, email)
     if problem:
         fields["password"] = problem
     if not display_name.strip():
         fields["display_name"] = "Hãy nhập tên hiển thị."
     if fields:
         raise AppError(400, "VALIDATION_ERROR", "Thông tin đăng ký chưa hợp lệ.", fields=fields)
-    if db.scalar(select(User.id).where(User.email == email)):
-        raise AppError(409, "EMAIL_TAKEN", "Email này đã có tài khoản.")
-    user = User(id=str(uuid.uuid4()), email=email, hashed_password=hash_password(password),
+    # Băm mật khẩu ở cả hai nhánh để thời gian phản hồi email cũ/mới như nhau (bcrypt chiếm gần hết thời gian).
+    hashed = hash_password(password)
+    existing = db.scalar(select(User).where(User.email == email))
+    if existing is not None:
+        return existing, False
+    user = User(id=str(uuid.uuid4()), email=email, hashed_password=hashed,
                 display_name=display_name.strip(), role="learner")
     db.add(user)
     try:
         db.commit()
-    except IntegrityError as exc:  # hai yêu cầu đăng ký cùng email chạy song song
+    except IntegrityError:  # hai yêu cầu đăng ký cùng email chạy song song: coi như email đã có
         db.rollback()
-        raise AppError(409, "EMAIL_TAKEN", "Email này đã có tài khoản.") from exc
-    return user
+        existing = db.scalar(select(User).where(User.email == email))
+        if existing is None:
+            raise
+        return existing, False
+    return user, True
 
 
 def authenticate(db: Session, email: str, password: str, ip: str) -> User:
@@ -81,15 +90,33 @@ def authenticate(db: Session, email: str, password: str, ip: str) -> User:
     return user
 
 
-def issue_refresh_token(db: Session, user: User) -> str:
+def refresh_expiry(remember: bool, started_at: datetime, now: datetime) -> datetime:
+    """3A: trượt 30 ngày (ghi nhớ) hoặc 1 ngày (phiên), nhưng không quá trần tuyệt đối 90 ngày từ lúc đăng nhập."""
+    days = settings.remember_refresh_days if remember else settings.session_refresh_days
+    return min(now + timedelta(days=days), _aware(started_at) + timedelta(days=settings.session_absolute_days))
+
+
+def issue_refresh_token(db: Session, user: User, remember: bool = True,
+                        session_started_at: datetime | None = None) -> str:
     token = new_refresh_token()
+    now = utcnow()
+    started = session_started_at or now
     db.add(RefreshToken(id=str(uuid.uuid4()), user_id=user.id, token_hash=hash_refresh_token(token),
-                        expires_at=utcnow() + timedelta(days=settings.refresh_token_days)))
+                        expires_at=refresh_expiry(remember, started, now), remember=remember,
+                        session_started_at=started))
     db.commit()
     return token
 
 
-def rotate_refresh_token(db: Session, token: str | None) -> tuple[User, str]:
+def revoke_all_refresh_tokens(db: Session, user_id: str, keep_hash: str | None = None) -> None:
+    """Thu hồi mọi phiên của người dùng (đặt lại/đổi mật khẩu). keep_hash: giữ lại đúng một phiên."""
+    stmt = update(RefreshToken).where(RefreshToken.user_id == user_id, RefreshToken.revoked_at.is_(None))
+    if keep_hash:
+        stmt = stmt.where(RefreshToken.token_hash != keep_hash)
+    db.execute(stmt.values(revoked_at=utcnow()))
+
+
+def rotate_refresh_token(db: Session, token: str | None) -> tuple[User, str, bool]:
     """Đổi refresh token cũ lấy token mới; token cũ bị thu hồi ngay (NFR-18)."""
     invalid = AppError(401, "UNAUTHORIZED", "Phiên đăng nhập đã hết hạn. Hãy đăng nhập lại.")
     if not token:
@@ -100,7 +127,8 @@ def rotate_refresh_token(db: Session, token: str | None) -> tuple[User, str]:
         update(RefreshToken)
         .where(RefreshToken.token_hash == hash_refresh_token(token), RefreshToken.revoked_at.is_(None))
         .values(revoked_at=now)
-        .returning(RefreshToken.user_id, RefreshToken.expires_at)
+        .returning(RefreshToken.user_id, RefreshToken.expires_at, RefreshToken.remember,
+                   RefreshToken.session_started_at, RefreshToken.created_at)
     ).first()
     if result is None or _aware(result.expires_at) <= now:
         db.commit()
@@ -109,8 +137,11 @@ def rotate_refresh_token(db: Session, token: str | None) -> tuple[User, str]:
     if user is None or not user.is_active or user.is_synthetic:
         db.commit()
         raise invalid
-    new_token = issue_refresh_token(db, user)  # commit cả hai thay đổi
-    return user, new_token
+    # Token mới giữ kiểu phiên và mốc bắt đầu của token cũ (trần 90 ngày không bị kéo dài bởi xoay vòng).
+    remember = bool(result.remember)
+    started = result.session_started_at or result.created_at
+    new_token = issue_refresh_token(db, user, remember, started)  # commit cả hai thay đổi
+    return user, new_token, remember
 
 
 def revoke_refresh_token(db: Session, token: str | None) -> None:
@@ -125,4 +156,4 @@ def revoke_refresh_token(db: Session, token: str | None) -> None:
 
 
 def access_token_for(user: User) -> str:
-    return create_access_token(user.id, user.role)
+    return create_access_token(user.id, user.role, pwd=password_stamp(user.password_changed_at))

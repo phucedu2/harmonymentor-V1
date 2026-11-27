@@ -207,8 +207,38 @@ docker compose up --build
 - Tạo admin: `docker compose exec -e ADMIN_PASSWORD=<mật-khẩu> api python -m app.seed_admin --email admin@example.com`.
 - Bảng độ trễ p95: `docker compose logs api --no-log-prefix | python scripts/p95.py`.
 - Xóa sạch dữ liệu: `docker compose down -v`.
+- Hộp thư thử (Mailpit): http://localhost:8025, nơi xem thư đặt lại mật khẩu, xác minh email khi chạy ở máy (xem mục dưới).
 
 4 dịch vụ theo SRS 10.2: `db` (PostgreSQL 16 + pgvector, CSDL `harmony`), `redis` (bộ đếm khóa đăng nhập), `api` (chạy `alembic upgrade head` rồi uvicorn), `web` (nginx, cổng `5173:80`). `/health` trả 503 khi CSDL hoặc Redis lỗi; compose dùng nó để chờ `api` sẵn sàng rồi mới mở `web`.
+
+## Cấu hình gửi email (quên mật khẩu, xác minh email, ADR-040)
+
+HarmonyMentor **không bao giờ gửi mật khẩu qua email**. Thư chỉ chứa một liên kết dùng một lần để bạn tự đặt mật khẩu mới.
+
+**Mặc định: Mailpit, không cần tài khoản thật.** `docker compose up` có sẵn dịch vụ `mailpit`. Mọi thư API gửi đi đều bị Mailpit giữ lại, không ra Internet. Mở http://localhost:8025 để đọc thư, bấm liên kết trong thư như thật. Cả nhóm dùng cách này để thử.
+
+**Gửi thư thật qua Gmail** (khi demo cho người ngoài nhận thư). Làm một lần trên máy chạy Docker:
+
+1. Tạo một tài khoản Gmail riêng cho dự án, ví dụ `harmonymentor.noreply@gmail.com`. Đừng dùng Gmail cá nhân.
+2. Bật **Xác minh 2 bước** cho tài khoản đó: https://myaccount.google.com/security → "Xác minh 2 bước". Gmail chỉ cho tạo Mật khẩu ứng dụng khi đã bật bước này.
+3. Mở https://myaccount.google.com/apppasswords, đặt tên ứng dụng "HarmonyMentor", bấm **Tạo**. Google hiện 16 ký tự (dạng `abcd efgh ijkl mnop`). Chép lại, bỏ dấu cách. Google chỉ hiện một lần.
+4. Mở file `.env` ở thư mục gốc repo (KHÔNG phải `.env.example`) và điền:
+
+   ```env
+   EMAIL_BACKEND=smtp
+   SMTP_HOST=smtp.gmail.com
+   SMTP_PORT=587
+   SMTP_USER=harmonymentor.noreply@gmail.com
+   SMTP_PASSWORD=abcdefghijklmnop
+   EMAIL_FROM=HarmonyMentor <harmonymentor.noreply@gmail.com>
+   FRONTEND_BASE_URL=http://localhost:5173
+   ```
+
+5. Chạy lại: `docker compose up -d --build api`. Thử "Quên mật khẩu?" với email của bạn.
+
+> **Cảnh báo:** `.env` chứa Mật khẩu ứng dụng, tương đương chìa khóa hộp thư. Không commit `.env` (đã có trong `.gitignore`), không dán vào chat hay ảnh chụp màn hình. Lộ thì vào https://myaccount.google.com/apppasswords xóa mật khẩu đó và tạo cái mới. Gmail giới hạn khoảng 500 thư/ngày.
+
+Lỗi thường gặp: `535 Username and Password not accepted` là sai Mật khẩu ứng dụng hoặc chưa bật Xác minh 2 bước. Thư không tới thì xem `docker compose logs api` (log chỉ ghi người nhận đã che, không ghi liên kết). Liên kết trong thư trỏ về `FRONTEND_BASE_URL`, nên người nhận phải mở được địa chỉ đó (máy cá nhân thì chỉ chính máy đó mở được).
 
 ## PostgreSQL target (chạy backend ngoài Docker)
 

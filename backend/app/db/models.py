@@ -40,6 +40,10 @@ class User(Base):
     goal_embedding_model: Mapped[Optional[str]] = mapped_column(String(80), nullable=True)
     # Ảnh đại diện là một con vật vẽ sẵn (ADR-029, 10A). Rỗng = con vật cố định suy từ id (app/auth/avatars.py).
     avatar_key: Mapped[Optional[str]] = mapped_column(String(24), nullable=True)
+    # ADR-040: access token cấp trước mốc này bị từ chối, để đổi/đặt lại mật khẩu là mọi phiên cũ chết ngay.
+    password_changed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    # ADR-040: xác minh email mức "mềm" (vẫn học được, chỉ nhắc). Tài khoản có trước migration coi như đã xác minh.
+    email_verified_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
 class RefreshToken(Base):
@@ -53,6 +57,37 @@ class RefreshToken(Base):
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     revoked_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    # ADR-040 (3A): "Ghi nhớ đăng nhập". Xoay vòng giữ nguyên kiểu phiên và mốc bắt đầu để áp trần tuyệt đối 90 ngày.
+    remember: Mapped[bool] = mapped_column(Boolean, default=True, server_default=sa_true())
+    session_started_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class PasswordResetToken(Base):
+    """Liên kết đặt lại mật khẩu dùng một lần (ADR-040). Chỉ lưu SHA-256; token gốc chỉ nằm trong email."""
+
+    __tablename__ = "password_reset_tokens"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True, index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    used_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    requested_ip: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+
+
+class EmailVerificationToken(Base):
+    """Liên kết xác minh email (ADR-040), cùng kiểu với PasswordResetToken, hạn 24 giờ."""
+
+    __tablename__ = "email_verification_tokens"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True, index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    used_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    requested_ip: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
 
 
 class Skill(Base):

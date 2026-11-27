@@ -10,6 +10,9 @@ export type User = {
   goal_text: string | null;
   // ADR-029: khóa con vật vẽ sẵn (components/ui/AnimalAvatar.tsx). Máy chủ cũ chưa có trường này thì suy từ id.
   avatar?: string;
+  // ADR-040: banner nhắc xác minh email (mức mềm) và dòng "Đổi lần cuối" ở Hồ sơ. Máy chủ cũ thiếu thì coi như đã xác minh.
+  email_verified?: boolean;
+  password_changed_at?: string | null;
 };
 
 export type AuthResponse = {

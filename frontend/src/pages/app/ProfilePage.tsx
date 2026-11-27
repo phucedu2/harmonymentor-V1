@@ -7,6 +7,7 @@ import { Alert } from "../../components/ui/Alert";
 import { Button } from "../../components/ui/Button";
 import { PageLoader } from "../../components/ui/PageLoader";
 import { TextField } from "../../components/ui/TextField";
+import { SecurityCard, VerifyEmailBanner } from "./profile/SecurityCard";
 import { ANIMALS, ANIMAL_NAME, AnimalAvatar, animalFor, type Animal } from "../../components/ui/AnimalAvatar";
 
 const INSTRUMENTS: { value: NonNullable<User["preferred_instrument"]>; label: string }[] = [
@@ -45,6 +46,7 @@ export default function ProfilePage() {
     <section className="max-w-xl">
       <h1 className="text-2xl font-bold">Hồ sơ</h1>
       <p className="mt-1 text-muted">Thông tin này chỉ bạn xem được.</p>
+      {me.data.email_verified === false && <VerifyEmailBanner />}
 
       <div className="mt-6 flex items-center gap-4">
         <AnimalAvatar animal={avatar ?? current} size={72} />
@@ -87,6 +89,8 @@ export default function ProfilePage() {
         </fieldset>
         <Button type="submit" loading={save.isPending} disabled={!dirty || !name.trim()}>Lưu thay đổi</Button>
       </form>
+
+      <SecurityCard user={me.data} onChanged={() => me.refetch()} />
     </section>
   );
 }

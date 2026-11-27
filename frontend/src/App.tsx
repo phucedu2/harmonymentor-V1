@@ -8,6 +8,9 @@ import HomePage from "./pages/public/HomePage";
 // Tách bundle theo route (docs/giai-doan/phase-A/PHASE_A_PLAN.md mục 3): trang chủ tải ngay, phần còn lại tải khi mở.
 const LoginPage = lazy(() => import("./pages/public/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/public/RegisterPage"));
+const ForgotPasswordPage = lazy(() => import("./pages/public/ForgotPasswordPage"));
+const ResetPasswordPage = lazy(() => import("./pages/public/ResetPasswordPage"));
+const VerifyEmailPage = lazy(() => import("./pages/public/VerifyEmailPage"));
 const DashboardPage = lazy(() => import("./pages/Dashboard"));
 const LearnPage = lazy(() => import("./pages/Learn"));
 const PracticePage = lazy(() => import("./pages/Practice"));
@@ -26,6 +29,9 @@ const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: "dang-nhap", element: <LoginPage /> },
       { path: "dang-ky", element: <RegisterPage /> },
+      { path: "quen-mat-khau", element: <ForgotPasswordPage /> },
+      { path: "dat-lai-mat-khau", element: <ResetPasswordPage /> },
+      { path: "xac-minh-email", element: <VerifyEmailPage /> },
       { path: "*", element: <NotFoundPage /> },
     ],
   },

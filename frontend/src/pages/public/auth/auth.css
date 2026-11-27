@@ -1,0 +1,17 @@
+/* Bảng thương hiệu của các trang tài khoản (ADR-040, B1). Chỉ dùng token màu, không mã màu cứng. */
+@keyframes hm-auth-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes hm-auth-glow {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.8; }
+}
+.hm-auth-note { animation: hm-auth-float 4.8s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.hm-auth-note:nth-of-type(2) { animation-delay: -1.2s; }
+.hm-auth-note:nth-of-type(3) { animation-delay: -2.4s; }
+.hm-auth-note:nth-of-type(4) { animation-delay: -3.6s; }
+.hm-auth-spot { animation: hm-auth-glow 6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .hm-auth-note, .hm-auth-spot { animation: none; }
+}

@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from ..core.errors import AppError
 from ..db.models import User
 from ..db.session import get_db
-from .security import decode_access_token
+from .security import decode_access_token, password_stamp
 
 
 def _unauthorized() -> AppError:
@@ -26,6 +26,9 @@ def get_current_user(request: Request, db: Session = Depends(get_db)) -> User:
     user = db.get(User, payload["sub"])
     # Người dùng bị khóa hoặc người học mô phỏng (không đăng nhập được, nguyên tắc 9) đều bị chặn.
     if user is None or not user.is_active or user.is_synthetic:
+        raise _unauthorized()
+    # A2: token cấp trước lần đổi/đặt lại mật khẩu gần nhất bị từ chối ngay, không đợi hết 30 phút.
+    if user.password_changed_at is not None and payload.get("pwd") != password_stamp(user.password_changed_at):
         raise _unauthorized()
     return user
 
