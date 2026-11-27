@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
-import { api, type AdminLessonRow, type AdminSkill, type AdminSource } from "../../api";
+import { api, type AdminSkill } from "../../api";
 import { Button } from "../ui/Button";
 import { Badge, Card, CardTitle } from "../ui/Page";
 
-// FR-ADM-18..22, FR-ADM-38 (Phúc 1A). Kỹ năng/cạnh/nguồn gốc của hệ thống chỉ xem: seed ghi lại mỗi lần khởi động.
+// FR-ADM-18..22 (Phúc 1A ngày 25/11). Kỹ năng/cạnh gốc của hệ thống chỉ xem: seed ghi lại mỗi lần khởi động.
 // Kỹ năng của bài = kỹ năng các câu của bài (04 mục 6.5): đổi ở ô "Kỹ năng" trong form câu luyện tập.
+// 27/11/2026 (Phúc 2A): không còn là tab riêng mà là mục "Nâng cao" thu gọn trong tab Bài học. Vẫn cần vì AI soạn bài
+// chỉ gán được kỹ năng có sẵn: kiến thức mới (vd quãng kép) muốn có mastery riêng thì phải thêm kỹ năng ở đây.
+// Phần Nguồn tài liệu bỏ khỏi giao diện: AI soạn bài tự gắn nguồn (tên tài liệu + trang), bài gốc do curriculum_specs.
 const errMsg = (e: unknown) => (e as { message?: string }).message ?? "Có lỗi xảy ra, thử lại sau.";
 const box = "min-h-10 rounded-lg border border-line bg-surface px-3";
 // 10 nhóm MVP của hệ gợi ý (ADR-008): kỹ năng tự tạo phải thuộc một nhóm để được tính mastery và gợi ý (ADR-037).
@@ -32,21 +35,15 @@ function Thresholds({ skill, onSaved }: { skill: AdminSkill; onSaved: (msg: stri
   </div>;
 }
 
-export default function SkillsTab() {
+export default function SkillsSection() {
   const [skills, setSkills] = useState<AdminSkill[] | null>(null);
-  const [sources, setSources] = useState<AdminSource[]>([]);
-  const [lessons, setLessons] = useState<AdminLessonRow[]>([]);
   const [msg, setMsg] = useState<string | null>(null);
   const [form, setForm] = useState({ slug: "", name: "", domain: "theory", group_code: "" });
-  const [src, setSrc] = useState({ title: "", author: "", url: "" });
-  const [link, setLink] = useState({ lesson: "", source: "", locator: "" });
   const [pre, setPre] = useState<Record<string, string>>({});
   const [q, setQ] = useState("");
 
   const load = () => {
     api.adminSkills().then(setSkills).catch((e) => setMsg(errMsg(e)));
-    api.adminSources().then(setSources).catch(() => undefined);
-    api.adminLessons().then(setLessons).catch(() => undefined);
   };
   useEffect(load, []);
   const run = async (fn: () => Promise<unknown>, ok: string) => {
@@ -54,7 +51,6 @@ export default function SkillsTab() {
     try { await fn(); setMsg(ok); load(); } catch (e) { setMsg(errMsg(e)); }
   };
   if (!skills) return <p role="status" className="text-muted">{msg ?? "Đang tải…"}</p>;
-  const own = lessons.filter((l) => l.id.startsWith("M-") || l.id.startsWith("AI-"));
   const name = new Map(skills.map((s) => [s.id, s.name]));
   const shown = skills.filter((s) => !q || `${s.id} ${s.name}`.toLowerCase().includes(q.toLowerCase()));
 
@@ -112,33 +108,5 @@ export default function SkillsTab() {
       </li>)}</ul>
     </Card>
 
-    <Card className="grid gap-2 p-4">
-      <CardTitle>Nguồn tài liệu ({sources.length})</CardTitle>
-      <div className="grid gap-2 sm:grid-cols-3">
-        <label className="text-sm font-semibold">Tên tài liệu<input className={`${box} mt-1 w-full`} value={src.title} onChange={(e) => setSrc({ ...src, title: e.target.value })} /></label>
-        <label className="text-sm font-semibold">Tác giả<input className={`${box} mt-1 w-full`} value={src.author} onChange={(e) => setSrc({ ...src, author: e.target.value })} /></label>
-        <label className="text-sm font-semibold">Liên kết<input className={`${box} mt-1 w-full`} placeholder="https://" value={src.url} onChange={(e) => setSrc({ ...src, url: e.target.value })} /></label>
-      </div>
-      <div><Button disabled={!src.title.trim()} onClick={() => run(() => api.adminCreateSource({ title: src.title, author: src.author || null, url: src.url || null })
-        .then(() => setSrc({ title: "", author: "", url: "" })), "Đã thêm nguồn.")}>Thêm nguồn</Button></div>
-      <div className="grid gap-2 rounded-lg border border-line p-3 sm:grid-cols-4">
-        <label className="text-sm font-semibold">Bài (tự tạo hoặc AI)<select id="link-lesson" className={`${box} mt-1 w-full`} value={link.lesson} onChange={(e) => setLink({ ...link, lesson: e.target.value })}>
-          <option value="">(chọn)</option>{own.map((l) => <option key={l.id} value={l.id}>{l.title}</option>)}</select></label>
-        <label className="text-sm font-semibold">Nguồn<select id="link-source" className={`${box} mt-1 w-full`} value={link.source} onChange={(e) => setLink({ ...link, source: e.target.value })}>
-          <option value="">(chọn)</option>{sources.map((w) => <option key={w.id} value={w.id}>{w.title}</option>)}</select></label>
-        <label className="text-sm font-semibold">Vị trí<input className={`${box} mt-1 w-full`} placeholder="chương 2, trang 14" value={link.locator} onChange={(e) => setLink({ ...link, locator: e.target.value })} /></label>
-        <div className="flex items-end"><Button variant="secondary" disabled={!link.lesson || !link.source}
-          onClick={() => run(() => api.adminLinkSource(link.lesson, { source_id: link.source, locator: link.locator, note: null }), "Đã gắn nguồn vào bài.")}>Gắn vào bài</Button></div>
-      </div>
-      <p className="text-xs text-muted">Nguồn của bài gốc do curriculum_specs quản lý. Mỗi bài phải còn ít nhất một nguồn (nguyên tắc 11).</p>
-      <ul className="grid gap-2">{sources.map((w) => <li key={w.id} className="rounded-lg border border-line p-2 text-sm">
-        <p className="font-semibold">{w.title} {w.seed ? <Badge tone="muted">Gốc</Badge> : <Badge>Tự thêm</Badge>}</p>
-        <p className="text-muted">{[w.author, w.url].filter(Boolean).join(" · ") || "chưa có tác giả/liên kết"}</p>
-        {w.lessons.length > 0 && <ul className="mt-1 flex flex-wrap gap-1">{w.lessons.map((l) => <li key={l.id} className="inline-flex items-center gap-1 rounded-full border border-line px-2">
-          {l.lesson_id} · {l.locator}
-          {(l.lesson_id.startsWith("M-") || l.lesson_id.startsWith("AI-")) && <button type="button" aria-label={`Gỡ nguồn khỏi ${l.lesson_id}`} className="text-danger"
-            onClick={() => run(() => api.adminUnlinkSource(l.id), "Đã gỡ nguồn.")}>×</button>}</li>)}</ul>}
-      </li>)}</ul>
-    </Card>
   </div>;
 }

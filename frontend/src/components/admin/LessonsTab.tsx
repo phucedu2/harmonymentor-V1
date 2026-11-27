@@ -6,6 +6,7 @@ import CardsPanel from "./CardsPanel";
 import ExamplesPanel, { ExampleEditor } from "./ExamplesPanel";
 import TemplatesPanel from "./TemplatesPanel";
 import ExercisesPanel from "./ExercisesPanel";
+import SkillsSection from "./SkillsSection";
 
 // Trường chữ sửa được: khớp danh sách ở backend (content_service). Trường khác (loại khối, mã bài tập, hợp âm…) bị khóa.
 const TEXT_KEYS = ["title", "prompt", "note", "intro", "kicker"];
@@ -310,6 +311,7 @@ export default function LessonsTab() {
   const [openId, setOpenId] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [advanced, setAdvanced] = useState(false);
   const load = () => api.adminLessons().then(setRows).catch(() => setFailed(true));
   useEffect(() => { load(); }, []);
   if (openId) return <LessonEditor id={openId} onBack={() => setOpenId(null)} onChanged={load} />;
@@ -339,5 +341,10 @@ export default function LessonsTab() {
     {gone.length > 0 && <details><summary className="cursor-pointer text-sm font-semibold">Bài đã xóa ({gone.length})</summary>
       <ul className="mt-2 grid gap-2">{gone.map((l) => <li key={l.id} className="flex items-center justify-between gap-2 rounded-lg border border-line p-2 text-sm">
         <span>{l.title}</span><Button variant="ghost" onClick={() => restore(l.id)}>Khôi phục</Button></li>)}</ul></details>}
+    <details className="rounded-xl border border-line p-3" onToggle={(e) => setAdvanced((e.target as HTMLDetailsElement).open)}>
+      <summary className="cursor-pointer font-semibold">Nâng cao: kỹ năng và tiên quyết</summary>
+      <p className="mt-1 text-xs text-muted">Chỉ cần khi tài liệu dạy một kỹ năng hoàn toàn mới mà danh sách chưa có (AI soạn bài chỉ gán được kỹ năng có sẵn).</p>
+      {advanced && <div className="mt-3"><SkillsSection /></div>}
+    </details>
   </div>;
 }

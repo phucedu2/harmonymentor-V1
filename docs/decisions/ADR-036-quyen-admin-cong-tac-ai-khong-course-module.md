@@ -11,7 +11,13 @@
 
 ## Quyết định
 
-### 1. Đổi vai trò qua web (7A)
+### 1. Đổi vai trò qua web (7A), ĐÃ GỠ ngày 27/11/2026
+
+> **Bổ sung 27/11/2026 (Phúc chọn 1A, ADR-041):** gỡ cả nút "Nâng lên Quản trị"/"Hạ xuống người học" lẫn trường `role` của
+> `PATCH /admin/users/{id}`. Gửi `role` nay bị từ chối 400 (`extra="forbid"`), không ghi nhật ký `user.role` nữa.
+> Lý do: dự án chỉ có vài Quản trị viên cố định, cấp quyền qua web thêm rủi ro (lỡ tay, chiếm quyền) mà không cần cho demo.
+> Quản trị viên chỉ tạo bằng `python -m app.seed_admin`. Khóa/mở khóa tài khoản giữ nguyên. Phần dưới giữ để truy vết.
+
 - `PATCH /api/v1/admin/users/{id}` nhận `{"role": "admin" | "learner"}`, có thể kèm `is_active`.
 - Admin **không** tự đổi vai trò của mình (409 `CANNOT_CHANGE_OWN_ROLE`). Vì vậy luôn còn ít nhất một Admin: người đang thao tác.
 - Mỗi lần đổi ghi nhật ký `user.role` với `detail = {from, to}`.

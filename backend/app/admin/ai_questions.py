@@ -13,6 +13,13 @@ Vì sao tách khỏi ai_service: phần này quyết định câu nào được 
 - N2: câu Đúng/Sai chỉ do Engine quyết khi MỌI phần của câu được kiểm; còn từ phủ định/khái niệm chưa kiểm thì bắt duyệt.
 - H3 (5A): câu Engine kiểm mà kỹ năng AI chọn không khớp loại kiểm (quãng ↔ kỹ năng quãng...) thì bắt duyệt.
 - N3: câu gắn với khối lý thuyết qua `block_ref` (số thứ tự khối, từ 1); thiếu hoặc sai thì bắt duyệt.
+
+Đợt 27/11/2026 (Phúc 3A–6A):
+- Câu Engine kiểm được mà thiếu lời giải thì Engine tự viết (ai_explain); câu trắc nghiệm có thêm lời Engine chỉ ra vì
+  sao từng phương án sai. Chỉ câu khái niệm mới còn phải nhờ Gemini/người viết lời giải.
+- Quản trị viên đã sửa câu (cờ `edited` do giao diện gửi khi đổi đề/đáp án/lời giải) thì coi như đã duyệt: sửa tức là đã đọc.
+- Đề hỏi quãng kép mà phần kiểm chỉ có hai tên nốt (không quãng tám) thì Engine tính theo quãng kép (C–D → C4–D5 = M9),
+  không để Engine trả quãng đơn M2 cho câu hỏi quãng kép.
 """
 
 from __future__ import annotations
@@ -21,12 +28,14 @@ import re
 from typing import Any, Callable
 
 from ..ai.tutor import notes as _nt
+from . import ai_explain
 from ..ai.tutor.guardrail import scan_reply
 from ..music_engine import tools as engine
 from ..music_engine.errors import MusicEngineError
 from ..music_engine.grading import (grade_build_chord, grade_build_scale, grade_identify_chord, grade_identify_interval,
                                     grade_roman_numeral)
 from ..music_engine.interval import interval_between
+from ..music_engine.pitch import parse_note
 from ..music_engine.roman import roman_numeral
 
 KINDS = ("mcq", "true_false", "multi_select", "short", "build_chord", "build_scale", "open")
@@ -241,6 +250,32 @@ def skill_matches(q: dict[str, Any]) -> bool:
 
 EXPLANATION_NOTE = "Câu chưa có lời giải: viết lời giải (vì sao đáp án đúng) rồi mới duyệt."
 
+# Đề hỏi quãng kép (lớn hơn quãng tám): "quãng kép", "quãng 9".."quãng 15", "quãng chín/mười...", "compound".
+_COMPOUND = re.compile(r"quãng\s+kép|compound|quãng\s+(?:9|1[0-5])(?!\d)|quãng\s+(?:chín|mười)", re.IGNORECASE)
+
+
+def compound_check(check: dict[str, str], prompt: str) -> dict[str, str] | None:
+    """Đề hỏi quãng kép mà phần kiểm là hai tên nốt không có quãng tám → phần kiểm mới có quãng tám, quãng = quãng đơn + 7.
+
+    Vì sao: interval_between("C", "D") luôn ra quãng đơn M2 (MUS-INT-010 chỉ tính quãng kép khi có số quãng tám), nên
+    câu "quãng 2 trưởng mở rộng thành quãng kép nào?" từng có đáp án Engine M2 thay vì M9. None = không cần đổi."""
+    if check["type"] != "interval" or not _COMPOUND.search(prompt):
+        return None
+    try:
+        lo, up = parse_note(check["lower"]), parse_note(check["upper"])
+    except (MusicEngineError, ValueError):
+        return None
+    if lo.octave is not None or up.octave is not None:
+        return None
+    for octave in (4, 5):   # nốt trên thấp hơn về chữ cái (A lên C) thì quãng đơn nằm sang quãng tám kế tiếp
+        try:
+            simple = interval_between(f"{check['lower']}4", f"{check['upper']}{octave}")
+        except (MusicEngineError, ValueError):
+            continue
+        if 2 <= simple.number <= 7:
+            return {**check, "lower": f"{check['lower']}4", "upper": f"{check['upper']}{octave + 1}"}
+    return None
+
 
 # --- chuẩn hóa từng câu ----------------------------------------------------------------------------
 
@@ -268,6 +303,11 @@ def normalize_question(item: Any, skills: set[str], clamp: Callable[[Any], int],
         return None, f"“{short}”: kỹ năng “{skill}” không có trong hệ thống"
     check = clean_check(item.get("check"))
     review_notes: list[str] = []
+    compound = compound_check(check, prompt) if check is not None else None
+    if compound is not None:
+        review_notes.append(f"Đề hỏi quãng kép: Engine tính theo {compound['lower']}–{compound['upper']} = "
+                            f"{engine_answer_for_check(compound)}. Kiểm lại đề có đúng ý này không.")
+        check = compound
     if check is not None and kind != "true_false":
         match = prompt_match(check, prompt)
         if match == "mismatch":
@@ -298,13 +338,32 @@ def normalize_question(item: Any, skills: set[str], clamp: Callable[[Any], int],
             review_notes.append("Câu chưa gắn với khối lý thuyết nào của bài.")
     if "page_claimed" in q:
         review_notes.append(f"AI ghi trang {q['page_claimed']}, nằm ngoài các trang của phần này.")
+    fill_explanations(q)
     if kind != "open" and not q.get("explanation"):
         # 8A (zip thầy, 23/11): học sinh làm sai mà không có lời giải thì câu chỉ chấm, không dạy. Câu mở có rubric riêng.
         review_notes.append(EXPLANATION_NOTE)
     q["review_notes"] = review_notes
     q["needs_review"] = not q["engine_verified"] or bool(review_notes)
-    q["reviewed"] = bool(trust_review and q["needs_review"] and item.get("reviewed") is True)
+    # 3A (27/11): Quản trị viên sửa câu rồi lưu = đã đọc câu, không bắt tick thêm. Vẫn phải có lời giải (trừ câu mở).
+    edited = trust_review and item.get("edited") is True
+    if edited:
+        q["edited"] = True
+    auto_ok = edited and (kind == "open" or bool(q.get("explanation")))
+    q["reviewed"] = bool(trust_review and q["needs_review"] and (item.get("reviewed") is True or auto_ok))
     return q, ""
+
+
+def fill_explanations(q: dict[str, Any]) -> None:
+    """Engine viết lời giải và lời giải thích phương án sai còn thiếu (4A, 5A). Lời AI đã có thì giữ (guardrail soát khi
+    xuất bản), Engine chỉ điền chỗ trống, để không thay một lời giải đúng bằng câu chữ khô hơn."""
+    text = ai_explain.explanation_for(q)
+    if not q.get("explanation") and text:
+        q["explanation"] = text[:800]
+    if text and q.get("explanation") == text[:800]:
+        q["explanation_source"] = "engine"   # để giao diện ghi "Lời giải do Music Engine viết"; sửa chữ thì mất nhãn
+    feedback = ai_explain.wrong_option_feedback(q)
+    if feedback:
+        q["option_feedback"] = {**feedback, **(q.get("option_feedback") or {})}
 
 
 def _check_text(check: dict[str, str]) -> str:

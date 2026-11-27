@@ -50,13 +50,20 @@ def make_draft(client, h):
 
 # --- 8A: câu không có lời giải ----------------------------------------------------------------------------
 
-def test_cau_thieu_loi_giai_phai_duyet_ke_ca_khi_engine_kiem_duoc():
+def test_cau_thieu_loi_giai_engine_tu_viet_cau_khai_niem_van_phai_duyet():
+    # 27/11/2026 (Phúc 4A): câu Engine kiểm được mà AI bỏ trống lời giải thì Engine viết, không bắt duyệt nữa.
     item = {"kind": "build_chord", "level": "nho", "prompt": "Dựng hợp âm Am7", "skill_id": "chord.seventh_build",
             "symbol": "Am7", "page": 1}
     bare, _ = aq.normalize_question(item, SKILLS, lambda p: 1)
-    assert bare["engine_verified"] and bare["needs_review"] and aq.EXPLANATION_NOTE in bare["review_notes"]
+    assert bare["engine_verified"] and not bare["needs_review"] and bare["explanation_source"] == "engine"
+    assert bare["explanation"].endswith("A C E G.") and aq.EXPLANATION_NOTE not in bare["review_notes"]
     full, _ = aq.normalize_question({**item, "explanation": "Am7 = A C E G."}, SKILLS, lambda p: 1)
-    assert not full["needs_review"] and full["review_notes"] == []
+    assert not full["needs_review"] and full["review_notes"] == [] and "explanation_source" not in full
+    # Câu khái niệm Engine không tính được: vẫn bắt lời giải.
+    concept, _ = aq.normalize_question({"kind": "mcq", "level": "hieu", "prompt": "Quãng nào nghe ổn định nhất?", "page": 1,
+                                        "skill_id": "interval.naming", "options": ["P8", "m2", "A4"], "answer": "P8"},
+                                       SKILLS, lambda p: 1)
+    assert concept["needs_review"] and aq.EXPLANATION_NOTE in concept["review_notes"]
     # Câu mở chấm theo rubric, không bắt lời giải.
     open_q, _ = aq.normalize_question({"kind": "open", "level": "hieu", "prompt": "Vì sao G7 muốn về C?", "skill_id": "function.dominant",
                                        "page": 1, "model_answer": "G7 có nốt cảm B đi lên C và tritone B–F giải quyết vào C–E.",

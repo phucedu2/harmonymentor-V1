@@ -16,15 +16,6 @@ export default function UsersTab() {
     try { await api.adminSetActive(u.id, !u.is_active); await load(q); }
     catch (e) { setError((e as { message?: string }).message ?? "Không đổi được trạng thái."); }
   };
-  // ADR-036: nâng/hạ vai trò có hiệu lực ngay, ghi nhật ký; không tự đổi vai trò của mình.
-  const changeRole = async (u: AdminUser) => {
-    const to = u.role === "admin" ? "learner" : "admin";
-    const msg = to === "admin" ? `Nâng ${u.email} lên Quản trị viên? Người này sẽ có toàn quyền trang Quản trị.`
-      : `Hạ ${u.email} xuống người học? Người này mất quyền Quản trị ngay.`;
-    if (!window.confirm(msg)) return;
-    try { await api.adminSetRole(u.id, to); await load(q); }
-    catch (e) { setError((e as { message?: string }).message ?? "Không đổi được vai trò."); }
-  };
   return <div className="grid gap-3">
     <form onSubmit={(e) => { e.preventDefault(); load(q); }} className="flex gap-2">
       <label htmlFor="user-q" className="sr-only">Tìm người dùng</label>
@@ -40,7 +31,6 @@ export default function UsersTab() {
           <p className="text-sm text-muted">{u.email} · {u.lessons_completed} bài xong · {u.attempts} lượt làm · {u.last_activity ? `gần nhất ${u.last_activity.slice(0, 10)}` : "chưa hoạt động"}</p>
         </div>
         {u.id !== me?.id && <div className="flex gap-2">
-          <Button variant="secondary" aria-label={`${u.role === "admin" ? "Hạ xuống người học" : "Nâng lên Quản trị"}: ${u.email}`} onClick={() => changeRole(u)}>{u.role === "admin" ? "Hạ xuống người học" : "Nâng lên Quản trị"}</Button>
           <Button variant="secondary" aria-label={`${u.is_active ? "Khóa" : "Mở khóa"} tài khoản ${u.email}`} onClick={() => toggle(u)}>{u.is_active ? "Khóa" : "Mở khóa"}</Button>
         </div>}
       </Card></li>)}</ul>}

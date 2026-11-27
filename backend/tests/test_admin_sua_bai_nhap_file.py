@@ -9,7 +9,7 @@ import yaml
 from sqlalchemy import select
 
 from app.content.source_registry import SOURCE_REGISTRY
-from app.db.models import AdminAuditLog, Exercise, Lesson
+from app.db.models import AdminAuditLog, Exercise, Lesson, LessonSource, SourceWork
 from app.db.seed import seed_initial_data
 from app.db.session import SessionLocal
 from tests.test_admin_bai_hoc import A, MCQ, client, h, new_lesson  # noqa: F401  (fixture dùng lại)
@@ -95,7 +95,7 @@ def test_nhap_file_tao_bai_an_va_nhap_lai_khong_trung(client, h):
     code = f"thu-{uuid4().hex[:8]}"
     lid = f"M-{code}"
     r = _post(client, h, _doc(code), dry=True)
-    assert r.status_code == 200 and r.json()["dry_run"] is True
+    assert r.status_code == 200 and r.json()["dry_run"] is True, r.text
     with SessionLocal() as db:
         assert db.get(Lesson, lid) is None   # thử trước: không ghi gì
     r = _post(client, h, _doc(code))
@@ -125,7 +125,9 @@ def test_nhap_file_tao_bai_an_va_nhap_lai_khong_trung(client, h):
 def test_file_loi_khong_ghi_gi_va_bao_du_vi_tri(client, h):
     code = f"loi-{uuid4().hex[:8]}"
     wrong = {"key": "q1", **MCQ, "answer": "m3"}             # Engine tính M3
-    no_why = {"key": "q2", **MCQ, "explanation": ""}
+    # Câu khái niệm thiếu lời giải vẫn bị chặn; câu Engine tính được thì Engine tự viết lời giải (27/11, 4A).
+    no_why = {"key": "q2", **MCQ, "explanation": "", "check": None, "prompt": "Quãng nào nghe ổn định nhất?",
+              "options": ["P8", "m2", "A4"], "answer": "P8"}
     r = _post(client, h, _doc(code, exercises=[wrong, no_why], sources=[{"source_id": "khong-co"}]))
     assert r.status_code == 422
     msg = r.json()["error"]["message"]
@@ -133,6 +135,23 @@ def test_file_loi_khong_ghi_gi_va_bao_du_vi_tri(client, h):
     with SessionLocal() as db:
         assert db.get(Lesson, f"M-{code}") is None
     assert _post(client, h, {"format": "khac"}).json()["error"]["code"] == "IMPORT_INVALID"
+
+
+def test_file_tu_khai_nguon_moi_bang_ten(client, h):
+    """27/11/2026 (Phúc 2A): bỏ mục Nguồn khỏi giao diện nên file được khai nguồn mới bằng `title`; nhập lại không tạo trùng."""
+    code = f"nguon-{uuid4().hex[:8]}"
+    title = f"Giáo trình thử {code}"
+    src = [{"title": title, "author": "Tác giả", "locator": "Chương 3"}]
+    assert _post(client, h, _doc(code, sources=src), dry=True).status_code == 200
+    with SessionLocal() as db:
+        assert db.scalar(select(SourceWork).where(SourceWork.title == title)) is None   # thử trước: không tạo nguồn
+    assert _post(client, h, _doc(code, sources=src)).status_code == 200
+    assert _post(client, h, _doc(code, sources=src)).status_code == 200
+    with SessionLocal() as db:
+        works = db.scalars(select(SourceWork).where(SourceWork.title == title)).all()
+        assert len(works) == 1 and works[0].author == "Tác giả"
+        links = db.scalars(select(LessonSource).where(LessonSource.lesson_id == f"M-{code}")).all()
+        assert [l.source_work_id for l in links] == [works[0].id]
     bad = client.post(f"{A}/import", headers=h, files={"file": ("a.yaml", b"lessons: [", "text/plain")})
     assert bad.json()["error"]["code"] == "IMPORT_SYNTAX"
     assert client.post(f"{A}/import", headers=h, files={"file": ("a.txt", b"x", "text/plain")}).status_code == 422

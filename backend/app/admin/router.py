@@ -5,7 +5,7 @@ from typing import Any
 from dataclasses import replace as dc_replace
 
 from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
@@ -377,8 +377,10 @@ def retire_exercise(exercise_id: str, admin: User = Depends(require_admin), db: 
 # --- người dùng ---------------------------------------------------------------------------------
 
 class UserPatchIn(BaseModel):
-    is_active: bool | None = None
-    role: str | None = Field(default=None, pattern="^(admin|learner)$")
+    # ADR-036 bổ sung (27/11/2026, Phúc 1A): bỏ đổi vai trò qua web. Gửi "role" bị từ chối (400) thay vì lặng lẽ bỏ qua,
+    # để client cũ biết tính năng đã gỡ. Quản trị viên chỉ tạo bằng `python -m app.seed_admin`.
+    model_config = ConfigDict(extra="forbid")
+    is_active: bool
 
 
 @router.get("/users")
@@ -406,24 +408,16 @@ def list_users(q: str = Query("", max_length=80), limit: int = Query(50, ge=1, l
 
 @router.patch("/users/{user_id}")
 def patch_user(user_id: str, body: UserPatchIn, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
-    """Khóa/mở khóa tài khoản và đổi vai trò (ADR-036, Phúc 7A). Không tự khóa và không tự đổi vai trò của mình, nên
-    hệ thống luôn còn ít nhất người đang thao tác là Quản trị viên. Mọi thay đổi ghi nhật ký."""
+    """Khóa/mở khóa tài khoản. Không tự khóa mình, nên hệ thống luôn còn người đang thao tác là Quản trị viên. Ghi nhật ký.
+    Đổi vai trò qua web đã gỡ (ADR-036 bổ sung 27/11/2026)."""
     target = db.get(User, user_id)
     if target is None or target.is_synthetic or target.email is None:
         raise AppError(404, "USER_NOT_FOUND", "Không có người dùng này.")
-    if body.is_active is None and body.role is None:
-        raise AppError(422, "NOTHING_TO_CHANGE", "Không có gì để đổi.")
-    if target.id == admin.id:
-        if body.is_active is False:
-            raise AppError(409, "CANNOT_LOCK_SELF", "Bạn không thể tự khóa tài khoản của mình.")
-        if body.role is not None and body.role != admin.role:
-            raise AppError(409, "CANNOT_CHANGE_OWN_ROLE", "Bạn không thể tự đổi vai trò của mình. Nhờ Quản trị viên khác.")
-    if body.is_active is not None and body.is_active != target.is_active:
+    if target.id == admin.id and body.is_active is False:
+        raise AppError(409, "CANNOT_LOCK_SELF", "Bạn không thể tự khóa tài khoản của mình.")
+    if body.is_active != target.is_active:
         target.is_active = body.is_active
         content_service.audit(db, admin, "user.unlock" if body.is_active else "user.lock", "user", target.id)
-    if body.role is not None and body.role != target.role:
-        content_service.audit(db, admin, "user.role", "user", target.id, {"from": target.role, "to": body.role})
-        target.role = body.role
     db.commit()
     return {"id": target.id, "is_active": target.is_active, "role": target.role}
 
@@ -648,6 +642,16 @@ def edit_draft(draft_id: str, body: DraftEditIn, admin: User = Depends(require_a
         return ai_service.draft_view(db, ai_service.update_draft(db, admin, draft_id, body.model_dump()))
     except AdminContentError as exc:
         raise _wrap(exc) from exc
+
+
+@router.post("/ai/drafts/{draft_id}/fill-explanations")
+def fill_draft_explanations(draft_id: str, admin: User = Depends(require_admin), db: Session = Depends(get_db)):
+    """Music Engine điền lời giải còn thiếu cho bản nháp (không gọi Gemini)."""
+    try:
+        draft, filled, missing = ai_service.fill_explanations(db, admin, draft_id)
+    except AdminContentError as exc:
+        raise _wrap(exc) from exc
+    return {**ai_service.draft_view(db, draft), "filled": filled, "still_missing": missing}
 
 
 @router.post("/ai/drafts/{draft_id}/publish")
