@@ -1,0 +1,3 @@
+# Test test_release_files_match_model_card so SHA-256 cua file nay voi ban da dang len GitHub Release (LF).
+# Tren Windows voi core.autocrlf=true file bi checkout thanh CRLF nen ma bam lech. Ep LF cho rieng file nay.
+docs/giai-doan/ai-gop-y/gd2b_model_info.json text eol=lf

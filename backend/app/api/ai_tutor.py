@@ -54,7 +54,14 @@ if settings.ai_enabled:  # AI tắt thì không có gì để làm nóng (và te
 
 def provider_dep() -> LLMProvider | None:
     """Tách thành dependency để test thay bằng FakeProvider, không gọi mạng."""
-    key = (settings.ai_enabled, bool(settings.gemini_api_key), settings.gemini_model, settings.gemini_fallback_model)
+    key = (
+        settings.ai_enabled,
+        getattr(settings, "tutor_llm_provider", "gemini"),
+        getattr(settings, "local_qlora_adapter_dir", ""),
+        bool(settings.gemini_api_key),
+        settings.gemini_model,
+        settings.gemini_fallback_model,
+    )
     if key not in _provider_cache:
         _provider_cache[key] = get_provider(settings)
     return _provider_cache[key]

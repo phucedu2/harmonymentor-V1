@@ -64,6 +64,14 @@
       "tra_loi": "Âm giai (scale) là dãy nốt đi lên theo một khuôn cung và nửa cung cố định. Âm giai C trưởng gồm C D E F G A B, đi theo khuôn cung, cung, nửa cung, cung, cung, cung, nửa cung.",
       "bai": "L02",
       "nguon": "Bài 2 (L02), phần giọng và âm giai"
+    },
+    {
+      "id": "FAQ-09",
+      "status": "approved",
+      "cau_hoi": ["mi thu co may dau thang", "giong mi thu co may dau", "mi thu co may dau", "giong mi thu co may dau thang", "em thu co may dau thang", "e minor co may dau"],
+      "tra_loi": "Giọng Mi thứ (Em) có một dấu thăng (F#). Mi thứ là giọng tương đối của Sol trưởng, và hai giọng này có cùng hóa biểu. Sol trưởng có một dấu thăng là F#.",
+      "bai": "L02",
+      "nguon": "Sách Nhạc Lý Nâng Cao, Ngô Ngọc Thắng, Chương VI (trang 62, 63), đối chiếu Fankhauser Harmony 1 trang 40 và Fundamentals of Music Theory trang 60"
     }
   ]
 }

@@ -59,4 +59,4 @@ def test_fake_model_unsupported_lesson_claim_falls_back(isolated_client):
     assert len(provider.calls) == 2
     assert "Bài học chưa có nội dung về fugue" not in data["reply"]
     assert data["citations"] == []
-    assert data["fallback_reason"] == "answer_leak"
+    assert data["fallback_reason"] == "lesson_ungrounded"

@@ -202,10 +202,11 @@ def _fold_text(text: str) -> str:
     return "".join(c for c in unicodedata.normalize("NFD", text or "") if unicodedata.category(c) != "Mn").lower()
 
 
-def _required_engine_fact_ok(question: str, facts: Sequence[dict[str, Any]]) -> bool:
+def _required_engine_fact_ok(question: str, facts: Sequence[dict[str, Any]], context: dict | None = None) -> bool:
     from ..ai.tutor.engine_query import engine_answer
 
-    expected = [f for f in engine_answer(question).facts if f.get("tool") == "get_roman_numeral"]
+    # Câu như "Hợp âm này là bậc mấy?" chỉ giải được nhờ ngữ cảnh giao diện: phải truyền cùng ngữ cảnh đã dùng khi lấy dữ kiện.
+    expected = [f for f in engine_answer(question, context=context).facts if f.get("tool") == "get_roman_numeral"]
     # Fail closed if the question cannot be resolved or the result is for another chord/key/mode.
     return bool(expected) and any(
         supplied.get("tool") == "get_roman_numeral"
@@ -215,31 +216,55 @@ def _required_engine_fact_ok(question: str, facts: Sequence[dict[str, Any]]) -> 
     )
 
 
+class BehaviorIssue(str):
+    """Thông báo sửa lỗi cho model, kèm mã lý do riêng để báo cáo không gọi nhầm mọi lỗi là answer_leak."""
+    code: str
+
+    def __new__(cls, message: str, code: str):
+        obj = super().__new__(cls, message)
+        obj.code = code
+        return obj
+
+
+def _is_concept_roman_question(question: str, context: dict | None) -> bool:
+    """Câu hỏi khái niệm về số La Mã (không có hợp âm, giọng hay ngữ cảnh giao diện cụ thể để Engine tính)."""
+    from ..ai.tutor.engine_query import engine_answer, _symbol_matches
+    if context or next(_symbol_matches(question), None) is not None:
+        return False
+    er = engine_answer(question)
+    return not er.facts and not er.unknown and not er.context_note
+
+
 def _chat_behavior_issue(answer: TutorAnswer, question: str, *, has_lesson_hits: bool, has_engine_facts: bool,
-                         engine_facts: Sequence[dict[str, Any]] | None = None) -> str | None:
+                         engine_facts: Sequence[dict[str, Any]] | None = None,
+                         context: dict | None = None) -> str | None:
     """Fail closed for semantic violations that schema/engine checks cannot detect."""
     q, reply = _fold_text(question), _fold_text(answer.reply)
     facts = list(engine_facts or [])
     if any(t in q for t in ("dau dau", "trieu chung", "chan doan benh", "chan doan giup",
                             "dieu tri benh", "bao hiem", "tai chinh")) and answer.intent != "out_of_scope":
-        return "Câu hỏi ngoài phạm vi phải có intent out_of_scope."
+        return BehaviorIssue("Câu hỏi ngoài phạm vi phải có intent out_of_scope.", "out_of_scope_intent")
     from ..ai.tutor.semantic_checks import asks_lesson, safe_lesson_abstention, conflicting_degree_statements
     if asks_lesson(question) and not answer.citations and not safe_lesson_abstention(answer.reply):
-        return "Không có nguồn bài học: chỉ nói chưa có trích đoạn để xác minh và đề nghị người học cung cấp."
+        return BehaviorIssue("Không có nguồn bài học: chỉ nói chưa có trích đoạn để xác minh và đề nghị người học cung cấp.",
+                             "lesson_ungrounded")
     # A related Engine result is not enough: degree questions need a Roman-numeral result.
-    if any(t in q for t in ("bac may", "bac nao", "so la ma", "roman")) or ("thu may" in q and "hop am" in q):
-        if not has_engine_facts or not _required_engine_fact_ok(question, facts):
-            return "Không thể xác minh bậc hợp âm: thiếu dữ kiện số La Mã phù hợp từ Music Engine."
+    degree_trigger = any(t in q for t in ("bac may", "bac nao", "so la ma", "roman")) or ("thu may" in q and "hop am" in q)
+    # Câu khái niệm ("Số La Mã là gì?", "hợp âm bảy ghi số La Mã thế nào?") không có gì để Engine tính: không ép số La Mã cụ thể.
+    if degree_trigger and not _is_concept_roman_question(question, context):
+        if not has_engine_facts or not _required_engine_fact_ok(question, facts, context):
+            return BehaviorIssue("Không thể xác minh bậc hợp âm: thiếu dữ kiện số La Mã phù hợp từ Music Engine.",
+                                 "engine_fact_missing")
         from ..ai.tutor.engine_query import engine_answer
-        expected = [str(f["result"]) for f in engine_answer(question).facts
+        expected = [str(f["result"]) for f in engine_answer(question, context=context).facts
                     if f.get("tool") == "get_roman_numeral"]
         # Conservatively require the exact Engine result in the answer. Alternatives such as
         # Arabic numerals or incomplete chord qualities fall back rather than being guessed.
         if not any(re.search(r"(?<![A-Za-z0-9])" + re.escape(value) + r"(?![A-Za-z0-9])", answer.reply)
                    for value in expected):
-            return "Câu trả lời phải nêu chính xác số La Mã do Music Engine cung cấp."
+            return BehaviorIssue("Câu trả lời phải nêu chính xác số La Mã do Music Engine cung cấp.", "engine_fact_mismatch")
         if any(conflicting_degree_statements(answer.reply, value) for value in expected):
-            return "Câu trả lời chứa bậc hợp âm mâu thuẫn với Music Engine."
+            return BehaviorIssue("Câu trả lời chứa bậc hợp âm mâu thuẫn với Music Engine.", "engine_fact_mismatch")
     return None
 
 
@@ -270,7 +295,8 @@ def _llm_round(provider: LLMProvider, build, allowed: dict[str, Hit], titles: di
             # Lần 2 vẫn có trích dẫn lạ thì bỏ trích dẫn đó thay vì bỏ cả câu trả lời đúng nhạc lý.
             ans.citations = [c for c in ans.citations if c.block_id in allowed]
             return ans, guard, results, None
-        reason = "engine_contradiction" if guard.contradicted else ("answer_leak" if extra else "bad_citation")
+        reason = ("engine_contradiction" if guard.contradicted
+                  else (getattr(extra, "code", "answer_leak") if extra else "bad_citation"))
         correction = pr.correction_note([c.as_dict() for c in guard.contradicted], bad_cites, False)
         if extra:
             correction += "\n- " + extra
@@ -385,7 +411,7 @@ def _general_answer(db: Session, user: User, question: str, turns: Sequence[tupl
 
     def general_check(ans: TutorAnswer) -> str | None:
         return _chat_behavior_issue(ans, question, has_lesson_hits=False, has_engine_facts=bool(facts),
-                                    engine_facts=facts)
+                                    engine_facts=facts, context=context)
 
     try:
         ans, guard, results, reason = _llm_round(provider, build, {}, titles, general_check, system=pr.SYSTEM_GENERAL)
@@ -499,6 +525,11 @@ def answer_question(db: Session, user: User, question: str, turns: Sequence[tupl
                      source_label=fb.LABEL_REFUSE), meta
     if dec.flow == "D":
         return _help_answer(dec), meta
+    # FAQ đã duyệt khớp nguyên câu (không có dữ kiện Engine) được trả trước, cho cả luồng A lẫn B, không gọi LLM.
+    if dec.flow in ("A", "B") and not facts:
+        faq_hit = _faq_answer(question, titles, "faq_priority")
+        if faq_hit is not None:
+            return faq_hit, meta
     if dec.flow == "B":
         return _general_answer(db, user, question, turns, dec, titles, facts, provider, now, context=context), meta
 
@@ -526,7 +557,7 @@ def answer_question(db: Session, user: User, question: str, turns: Sequence[tupl
 
     def chat_check(ans: TutorAnswer) -> str | None:
         return _chat_behavior_issue(ans, question, has_lesson_hits=bool(hits), has_engine_facts=bool(facts),
-                                    engine_facts=facts)
+                                    engine_facts=facts, context=context)
 
     try:
         ans, guard, results, reason = _llm_round(provider, build, allowed, titles, chat_check)

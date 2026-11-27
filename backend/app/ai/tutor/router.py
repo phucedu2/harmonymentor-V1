@@ -65,8 +65,8 @@ _UNTAUGHT = {
     # Thêm 09/11 sau khi kiểm kho: L01–L05 không có "gam thứ tự nhiên/hòa âm/giai điệu", "relative minor", hợp âm 6, bảy giảm.
     "minor_scales": dict(pattern=r"\bgam thu (?:tu nhien|hoa am|giai dieu)\b|\b(?:am giai|gam) thu (?:tu nhien|hoa am|giai dieu)\b|\b(?:natural|harmonic|melodic) minor\b|\bthu (?:hoa am|giai dieu)\b",
                          marker=r"\bgam thu\b|\b(?:natural|harmonic|melodic) minor\b|\bthu hoa am\b"),
-    "relative_minor": dict(pattern=r"\brelative (?:minor|major)\b|\bgiong thu (?:tuong ung|song hanh|ke can)\b|\bla thu\b.*\bdo truong\b|\bdo truong\b.*\bla thu\b",
-                           marker=r"\brelative\b|\bgiong thu tuong ung\b"),
+    "relative_minor": dict(pattern=r"\brelative (?:minor|major)\b|\bgiong thu (?:tuong ung|song hanh|ke can)\b|\bla thu\b.*\bdo truong\b|\bdo truong\b.*\bla thu\b|\bmi thu\b.*(?:\bdau\b|\bhoa bieu\b)|(?:\bdau\b|\bhoa bieu\b).*\bmi thu\b",
+                           marker=r"\brelative\b|\bgiong thu tuong ung\b|\bmi thu\b"),
     "sixth_chord": dict(pattern=r"\bhop am 6\b|\bhop am sau\b|\b[a-g][#b]?6\b(?!\d)", marker=r"\bhop am 6\b|\b[a-g][#b]?6\b"),
     "dim7_chord": dict(pattern=r"\bhop am bay (?:giam|gim)\b|\bdim7\b|\b[a-g][#b]?dim7\b", marker=r"\bbay giam\b|\bdim7\b"),
     "circle_of_fifths": dict(pattern=r"\bvong (?:tron )?quang (?:5|nam)\b|\bcircle of fifths\b", marker=r"\bvong (?:tron )?quang\b|\bcircle of fifths\b"),
@@ -158,6 +158,16 @@ def known_words() -> frozenset[str]:
     words: set[str] = set()
     for c in [*knowledge_base(), *help_base()]:
         words.update(_words(f"{c.title} {c.text}"))
+    # Tiêu đề bài (chỉ bài đã có trong kho) cũng là từ đã biết: bài L06 tên "Modal Interchange" thì hỏi "interchange"
+    # không thể bị coi là thuật ngữ chưa dạy (M8, ca C3).
+    try:
+        from .chunker import lesson_titles
+        in_kb = {c.lesson_id for c in knowledge_base()}
+        for lesson_id, title in lesson_titles().items():
+            if lesson_id in in_kb:
+                words.update(_words(title))
+    except Exception:  # noqa: BLE001 - thiếu tiêu đề thì giữ hành vi cũ
+        pass
     data = load_data()
     for label, rows in data["train"].items():
         if label != "nhac_ly":
@@ -346,7 +356,7 @@ def _route(sig: Signals, th: dict[str, float]) -> Decision:
         # Câu nhạc lý hỏi kiểu "… làm thế nào" hay bị tầng 1 đoán là hướng dẫn. Kho bài trả lời được (điểm đạt ngưỡng
         # nhận) và xác suất nhạc lý không thấp thì ưu tiên bài học.
         # Với nhúng, điểm hai kho cùng thang (cosine) nên so trực tiếp: đoạn bài hơn mục hướng dẫn một khoảng thì là bài.
-        same_scale = lesson.method == "embedding" and sig.help.method == "embedding"
+        same_scale = lesson.method in ("embedding", "qdrant") and sig.help.method in ("embedding", "qdrant")
         lesson_wins = ((lesson.best_score >= accept and probs.get("nhac_ly", 0) >= th["music_min"]) or
                        (same_scale and lesson.best_score >= sig.help.best_score + th.get("help_margin", 1.0)))
         if hits and not lesson_wins:

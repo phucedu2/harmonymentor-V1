@@ -67,6 +67,21 @@ _ROMAN_Q = re.compile(
     re.IGNORECASE)
 
 
+# Cùng ý với _ROMAN_Q nhưng đảo thứ tự: "Fm là bậc mấy trong C thứ?", "Tính bậc của Am trong C trưởng".
+_ROMAN_Q_WORD_FIRST = (
+    re.compile(
+        rf"(?<![A-Za-z0-9#])(?P<chord>{NOTE}{_SUFFIX}?)(?![A-Za-z0-9#])\s+(?i:là|la)\s+"
+        rf"(?i:bậc mấy|bac may|bậc nào|bac nao|số la mã nào|so la ma nao|số la mã gì|so la ma gi)\s+"
+        rf"(?i:trong|ở|o|của)\s+(?i:giọng\s+|giong\s+)?(?P<key>{NOTE})(?![A-Za-z0-9#])\s*"
+        rf"(?P<mode>(?i:{ROMAN_MODE}))?(?![\wÀ-ỹ])"),
+    re.compile(
+        rf"(?i:bậc|bac|số la mã|so la ma|roman)\s+(?i:của|cua|of)\s+(?i:hợp âm\s+|hop am\s+)?"
+        rf"(?<![A-Za-z0-9#])(?P<chord>{NOTE}{_SUFFIX}?)(?![A-Za-z0-9#])\s+(?i:trong|ở|o)\s+"
+        rf"(?i:giọng\s+|giong\s+)?(?P<key>{NOTE})(?![A-Za-z0-9#])\s*"
+        rf"(?P<mode>(?i:{ROMAN_MODE}))?(?![\wÀ-ỹ])"),
+)
+
+
 @dataclass
 class EngineAnswer:
     facts: list[dict[str, Any]] = field(default_factory=list)     # {tool, args, result, sourced}
@@ -120,8 +135,12 @@ def _add(out: EngineAnswer, seen: set, tool: str, args: dict[str, str]) -> None:
 
 # "Em đếm / Em muốn…" là cách người học tự xưng, không phải hợp âm Mi thứ.
 # Xét từng lần xuất hiện để vẫn nhận hợp âm trong "Em hỏi về hợp âm Em".
-_EM_PRONOUN_TAIL = re.compile(r"\s+(?:đếm|dem|hỏi|hoi|muốn|muon|đang|dang|chưa|chua|cần|can|nên|nen)\b", re.I)
+_EM_PRONOUN_TAIL = re.compile(r"\s+(?:đếm|dem|hỏi|hoi|muốn|muon|đang|dang|chưa|chua|cần|can|nên|nen"
+                              r"|chỉ|chi|thấy|thay|biết|biet|hiểu|hieu|vẫn|van|mới|moi|thử|vừa|vua|đã)\b", re.I)
 _EXPLICIT_CHORD_PREFIX = re.compile(r"\b(?:hợp âm|hop am|chord)\s+$", re.I)
+# Câu hỏi đòi xác định bậc của một hợp âm cụ thể ("là bậc mấy", "xác định bậc"). Thiếu giọng hoặc thiếu hợp âm thì phải
+# hỏi lại, không đoán. Câu hỏi khái niệm ("số La Mã là gì") không khớp mẫu này nên vẫn đi theo bài học.
+_ROMAN_DETERMINE = re.compile(r"bậc mấy|bac may|xác định bậc|xac dinh bac|là bậc nào|la bac nao|bậc nào|bac nao", re.I)
 
 
 def _symbol_matches(text: str):
@@ -151,7 +170,7 @@ def engine_answer(question: str, limit: int = 4, *, context: dict | None = None)
                 return "natural_minor"
         return mode
 
-    for m in _ROMAN_Q.finditer(text):
+    for m in (mm for rx in (_ROMAN_Q, *_ROMAN_Q_WORD_FIRST) for mm in rx.finditer(text)):
         mode = question_mode(m)
         if mode is None:
             out.context_note = "Bạn cho mình biết giọng trưởng hay thứ; nếu là thứ, bạn muốn xét dạng thứ nào nhé."
@@ -201,10 +220,9 @@ def engine_answer(question: str, limit: int = 4, *, context: dict | None = None)
                                                f["args"].get("symbol") != sym for f in out.facts):
             _add(out, seen, "get_chord_tones", {"symbol": sym})
 
-    if context:
-        before = len(out.facts)
-        _add_context_facts(text, out, seen, context)
-        out.context_used = out.context_used or len(out.facts) > before
+    before = len(out.facts)
+    _add_context_facts(text, out, seen, context)
+    out.context_used = out.context_used or len(out.facts) > before
     out.facts = out.facts[:limit]
     return out
 
@@ -231,10 +249,12 @@ def _add_context_facts(text, out, seen, context):
     """Resolve deictic questions without modifying the original user message."""
     from .context import clean_context
     ctx = clean_context(context)
-    if not ctx:
-        return
     roman_request = re.search(r"bậc|bac|la mã|la ma|roman", text, re.I)
     referent = re.search(r"này|nay|đang chọn|dang chon|đang xem|dang xem|hiện tại|hien tai|this|selected", text, re.I)
+    determine = bool(_ROMAN_DETERMINE.search(text)) and not any(f["tool"] == "get_roman_numeral" for f in out.facts)
+    # Không có context thì giữ hành vi cũ, trừ khi câu hỏi đòi xác định bậc mà thiếu giọng/hợp âm: khi đó hỏi lại.
+    if not ctx and not (roman_request and (referent or determine)):
+        return
     key, mode = ctx.get("selected_key"), ctx.get("mode")
     # Explicit key/mode in the question always overrides UI. Bare/unsupported
     # explicit keys must not fall back to a different selected key.
@@ -249,10 +269,10 @@ def _add_context_facts(text, out, seen, context):
     chords = [f["args"].get("symbol") for f in out.facts if f["tool"] == "get_chord_tones"]
     chord = chords[0] if len(chords) == 1 else None
     # Unknown explicitly named chords must not become the selected chord.
-    if (not chord and referent and not out.unknown
+    if (not chord and (referent or (determine and not chords)) and not out.unknown
             and next(_symbol_matches(text), None) is None and not _CHORD_WORD.search(text)):
         chord = ctx.get("selected_chord")
-    if roman_request and referent and (not key or not mode or not chord):
+    if roman_request and (referent or determine) and (not key or not mode or not chord):
         out.context_note = ("Bạn chọn giọng và loại giọng để mình xác định bậc của hợp âm nhé. Nốt gốc của hợp âm không tự xác định giọng."
                             if not key or not mode else "Bạn chọn hợp âm ở phần khám phá hoặc ghi rõ tên hợp âm nhé.")
         return

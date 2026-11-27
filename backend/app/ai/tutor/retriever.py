@@ -11,6 +11,7 @@ nào đổi nội dung mà chưa chạy lại build_index thì không có vector
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
@@ -110,6 +111,20 @@ def _top(chunks: Sequence[Chunk], scores: Sequence[float], top_k: int, min_score
 def retrieve(query: str, embedder: Embedder | None, *, top_k: int = 4, min_score: float = 0.35,
              bm25_min_score: float = 2.0, chunks: Sequence[Chunk] | None = None,
              vectors: Sequence[Sequence[float]] | None = None) -> Retrieval:
+    # Mốc 7: chỉ truy vấn toàn kho bài học (không truyền chunks/vectors riêng, ví dụ kho hướng dẫn) mới đi qua Qdrant.
+    # Qdrant lỗi, lệch hash hoặc lệch model thì query_qdrant trả None và luồng cũ bên dưới chạy như trước.
+    if (embedder is not None and chunks is None and vectors is None
+            and os.getenv("TUTOR_VECTOR_BACKEND", "memory").lower() == "qdrant"):
+        from .qdrant_retriever import query_qdrant
+        qres = query_qdrant(
+            query, embedder, knowledge_base(), top_k=top_k, min_score=min_score,
+            local_path=os.getenv("QDRANT_LOCAL_PATH", ""),
+            url=os.getenv("QDRANT_URL", ""),
+            collection=os.getenv("QDRANT_COLLECTION", "hm_lessons_L01_L08_e5_v1"),
+        )
+        if qres is not None:
+            pairs, best = qres
+            return Retrieval([Hit(c, s) for c, s in pairs], "qdrant", best)
     chunks = list(chunks if chunks is not None else knowledge_base())
     reason = None
     if embedder is None:
@@ -176,6 +191,19 @@ def retrieve_for_skill(query: str, embedder: Embedder | None, lesson_ids: Sequen
     if not idx:
         return Retrieval([], "none", 0.0, "no_lesson_chunks")
     chunks = [kb[i] for i in idx]
+    if embedder is not None and os.getenv("TUTOR_VECTOR_BACKEND", "memory").lower() == "qdrant":
+        from .qdrant_retriever import query_qdrant
+        qres = query_qdrant(
+            query, embedder, tuple(kb), top_k=top_k, min_score=-1.0, allowed_lessons=allowed,
+            local_path=os.getenv("QDRANT_LOCAL_PATH", ""),
+            url=os.getenv("QDRANT_URL", ""),
+            collection=os.getenv("QDRANT_COLLECTION", "hm_lessons_L01_L08_e5_v1"),
+        )
+        if qres is not None:
+            pairs, best = qres
+            if best <= 0:
+                return Retrieval([Hit(c, 0.0) for c in chunks[:top_k]], "qdrant", 0.0, "lesson_order")
+            return Retrieval([Hit(c, s) for c, s in pairs], "qdrant", best)
     vectors = None
     if embedder is not None:
         try:

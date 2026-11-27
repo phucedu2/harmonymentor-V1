@@ -131,7 +131,8 @@ def test_unknown_terms():
     ("Csus4 gồm những nốt nào?", "B", "engine"),
     ("Âm giai A thứ hòa âm gồm những nốt nào?", "B", "engine"),
     ("Hop am C11 gom not gi", "B", "unknown"),
-    ("Modal interchange là gì?", "B", "unknown"),
+    # L06 "Modal Interchange" vào kho 10/11/2026: câu này nay thuộc giáo trình (luồng A), không còn là thuật ngữ chưa dạy.
+    ("Modal interchange là gì?", "A", "lesson"),
     ("Kết cấu fugue là gì?", "B", "unknown"),
 ])
 def test_decide_bm25(q, flow, kind):

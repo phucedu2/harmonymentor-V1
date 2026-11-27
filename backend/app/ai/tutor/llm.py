@@ -123,7 +123,19 @@ class FakeProvider:
 
 
 def get_provider(cfg) -> LLMProvider | None:
-    if not cfg.ai_enabled or not cfg.gemini_api_key:
+    if not cfg.ai_enabled:
+        return None
+    if getattr(cfg, "tutor_llm_provider", "gemini").lower() == "local_qlora":
+        if not getattr(cfg, "local_qlora_adapter_dir", "") or not getattr(cfg, "local_qlora_snapshot_root", ""):
+            return None
+        from .qlora_provider import LocalQLoRAProvider
+        return LocalQLoRAProvider(
+            adapter_dir=cfg.local_qlora_adapter_dir,
+            snapshot_root=cfg.local_qlora_snapshot_root,
+            wsl_python=getattr(cfg, "local_qlora_wsl_python", "/home/thang/hm-qlora-resolve-guj5dVKF/venv/bin/python"),
+            timeout_s=cfg.ai_timeout_seconds,
+        )
+    if not cfg.gemini_api_key:
         return None
     return GeminiProvider(api_key=cfg.gemini_api_key, model=cfg.gemini_model,
                           fallback_model=cfg.gemini_fallback_model, timeout_s=cfg.ai_timeout_seconds)

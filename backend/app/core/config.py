@@ -71,6 +71,15 @@ class Settings:
     # Hiệu chỉnh ở GĐ3 với gemini-embedding-001 (báo cáo ai-gd3 mục C): câu trong phạm vi ≥ 0,61, ngoài ≤ 0,61.
     rag_min_score: float = float(os.getenv("RAG_MIN_SCORE", "0.60"))
     rag_bm25_min_score: float = float(os.getenv("RAG_BM25_MIN_SCORE", "2.0"))
+    # Mốc 7: Tùy chọn kết nối Local QLoRA Adapter và Qdrant 82 đoạn L01–L08 (mặc định giữ nguyên hành vi cũ).
+    tutor_llm_provider: str = os.getenv("TUTOR_LLM_PROVIDER", "gemini")
+    local_qlora_adapter_dir: str = os.getenv("LOCAL_QLORA_ADAPTER_DIR", "")
+    local_qlora_snapshot_root: str = os.getenv("LOCAL_QLORA_SNAPSHOT_ROOT", "")
+    local_qlora_wsl_python: str = os.getenv("LOCAL_QLORA_WSL_PYTHON", "/home/thang/hm-qlora-resolve-guj5dVKF/venv/bin/python")
+    tutor_vector_backend: str = os.getenv("TUTOR_VECTOR_BACKEND", "memory")
+    qdrant_local_path: str = os.getenv("QDRANT_LOCAL_PATH", "")
+    qdrant_url: str = os.getenv("QDRANT_URL", "")
+    qdrant_collection: str = os.getenv("QDRANT_COLLECTION", "hm_lessons_L01_L08_e5_v1")
 
 
 def check_runtime_settings(cfg: Settings) -> None:

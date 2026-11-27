@@ -18,6 +18,8 @@ from app.ai.tutor import router
     ("fmaj11 là hợp âm gì, gồm nốt nào", "B", "unknown_terms"),      # hợp âm 11: Engine chưa có (ADR-019 chỉ 9 và 13)
     ("Gợi ý phim hay cuối tuần", "C", "weak_music_oos"),
     ("Hòa âm bốn bè cấm quãng năm song song vì sao?", "B", "untaught_concept"),
+    ("giong mi thu co may dau thang", "B", "untaught_concept"),                # giọng tương đối: kho chưa dạy (09/11 → 27/11 sửa router)
+    ("Mi thứ có mấy dấu", "B", "untaught_concept"),
 ])
 def test_cau_kho_chua_day_khong_vao_luong_A(question, flow, reason):
     d = router.decide(question, None)

@@ -24,6 +24,10 @@ const FALLBACK_NOTE: Record<string, string> = {
   answer_leak: "Câu AI soạn để lộ đáp án nên đã được thay bằng gợi ý viết sẵn.",
   format_error: "AI trả lời sai định dạng nên đã được thay bằng câu trả lời lấy từ bài học.",
   prompt_leak: "Câu trả lời bị chặn vì không an toàn.",
+  lesson_ungrounded: "AI chưa có nguồn bài học để trả lời nên đã được thay bằng câu trả lời lấy từ bài học.",
+  engine_fact_missing: "Chưa xác minh được bậc hợp âm bằng Music Engine nên đã dùng câu trả lời an toàn.",
+  engine_fact_mismatch: "Câu AI soạn không khớp kết quả của Music Engine nên đã được thay bằng câu trả lời an toàn.",
+  out_of_scope_intent: "Câu hỏi nằm ngoài phạm vi bài học nên đã dùng câu trả lời an toàn.",
 };
 
 // Màu nhãn nguồn theo luồng: người học thấy ngay câu trả lời lấy từ đâu (góp ý thầy G1/G3).
