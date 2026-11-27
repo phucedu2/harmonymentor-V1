@@ -104,7 +104,7 @@ L07_DRAFT_BLOCKS: list[Block] = [
         "title": "2. Tension của ba hợp âm trong ii–V–I ở C major",
         "items": [
             "Dm7 (D–F–A–C): 9 = E, 11 = G, 13 = B.",
-            "G7 (G–B–D–F): 9 = A, 11 = C, 13 = E. Nốt 11 (C) cách quãng 3 (B) nửa cung nên nhiều nhạc sĩ tránh nó trên G7.",
+            "G7 (G–B–D–F): 9 = A, 11 = C, 13 = E. Nốt 11 (C) cách quãng 3 (B) nửa cung, nên hai nốt này nghe rất gần nhau. Khi chọn tension, hãy nghe thử.",
             "Cmaj7 (C–E–G–B): 9 = D, 11 = F, 13 = A.",
         ]}),
     ("L07-BCP1", "checkpoint", {
@@ -159,7 +159,7 @@ L08_DRAFT_BLOCKS: list[Block] = [
         "paragraphs": [
             "Voicing là cách sắp xếp các nốt của một hợp âm để chơi. Khi chơi piano, bạn không phải chơi đủ mọi chord tone.",
             "Shell voicing chỉ giữ ba nốt: root, quãng 3 và quãng 7. Quãng 5 thường lược đi vì nó ít quyết định màu của "
-            "hợp âm hơn quãng 3 và quãng 7.",
+            "hợp âm hơn quãng 3 và quãng 7. Trong bài nâng cao, người chơi có thể bỏ root (rootless voicing). Bài này dùng bản có root để học trước.",
             "Dựng đầy đủ hợp âm (đủ mọi chord tone) và dựng một voicing là hai việc khác nhau, nên chấm điểm khác nhau.",
         ]}),
     ("L08-B03", "theory", {
