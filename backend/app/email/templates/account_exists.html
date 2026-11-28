@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% set preheader = "Someone tried to sign up with this email address." %}
+{% block content %}
+<h1 style="margin:0 0 16px 0;font-size:22px;line-height:30px;">You already have an account</h1>
+<p style="margin:0 0 16px 0;">Hi {{ name }},</p>
+<p style="margin:0;">Someone just tried to create a HarmonyMentor account with this email address. Since you already have one, no new account was created.</p>
+{% with href = login_link, label = "Sign in" %}{% include "_button.html" %}{% endwith %}
+<p style="margin:0;font-size:14px;line-height:20px;color:{{ c.muted }};">Forgot your password? <a href="{{ reset_link }}" style="color:{{ c.primary }};">Reset it here</a>. If this wasn't you, you can safely ignore this email.</p>
+{% endblock %}

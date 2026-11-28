@@ -6,9 +6,9 @@ File: `.github/workflows/ci.yml`. CI chạy khi mở hoặc cập nhật PR vào
 
 | Job | Các bước | Đỏ khi |
 |---|---|---|
-| Backend (SQLite, toàn bộ test) | Python 3.11 → `pip install -r requirements.txt` → `pip freeze` → `python -m compileall` → `pytest -m "not postgres"` → `scripts/ci/kiem_junit.py` | có test sai/lỗi, có test bị skip, hoặc ít hơn 325 test đạt |
+| Backend (SQLite, toàn bộ test) | Python 3.11 → `pip install -r requirements.txt` → `pip freeze` → `python -m compileall` → `pytest -m "not postgres"` → `scripts/ci/kiem_junit.py` | có test sai/lỗi, có test bị skip, hoặc ít hơn 330 test đạt |
 | Backend (PostgreSQL 16 + pgvector) | container tạm `pgvector/pgvector:pg16` → tạo CSDL `harmony_ci_migrate` → `alembic upgrade head` → `alembic check` → kiểm tra extension `vector` → `pytest -m postgres` → `kiem_junit.py` → kiểm tra không còn schema `hm_pgtest_*` | migration lỗi, model lệch migration, test HM-010 hoặc migration PR-3 sai, **bị skip**, ít hơn 21 test đạt, hoặc còn schema test sót lại |
-| Frontend (npm ci + build) | Node 22 → `npm ci` → `npm run build` (`tsc -b` + `vite build`) | lỗi kiểu TypeScript hoặc lỗi build |
+| Frontend (npm ci + build) | Node 22 → `npm ci` → `npm test` (Vitest) → `npm run build` (`tsc -b` + `vite build`) | test Vitest sai, lỗi kiểu TypeScript hoặc lỗi build |
 
 ### Vì sao phải đếm skip
 
@@ -20,22 +20,37 @@ Test PostgreSQL tự bỏ qua khi thiếu `TEST_DATABASE_URL` hoặc khi URL kh�
 - Hai CSDL tạm: `harmony_ci_migrate` (`DATABASE_URL`, cho migration) và `harmony_test` (`TEST_DATABASE_URL`, cho test). Vì hai CSDL khác nhau và tên CSDL test kết thúc `_test`, lớp bảo vệ trong `backend/tests/pg_test_db.py` (PR-1) cho phép chạy. Nếu ai đặt sai, test bị skip và CI đỏ.
 - Mật khẩu `ci_only_not_secret` chỉ dùng cho container tạm này. Không dùng `JWT_SECRET`, `GEMINI_API_KEY` hay khóa thật nào.
 
+## Job thứ tư: test giao diện Playwright (FE-027, 17/11/2026)
+
+`frontend-e2e` ("Frontend (Playwright giao diện)") chạy `frontend/e2e/*.e2e.ts` bằng Chromium thật trên bản build, 2 cỡ màn hình (desktop 1440 và Pixel 7). Không cần backend: mọi `/api` bị chặn trong test. Kiểm: h1 và không cuộn ngang ở trang công khai, chặn /app khi chưa đăng nhập, nhãn ô nhập, nút sáng/tối, nhận diện Sân khấu, font Fraunces không vỡ dấu, giảm chuyển động, GSAP tải muộn, kéo nút AI Tutor. Job này **chưa** nằm trong ruleset `bao-ve-main`; muốn bắt buộc thì thêm tên job vào ruleset.
+
+Trên máy: `cd frontend && npm run build && npx playwright install chromium && npm run e2e`.
+
+## Job thứ năm: test giao diện với backend thật (FE-028, 17/11/2026)
+
+`frontend-e2e-live` ("Frontend (Playwright + backend thật)") chạy `frontend/e2e-live/*.live.ts` (7 ca): đăng ký, đăng xuất, đăng nhập lại, sai mật khẩu, trùng email, tải lại trang vẫn giữ phiên, làm câu trắc nghiệm sai rồi đúng và tiến độ được lưu, hoàn thành Bài 1 (12 câu) rồi ôn thẻ đúng/sai. `playwright.live.config.ts` tự dựng backend (SQLite mới trong thư mục tạm, tự seed nội dung, AI tắt) và bản build qua vite preview có proxy `/api`. Đáp án đúng lấy từ `curriculum_specs` của chính backend đó (`scripts/e2e/dap_an_giao_dien.py`), nên đổi nội dung bài (tăng `version`) mà test không theo thì sẽ đỏ đúng chỗ. Cũng chưa nằm trong ruleset bắt buộc.
+
+Trên máy (Python 3.11 và `pip install -r backend/requirements.txt` trước): `cd frontend && npm run build && npm run e2e:live`. Trên Windows đặt `PYTHON=python` nếu cần.
+
 ## Khi thêm hoặc xóa test
 
-Mức tối thiểu (`--min-passed 325` và `--min-passed 21` trong `ci.yml`) là số test đạt sau PR-3 ngày 27/10/2026, gồm 6 test sửa sau review (trước PR-3 là 281 và 9). Khi thêm test thì nâng mức này trong cùng PR, để sau đó lỡ xóa test thì CI đỏ. Mức này không bao giờ được hạ để CI xanh.
+Mức tối thiểu (`--min-passed 330` và `--min-passed 21` trong `ci.yml`) là số test đạt sau HM-001 ngày 28/10/2026 (PR-3 là 325, trước PR-3 là 281 và 9). Khi thêm test thì nâng mức này trong cùng PR, để sau đó lỡ xóa test thì CI đỏ. Mức này không bao giờ được hạ để CI xanh.
 
 ## Chạy giống CI trên máy
 
 ```bash
 cd backend
 pytest -q -m "not postgres" --junitxml=../ket-qua-sqlite.xml
-python ../scripts/ci/kiem_junit.py ../ket-qua-sqlite.xml --min-passed 325 --title "Backend SQLite"
+python ../scripts/ci/kiem_junit.py ../ket-qua-sqlite.xml --min-passed 330 --title "Backend SQLite"
 
 # Cần PostgreSQL có pgvector, ví dụ: docker run -d -p 55432:5432 -e POSTGRES_USER=hm_ci \
 #   -e POSTGRES_PASSWORD=ci_only_not_secret -e POSTGRES_DB=harmony_test pgvector/pgvector:pg16
 TEST_DATABASE_URL=postgresql+psycopg://hm_ci:ci_only_not_secret@127.0.0.1:55432/harmony_test \
   pytest -m postgres -v --junitxml=../ket-qua-postgres.xml
 python ../scripts/ci/kiem_junit.py ../ket-qua-postgres.xml --min-passed 21 --title "PostgreSQL HM-010 + PR-3"
+
+cd ../frontend
+npm ci && npm test && npm run build
 ```
 
 ## Bắt buộc CI xanh trước khi gộp (Phúc làm trên GitHub)

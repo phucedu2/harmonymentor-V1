@@ -1,0 +1,181 @@
+{"id": "T001", "verdict": "dung", "note": ""}
+{"id": "T002", "verdict": "dung", "note": ""}
+{"id": "T003", "verdict": "dung", "note": ""}
+{"id": "T004", "verdict": "khong_tra_loi", "note": "Từ chối câu tiếng Anh 'What notes are in the Bb chord' dù Engine tính được"}
+{"id": "T005", "verdict": "dung", "note": ""}
+{"id": "T006", "verdict": "dung", "note": "Ab 'mượn từ C minor' tự thêm ngữ cảnh, nốt đúng"}
+{"id": "T007", "verdict": "dung", "note": ""}
+{"id": "T008", "verdict": "dung", "note": ""}
+{"id": "T009", "verdict": "dung", "note": ""}
+{"id": "T010", "verdict": "dung", "note": ""}
+{"id": "T011", "verdict": "dung", "note": ""}
+{"id": "T012", "verdict": "dung", "note": ""}
+{"id": "T013", "verdict": "dung", "note": ""}
+{"id": "T014", "verdict": "dung", "note": ""}
+{"id": "T015", "verdict": "dung", "note": ""}
+{"id": "T016", "verdict": "dung", "note": ""}
+{"id": "T017", "verdict": "dung", "note": ""}
+{"id": "T018", "verdict": "dung", "note": ""}
+{"id": "T019", "verdict": "dung", "note": ""}
+{"id": "T020", "verdict": "dung", "note": ""}
+{"id": "T021", "verdict": "dung", "note": ""}
+{"id": "T022", "verdict": "dung", "note": ""}
+{"id": "T023", "verdict": "dung", "note": ""}
+{"id": "T024", "verdict": "dung", "note": ""}
+{"id": "T025", "verdict": "sai", "note": "Viết 'một năm át phụ' lủng củng và tự thêm ngữ cảnh C major không ai hỏi"}
+{"id": "T026", "verdict": "dung", "note": ""}
+{"id": "T027", "verdict": "dung", "note": ""}
+{"id": "T028", "verdict": "dung", "note": ""}
+{"id": "T029", "verdict": "dung", "note": ""}
+{"id": "T030", "verdict": "dung", "note": ""}
+{"id": "T031", "verdict": "dung", "note": ""}
+{"id": "T032", "verdict": "dung", "note": ""}
+{"id": "T033", "verdict": "dung", "note": ""}
+{"id": "T034", "verdict": "dung", "note": ""}
+{"id": "T035", "verdict": "dung", "note": ""}
+{"id": "T036", "verdict": "dung", "note": ""}
+{"id": "T037", "verdict": "dung", "note": ""}
+{"id": "T038", "verdict": "dung", "note": ""}
+{"id": "T039", "verdict": "dung", "note": ""}
+{"id": "T040", "verdict": "dung", "note": ""}
+{"id": "T041", "verdict": "dung", "note": ""}
+{"id": "T042", "verdict": "sai", "note": "Bịa chữ 'Blandimished 7'; nốt đúng"}
+{"id": "T043", "verdict": "sai", "note": "'giảm kép bảy' sai thuật ngữ (là bảy giảm); nốt đúng"}
+{"id": "T044", "verdict": "dung", "note": ""}
+{"id": "T045", "verdict": "dung", "note": ""}
+{"id": "T046", "verdict": "dung", "note": "Dự phòng Engine đúng G7=G B D F"}
+{"id": "T047", "verdict": "sai", "note": "Nói A xuất hiện nếu chơi 'thang âm trưởng tương ứng': không có thang nào của Dm7b5 chứa A"}
+{"id": "T048", "verdict": "dung", "note": ""}
+{"id": "T049", "verdict": "dung", "note": ""}
+{"id": "T050", "verdict": "dung", "note": ""}
+{"id": "T051", "verdict": "dung", "note": "Nốt đúng nhưng không nói thẳng 'A7 không có C'"}
+{"id": "T052", "verdict": "dung", "note": "Nốt đúng nhưng không nói thẳng 'E7 không có G'"}
+{"id": "T053", "verdict": "dung", "note": ""}
+{"id": "T054", "verdict": "dung", "note": ""}
+{"id": "T055", "verdict": "dung", "note": ""}
+{"id": "T056", "verdict": "dung", "note": ""}
+{"id": "T057", "verdict": "dung", "note": ""}
+{"id": "T058", "verdict": "dung", "note": ""}
+{"id": "T059", "verdict": "dung", "note": ""}
+{"id": "T060", "verdict": "dung", "note": ""}
+{"id": "T061", "verdict": "dung", "note": ""}
+{"id": "T062", "verdict": "dung", "note": ""}
+{"id": "T063", "verdict": "dung", "note": ""}
+{"id": "T064", "verdict": "khong_tra_loi", "note": "Từ chối liệt kê nốt âm giai / mode dù Engine tính được"}
+{"id": "T065", "verdict": "dung", "note": ""}
+{"id": "T066", "verdict": "khong_tra_loi", "note": "Từ chối liệt kê nốt âm giai / mode dù Engine tính được"}
+{"id": "T067", "verdict": "dung", "note": ""}
+{"id": "T068", "verdict": "sai", "note": "Công thức giọng thứ tự nhiên liệt kê thiếu 1 bậc (chỉ 6 bước); từ chối liệt kê nốt"}
+{"id": "T069", "verdict": "dung", "note": ""}
+{"id": "T070", "verdict": "sai", "note": "Nói thứ tự nhiên có 'Năm giáng' (đúng là Năm đúng) và gõ 'Giây trưởng'; lộ chữ ENGINE_FACTS"}
+{"id": "T071", "verdict": "sai", "note": "F–G# là quãng 2 TĂNG, không phải 2 thứ"}
+{"id": "T072", "verdict": "dung", "note": ""}
+{"id": "T073", "verdict": "sai", "note": "C–D# là quãng 2 TĂNG, không phải 2 trưởng"}
+{"id": "T074", "verdict": "tranh_luan", "note": "'màu sắc Á Đông' mang tính chủ quan"}
+{"id": "T075", "verdict": "dung", "note": ""}
+{"id": "T076", "verdict": "dung", "note": ""}
+{"id": "T077", "verdict": "dung", "note": ""}
+{"id": "T078", "verdict": "khong_tra_loi", "note": "Từ chối liệt kê nốt âm giai / mode dù Engine tính được"}
+{"id": "T079", "verdict": "khong_tra_loi", "note": "Từ chối liệt kê nốt âm giai / mode dù Engine tính được"}
+{"id": "T080", "verdict": "khong_tra_loi", "note": "Từ chối liệt kê nốt âm giai / mode dù Engine tính được"}
+{"id": "T081", "verdict": "khong_tra_loi", "note": "Từ chối liệt kê nốt âm giai / mode dù Engine tính được"}
+{"id": "T082", "verdict": "dung", "note": ""}
+{"id": "T083", "verdict": "dung", "note": ""}
+{"id": "T084", "verdict": "khong_tra_loi", "note": "Từ chối: Engine không có mode này (Lydian/Phrygian/Locrian/pentatonic/blues); chỉ nêu công thức"}
+{"id": "T085", "verdict": "tranh_luan", "note": "'màu sắc Tây Ban Nha hoặc Ai Cập' của Phrygian mang tính chủ quan; lại từ chối nốt"}
+{"id": "T086", "verdict": "khong_tra_loi", "note": "Từ chối: Engine không có mode này (Lydian/Phrygian/Locrian/pentatonic/blues); chỉ nêu công thức"}
+{"id": "T087", "verdict": "khong_tra_loi", "note": "Từ chối: Engine không có mode này (Lydian/Phrygian/Locrian/pentatonic/blues); chỉ nêu công thức"}
+{"id": "T088", "verdict": "dung", "note": ""}
+{"id": "T089", "verdict": "khong_tra_loi", "note": "AI lỗi, câu dự phòng không có đáp án Engine"}
+{"id": "T090", "verdict": "dung", "note": ""}
+{"id": "T091", "verdict": "dung", "note": ""}
+{"id": "T092", "verdict": "sai", "note": "Chỉ nói 'quãng 5', thiếu tính chất 'đúng' (P5)"}
+{"id": "T093", "verdict": "dung", "note": ""}
+{"id": "T094", "verdict": "dung", "note": ""}
+{"id": "T095", "verdict": "dung", "note": ""}
+{"id": "T096", "verdict": "dung", "note": ""}
+{"id": "T097", "verdict": "sai", "note": "Tritone là 3 cung, không phải 'ba cung rưỡi'"}
+{"id": "T098", "verdict": "tranh_luan", "note": "A4 thường giải quyết ra m6 hoặc vào m3; M6 không phải khuôn chuẩn"}
+{"id": "T099", "verdict": "dung", "note": ""}
+{"id": "T100", "verdict": "dung", "note": ""}
+{"id": "T101", "verdict": "sai", "note": "Giải thích sai: G lên F tự nhiên là m7, không phải M7 (kết quả M7 của G–F# đúng)"}
+{"id": "T102", "verdict": "khong_tra_loi", "note": "Từ chối quãng Eb–A dù Engine tính được"}
+{"id": "T103", "verdict": "khong_tra_loi", "note": "AI lỗi, câu dự phòng không có đáp án Engine"}
+{"id": "T104", "verdict": "dung", "note": ""}
+{"id": "T105", "verdict": "dung", "note": ""}
+{"id": "T106", "verdict": "dung", "note": ""}
+{"id": "T107", "verdict": "sai", "note": "Đọc ngược chiều: hỏi D lên C# (M7), trả lời C# lên D (m2)"}
+{"id": "T108", "verdict": "khong_tra_loi", "note": "AI lỗi, câu dự phòng không có đáp án Engine"}
+{"id": "T109", "verdict": "dung", "note": ""}
+{"id": "T110", "verdict": "dung", "note": ""}
+{"id": "T111", "verdict": "dung", "note": ""}
+{"id": "T112", "verdict": "dung", "note": ""}
+{"id": "T113", "verdict": "dung", "note": ""}
+{"id": "T114", "verdict": "dung", "note": ""}
+{"id": "T115", "verdict": "dung", "note": ""}
+{"id": "T116", "verdict": "sai", "note": "Không nói kích thước M7 (11 nửa cung)"}
+{"id": "T117", "verdict": "sai", "note": "'m7 (thứ bảy trưởng)' tự mâu thuẫn; số 10 đúng"}
+{"id": "T118", "verdict": "dung", "note": ""}
+{"id": "T119", "verdict": "sai", "note": "'9 cung rưỡi' sai (9 nửa cung = 4,5 cung)"}
+{"id": "T120", "verdict": "dung", "note": ""}
+{"id": "T121", "verdict": "khong_tra_loi", "note": "Câu 'đảo quãng' bị gán nhầm thành hướng dẫn dùng web"}
+{"id": "T122", "verdict": "sai", "note": "Gõ sai 'thưởng trưởng', 'hoàn giữ nguyên'; kết quả M7 đúng"}
+{"id": "T123", "verdict": "sai", "note": "Đảo A4 phải ra d5, trả lời P5"}
+{"id": "T124", "verdict": "dung", "note": ""}
+{"id": "T125", "verdict": "dung", "note": ""}
+{"id": "T126", "verdict": "dung", "note": ""}
+{"id": "T127", "verdict": "dung", "note": ""}
+{"id": "T128", "verdict": "dung", "note": "Sai chính tả 'circle of fiths', nội dung đúng"}
+{"id": "T129", "verdict": "dung", "note": ""}
+{"id": "T130", "verdict": "dung", "note": ""}
+{"id": "T131", "verdict": "dung", "note": ""}
+{"id": "T132", "verdict": "dung", "note": ""}
+{"id": "T133", "verdict": "dung", "note": ""}
+{"id": "T134", "verdict": "dung", "note": ""}
+{"id": "T135", "verdict": "dung", "note": ""}
+{"id": "T136", "verdict": "dung", "note": ""}
+{"id": "T137", "verdict": "dung", "note": ""}
+{"id": "T138", "verdict": "dung", "note": ""}
+{"id": "T139", "verdict": "tranh_luan", "note": "'giọng song sinh' không phải thuật ngữ chuẩn (tương quan)"}
+{"id": "T140", "verdict": "sai", "note": "B thứ có 2 dấu THĂNG (F# C#), trả lời 2 dấu giáng và gọi là song song với D trưởng"}
+{"id": "T141", "verdict": "dung", "note": ""}
+{"id": "T142", "verdict": "dung", "note": ""}
+{"id": "T143", "verdict": "dung", "note": ""}
+{"id": "T146", "verdict": "dung", "note": ""}
+{"id": "T147", "verdict": "dung", "note": ""}
+{"id": "T148", "verdict": "dung", "note": ""}
+{"id": "T150", "verdict": "dung", "note": ""}
+{"id": "T151", "verdict": "dung", "note": ""}
+{"id": "T152", "verdict": "khong_tra_loi", "note": "AI lỗi, câu dự phòng không có đáp án Engine"}
+{"id": "T153", "verdict": "dung", "note": ""}
+{"id": "T154", "verdict": "dung", "note": ""}
+{"id": "T155", "verdict": "khong_tra_loi", "note": "Từ chối 'bài chưa dạy' cho kiến thức hóa biểu/bậc cơ bản"}
+{"id": "T156", "verdict": "dung", "note": ""}
+{"id": "T157", "verdict": "dung", "note": ""}
+{"id": "T158", "verdict": "dung", "note": ""}
+{"id": "T159", "verdict": "khong_tra_loi", "note": "Từ chối 'bài chưa dạy' cho kiến thức hóa biểu/bậc cơ bản"}
+{"id": "T160", "verdict": "khong_tra_loi", "note": "Từ chối 'bài chưa dạy' cho kiến thức hóa biểu/bậc cơ bản"}
+{"id": "T161", "verdict": "dung", "note": ""}
+{"id": "T162", "verdict": "sai", "note": "Mở đầu 'Đúng rồi' với tiền đề sai, liệt kê G# cho D trưởng rồi tự sửa; dùng 'hóa vận'"}
+{"id": "T163", "verdict": "dung", "note": ""}
+{"id": "T164", "verdict": "dung", "note": ""}
+{"id": "T165", "verdict": "sai", "note": "Em7 trong G trưởng là vi7 (bậc 6), trả lời bậc 3"}
+{"id": "T168", "verdict": "khong_tra_loi", "note": "AI lỗi, câu dự phòng đưa đoạn bài không liên quan (không trả lời bậc của Bb trong F)"}
+{"id": "T169", "verdict": "khong_tra_loi", "note": "AI lỗi, đoạn dự phòng nói về F# trong G trưởng, không liên quan; không trả lời bậc"}
+{"id": "T171", "verdict": "dung", "note": ""}
+{"id": "T172", "verdict": "khong_tra_loi", "note": "Từ chối 'bài chưa dạy' cho kiến thức hóa biểu/bậc cơ bản"}
+{"id": "T173", "verdict": "sai", "note": "F#m7 trong A trưởng là vi7, trả lời ii7"}
+{"id": "T175", "verdict": "dung", "note": ""}
+{"id": "T176", "verdict": "khong_tra_loi", "note": "Từ chối 'bài chưa dạy' cho kiến thức hóa biểu/bậc cơ bản"}
+{"id": "T177", "verdict": "khong_tra_loi", "note": "AI lỗi, dự phòng có Cm7 đúng nhưng kèm đoạn bài lạc"}
+{"id": "T178", "verdict": "dung", "note": ""}
+{"id": "T180", "verdict": "dung", "note": ""}
+{"id": "T183", "verdict": "dung", "note": ""}
+{"id": "T184", "verdict": "dung", "note": ""}
+{"id": "T185", "verdict": "dung", "note": ""}
+{"id": "T186", "verdict": "dung", "note": ""}
+{"id": "T187", "verdict": "dung", "note": ""}
+{"id": "T188", "verdict": "dung", "note": ""}
+{"id": "T189", "verdict": "dung", "note": ""}
+{"id": "T191", "verdict": "dung", "note": ""}
+{"id": "T192", "verdict": "khong_tra_loi", "note": "Từ chối 'bài chưa dạy' cho kiến thức hóa biểu/bậc cơ bản"}

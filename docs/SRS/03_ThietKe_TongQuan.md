@@ -117,6 +117,7 @@ Người học và Quản trị viên dùng hệ thống qua trình duyệt. H�
 | Đoạn bài học liên quan (RAG)                       | Mã người dùng, token đăng nhập       |
 | Mục tiêu học tập và tên các kỹ năng yếu            | Lịch sử làm bài đầy đủ của người học |
 | Mã lỗi và đáp án của lượt làm đang được giải thích | Dữ liệu của người học khác           |
+| Chữ của các trang tài liệu nhạc lý mà Quản trị viên chọn để AI tóm tắt (chỉ khi Quản trị viên đã tick xác nhận có quyền dùng tài liệu; ADR-025) | Tệp gốc, tên Quản trị viên, email |
 
 Người dùng có thể là học sinh dưới 18 tuổi, nên nhóm phải đọc điều khoản sử dụng Gemini API về độ tuổi và về cách Google dùng dữ liệu của gói miễn phí trước khi demo với người dùng thật. Khi có người dùng thật, nên chuyển sang gói trả phí hoặc tắt AI.
 
@@ -189,7 +190,7 @@ Nhóm chọn kiến trúc nguyên khối chia module (Modular Monolith): toàn b
 |-----------------|---------------------------------------------------------------------------------------------------|
 | Trang chủ       | Giới thiệu hệ thống, chương trình học, nút Đăng ký và Đăng nhập.                                  |
 | Bảng điều khiển | Mục tiêu học tập, 3–5 bài được gợi ý kèm lý do, kỹ năng yếu, số thẻ ôn đến hạn.                   |
-| Học             | 12 bài theo 5 module. Trong bài: các bước học, mục lục, piano, khuông nhạc, bài tập.              |
+| Học             | 9 bài theo 4 module. Trong bài: các bước học, mục lục, piano, khuông nhạc, bài tập.              |
 | Luyện tập       | Bài tập ngẫu nhiên theo kỹ năng và mức độ Dễ, Vừa, Khó.                                           |
 | Ôn tập          | Flashcard đến hạn, lật thẻ, tự đánh giá.                                                          |
 | Tiến độ         | Tiến độ theo bài, mức thành thạo theo kỹ năng, số thẻ ở từng hộp Leitner.                         |

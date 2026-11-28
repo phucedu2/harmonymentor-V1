@@ -1,0 +1,303 @@
+<title>Phòng nghe mù HarmonyMentor</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Bố cục: một "sổ ghi take" của phòng thu — mỗi thẻ là một cặp take A/B, điểm chấm như núm vặn 1–5. */
+:root {
+  --bg: #eef1f3; --panel: #ffffff; --ink: #18232c; --muted: #5b6b77; --line: #d3dbe0;
+  --accent: #1c6b7d; --accent-ink: #ffffff; --take-a: #1c6b7d; --take-b: #a3542a;
+  --good: #2c7a3f; --warn: #a66a00; --bad: #b0312a;
+  --f-display: "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #11181d; --panel: #18222a; --ink: #e4ebef; --muted: #93a3ae; --line: #2b3a44;
+  --accent: #58b3c6; --accent-ink: #0c1418; --take-a: #58b3c6; --take-b: #e08a5c;
+  --good: #6cc282; --warn: #e2b04a; --bad: #ef7d74; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #11181d; --panel: #18222a; --ink: #e4ebef; --muted: #93a3ae; --line: #2b3a44;
+  --accent: #58b3c6; --accent-ink: #0c1418; --take-a: #58b3c6; --take-b: #e08a5c;
+  --good: #6cc282; --warn: #e2b04a; --bad: #ef7d74; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 24px 64px }
+.wrap { max-width: 960px; margin: 0 auto; display: grid; gap: 20px }
+h1 { font: 800 clamp(26px, 5vw, 38px)/1.1 var(--f-display); letter-spacing: -0.02em; margin: 0; text-wrap: balance }
+h2 { font: 700 19px/1.3 var(--f-display); margin: 0; text-wrap: balance }
+p { margin: 0; max-width: 68ch }
+.muted { color: var(--muted) }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums }
+.eyebrow { font: 600 12px var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted) }
+header { display: grid; gap: 10px }
+.bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px }
+.bar label { display: flex; gap: 8px; align-items: center; font-weight: 500 }
+select, button { font: inherit; color: inherit }
+select { background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px }
+.progress { flex: 1 1 200px; display: grid; gap: 4px; min-width: 0 }
+.track { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden }
+.track > i { display: block; height: 100%; background: var(--accent); width: 0 }
+.status { font: 500 13px var(--f-mono); color: var(--muted) }
+.trials { display: grid; gap: 14px }
+.trial { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: grid; gap: 14px }
+.trial.done { border-color: color-mix(in srgb, var(--good) 45%, var(--line)) }
+.trial-head { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; justify-content: space-between }
+.takes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px }
+.take { border: 1px solid var(--line); border-radius: 8px; padding: 12px; display: grid; gap: 10px; min-width: 0 }
+.take h3 { margin: 0; font: 700 15px var(--f-display); display: flex; gap: 8px; align-items: center }
+.chip { font: 600 12px var(--f-mono); padding: 2px 8px; border-radius: 99px; color: var(--accent-ink) }
+.chip.a { background: var(--take-a) } .chip.b { background: var(--take-b) }
+.play { justify-self: start; display: inline-flex; gap: 8px; align-items: center; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px; cursor: pointer }
+.play[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent) }
+.crit { display: grid; gap: 4px }
+.crit span { font-size: 13px; color: var(--muted) }
+.knobs { display: flex; gap: 4px }
+.knobs button { width: 34px; height: 30px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); cursor: pointer; font: 600 13px var(--f-mono) }
+.knobs button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink) }
+.pref { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 14px }
+.pref button { border: 1px solid var(--line); background: var(--bg); border-radius: 6px; padding: 5px 12px; cursor: pointer }
+.pref button[aria-pressed="true"] { background: var(--ink); color: var(--bg) }
+.reveal { font: 500 13px var(--f-mono); color: var(--muted) }
+button:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: grid; gap: 12px }
+.table-wrap { overflow-x: auto }
+table { border-collapse: collapse; width: 100%; font-size: 14px }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--line); white-space: nowrap }
+td.num, th.num { text-align: right; font-family: var(--f-mono); font-variant-numeric: tabular-nums }
+.ok { color: var(--good) } .low { color: var(--bad) } .mid { color: var(--warn) }
+.actions { display: flex; flex-wrap: wrap; gap: 10px }
+.btn { background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 6px; padding: 8px 14px; font-weight: 600; cursor: pointer }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line) }
+textarea { width: 100%; min-height: 120px; font: 12px var(--f-mono); background: var(--bg); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 8px }
+@media (prefers-reduced-motion: no-preference) { .track > i { transition: width .3s } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Backing track · nghe mù · 02/11/2026</div>
+    <h1>Phòng nghe mù</h1>
+    <p>Mỗi thẻ có hai take A và B của cùng một vòng hợp âm và phong cách. Một take là bản phối mới (mẫu nhạc cụ thật), một take là bản synth cũ, thứ tự xáo riêng cho từng người. Hai take đã được chỉnh cùng độ to (−20 LUFS) để bản to hơn không được lợi. Nghe bằng tai nghe, chấm từ 1 (rất tệ) đến 5 (như ban nhạc thu phòng thu).</p>
+    <p class="muted">Đích của nhóm: bản mới đạt trung bình ≥ 4/5 và không phong cách nào dưới 3. Đáp án chỉ hiện khi bạn chấm xong cả 18 thẻ.</p>
+  </header>
+
+  <div class="bar">
+    <label for="who">Bạn là
+      <select id="who"><option value="">chọn tên</option><option>Phúc</option><option>Thắng</option><option>Đạt</option><option>Khác</option></select>
+    </label>
+    <div class="progress"><div class="track"><i id="prog"></i></div><div class="status" id="status">0/18 thẻ · đang kết nối…</div></div>
+  </div>
+
+  <section class="trials" id="trials" aria-label="Các cặp take"></section>
+
+  <section class="panel" id="mine" hidden>
+    <h2>Kết quả của bạn (đã mở đáp án)</h2>
+    <div class="table-wrap"><table id="mineTable"></table></div>
+  </section>
+
+  <section class="panel" id="team" hidden>
+    <h2>Tổng hợp cả nhóm</h2>
+    <p class="muted">Chỉ chủ trang thấy bảng này. Điểm là trung bình ba tiêu chí của bản mới, theo phong cách.</p>
+    <div class="table-wrap"><table id="teamTable"></table></div>
+  </section>
+
+  <section class="panel" id="local" hidden>
+    <h2>Gửi kết quả</h2>
+    <p class="muted">Trang đang mở ngoài claude.ai nên điểm chỉ lưu trên máy này. Bấm chép rồi dán vào luồng dự án.</p>
+    <div class="actions"><button class="btn" id="copy" type="button">Chép kết quả (JSON)</button></div>
+    <textarea id="dump" readonly aria-label="Kết quả dạng JSON"></textarea>
+  </section>
+</div>
+
+<script>
+const DATA = /*DATA*/null/*END*/;
+const LABEL = { pop: "Pop", ballad: "Ballad", bossa: "Bossa nova", lofi: "Lo-fi", jazz: "Jazz", rock: "Rock", indie: "Indie", funk: "Funk", rnb: "R&B" };
+const CRITERIA = ["Âm sắc giống nhạc cụ thật", "Cách chơi đúng phong cách", "Tổng thể: như ban nhạc phòng thu"];
+const TARGET_LUFS = -20;
+const trials = DATA.results.map((r) => ({ key: `${r.style}|${r.loop}`, style: r.style, loop: r.loop, old: r.old_style, bpm: r.bpm,
+  file: (k) => `${r.style}_${r.loop}_${k}.ogg`, lufs: { truoc: r.before.lufs, sau: r.after.lufs } }));
+
+// Xáo theo hạt giống của người nghe: mở lại trang vẫn đúng thứ tự cũ, mỗi người một thứ tự khác.
+function hash(s) { let h = 2166136261; for (const c of s) { h ^= c.codePointAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
+function rng(seed) { return () => { seed |= 0; seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+
+let state = { listener: "", seed: 0, answers: {} };   // answers[key] = { a: "sau"|"truoc", A:[3 điểm], B:[3 điểm], pref: "A"|"B"|"=" }
+let order = [];
+let db = null, docRef = null, uid = null, saveTimer = null, saving = false, dirty = false;
+const $ = (id) => document.getElementById(id);
+
+function setup(seed) {
+  state.seed = seed;
+  const r = rng(seed);
+  order = trials.map((t) => t.key);
+  for (let i = order.length - 1; i > 0; i -= 1) { const j = Math.floor(r() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+  for (const key of order) if (!state.answers[key]) state.answers[key] = { a: r() < 0.5 ? "sau" : "truoc", A: [0, 0, 0], B: [0, 0, 0], pref: "" };
+}
+
+const complete = (a) => a.A.every(Boolean) && a.B.every(Boolean) && a.pref;
+const doneCount = () => order.filter((k) => complete(state.answers[k])).length;
+
+let current = null;
+function playClip(btn, src, gain) {
+  if (current) { current.audio.pause(); current.btn.setAttribute("aria-pressed", "false"); current.btn.querySelector("b").textContent = "▶ Nghe"; }
+  if (current && current.btn === btn) { current = null; return; }
+  const audio = new Audio(src);
+  audio.volume = Math.min(1, gain);
+  audio.play().catch(() => { btn.querySelector("b").textContent = "Không phát được"; });
+  btn.setAttribute("aria-pressed", "true"); btn.querySelector("b").textContent = "■ Dừng";
+  audio.onended = () => { btn.setAttribute("aria-pressed", "false"); btn.querySelector("b").textContent = "▶ Nghe"; current = null; };
+  current = { audio, btn };
+}
+
+function render() {
+  const box = $("trials");
+  box.textContent = "";
+  order.forEach((key, idx) => {
+    const t = trials.find((x) => x.key === key);
+    const ans = state.answers[key];
+    const card = document.createElement("article");
+    card.className = "trial" + (complete(ans) ? " done" : "");
+    const head = document.createElement("div"); head.className = "trial-head";
+    const h = document.createElement("h2"); h.textContent = `Thẻ ${idx + 1} · ${LABEL[t.style]}`;
+    const meta = document.createElement("span"); meta.className = "mono muted"; meta.textContent = `${t.loop.replaceAll("-", " – ")} · ${t.bpm} BPM`;
+    head.append(h, meta);
+    const takes = document.createElement("div"); takes.className = "takes";
+    for (const side of ["A", "B"]) {
+      const kind = side === "A" ? ans.a : (ans.a === "sau" ? "truoc" : "sau");
+      const take = document.createElement("div"); take.className = "take";
+      const th = document.createElement("h3"); const chip = document.createElement("span"); chip.className = "chip " + side.toLowerCase(); chip.textContent = side;
+      th.append(chip, document.createTextNode(`Take ${side}`));
+      const play = document.createElement("button"); play.type = "button"; play.className = "play"; play.setAttribute("aria-pressed", "false");
+      const b = document.createElement("b"); b.textContent = "▶ Nghe"; play.append(b);
+      play.addEventListener("click", () => playClip(play, t.file(kind), 10 ** ((TARGET_LUFS - t.lufs[kind]) / 20)));
+      take.append(th, play);
+      CRITERIA.forEach((c, ci) => {
+        const crit = document.createElement("div"); crit.className = "crit";
+        const lab = document.createElement("span"); lab.textContent = c;
+        const knobs = document.createElement("div"); knobs.className = "knobs"; knobs.setAttribute("role", "group"); knobs.setAttribute("aria-label", `${c}, take ${side}`);
+        for (let v = 1; v <= 5; v += 1) {
+          const kb = document.createElement("button"); kb.type = "button"; kb.textContent = v; kb.setAttribute("aria-pressed", String(ans[side][ci] === v));
+          kb.addEventListener("click", () => { ans[side][ci] = v; changed(); });
+          knobs.append(kb);
+        }
+        crit.append(lab, knobs); take.append(crit);
+      });
+      takes.append(take);
+    }
+    const pref = document.createElement("div"); pref.className = "pref";
+    pref.append(document.createTextNode("Bạn thích take nào hơn?"));
+    for (const [v, txt] of [["A", "A"], ["B", "B"], ["=", "Ngang nhau"]]) {
+      const pb = document.createElement("button"); pb.type = "button"; pb.textContent = txt; pb.setAttribute("aria-pressed", String(ans.pref === v));
+      pb.addEventListener("click", () => { ans.pref = v; changed(); });
+      pref.append(pb);
+    }
+    card.append(head, takes, pref);
+    if (doneCount() === order.length) {
+      const rv = document.createElement("div"); rv.className = "reveal";
+      rv.textContent = `Đáp án: A = ${ans.a === "sau" ? "bản mới" : "bản cũ"}, B = ${ans.a === "sau" ? "bản cũ" : "bản mới"}` + (t.old !== t.style ? ` (bản cũ chưa có ${LABEL[t.style]}, dùng ${LABEL[t.old]} cũ)` : "");
+      card.append(rv);
+    }
+    box.append(card);
+  });
+  const n = doneCount();
+  $("prog").style.width = `${(100 * n) / order.length}%`;
+  renderMine();
+}
+
+const newScore = (a) => (a.a === "sau" ? a.A : a.B);
+const oldScore = (a) => (a.a === "sau" ? a.B : a.A);
+const avg = (xs) => xs.reduce((s, x) => s + x, 0) / xs.length;
+const cls = (v) => (v >= 4 ? "ok" : v >= 3 ? "mid" : "low");
+
+function styleTable(rows, table) {
+  table.textContent = "";
+  const head = table.insertRow();
+  for (const [t, num] of [["Phong cách", 0], ["Bản mới", 1], ["Bản cũ", 1], ["Chọn bản mới", 1], ["Số lượt", 1]]) { const th = document.createElement("th"); th.textContent = t; if (num) th.className = "num"; head.append(th); }
+  for (const s of Object.keys(LABEL)) {
+    const rs = rows.filter((r) => r.style === s);
+    if (!rs.length) continue;
+    const tr = table.insertRow();
+    const nNew = avg(rs.map((r) => avg(r.neu))), nOld = avg(rs.map((r) => avg(r.cu)));
+    const wins = rs.filter((r) => r.pick === "sau").length;
+    tr.insertCell().textContent = LABEL[s];
+    for (const [v, c] of [[nNew.toFixed(2), cls(nNew)], [nOld.toFixed(2), ""], [`${wins}/${rs.length}`, ""], [String(rs.length), ""]]) { const td = tr.insertCell(); td.textContent = v; td.className = "num " + c; }
+  }
+}
+
+function rowsOf(s) {
+  return Object.entries(s.answers || {}).filter(([, a]) => complete(a)).map(([key, a]) => ({ style: key.split("|")[0], neu: newScore(a), cu: oldScore(a),
+    pick: a.pref === "=" ? "=" : ((a.pref === "A") === (a.a === "sau") ? "sau" : "truoc") }));
+}
+
+function renderMine() {
+  const done = doneCount() === order.length;
+  $("mine").hidden = !done;
+  if (done) styleTable(rowsOf(state), $("mineTable"));
+  if (!$("local").hidden) $("dump").value = JSON.stringify(state);
+}
+
+function changed() {
+  render();
+  if (db && docRef) { dirty = true; clearTimeout(saveTimer); saveTimer = setTimeout(flush, 600); }
+  else { try { localStorage.setItem("hm-nghe-mu", JSON.stringify(state)); } catch { /* chặn lưu trữ */ } status(); }
+}
+
+// Mỗi lúc chỉ một lượt ghi lên tài liệu của mình; thay đổi trong lúc ghi được gom vào lượt sau.
+async function flush() {
+  if (saving || !dirty) return;
+  saving = true; dirty = false; status("đang lưu…");
+  try { await docRef.set({ listener: state.listener, seed: state.seed, answers: state.answers, updated_at: new Date().toISOString() }); status("đã lưu"); }
+  catch (e) { status(e && e.code === "not_granted" ? "bạn chưa có quyền ghi: nhờ Phúc chia sẻ trang với quyền Có thể tương tác" : "chưa lưu được, thử lại sau"); dirty = true; }
+  saving = false;
+  if (dirty) saveTimer = setTimeout(flush, 600);
+}
+
+function status(msg) {
+  const where = db && docRef ? "lưu trên claude.ai" : "lưu trên máy này";
+  $("status").textContent = `${doneCount()}/${order.length} thẻ · ${msg || where}`;
+}
+
+$("who").addEventListener("change", (e) => { state.listener = e.target.value; changed(); });
+$("copy").addEventListener("click", async () => {
+  const text = JSON.stringify(state);
+  try { await navigator.clipboard.writeText(text); $("copy").textContent = "Đã chép"; } catch { $("dump").select(); }
+});
+
+async function loadTeam() {
+  try {
+    const snap = await db.collection("ratings").get();
+    const rows = snap.docs.flatMap((d) => rowsOf(d.data() || {}));
+    if (!rows.length) return;
+    $("team").hidden = false;
+    styleTable(rows, $("teamTable"));
+  } catch { /* người nghe thường không đọc được bảng chung: bỏ qua */ }
+}
+
+async function boot() {
+  // Hiện ngay một bản xáo tạm, rồi thay bằng bản của người nghe khi biết họ là ai.
+  let local = null;
+  try { local = JSON.parse(localStorage.getItem("hm-nghe-mu") || "null"); } catch { local = null; }
+  if (local && local.seed) state = local;
+  setup(state.seed || ((Math.random() * 2 ** 31) | 0));
+  render(); status("đang kết nối…");
+  const fallback = () => { $("local").hidden = false; $("dump").value = JSON.stringify(state); status(); };
+  const timer = setTimeout(fallback, 10000);
+  try {
+    const user = window.claude ? await window.claude.use("user") : null;
+    db = window.claude ? await window.claude.use("db") : null;
+    uid = user ? await user.id() : null;
+    if (!db || !uid) { clearTimeout(timer); db = null; fallback(); return; }
+    docRef = db.doc("ratings/" + uid);
+    const snap = await docRef.get();
+    clearTimeout(timer);
+    const saved = snap.exists ? snap.data() : null;
+    state = saved ? { listener: saved.listener || "", seed: saved.seed, answers: saved.answers || {} } : { listener: state.listener, seed: hash(uid), answers: {} };
+    setup(state.seed);
+    $("who").value = state.listener;
+    render(); status();
+    if (await user.isOwner()) loadTeam();
+  } catch { clearTimeout(timer); db = null; docRef = null; fallback(); }
+}
+$("who").value = state.listener;
+boot();
+</script>

@@ -26,6 +26,9 @@ class LoginAttemptStore(Protocol):
 
     def reset(self, key: str) -> None: ...
 
+    def reset_email(self, email: str) -> None:
+        """Xóa khóa của email này trên MỌI IP (sau khi đặt lại mật khẩu thành công)."""
+
 
 class MemoryLoginAttemptStore:
     def __init__(self) -> None:
@@ -54,6 +57,12 @@ class MemoryLoginAttemptStore:
     def reset(self, key: str) -> None:
         with self._lock:
             self._data.pop(key, None)
+
+    def reset_email(self, email: str) -> None:
+        suffix = f"|{email}"
+        with self._lock:
+            for key in [k for k in self._data if k.endswith(suffix)]:
+                self._data.pop(key, None)
 
 
 class RedisLoginAttemptStore:
@@ -94,6 +103,15 @@ class RedisLoginAttemptStore:
             self._redis.delete(self._key(key))
         except Exception:  # noqa: BLE001
             log.exception("Redis không xóa được bộ đếm đăng nhập")
+
+    def reset_email(self, email: str) -> None:
+        # Thoát ký tự đặc biệt của mẫu glob để email chứa * ? [ không khớp nhầm khóa người khác.
+        escaped = "".join("\\" + ch if ch in "*?[]\\" else ch for ch in email)
+        try:
+            for name in self._redis.scan_iter(match=f"login_fail:*|{escaped}", count=500):
+                self._redis.delete(name)
+        except Exception:  # noqa: BLE001
+            log.exception("Redis không xóa được bộ đếm đăng nhập theo email")
 
 
 def build_store() -> LoginAttemptStore:

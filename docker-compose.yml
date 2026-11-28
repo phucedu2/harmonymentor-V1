@@ -24,19 +24,61 @@ services:
       timeout: 3s
       retries: 20
 
+  # Kho vector (T3/G3). Dữ liệu ở volume qdrantdata; nạp lại được bằng: docker compose exec api python -m app.rag.ingest --source all
+  qdrant:
+    image: qdrant/qdrant:v1.12.4
+    volumes:
+      - qdrantdata:/qdrant/storage
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c ':> /dev/tcp/127.0.0.1/6333' || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    # Không mở cổng ra máy; cần xem giao diện thì thêm: ports: ["127.0.0.1:6333:6333"]
+
+  # Hộp thư thử cho dev (ADR-040, A12): bắt mọi thư API gửi, xem ở http://localhost:8025. Không gửi ra Internet.
+  # Chỉ mở cổng cho chính máy đang chạy. Khi đã dùng Gmail thật, Mailpit vẫn chạy nhưng không nhận thư nào.
+  mailpit:
+    image: axllent/mailpit:v1.33.1
+    environment:
+      MP_MAX_MESSAGES: 500
+      MP_SMTP_AUTH_ACCEPT_ANY: "1"
+      MP_SMTP_AUTH_ALLOW_INSECURE: "1"
+    ports:
+      - "127.0.0.1:8025:8025"
+
   api:
-    build: ./backend
+    build:
+      context: ./backend
+      args:
+        E5_HM: ${E5_HM:-0}   # 1 = tải thêm bản fine-tune GĐ2b (470 MB) từ GitHub Release, ADR-018
     env_file: .env
     environment:
       DATABASE_URL: postgresql+psycopg://harmony:${DB_PASSWORD}@db:5432/harmony
       REDIS_URL: redis://redis:6379/0
       AUTO_CREATE_SCHEMA: "0"
       TRUST_PROXY: "true"
+      QDRANT_URL: http://qdrant:6333
+      RAG_ENABLED: ${RAG_ENABLED:-1}   # chatbot hỏi Qdrant (chưa nạp hoặc lỗi thì tự lùi về đường cũ); đặt 0 để tắt
+      RAG_CORPUS_DIR: /data/corpus/raw
+      # ADR-040: mặc định gửi thư vào Mailpit (8A). Đặt EMAIL_BACKEND/SMTP_* trong .env để dùng Gmail thật.
+      EMAIL_BACKEND: ${EMAIL_BACKEND:-smtp}
+      SMTP_HOST: ${SMTP_HOST:-mailpit}
+      SMTP_PORT: ${SMTP_PORT:-1025}
+      EMAIL_FROM: ${EMAIL_FROM:-HarmonyMentor <no-reply@harmonymentor.local>}
+    # Bộ đánh giá (python -m app.eval.run) đọc /eval và ghi eval/report.md; kho tài liệu thô nằm ngoài image (gitignore)
+    volumes:
+      - ./eval:/eval
+      - ./data/corpus:/data/corpus:ro
     depends_on:
       db:
         condition: service_healthy
       redis:
         condition: service_healthy
+      qdrant:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
       interval: 10s
@@ -57,3 +99,4 @@ services:
 
 volumes:
   pgdata:
+  qdrantdata:

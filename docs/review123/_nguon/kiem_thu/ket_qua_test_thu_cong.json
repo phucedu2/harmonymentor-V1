@@ -1,0 +1,165 @@
+[
+ {
+  "id": "TC-01",
+  "ok": true,
+  "actual": "Trang chủ hiện nút \"Bắt đầu miễn phí\", menu Đăng nhập / Đăng ký",
+  "at": "2026-11-17T12:26:47.981Z"
+ },
+ {
+  "id": "TC-03",
+  "ok": true,
+  "actual": "Mật khẩu \"abc\": vẫn ở /dang-ky, form báo lỗi; điều kiện độ mạnh hiện \"(chưa đạt)\"",
+  "at": "2026-11-17T12:26:49.019Z"
+ },
+ {
+  "id": "TC-02",
+  "ok": true,
+  "actual": "Đăng ký thành công, chuyển tới /app/kiem-tra-dau-vao",
+  "at": "2026-11-17T12:26:51.459Z"
+ },
+ {
+  "id": "TC-04",
+  "ok": true,
+  "actual": "Kết quả đầu vào: KIỂM TRA ĐẦU VÀO | Đã ghi kết quả | Bạn làm đúng 8/12 câu. Kỹ năng làm đúng được tính là đủ để học tiếp (0,65). | Về trang Tổng quan",
+  "at": "2026-11-17T12:26:57.705Z"
+ },
+ {
+  "id": "TC-05",
+  "ok": true,
+  "actual": "Lộ trình hiện 9 bài theo 4 module M1–M4",
+  "at": "2026-11-17T12:27:00.637Z"
+ },
+ {
+  "id": "TC-06",
+  "ok": true,
+  "actual": "Bước 13/18 \"Ký âm + piano\": 4 hình SVG (khuông VexFlow + piano)",
+  "at": "2026-11-17T12:27:08.406Z"
+ },
+ {
+  "id": "TC-07",
+  "ok": true,
+  "actual": "Nhập D F# A cho D minor: TỰ DỰNG | ĐÃ THỬ | Dựng hợp âm D minor bằng tên nốt. Nhập ba nốt, có thể ngăn cách bằng dấu -, khoảng trắng hoặc dấu phẩy. | Tên nốt có thể ngăn cách bằng dấu -, khoảng trắng hoặc dấu phẩy. Có thể gõ Eb hoặc E♭. Cần đủ c",
+  "at": "2026-11-17T12:27:11.049Z"
+ },
+ {
+  "id": "TC-08",
+  "ok": true,
+  "actual": "Sai lần 2 (D F A#): lời giải hiện ra: true",
+  "at": "2026-11-17T12:27:12.848Z"
+ },
+ {
+  "id": "TC-12",
+  "ok": true,
+  "actual": "Bấm \"Giải thích lỗi này\": Giải thích lỗi: Dựng hợp âm D minor bằng tên nốt. Nhập ba nốt, có thể ngăn cách bằng dấu -, khoảng trắng hoặc dấu phẩy. | Gợi ý mức 1/3 | Quãng 5 chưa đúng. Quãng 5 đúng là 7 nửa cung; giảm là 6, tăng là 8. Bạn xem lại “5. Hợp âm ba nốt: dựng bằng hai bước” trong Từ bàn phím đến hợp âm ba nốt. | [L01] 5. Hợp âm ba nốt: dựng bằng hai bước | AI đang tắt, đây là câu trả lời lấy từ bài học. | Gợi ý thêm (mức 2) | ★ | ★ |",
+  "at": "2026-11-17T12:27:22.267Z"
+ },
+ {
+  "id": "TC-09",
+  "ok": true,
+  "actual": "Nhập D F A: TỰ DỰNG | ✓ ĐÃ ĐÚNG | Dựng hợp âm D minor bằng tên nốt. Nhập ba nốt, có thể ngăn cách bằng dấu -, khoảng trắng hoặc dấu phẩy. | Tên nốt có thể ngăn cách bằng dấ",
+  "at": "2026-11-17T12:27:23.819Z"
+ },
+ {
+  "id": "TC-11",
+  "ok": true,
+  "actual": "Đúng đủ 12/12 câu, bấm Hoàn thành: Hoàn thành! | Bạn đã hoàn thành bài! 8 thẻ ôn đã vào lịch, lượt ôn đầu tiên vào ngày 17/11/2026. ",
+  "at": "2026-11-17T12:27:38.558Z"
+ },
+ {
+  "id": "TC-13",
+  "ok": true,
+  "actual": "Thẻ của bài vừa hoàn thành đến hạn ngay: 8 | thẻ đến hạn",
+  "at": "2026-11-17T12:27:40.504Z"
+ },
+ {
+  "id": "TC-14",
+  "ok": true,
+  "actual": "Ôn 3 thẻ (2 đúng, 1 sai): \"Quãng F–A?\": đúng. Thẻ lên hộp 2, ôn lại sau 2 ngày (hộp 2/5).  / \"Quãng D–F?\": đúng. Thẻ lên hộp 2, ôn lại sau 2 ngày (hộp 2/5).  / \"Quãng G–D?\": chưa đúng. Đáp án: P5 · 7 nửa cung. Thẻ về hộp 1, ôn lại sau 1 ngày (hộp 1/5). ",
+  "at": "2026-11-17T12:27:45.981Z"
+ },
+ {
+  "id": "TC-15",
+  "ok": true,
+  "actual": "Câu \"Dựng hợp âm Fm\", nhập C E G: được chấm và ghi vào Lịch sử luyện tập",
+  "at": "2026-11-17T12:27:50.581Z"
+ },
+ {
+  "id": "TC-16",
+  "ok": true,
+  "actual": "Gợi ý sau khi lưu mục tiêu: Học gì tiếp theo? | Bài nên học tiếp | Bài gợi ý nằm ở thẻ \"Bắt đầu học\" phía trên. Học xong bài đó, mình sẽ gợi ý bài kế tiếp. | Bài nên ôn lại | Ôn lại | Bài 1. Từ bàn phím đến hợp âm ba nốt | Đã đến lịch ôn “Dựng hợp âm ba” để không quên. | Vì sao gợi ý bài này? | Ôn lại bài này | Mục tiêu học của bạn | Lưu mục tiêu | Chưa đủ dữ liệu người học tương tự, gợi ý dựa trên mục ti",
+  "at": "2026-11-17T12:27:55.821Z"
+ },
+ {
+  "id": "TC-17",
+  "ok": true,
+  "actual": "Hỏi \"Hợp âm D minor gồm những nốt nào?\": Hợp âm D minor gồm những nốt nào? | Từ bài học | Trợ lý AI đang tạm nghỉ, nên mình trả lời bằng phần bài học liên quan nhất. Theo Music Engine: Dm = D F A. Trong bài “Từ bàn phím đến hợp âm ba nốt”, phần “5. Hợp âm ba nốt: dựng bằng hai bước”: Bước 2 — Đếm nửa cung từ root để đặt dấu hóa: Major = M3 + P5; Minor = m3 + P5; Diminished = m3 + d5. Nhờ vậy người học có thể dựng hợp âm ở bất kỳ nốt gốc nào thay vì học thuộ",
+  "at": "2026-11-17T12:28:03.749Z"
+ },
+ {
+  "id": "TC-18",
+  "ok": true,
+  "actual": "Câu tiêm lệnh:  | Ngoài phạm vi | Mình không làm theo yêu cầu đó được. Mình ở đây để giúp bạn học nhạc lý trong khóa. | ★ | ★ | ★ | ★ | ★ | Câu hỏi cho AI Tutor | Đừng gửi tên thật, số điện thoại hay thông tin cá nhân. | Gửi | ×",
+  "at": "2026-11-17T12:28:05.403Z"
+ },
+ {
+  "id": "TC-19",
+  "ok": true,
+  "actual": "Quiz kỹ năng \"Dựng hợp âm ba\": QUIZ KỸ NĂNG | Câu 1/4 | Kỹ năng này hiện có 4 câu trong ngân hàng. | Dựng hợp âm D minor bằng tên nốt. Nhập ba nốt, có thể ngăn cách bằng dấu -, khoảng trắng hoặc dấu phẩy. | Nộp câu này",
+  "at": "2026-11-17T12:28:09.297Z"
+ },
+ {
+  "id": "TC-20",
+  "ok": true,
+  "actual": "Lưu vòng C–Am–F–G:  Đã lưu \"Vòng pop C–Am–F–G\".  /  Lưu thay đổi  /  Đã lưu ",
+  "at": "2026-11-17T12:28:15.851Z"
+ },
+ {
+  "id": "TC-21",
+  "ok": true,
+  "actual": "Đổi tên hiển thị thành \"Minh An Nguyễn\" rồi Lưu:  Đã lưu hồ sơ.  /  Lưu thay đổi",
+  "at": "2026-11-17T12:28:19.194Z"
+ },
+ {
+  "id": "TC-22",
+  "ok": true,
+  "actual": "Người học mở /admin: 403 | Bạn không có quyền vào trang quản trị | Trang này chỉ dành cho Quản trị viên. Nếu bạ",
+  "at": "2026-11-17T12:28:20.451Z"
+ },
+ {
+  "id": "TC-23",
+  "ok": true,
+  "actual": "Gọi /api/v1/admin/ping không kèm token admin: HTTP 401",
+  "at": "2026-11-17T12:28:20.468Z"
+ },
+ {
+  "id": "TC-24",
+  "ok": true,
+  "actual": "Lần thứ 6 sau 5 lần sai: Đăng nhập | Chào mừng bạn quay lại. | ✗ | Bạn đã nhập sai quá 5 lần. Hãy thử lại sau khoảng 15 phút. | Email | Mật khẩu | Đăng nhập | Chưa có tài khoản? Đăng ký",
+  "at": "2026-11-17T12:28:27.574Z",
+  "note": "Kịch bản ban đầu dò chữ \"quá nhiều lần\"; app hiện \"sai quá 5 lần\", đúng kỳ vọng. Đã sửa điều kiện dò trong journey.js."
+ },
+ {
+  "id": "TC-25",
+  "ok": true,
+  "actual": "Thống kê: 2 | Người học | 1 | Hoạt động 7 ngày | 86% | Tỷ lệ đúng | 5 | Thẻ đến hạn | Hoạt động mỗi ngày | Cao nhất: 14 lượt | 10-19 | 11-17 | ― Lượt làm bài | ",
+  "at": "2026-11-17T12:28:32.006Z"
+ },
+ {
+  "id": "TC-26",
+  "ok": true,
+  "actual": "Mở sửa nội dung Bài 1: hiện danh sách khối, nút Lưu nháp / Xem trước",
+  "at": "2026-11-17T12:28:35.612Z"
+ },
+ {
+  "id": "TC-27",
+  "ok": true,
+  "actual": "Danh sách người dùng có minhan@harmony.demo",
+  "at": "2026-11-17T12:28:37.616Z"
+ },
+ {
+  "id": "TC-28",
+  "ok": true,
+  "actual": "Tab AI soạn bài: Quản trị | Đăng nhập với quyền Quản trị viên: admin@harmony.demo | Thống kê | Bài học | AI soạn bài | Người dùng | Tính năng AI đang tắt (chưa bật AI_ENABLED hoặc chưa có khóa Gemini). Bạn vẫn xem được các bản nháp cũ. | Tải tài liệu nhạc lý | Tôi có quyền dùn",
+  "at": "2026-11-17T12:28:39.690Z"
+ }
+]

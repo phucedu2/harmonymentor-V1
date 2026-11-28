@@ -1,6 +1,6 @@
 # ADR-004 · Hợp đồng API xác thực giữa frontend và backend
 
-Trạng thái: **Đã chốt** (Giai đoạn B, 19/10/2026). Frontend (nhánh `phase-b-frontend`) và backend (nhánh `phase-b-backend-auth`) đều cài đặt đúng hợp đồng này; muốn đổi thì sửa ADR trước.
+Trạng thái: **Đã chốt** (Giai đoạn B, 19/10/2026). Bổ sung 25/11/2026: quên/đổi mật khẩu, xác minh email, ghi nhớ đăng nhập theo [ADR-040](ADR-040-quen-doi-mat-khau-va-email.md). Frontend (nhánh `phase-b-frontend`) và backend (nhánh `phase-b-backend-auth`) đều cài đặt đúng hợp đồng này; muốn đổi thì sửa ADR trước.
 
 ## Bối cảnh
 
@@ -16,12 +16,18 @@ Vì sao không dùng `localStorage` cho cả hai: đơn giản hơn nhưng refre
 
 | Phương thức | Đường dẫn | Quyền | Body | Thành công |
 |---|---|---|---|---|
-| POST | `/auth/register` | Công khai | `{email, password, display_name}` | 201 `AuthResponse` + đặt cookie |
-| POST | `/auth/login` | Công khai | `{email, password}` | 200 `AuthResponse` + đặt cookie |
+| POST | `/auth/register` | Công khai | `{email, password, display_name}` | 201 `AuthResponse` + đặt cookie; email đã có tài khoản: 202 `{status: "check_email", message}`, không cookie (ADR-040) |
+| POST | `/auth/login` | Công khai | `{email, password, remember?}` | 200 `AuthResponse` + đặt cookie (`remember=false`: cookie phiên, ADR-040) |
 | POST | `/auth/refresh` | Cookie | (trống) | 200 `AuthResponse` + cookie mới (cookie cũ bị thu hồi) |
 | POST | `/auth/logout` | Cookie | (trống) | 204, thu hồi refresh token, xóa cookie |
 | GET | `/me` | Bearer | | 200 `User` |
 | PATCH | `/me` | Bearer | `{display_name?, preferred_instrument?}` | 200 `User` |
+| POST | `/auth/forgot-password` | Công khai | `{email}` | 202 `{message}`, luôn cùng một câu (ADR-040) |
+| POST | `/auth/reset-password/check` | Công khai | `{token}` | 200 `{email_masked}` hoặc 400 `RESET_TOKEN_INVALID` |
+| POST | `/auth/reset-password` | Công khai | `{token, new_password}` | 200 `{message}`, không tự đăng nhập, thu hồi mọi phiên |
+| POST | `/auth/change-password` | Bearer + cookie | `{current_password, new_password, sign_out_others}` | 200 `AuthResponse` + cookie mới cho thiết bị đang dùng |
+| POST | `/auth/verify-email` | Công khai | `{token}` | 200 `{message}` hoặc 400 `VERIFY_TOKEN_INVALID` |
+| POST | `/auth/resend-verification` | Bearer | (trống) | 202 `{message}` (200 nếu đã xác minh) |
 
 ```jsonc
 // AuthResponse
@@ -30,7 +36,9 @@ Vì sao không dùng `localStorage` cho cả hai: đơn giản hơn nhưng refre
 { "id": "uuid", "email": "phuc@example.com", "display_name": "Phúc",
   "role": "learner",                 // "learner" | "admin"
   "preferred_instrument": "piano",   // "piano" | "guitar" | "drums" | null
-  "goal_text": null }                // sửa qua PUT /me/goal ở Giai đoạn D
+  "goal_text": null,                 // sửa qua PUT /me/goal ở Giai đoạn D
+  "email_verified": true,            // ADR-040: false → banner nhắc xác minh (mức mềm)
+  "password_changed_at": null }      // ADR-040: dòng "Đổi lần cuối" ở Hồ sơ
 ```
 
 Mã lỗi frontend đang xử lý:
@@ -42,8 +50,10 @@ Mã lỗi frontend đang xử lý:
 | 401 | `UNAUTHORIZED` | Thiếu, sai hoặc hết hạn access token; refresh token không hợp lệ |
 | 403 | `FORBIDDEN` | Người học gọi `/admin/*` |
 | 404 | `NOT_FOUND` | Tài nguyên không có hoặc thuộc người khác |
-| 409 | `EMAIL_TAKEN` | Email đã đăng ký |
-| 429 | `LOGIN_LOCKED` | Lần đăng nhập sai thứ 6 trong 15 phút theo IP/email; kèm header `Retry-After` (giây) |
+| ~~409~~ | ~~`EMAIL_TAKEN`~~ | Bỏ từ ADR-040 (25/11/2026) vì làm lộ email có tài khoản; thay bằng 202 "kiểm tra hộp thư" |
+| 400 | `RESET_TOKEN_INVALID` / `VERIFY_TOKEN_INVALID` | Liên kết sai, hết hạn hoặc đã dùng (ADR-040) |
+| 429 | `RATE_LIMITED` | Quá giới hạn quên mật khẩu (3/email/giờ, 10/IP/giờ), đăng ký (10/IP/giờ), gửi lại thư xác minh (3/giờ); kèm `Retry-After` |
+| 429 | `LOGIN_LOCKED` | Lần đăng nhập sai thứ 6 trong 15 phút theo IP/email (tính cả sai mật khẩu hiện tại khi đổi mật khẩu, ADR-040); kèm header `Retry-After` (giây) |
 
 **Luồng 401.** Khi một request có Bearer bị 401, frontend gọi `/auth/refresh` đúng một lần (các request đồng thời dùng chung lời gọi đó) rồi gửi lại; refresh cũng 401 thì coi như hết phiên và chuyển về `/dang-nhap?next=…`.
 

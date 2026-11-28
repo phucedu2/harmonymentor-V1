@@ -12,6 +12,7 @@ import getpass
 import os
 import sys
 import uuid
+from datetime import datetime, timezone
 
 from sqlalchemy import select
 
@@ -41,7 +42,7 @@ def main(argv: list[str] | None = None) -> int:
                 except EOFError:  # chạy không có terminal (docker compose exec -T, CI)
                     print("Không đọc được mật khẩu: đặt biến ADMIN_PASSWORD.", file=sys.stderr)
                     return 2
-            problem = password_problem(password)
+            problem = password_problem(password, email)
             if problem:
                 print(problem, file=sys.stderr)
                 return 2
@@ -50,6 +51,11 @@ def main(argv: list[str] | None = None) -> int:
             db.add(user)
         if password:
             user.hashed_password = hash_password(password)
+            # Đặt lại mật khẩu bằng lệnh cũng là đổi mật khẩu: phiên cũ phải chết (ADR-040, A2).
+            now = datetime.now(timezone.utc)
+            user.password_changed_at = now.replace(microsecond=now.microsecond // 1000 * 1000)
+        if user.email_verified_at is None:  # 12A: admin tạo bằng lệnh coi như đã xác minh email
+            user.email_verified_at = datetime.now(timezone.utc)
         user.role = "admin"
         user.is_active = True
         db.commit()

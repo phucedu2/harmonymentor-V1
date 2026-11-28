@@ -4,7 +4,8 @@ name: CI
 
 on:
   pull_request:
-    branches: [main]
+    # phuc-music: các Draft PR xếp chồng của pipeline AI (ai/gd*) đích nhánh này cũng cần CI.
+    branches: [main, phuc-music]
   push:
     branches: [main]
   workflow_dispatch:
@@ -27,6 +28,14 @@ jobs:
     name: Backend (SQLite, toàn bộ test)
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # G3: máy chủ Qdrant thật cho bài kiểm tích hợp (test_g3_qdrant.py); không có thì test đó bị skip và CI cấm skip.
+    services:
+      qdrant:
+        image: qdrant/qdrant:v1.12.4
+        ports:
+          - 6333:6333
+    env:
+      QDRANT_TEST_URL: http://localhost:6333
     defaults:
       run:
         working-directory: backend
@@ -51,14 +60,27 @@ jobs:
       - name: Kiểm tra cú pháp Python
         run: python -m compileall -q app tests migrations ../scripts
 
+      # ADR-017: mô hình nhúng e5-small (470 MB) không nằm trong git. Tải một lần, lưu cache theo bản cố định
+      # (HF_REVISION trong app/ai/local_embedder.py) để test định tuyến bằng e5 chạy thật, không bị skip.
+      - name: Cache mô hình e5-small
+        uses: actions/cache@v4
+        with:
+          # Chỉ cache thư mục e5: cache cả backend/models sẽ ghi đè model đã commit (relevance/, route/) bằng bản cũ.
+          path: backend/models/multilingual-e5-small
+          key: e5-small-${{ hashFiles('backend/app/ai/local_embedder.py') }}
+
+      - name: Tải mô hình e5-small (kiểm SHA-256)
+        run: python -m app.ai.local_embedder download
+
       # Nhóm postgres chạy ở job riêng; ở đây không đặt TEST_DATABASE_URL nên phải loại ra, nếu không sẽ bị skip.
+      # Nhóm live gọi Gemini thật, CI không có khóa và không gọi mạng (nhiệm vụ AI mục 5.4).
       - name: Chạy pytest
-        run: pytest -q -m "not postgres" --junitxml=../ket-qua-sqlite.xml
+        run: pytest -q -m "not postgres and not live" --junitxml=../ket-qua-sqlite.xml
 
       # Mức tối thiểu = số test đạt sau PR-3 (27/10/2026): 281 cũ + 38 test phiên bản câu hỏi; ai xóa test thì CI đỏ.
-      - name: Kiểm số test (0 skip, ít nhất 325 đạt)
+      - name: Kiểm số test (0 skip, ít nhất 966 đạt)
         if: ${{ !cancelled() }}
-        run: python ../scripts/ci/kiem_junit.py ../ket-qua-sqlite.xml --min-passed 325 --title "Backend SQLite"
+        run: python ../scripts/ci/kiem_junit.py ../ket-qua-sqlite.xml --min-passed 1693 --title "Backend SQLite"
 
       - name: Lưu kết quả JUnit
         if: ${{ !cancelled() }}
@@ -138,7 +160,7 @@ jobs:
       # pytest vẫn trả mã 0 khi các test này bị skip, nên phải đếm riêng.
       - name: Kiểm số test (0 skip, ít nhất 21 đạt)
         if: ${{ !cancelled() }}
-        run: python ../scripts/ci/kiem_junit.py ../ket-qua-postgres.xml --min-passed 21 --title "PostgreSQL HM-010 + PR-3"
+        run: python ../scripts/ci/kiem_junit.py ../ket-qua-postgres.xml --min-passed 27 --title "PostgreSQL HM-010 + PR-3 + ADR-040"
 
       # Test tự xóa schema hm_pgtest_* của mình; còn sót là lớp dọn dẹp của PR-1 hỏng.
       - name: Không còn schema test sót lại
@@ -172,6 +194,109 @@ jobs:
       - name: npm ci
         run: npm ci
 
+      # Vitest: test đơn vị frontend (HM-001 so ký âm/MIDI L01 với bảng sinh từ Music Engine).
+      - name: npm test
+        run: npm test
+
       # build = tsc -b (kiểm kiểu TypeScript) + vite build; lỗi nào cũng làm bước này đỏ.
       - name: npm run build
         run: npm run build
+
+  # FE-027: test giao diện bằng Chromium thật trên bản build (không cần backend, /api bị chặn trong test).
+  # Job riêng, KHÔNG nằm trong 3 check bắt buộc của ruleset bao-ve-main; muốn bắt buộc thì thêm tên job vào ruleset.
+  frontend-e2e:
+    name: Frontend (Playwright giao diện)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: npm ci
+        run: npm ci
+
+      - name: Cài Chromium cho Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: npm run build
+        run: npm run build
+
+      - name: Playwright
+        run: npx playwright test
+
+      - name: Lưu báo cáo Playwright khi đỏ
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: playwright-report
+          path: frontend/playwright-report
+          retention-days: 7
+
+  # FE-028: test giao diện với backend THẬT (đăng ký/đăng nhập, làm bài, ôn thẻ). Playwright tự dựng backend SQLite mới
+  # và bản build qua vite preview (xem frontend/playwright.live.config.ts). AI tắt, không gọi mạng ngoài.
+  # Cũng KHÔNG nằm trong 3 check bắt buộc của ruleset bao-ve-main.
+  # ADR-040: thêm Mailpit (hộp thư thử) để chạy luồng quên/đổi mật khẩu đầu cuối (e2e-live/mat-khau.live.ts, truy-cap.live.ts).
+  frontend-e2e-live:
+    name: Frontend (Playwright + backend thật)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      mailpit:
+        image: axllent/mailpit:v1.33.1
+        ports:
+          - 1025:1025
+          - 8025:8025
+    env:
+      E2E_MAILPIT: "1"
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Cài thư viện backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements.txt
+
+      - name: npm ci
+        run: npm ci
+        working-directory: frontend
+
+      - name: Cài Chromium cho Playwright
+        run: npx playwright install --with-deps chromium
+        working-directory: frontend
+
+      - name: npm run build
+        run: npm run build
+        working-directory: frontend
+
+      - name: Playwright với backend thật
+        run: npx playwright test -c playwright.live.config.ts
+        working-directory: frontend
+
+      - name: Lưu báo cáo Playwright khi đỏ
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: playwright-report-live
+          path: frontend/playwright-report-live
+          retention-days: 7
+

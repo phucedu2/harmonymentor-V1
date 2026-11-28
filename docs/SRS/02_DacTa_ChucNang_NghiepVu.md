@@ -195,7 +195,7 @@ Trang công khai, đăng ký, đăng nhập, phân quyền, hồ sơ và mục t
 | **Mã**     | **Tên chức năng**              | **Mô tả**                                                                                                      | **Ưu tiên** | **GĐ** |
 |------------|--------------------------------|----------------------------------------------------------------------------------------------------------------|-------------|--------|
 | FR-VIS-01  | Xem trang chủ                  | Khách xem trang chủ và phần giới thiệu hệ thống.                                                               | P0          | 1      |
-| FR-VIS-02  | Xem chương trình học           | Khách xem tổng quan chương trình 12 bài.                                                                       | P0          | 1      |
+| FR-VIS-02  | Xem chương trình học           | Khách xem tổng quan chương trình 9 bài.                                                                       | P0          | 1      |
 | FR-VIS-03  | Xem thông tin khóa học         | Khách xem tên, mô tả và cấp độ khóa học.                                                                       | P0          | 1      |
 | FR-VIS-04  | Xem giới thiệu tính năng       | Khách xem giới thiệu Luyện tập, AI Tutor và Harmony Lab.                                                       | P1          | 1      |
 | FR-VIS-05  | Đăng ký tài khoản              | Khách tạo tài khoản mới.                                                                                       | P0          | 1      |
@@ -231,7 +231,7 @@ Khóa học, module, bài học, tiến độ, bảng điều khiển, kiểm tr
 | FR-LRN-10 | Tìm kiếm bài học          | Người học tìm bài học theo từ khóa.                                                           | P2          | 1      |
 | FR-LRN-11 | Bảng điều khiển người học | Hiển thị mục tiêu, bài được gợi ý, kỹ năng yếu và thẻ ôn đến hạn.                             | P0          | 1      |
 | FR-LRN-12 | Kiểm tra năng lực đầu vào | Bài kiểm tra 12 câu sau khi nhập mục tiêu, dùng để khởi tạo mức thành thạo.                   | P1          | 1      |
-| FR-LRN-13 | Lộ trình theo nhánh       | Trang Học nhóm bài theo 5 module. Bài chưa đủ tiên quyết ghi "Nên học sau" nhưng vẫn mở được. | P0          | 1      |
+| FR-LRN-13 | Lộ trình theo nhánh       | Trang Học nhóm bài theo 4 module. Bài chưa đủ tiên quyết ghi "Nên học sau" nhưng vẫn mở được. | P0          | 1      |
 | FR-LRN-14 | Nguồn tham chiếu của bài  | Mỗi bài hiển thị nguồn tham chiếu và vị trí chương, mục.                                      | P1          | 1      |
 | FR-MAS-05 | Hiển thị tiến độ          | Người học xem tiến độ theo bài và theo kỹ năng.                                               | P0          | 1      |
 

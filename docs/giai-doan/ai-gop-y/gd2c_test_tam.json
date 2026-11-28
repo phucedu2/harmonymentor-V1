@@ -1,0 +1,5894 @@
+{
+  "set": "../scripts/ai/data/gd2/test_tam.json",
+  "n": 200,
+  "results": {
+    "bm25": {
+      "accuracy": 0.795,
+      "bc_answered_wrong": 0.1765,
+      "a_refused_wrong": 0.1081,
+      "a_engine_instead_of_lesson": 0.0,
+      "confusion": {
+        "A": {
+          "A": 99,
+          "B": 12,
+          "C": 0,
+          "D": 0,
+          "G": 0
+        },
+        "B": {
+          "A": 9,
+          "B": 27,
+          "C": 0,
+          "D": 2,
+          "G": 0
+        },
+        "C": {
+          "A": 0,
+          "B": 1,
+          "C": 10,
+          "D": 2,
+          "G": 0
+        },
+        "D": {
+          "A": 2,
+          "B": 0,
+          "C": 5,
+          "D": 15,
+          "G": 1
+        },
+        "G": {
+          "A": 0,
+          "B": 0,
+          "C": 7,
+          "D": 0,
+          "G": 8
+        }
+      },
+      "per_flow": {
+        "A": {
+          "precision": 0.9,
+          "recall": 0.892,
+          "n": 111
+        },
+        "B": {
+          "precision": 0.675,
+          "recall": 0.711,
+          "n": 38
+        },
+        "C": {
+          "precision": 0.455,
+          "recall": 0.769,
+          "n": 13
+        },
+        "D": {
+          "precision": 0.789,
+          "recall": 0.652,
+          "n": 23
+        },
+        "G": {
+          "precision": 0.889,
+          "recall": 0.533,
+          "n": 15
+        }
+      },
+      "rows": [
+        {
+          "q": "cho mình hỏi giữa E và F có phím đen không với",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giua E va F co phim den ko",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giữa C và D có phím đen không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giữa C và D có píhm đen không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "gữa F và G có phím đen không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hỏi ngu tí: giữa F và G có phím đen không với",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giua A va B co phim den ko",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giữa a và b có phím đen không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giữa D và E có phím đen không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giữa D và E có phím đen ko",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Dm7 trong C trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "ad ơi Dm7 trong C trưởng có chức năng gì với",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "g7 trong c trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "G7 torng C trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Cmaj7 trong C trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Cmaj7 trong C trưởng có cứhc năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Fmaj7 trong C trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Fmaj7 trong C truong co chuc nang j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "engine_in_kb"
+        },
+        {
+          "q": "D7 trong G trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "D7 trong G trưởng có chức năng j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Am7 trong C trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "đếm số quãng như thế nào",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "nốt đầu tiên có được đếm khi tính quãng không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "bạn ơi nốt đầu tiên có được đếm khi tính quãng không nhỉ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng 8 là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "thầy ơi cho em hỏi quãng 8 là gì vậy ạ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "số quãng đếm theo chữ cái hay theo phím",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "so quang dem theo chu cai hay theo phim",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "bạn ơi tại sao gọi là guide tone nhỉ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tai sao goi la guide tone",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "đường guide tone từ Dm7 sang G7 đi thế nào",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "duong guide tone tu Dm7 sang G7 di the nao",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "cho mình hỏi 7 tên nốt cơ bản là những nốt nào với",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "7 ten not co ban la nhung not nao",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "phím trắng trên piano tên gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "phim trang tren piano ten gi",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "sau nốt B thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "sau nốt b thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "phím đen có tên riêng không hay phải gọi theo phím trắng",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "phim den co ten rieng ko hay fai goi theo phim trang",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "ii V I trong C trưởng gồm hợp âm nào",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "ad ơi ii V I trong C trưởng gồm hợp âm nào ạ?",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "B là nốt gì của G7",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "engine_in_kb"
+        },
+        {
+          "q": "B la not j cua G7",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "engine_in_kb"
+        },
+        {
+          "q": "hỏi ngu tí: F là ♭7 của hợp âm nào ạ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "f là ♭7 của hợp âm nào",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "nốt 3 của Cmaj7 là j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "engine_in_kb"
+        },
+        {
+          "q": "not 3 cua Cmaj7 la j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "engine_in_kb"
+        },
+        {
+          "q": "ad ơi dominant là gì với",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "dominatn là gì",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "hợp âm nào là tonic trong giọng C",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hợp âm nào là tonic trong gọing C",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "IV với ii có cùng chức năng không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "IV voi ii co cung chuc nang khong",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "vì sao tiến trình kết thúc ở tonic nghe trọn vẹn",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "vi sao tien trinh ket thuc o tonic nghe tron ven",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "từ G đi lên một quãng 3 trưởgn thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "em hỏi xíu từ G đi lên một quãng 3 trưởng thì tới nốt gì???",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "từ A đi lên một qãung 3 thứ thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "thầy ơi cho em hỏi từ A đi lên một quãng 3 thứ thì tới nốt gì ạ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "em hỏi xíu từ D đi lên một quãng 5 đúng thì tới nốt gì vậy ạ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tu D di len mot quang 5 dung thi toi not j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tu E di len mot quang 4 dung thi toi not j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "từ e đi lên một quãng 4 đúng thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "từ F đi lên một quãng 7 thứ thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tu F di len mot quang 7 thu thi toi not gi",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "từ B đi lên một quãng 2 trưởng thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "từ B đi lên một quãng 2 trưởg thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "từ C đi lên một quãng 6 trưởng thì tới nốt j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tu C di len mot quang 6 truong thi toi not j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hợp âm bảy nửa giảm là j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hợp âm bảy nửa gảim là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "bm7b5 trong giọng c nằm ở bậc nào",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Bm7b5 trong giong C nam o bac nao",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "engine_in_kb"
+        },
+        {
+          "q": "ký hiệu ø7 nghĩa là sao",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "ký hiu ø7 nghĩa là sao",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "vii ø7 viết thế nào trong giọng trưởng",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "vii ø7 viet the nao trong giong truong",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "M3 rộng hơn m3 bao nhiêu",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "M3 rong hon m3 bao nhieu",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng tăng là gì cho ví dụ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quang giam la j",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "quãng giảm là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "d5 là quãng gì",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "d5 la quang gi",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "munố biết một hợp âm là trưởng hay thứ thì đếm sao",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "muon biet mot hop am la truong hay thu thi dem sao",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "root của hợp âm là gì",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "root cua hop am la gi",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "nốt quãng 5 của hợp âm giảm là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "nốt quãng 5 của hợp âm giảm là j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ D lên F# là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ D lên F# là quãng j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ E lên G là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãg từ E lên G là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ A lên C# là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "thầy ơi cho em hỏi quãng từ A lên C# là quãng gì vậy ạ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ C lên Eb là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ C lên Eb là quãg gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quang tu F len B la quang gi",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "thầy ơi cho em hỏi quãng từ F lên B là quãng gì???",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quang tu G len D la quang gi",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ G lên D là qãung gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ bb lên d là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quang tu Bb len D la quang j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ E lên C là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "em hỏi xíu quãng từ E lên C là quãng gì???",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "upper structure là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "quartal harmony là gì",
+          "true": "B",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "quartal harmony la gi",
+          "true": "B",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "Bdim7 có những nốt gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "hỏi ngu tí: Bdim7 có những nốt gì???",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "c#dim7 có những nốt gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "C#dim7 co nhg not gi",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "F#dim7 co nhg not j",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "f#dim7 có những nốt gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "G#dim7 có những nốt gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "bạn ơi G#dim7 có những nốt gì nhỉ",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "hợp âm bảy gim là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "hợp âm bảy giảm là gì",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hợp âm 6 là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "power chord là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "power chord la j",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "em hỏi xíu slash chord như C/E đọc thế nào với",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "slash chord nhu C/E doc the nao",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "accelerando nghĩa là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "accelerando nghĩa là j",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "ostinato là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "hỏi ngu tí: ostinato là gì???",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "counterpoint học có khó không",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "counterpoint hoc co kho ko",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "V/ii nghĩa là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "v/ii nghĩa là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tại sao có D7 trong bài giọng Đô trưởng, có fai át phụ không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tại sao có D7 trong bài gọing Đô trưởng, có phải át phụ không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "dấu lặng đen là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "chuyển giọng là j",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "chuyen giong la gi",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "dịch giọng một bài hát sang tông khác làm sao",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "cadence là gì, có mấy loại",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "cadence là j, có mấy loại",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "chromatic scale la j",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "chromatic scale là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "âm giai thứ giai điệu khác thứ hòa âm chỗ nào",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "âm gai thứ giai điệu khác thứ hòa âm chỗ nào",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "gam thu tu nhien dung the nao",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "gam thu tu nhien dung sao",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "giọng La thứ có liên quan gì với Đô trưởng",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giọng La thứ có liên quan gì vs Đô trưởng",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "chỉ mình cách chơi liên quân",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "chỉ mik cách chơi liên quân",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "ad ơi mua điện thoại nào tầm 5 triệu vậy ạ",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "mua điện thoại nào tầm 5 trệu",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "giá vàng hôm nay",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "ad ơi giá vàng hôm nay vậy ạ",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "bài tập vật lý về lực ma sát làm sao",
+          "true": "C",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "bạn ơi từ vựng tiếng anh lớp 11 unit 3 ạ",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "từ vựng tếing anh lớp 11 unit 3",
+          "true": "C",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "cách làm bài nghị lunậ xã hội",
+          "true": "C",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "cách làm bài nghị luận xã hội",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "cách nấu phở bò",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "đi đà lạt nên chơi ở đâu",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "sao app gợi ý cho mình bài này",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "sao app gợi ý cho mnìh bài này",
+          "true": "D",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "bai nen hoc tiep dc chon the nao",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "bai nen hoc tiep duoc chon the nao",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "mục gợi ý bài học dựa vào đâu",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "muc goi y bai hoc dua vao dau",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "xem tiến độ học ở đâu",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "xem tếin độ học ở đâu",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "mình muốn biết mình đã học được bao nhiêu",
+          "true": "D",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "mik muốn biết mik đã học đc bn",
+          "true": "D",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "chỗ nào hiện mức thành thạo từng kỹ năng",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "bạn ơi chỗ nào hiện mức thành thạo từng kỹ năng ạ",
+          "true": "D",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "đổi mật khẩu ở đâu",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "doi mat khau o dau",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "muốn đổi tên hiển thị thì làm sao",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "muốn đổi tên hểin thị thì làm sao",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "hỏi ngu tí: cách thay mật khẩu tài khoản của mình ạ?",
+          "true": "D",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "cách thay mật khẩu tài khản của mình",
+          "true": "D",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "luyện tập tự do ở đâu",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "muốn làm thêm bài tập thì vào mục nào",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "muon lam them bai tap thi vao muc nao",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "có chỗ nào luyện riêng phần quãng ko",
+          "true": "D",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "có chỗ nào luyn riêng phần quãng không",
+          "true": "D",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "chao ban, hom nay mik hoc gi nhi",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "chào bạn, hôm nay mình học gì nhỉ",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "hello, mình mới vào học",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "hello, mìh mới vào học",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "chào buổi tối nha, mình học tiếp đây",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "chao buoi toi nha, minh hoc tiep day",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "hi, hôm nay mình định ôn lại chút",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "hi, hôm nay mình định ôn lại cúht",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "cảm ơn nha, hôm nay học thú vị ghê",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "thầy ơi cho em hỏi cảm ơn nha, hôm nay học thú vị ghê với",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "tahnks bạn, bài này dễ hiểu quá",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "thầy ơi cho em hỏi thanks bạn, bài này dễ hiểu quá với",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "ok mình hiểu rồi, cảm ơn nhiều nhé",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "cam on, mai minh hoc tiep",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "bạn ơi cám ơn, mai mình học tiếp nhỉ",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        }
+      ]
+    },
+    "embedding:multilingual-e5-small": {
+      "accuracy": 0.82,
+      "bc_answered_wrong": 0.2353,
+      "a_refused_wrong": 0.045,
+      "a_engine_instead_of_lesson": 0.0,
+      "confusion": {
+        "A": {
+          "A": 106,
+          "B": 5,
+          "C": 0,
+          "D": 0,
+          "G": 0
+        },
+        "B": {
+          "A": 12,
+          "B": 25,
+          "C": 0,
+          "D": 1,
+          "G": 0
+        },
+        "C": {
+          "A": 0,
+          "B": 1,
+          "C": 10,
+          "D": 2,
+          "G": 0
+        },
+        "D": {
+          "A": 2,
+          "B": 0,
+          "C": 5,
+          "D": 15,
+          "G": 1
+        },
+        "G": {
+          "A": 0,
+          "B": 0,
+          "C": 7,
+          "D": 0,
+          "G": 8
+        }
+      },
+      "per_flow": {
+        "A": {
+          "precision": 0.883,
+          "recall": 0.955,
+          "n": 111
+        },
+        "B": {
+          "precision": 0.806,
+          "recall": 0.658,
+          "n": 38
+        },
+        "C": {
+          "precision": 0.455,
+          "recall": 0.769,
+          "n": 13
+        },
+        "D": {
+          "precision": 0.833,
+          "recall": 0.652,
+          "n": 23
+        },
+        "G": {
+          "precision": 0.889,
+          "recall": 0.533,
+          "n": 15
+        }
+      },
+      "rows": [
+        {
+          "q": "cho mình hỏi giữa E và F có phím đen không với",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giua E va F co phim den ko",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "giữa C và D có phím đen không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giữa C và D có píhm đen không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "gữa F và G có phím đen không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hỏi ngu tí: giữa F và G có phím đen không với",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giua A va B co phim den ko",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "giữa a và b có phím đen không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giữa D và E có phím đen không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giữa D và E có phím đen ko",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Dm7 trong C trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "ad ơi Dm7 trong C trưởng có chức năng gì với",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "g7 trong c trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "G7 torng C trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Cmaj7 trong C trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Cmaj7 trong C trưởng có cứhc năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Fmaj7 trong C trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Fmaj7 trong C truong co chuc nang j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "D7 trong G trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "D7 trong G trưởng có chức năng j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Am7 trong C trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "đếm số quãng như thế nào",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "nốt đầu tiên có được đếm khi tính quãng không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "bạn ơi nốt đầu tiên có được đếm khi tính quãng không nhỉ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng 8 là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "thầy ơi cho em hỏi quãng 8 là gì vậy ạ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "số quãng đếm theo chữ cái hay theo phím",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "so quang dem theo chu cai hay theo phim",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "bạn ơi tại sao gọi là guide tone nhỉ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tai sao goi la guide tone",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "đường guide tone từ Dm7 sang G7 đi thế nào",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "duong guide tone tu Dm7 sang G7 di the nao",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "cho mình hỏi 7 tên nốt cơ bản là những nốt nào với",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "7 ten not co ban la nhung not nao",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "phím trắng trên piano tên gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "phim trang tren piano ten gi",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "sau nốt B thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "sau nốt b thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "phím đen có tên riêng không hay phải gọi theo phím trắng",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "phim den co ten rieng ko hay fai goi theo phim trang",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "ii V I trong C trưởng gồm hợp âm nào",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "ad ơi ii V I trong C trưởng gồm hợp âm nào ạ?",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "B là nốt gì của G7",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "B la not j cua G7",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "engine_in_kb"
+        },
+        {
+          "q": "hỏi ngu tí: F là ♭7 của hợp âm nào ạ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "f là ♭7 của hợp âm nào",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "nốt 3 của Cmaj7 là j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "not 3 cua Cmaj7 la j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "engine_in_kb"
+        },
+        {
+          "q": "ad ơi dominant là gì với",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "dominatn là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hợp âm nào là tonic trong giọng C",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hợp âm nào là tonic trong gọing C",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "IV với ii có cùng chức năng không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "IV voi ii co cung chuc nang khong",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "vì sao tiến trình kết thúc ở tonic nghe trọn vẹn",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "vi sao tien trinh ket thuc o tonic nghe tron ven",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "từ G đi lên một quãng 3 trưởgn thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "em hỏi xíu từ G đi lên một quãng 3 trưởng thì tới nốt gì???",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "từ A đi lên một qãung 3 thứ thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "thầy ơi cho em hỏi từ A đi lên một quãng 3 thứ thì tới nốt gì ạ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "em hỏi xíu từ D đi lên một quãng 5 đúng thì tới nốt gì vậy ạ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tu D di len mot quang 5 dung thi toi not j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tu E di len mot quang 4 dung thi toi not j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "từ e đi lên một quãng 4 đúng thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "từ F đi lên một quãng 7 thứ thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tu F di len mot quang 7 thu thi toi not gi",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "từ B đi lên một quãng 2 trưởng thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "từ B đi lên một quãng 2 trưởg thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "từ C đi lên một quãng 6 trưởng thì tới nốt j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tu C di len mot quang 6 truong thi toi not j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hợp âm bảy nửa giảm là j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hợp âm bảy nửa gảim là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "bm7b5 trong giọng c nằm ở bậc nào",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Bm7b5 trong giong C nam o bac nao",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "ký hiệu ø7 nghĩa là sao",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "ký hiu ø7 nghĩa là sao",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "vii ø7 viết thế nào trong giọng trưởng",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "vii ø7 viet the nao trong giong truong",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "M3 rộng hơn m3 bao nhiêu",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "M3 rong hon m3 bao nhieu",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng tăng là gì cho ví dụ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quang giam la j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng giảm là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "d5 là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "d5 la quang gi",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "munố biết một hợp âm là trưởng hay thứ thì đếm sao",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "muon biet mot hop am la truong hay thu thi dem sao",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "root của hợp âm là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "root cua hop am la gi",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "nốt quãng 5 của hợp âm giảm là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "nốt quãng 5 của hợp âm giảm là j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ D lên F# là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ D lên F# là quãng j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ E lên G là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãg từ E lên G là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ A lên C# là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "thầy ơi cho em hỏi quãng từ A lên C# là quãng gì vậy ạ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ C lên Eb là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ C lên Eb là quãg gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quang tu F len B la quang gi",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "thầy ơi cho em hỏi quãng từ F lên B là quãng gì???",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quang tu G len D la quang gi",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ G lên D là qãung gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ bb lên d là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quang tu Bb len D la quang j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ E lên C là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "em hỏi xíu quãng từ E lên C là quãng gì???",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "upper structure là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "quartal harmony là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "quartal harmony la gi",
+          "true": "B",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "Bdim7 có những nốt gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "hỏi ngu tí: Bdim7 có những nốt gì???",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "c#dim7 có những nốt gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "C#dim7 co nhg not gi",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "F#dim7 co nhg not j",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "f#dim7 có những nốt gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "G#dim7 có những nốt gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "bạn ơi G#dim7 có những nốt gì nhỉ",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "hợp âm bảy gim là gì",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hợp âm bảy giảm là gì",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hợp âm 6 là gì",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "power chord là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "power chord la j",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "em hỏi xíu slash chord như C/E đọc thế nào với",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "slash chord nhu C/E doc the nao",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "accelerando nghĩa là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "accelerando nghĩa là j",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "ostinato là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "hỏi ngu tí: ostinato là gì???",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "counterpoint học có khó không",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "counterpoint hoc co kho ko",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "V/ii nghĩa là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "v/ii nghĩa là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tại sao có D7 trong bài giọng Đô trưởng, có fai át phụ không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tại sao có D7 trong bài gọing Đô trưởng, có phải át phụ không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "dấu lặng đen là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "chuyển giọng là j",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "chuyen giong la gi",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "dịch giọng một bài hát sang tông khác làm sao",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "cadence là gì, có mấy loại",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "cadence là j, có mấy loại",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "chromatic scale la j",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "chromatic scale là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "âm giai thứ giai điệu khác thứ hòa âm chỗ nào",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "âm gai thứ giai điệu khác thứ hòa âm chỗ nào",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "gam thu tu nhien dung the nao",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "gam thu tu nhien dung sao",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giọng La thứ có liên quan gì với Đô trưởng",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giọng La thứ có liên quan gì vs Đô trưởng",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "chỉ mình cách chơi liên quân",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "chỉ mik cách chơi liên quân",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "ad ơi mua điện thoại nào tầm 5 triệu vậy ạ",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "mua điện thoại nào tầm 5 trệu",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "giá vàng hôm nay",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "ad ơi giá vàng hôm nay vậy ạ",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "bài tập vật lý về lực ma sát làm sao",
+          "true": "C",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "bạn ơi từ vựng tiếng anh lớp 11 unit 3 ạ",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "từ vựng tếing anh lớp 11 unit 3",
+          "true": "C",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "cách làm bài nghị lunậ xã hội",
+          "true": "C",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "cách làm bài nghị luận xã hội",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "cách nấu phở bò",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "đi đà lạt nên chơi ở đâu",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "sao app gợi ý cho mình bài này",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "sao app gợi ý cho mnìh bài này",
+          "true": "D",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "bai nen hoc tiep dc chon the nao",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "bai nen hoc tiep duoc chon the nao",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "mục gợi ý bài học dựa vào đâu",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "muc goi y bai hoc dua vao dau",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "xem tiến độ học ở đâu",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "xem tếin độ học ở đâu",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "mình muốn biết mình đã học được bao nhiêu",
+          "true": "D",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "mik muốn biết mik đã học đc bn",
+          "true": "D",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "chỗ nào hiện mức thành thạo từng kỹ năng",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "bạn ơi chỗ nào hiện mức thành thạo từng kỹ năng ạ",
+          "true": "D",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "đổi mật khẩu ở đâu",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "doi mat khau o dau",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "muốn đổi tên hiển thị thì làm sao",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "muốn đổi tên hểin thị thì làm sao",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "hỏi ngu tí: cách thay mật khẩu tài khoản của mình ạ?",
+          "true": "D",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "cách thay mật khẩu tài khản của mình",
+          "true": "D",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "luyện tập tự do ở đâu",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "muốn làm thêm bài tập thì vào mục nào",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "muon lam them bai tap thi vao muc nao",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "có chỗ nào luyện riêng phần quãng ko",
+          "true": "D",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "có chỗ nào luyn riêng phần quãng không",
+          "true": "D",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "chao ban, hom nay mik hoc gi nhi",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "chào bạn, hôm nay mình học gì nhỉ",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "hello, mình mới vào học",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "hello, mìh mới vào học",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "chào buổi tối nha, mình học tiếp đây",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "chao buoi toi nha, minh hoc tiep day",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "hi, hôm nay mình định ôn lại chút",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "hi, hôm nay mình định ôn lại cúht",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "cảm ơn nha, hôm nay học thú vị ghê",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "thầy ơi cho em hỏi cảm ơn nha, hôm nay học thú vị ghê với",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "tahnks bạn, bài này dễ hiểu quá",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "thầy ơi cho em hỏi thanks bạn, bài này dễ hiểu quá với",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "ok mình hiểu rồi, cảm ơn nhiều nhé",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "cam on, mai minh hoc tiep",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "bạn ơi cám ơn, mai mình học tiếp nhỉ",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        }
+      ]
+    },
+    "embedding:multilingual-e5-small-hm-gd2b": {
+      "accuracy": 0.76,
+      "bc_answered_wrong": 0.098,
+      "a_refused_wrong": 0.1802,
+      "a_engine_instead_of_lesson": 0.027,
+      "confusion": {
+        "A": {
+          "A": 88,
+          "B": 23,
+          "C": 0,
+          "D": 0,
+          "G": 0
+        },
+        "B": {
+          "A": 5,
+          "B": 31,
+          "C": 0,
+          "D": 2,
+          "G": 0
+        },
+        "C": {
+          "A": 0,
+          "B": 1,
+          "C": 10,
+          "D": 2,
+          "G": 0
+        },
+        "D": {
+          "A": 0,
+          "B": 2,
+          "C": 5,
+          "D": 15,
+          "G": 1
+        },
+        "G": {
+          "A": 0,
+          "B": 0,
+          "C": 7,
+          "D": 0,
+          "G": 8
+        }
+      },
+      "per_flow": {
+        "A": {
+          "precision": 0.946,
+          "recall": 0.793,
+          "n": 111
+        },
+        "B": {
+          "precision": 0.544,
+          "recall": 0.816,
+          "n": 38
+        },
+        "C": {
+          "precision": 0.455,
+          "recall": 0.769,
+          "n": 13
+        },
+        "D": {
+          "precision": 0.789,
+          "recall": 0.652,
+          "n": 23
+        },
+        "G": {
+          "precision": 0.889,
+          "recall": 0.533,
+          "n": 15
+        }
+      },
+      "rows": [
+        {
+          "q": "cho mình hỏi giữa E và F có phím đen không với",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giua E va F co phim den ko",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "giữa C và D có phím đen không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giữa C và D có píhm đen không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "gữa F và G có phím đen không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hỏi ngu tí: giữa F và G có phím đen không với",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giua A va B co phim den ko",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "giữa a và b có phím đen không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giữa D và E có phím đen không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giữa D và E có phím đen ko",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Dm7 trong C trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "ad ơi Dm7 trong C trưởng có chức năng gì với",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "g7 trong c trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "G7 torng C trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Cmaj7 trong C trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Cmaj7 trong C trưởng có cứhc năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Fmaj7 trong C trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Fmaj7 trong C truong co chuc nang j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "D7 trong G trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "D7 trong G trưởng có chức năng j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Am7 trong C trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "đếm số quãng như thế nào",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "nốt đầu tiên có được đếm khi tính quãng không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "bạn ơi nốt đầu tiên có được đếm khi tính quãng không nhỉ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng 8 là gì",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "thầy ơi cho em hỏi quãng 8 là gì vậy ạ",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "số quãng đếm theo chữ cái hay theo phím",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "so quang dem theo chu cai hay theo phim",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "bạn ơi tại sao gọi là guide tone nhỉ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tai sao goi la guide tone",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "đường guide tone từ Dm7 sang G7 đi thế nào",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "duong guide tone tu Dm7 sang G7 di the nao",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "cho mình hỏi 7 tên nốt cơ bản là những nốt nào với",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "7 ten not co ban la nhung not nao",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "phím trắng trên piano tên gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "phim trang tren piano ten gi",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "sau nốt B thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "sau nốt b thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "phím đen có tên riêng không hay phải gọi theo phím trắng",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "phim den co ten rieng ko hay fai goi theo phim trang",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "ii V I trong C trưởng gồm hợp âm nào",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "ad ơi ii V I trong C trưởng gồm hợp âm nào ạ?",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "B là nốt gì của G7",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "B la not j cua G7",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hỏi ngu tí: F là ♭7 của hợp âm nào ạ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "f là ♭7 của hợp âm nào",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "nốt 3 của Cmaj7 là j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "not 3 cua Cmaj7 la j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "ad ơi dominant là gì với",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "dominatn là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hợp âm nào là tonic trong giọng C",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hợp âm nào là tonic trong gọing C",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "IV với ii có cùng chức năng không",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "IV voi ii co cung chuc nang khong",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "vì sao tiến trình kết thúc ở tonic nghe trọn vẹn",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "vi sao tien trinh ket thuc o tonic nghe tron ven",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "từ G đi lên một quãng 3 trưởgn thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "em hỏi xíu từ G đi lên một quãng 3 trưởng thì tới nốt gì???",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "từ A đi lên một qãung 3 thứ thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "thầy ơi cho em hỏi từ A đi lên một quãng 3 thứ thì tới nốt gì ạ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "em hỏi xíu từ D đi lên một quãng 5 đúng thì tới nốt gì vậy ạ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tu D di len mot quang 5 dung thi toi not j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tu E di len mot quang 4 dung thi toi not j",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "từ e đi lên một quãng 4 đúng thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "từ F đi lên một quãng 7 thứ thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tu F di len mot quang 7 thu thi toi not gi",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "từ B đi lên một quãng 2 trưởng thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "từ B đi lên một quãng 2 trưởg thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "từ C đi lên một quãng 6 trưởng thì tới nốt j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tu C di len mot quang 6 truong thi toi not j",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "hợp âm bảy nửa giảm là j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hợp âm bảy nửa gảim là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "bm7b5 trong giọng c nằm ở bậc nào",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Bm7b5 trong giong C nam o bac nao",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "ký hiệu ø7 nghĩa là sao",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "ký hiu ø7 nghĩa là sao",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "vii ø7 viết thế nào trong giọng trưởng",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "vii ø7 viet the nao trong giong truong",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "M3 rộng hơn m3 bao nhiêu",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "M3 rong hon m3 bao nhieu",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng tăng là gì cho ví dụ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quang giam la j",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "quãng giảm là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "d5 là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "d5 la quang gi",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "munố biết một hợp âm là trưởng hay thứ thì đếm sao",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "muon biet mot hop am la truong hay thu thi dem sao",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "root của hợp âm là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "root cua hop am la gi",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "nốt quãng 5 của hợp âm giảm là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "nốt quãng 5 của hợp âm giảm là j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ D lên F# là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ D lên F# là quãng j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ E lên G là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãg từ E lên G là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ A lên C# là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "thầy ơi cho em hỏi quãng từ A lên C# là quãng gì vậy ạ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ C lên Eb là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ C lên Eb là quãg gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quang tu F len B la quang gi",
+          "true": "A",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "below_threshold_engine"
+        },
+        {
+          "q": "thầy ơi cho em hỏi quãng từ F lên B là quãng gì???",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quang tu G len D la quang gi",
+          "true": "A",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "below_threshold_engine"
+        },
+        {
+          "q": "quãng từ G lên D là qãung gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ bb lên d là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quang tu Bb len D la quang j",
+          "true": "A",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "below_threshold_engine"
+        },
+        {
+          "q": "quãng từ E lên C là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "em hỏi xíu quãng từ E lên C là quãng gì???",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "upper structure là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "quartal harmony là gì",
+          "true": "B",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "quartal harmony la gi",
+          "true": "B",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "Bdim7 có những nốt gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "hỏi ngu tí: Bdim7 có những nốt gì???",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "c#dim7 có những nốt gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "C#dim7 co nhg not gi",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "F#dim7 co nhg not j",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "f#dim7 có những nốt gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "G#dim7 có những nốt gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "bạn ơi G#dim7 có những nốt gì nhỉ",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "hợp âm bảy gim là gì",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hợp âm bảy giảm là gì",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hợp âm 6 là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "power chord là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "power chord la j",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "em hỏi xíu slash chord như C/E đọc thế nào với",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "slash chord nhu C/E doc the nao",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "accelerando nghĩa là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "accelerando nghĩa là j",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "ostinato là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "hỏi ngu tí: ostinato là gì???",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "counterpoint học có khó không",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "counterpoint hoc co kho ko",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "V/ii nghĩa là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "v/ii nghĩa là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tại sao có D7 trong bài giọng Đô trưởng, có fai át phụ không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tại sao có D7 trong bài gọing Đô trưởng, có phải át phụ không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "dấu lặng đen là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "chuyển giọng là j",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "chuyen giong la gi",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "dịch giọng một bài hát sang tông khác làm sao",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "cadence là gì, có mấy loại",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "cadence là j, có mấy loại",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "chromatic scale la j",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "chromatic scale là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "âm giai thứ giai điệu khác thứ hòa âm chỗ nào",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "âm gai thứ giai điệu khác thứ hòa âm chỗ nào",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "gam thu tu nhien dung the nao",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "gam thu tu nhien dung sao",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "giọng La thứ có liên quan gì với Đô trưởng",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "below_threshold_engine"
+        },
+        {
+          "q": "giọng La thứ có liên quan gì vs Đô trưởng",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "below_threshold_engine"
+        },
+        {
+          "q": "chỉ mình cách chơi liên quân",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "chỉ mik cách chơi liên quân",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "ad ơi mua điện thoại nào tầm 5 triệu vậy ạ",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "mua điện thoại nào tầm 5 trệu",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "giá vàng hôm nay",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "ad ơi giá vàng hôm nay vậy ạ",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "bài tập vật lý về lực ma sát làm sao",
+          "true": "C",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "bạn ơi từ vựng tiếng anh lớp 11 unit 3 ạ",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "từ vựng tếing anh lớp 11 unit 3",
+          "true": "C",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "cách làm bài nghị lunậ xã hội",
+          "true": "C",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "cách làm bài nghị luận xã hội",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "cách nấu phở bò",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "đi đà lạt nên chơi ở đâu",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "sao app gợi ý cho mình bài này",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "sao app gợi ý cho mnìh bài này",
+          "true": "D",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "bai nen hoc tiep dc chon the nao",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "bai nen hoc tiep duoc chon the nao",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "mục gợi ý bài học dựa vào đâu",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "muc goi y bai hoc dua vao dau",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "xem tiến độ học ở đâu",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "xem tếin độ học ở đâu",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "mình muốn biết mình đã học được bao nhiêu",
+          "true": "D",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "mik muốn biết mik đã học đc bn",
+          "true": "D",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "chỗ nào hiện mức thành thạo từng kỹ năng",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "bạn ơi chỗ nào hiện mức thành thạo từng kỹ năng ạ",
+          "true": "D",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "đổi mật khẩu ở đâu",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "doi mat khau o dau",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "muốn đổi tên hiển thị thì làm sao",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "muốn đổi tên hểin thị thì làm sao",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "hỏi ngu tí: cách thay mật khẩu tài khoản của mình ạ?",
+          "true": "D",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "cách thay mật khẩu tài khản của mình",
+          "true": "D",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "luyện tập tự do ở đâu",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "muốn làm thêm bài tập thì vào mục nào",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "muon lam them bai tap thi vao muc nao",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "có chỗ nào luyện riêng phần quãng ko",
+          "true": "D",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "có chỗ nào luyn riêng phần quãng không",
+          "true": "D",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "chao ban, hom nay mik hoc gi nhi",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "chào bạn, hôm nay mình học gì nhỉ",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "hello, mình mới vào học",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "hello, mìh mới vào học",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "chào buổi tối nha, mình học tiếp đây",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "chao buoi toi nha, minh hoc tiep day",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "hi, hôm nay mình định ôn lại chút",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "hi, hôm nay mình định ôn lại cúht",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "cảm ơn nha, hôm nay học thú vị ghê",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "thầy ơi cho em hỏi cảm ơn nha, hôm nay học thú vị ghê với",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "tahnks bạn, bài này dễ hiểu quá",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "thầy ơi cho em hỏi thanks bạn, bài này dễ hiểu quá với",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "ok mình hiểu rồi, cảm ơn nhiều nhé",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "cam on, mai minh hoc tiep",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "bạn ơi cám ơn, mai mình học tiếp nhỉ",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        }
+      ]
+    },
+    "embedding:multilingual-e5-small-hm-gd2c": {
+      "accuracy": 0.79,
+      "bc_answered_wrong": 0.1373,
+      "a_refused_wrong": 0.1171,
+      "a_engine_instead_of_lesson": 0.018,
+      "confusion": {
+        "A": {
+          "A": 96,
+          "B": 15,
+          "C": 0,
+          "D": 0,
+          "G": 0
+        },
+        "B": {
+          "A": 7,
+          "B": 29,
+          "C": 0,
+          "D": 2,
+          "G": 0
+        },
+        "C": {
+          "A": 0,
+          "B": 1,
+          "C": 10,
+          "D": 2,
+          "G": 0
+        },
+        "D": {
+          "A": 1,
+          "B": 1,
+          "C": 5,
+          "D": 15,
+          "G": 1
+        },
+        "G": {
+          "A": 0,
+          "B": 0,
+          "C": 7,
+          "D": 0,
+          "G": 8
+        }
+      },
+      "per_flow": {
+        "A": {
+          "precision": 0.923,
+          "recall": 0.865,
+          "n": 111
+        },
+        "B": {
+          "precision": 0.63,
+          "recall": 0.763,
+          "n": 38
+        },
+        "C": {
+          "precision": 0.455,
+          "recall": 0.769,
+          "n": 13
+        },
+        "D": {
+          "precision": 0.789,
+          "recall": 0.652,
+          "n": 23
+        },
+        "G": {
+          "precision": 0.889,
+          "recall": 0.533,
+          "n": 15
+        }
+      },
+      "rows": [
+        {
+          "q": "cho mình hỏi giữa E và F có phím đen không với",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giua E va F co phim den ko",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "giữa C và D có phím đen không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giữa C và D có píhm đen không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "gữa F và G có phím đen không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hỏi ngu tí: giữa F và G có phím đen không với",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giua A va B co phim den ko",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "giữa a và b có phím đen không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giữa D và E có phím đen không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giữa D và E có phím đen ko",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Dm7 trong C trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "ad ơi Dm7 trong C trưởng có chức năng gì với",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "g7 trong c trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "G7 torng C trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Cmaj7 trong C trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Cmaj7 trong C trưởng có cứhc năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Fmaj7 trong C trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Fmaj7 trong C truong co chuc nang j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "D7 trong G trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "D7 trong G trưởng có chức năng j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Am7 trong C trưởng có chức năng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "đếm số quãng như thế nào",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "nốt đầu tiên có được đếm khi tính quãng không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "bạn ơi nốt đầu tiên có được đếm khi tính quãng không nhỉ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng 8 là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "thầy ơi cho em hỏi quãng 8 là gì vậy ạ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "số quãng đếm theo chữ cái hay theo phím",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "so quang dem theo chu cai hay theo phim",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "bạn ơi tại sao gọi là guide tone nhỉ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tai sao goi la guide tone",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "đường guide tone từ Dm7 sang G7 đi thế nào",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "duong guide tone tu Dm7 sang G7 di the nao",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "cho mình hỏi 7 tên nốt cơ bản là những nốt nào với",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "7 ten not co ban la nhung not nao",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "phím trắng trên piano tên gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "phim trang tren piano ten gi",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "sau nốt B thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "sau nốt b thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "phím đen có tên riêng không hay phải gọi theo phím trắng",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "phim den co ten rieng ko hay fai goi theo phim trang",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "ii V I trong C trưởng gồm hợp âm nào",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "ad ơi ii V I trong C trưởng gồm hợp âm nào ạ?",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "B là nốt gì của G7",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "B la not j cua G7",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hỏi ngu tí: F là ♭7 của hợp âm nào ạ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "f là ♭7 của hợp âm nào",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "nốt 3 của Cmaj7 là j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "not 3 cua Cmaj7 la j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "ad ơi dominant là gì với",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "dominatn là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hợp âm nào là tonic trong giọng C",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hợp âm nào là tonic trong gọing C",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "IV với ii có cùng chức năng không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "IV voi ii co cung chuc nang khong",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "vì sao tiến trình kết thúc ở tonic nghe trọn vẹn",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "vi sao tien trinh ket thuc o tonic nghe tron ven",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "từ G đi lên một quãng 3 trưởgn thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "em hỏi xíu từ G đi lên một quãng 3 trưởng thì tới nốt gì???",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "từ A đi lên một qãung 3 thứ thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "thầy ơi cho em hỏi từ A đi lên một quãng 3 thứ thì tới nốt gì ạ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "em hỏi xíu từ D đi lên một quãng 5 đúng thì tới nốt gì vậy ạ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tu D di len mot quang 5 dung thi toi not j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tu E di len mot quang 4 dung thi toi not j",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "từ e đi lên một quãng 4 đúng thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "từ F đi lên một quãng 7 thứ thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tu F di len mot quang 7 thu thi toi not gi",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "từ B đi lên một quãng 2 trưởng thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "từ B đi lên một quãng 2 trưởg thì tới nốt gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "từ C đi lên một quãng 6 trưởng thì tới nốt j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tu C di len mot quang 6 truong thi toi not j",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "hợp âm bảy nửa giảm là j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hợp âm bảy nửa gảim là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "bm7b5 trong giọng c nằm ở bậc nào",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "Bm7b5 trong giong C nam o bac nao",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "ký hiệu ø7 nghĩa là sao",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "ký hiu ø7 nghĩa là sao",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "vii ø7 viết thế nào trong giọng trưởng",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "vii ø7 viet the nao trong giong truong",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "M3 rộng hơn m3 bao nhiêu",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "M3 rong hon m3 bao nhieu",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng tăng là gì cho ví dụ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quang giam la j",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "quãng giảm là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "d5 là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "d5 la quang gi",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "munố biết một hợp âm là trưởng hay thứ thì đếm sao",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "muon biet mot hop am la truong hay thu thi dem sao",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "root của hợp âm là gì",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "gray_zone_conservative"
+        },
+        {
+          "q": "root cua hop am la gi",
+          "true": "A",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "nốt quãng 5 của hợp âm giảm là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "nốt quãng 5 của hợp âm giảm là j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ D lên F# là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ D lên F# là quãng j",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ E lên G là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãg từ E lên G là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ A lên C# là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "thầy ơi cho em hỏi quãng từ A lên C# là quãng gì vậy ạ",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ C lên Eb là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ C lên Eb là quãg gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quang tu F len B la quang gi",
+          "true": "A",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "below_threshold_engine"
+        },
+        {
+          "q": "thầy ơi cho em hỏi quãng từ F lên B là quãng gì???",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quang tu G len D la quang gi",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ G lên D là qãung gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quãng từ bb lên d là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "quang tu Bb len D la quang j",
+          "true": "A",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "below_threshold_engine"
+        },
+        {
+          "q": "quãng từ E lên C là quãng gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "em hỏi xíu quãng từ E lên C là quãng gì???",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "upper structure là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "quartal harmony là gì",
+          "true": "B",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "quartal harmony la gi",
+          "true": "B",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "Bdim7 có những nốt gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "hỏi ngu tí: Bdim7 có những nốt gì???",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "c#dim7 có những nốt gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "C#dim7 co nhg not gi",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "F#dim7 co nhg not j",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "f#dim7 có những nốt gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "G#dim7 có những nốt gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "bạn ơi G#dim7 có những nốt gì nhỉ",
+          "true": "B",
+          "pred": "B",
+          "kind": "engine",
+          "reason": "outside_kb_engine"
+        },
+        {
+          "q": "hợp âm bảy gim là gì",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hợp âm bảy giảm là gì",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "hợp âm 6 là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "power chord là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "power chord la j",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "em hỏi xíu slash chord như C/E đọc thế nào với",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "slash chord nhu C/E doc the nao",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "accelerando nghĩa là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "accelerando nghĩa là j",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "ostinato là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "hỏi ngu tí: ostinato là gì???",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "counterpoint học có khó không",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "counterpoint hoc co kho ko",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "V/ii nghĩa là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "v/ii nghĩa là gì",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tại sao có D7 trong bài giọng Đô trưởng, có fai át phụ không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "tại sao có D7 trong bài gọing Đô trưởng, có phải át phụ không",
+          "true": "A",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "dấu lặng đen là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "chuyển giọng là j",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "chuyen giong la gi",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "dịch giọng một bài hát sang tông khác làm sao",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "cadence là gì, có mấy loại",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "cadence là j, có mấy loại",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "chromatic scale la j",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "chromatic scale là gì",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "âm giai thứ giai điệu khác thứ hòa âm chỗ nào",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "âm gai thứ giai điệu khác thứ hòa âm chỗ nào",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "gam thu tu nhien dung the nao",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "gam thu tu nhien dung sao",
+          "true": "B",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "giọng La thứ có liên quan gì với Đô trưởng",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "giọng La thứ có liên quan gì vs Đô trưởng",
+          "true": "B",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "chỉ mình cách chơi liên quân",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "chỉ mik cách chơi liên quân",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "ad ơi mua điện thoại nào tầm 5 triệu vậy ạ",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "mua điện thoại nào tầm 5 trệu",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "giá vàng hôm nay",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "ad ơi giá vàng hôm nay vậy ạ",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "bài tập vật lý về lực ma sát làm sao",
+          "true": "C",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "bạn ơi từ vựng tiếng anh lớp 11 unit 3 ạ",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "từ vựng tếing anh lớp 11 unit 3",
+          "true": "C",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "unknown_terms"
+        },
+        {
+          "q": "cách làm bài nghị lunậ xã hội",
+          "true": "C",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "cách làm bài nghị luận xã hội",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "cách nấu phở bò",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "đi đà lạt nên chơi ở đâu",
+          "true": "C",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "sao app gợi ý cho mình bài này",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "sao app gợi ý cho mnìh bài này",
+          "true": "D",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "bai nen hoc tiep dc chon the nao",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "bai nen hoc tiep duoc chon the nao",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "mục gợi ý bài học dựa vào đâu",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "muc goi y bai hoc dua vao dau",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "xem tiến độ học ở đâu",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "xem tếin độ học ở đâu",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "mình muốn biết mình đã học được bao nhiêu",
+          "true": "D",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "mik muốn biết mik đã học đc bn",
+          "true": "D",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "chỗ nào hiện mức thành thạo từng kỹ năng",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "bạn ơi chỗ nào hiện mức thành thạo từng kỹ năng ạ",
+          "true": "D",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "đổi mật khẩu ở đâu",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "doi mat khau o dau",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "muốn đổi tên hiển thị thì làm sao",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "muốn đổi tên hểin thị thì làm sao",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "hỏi ngu tí: cách thay mật khẩu tài khoản của mình ạ?",
+          "true": "D",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "cách thay mật khẩu tài khản của mình",
+          "true": "D",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "luyện tập tự do ở đâu",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "muốn làm thêm bài tập thì vào mục nào",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "muon lam them bai tap thi vao muc nao",
+          "true": "D",
+          "pred": "D",
+          "kind": "help",
+          "reason": "label_help+help_hit"
+        },
+        {
+          "q": "có chỗ nào luyện riêng phần quãng ko",
+          "true": "D",
+          "pred": "B",
+          "kind": "unknown",
+          "reason": "no_lesson_hit"
+        },
+        {
+          "q": "có chỗ nào luyn riêng phần quãng không",
+          "true": "D",
+          "pred": "A",
+          "kind": "lesson",
+          "reason": "lesson_hit"
+        },
+        {
+          "q": "chao ban, hom nay mik hoc gi nhi",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "chào bạn, hôm nay mình học gì nhỉ",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "hello, mình mới vào học",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "hello, mìh mới vào học",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "chào buổi tối nha, mình học tiếp đây",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "chao buoi toi nha, minh hoc tiep day",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "hi, hôm nay mình định ôn lại chút",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "hi, hôm nay mình định ôn lại cúht",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "label_out_of_scope"
+        },
+        {
+          "q": "cảm ơn nha, hôm nay học thú vị ghê",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "thầy ơi cho em hỏi cảm ơn nha, hôm nay học thú vị ghê với",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "tahnks bạn, bài này dễ hiểu quá",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "thầy ơi cho em hỏi thanks bạn, bài này dễ hiểu quá với",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        },
+        {
+          "q": "ok mình hiểu rồi, cảm ơn nhiều nhé",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "cam on, mai minh hoc tiep",
+          "true": "G",
+          "pred": "G",
+          "kind": "greeting",
+          "reason": "label_greeting"
+        },
+        {
+          "q": "bạn ơi cám ơn, mai mình học tiếp nhỉ",
+          "true": "G",
+          "pred": "C",
+          "kind": "refuse",
+          "reason": "not_music_low_score"
+        }
+      ]
+    }
+  }
+}

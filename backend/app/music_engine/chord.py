@@ -10,6 +10,9 @@ Claim:
 - MUS-TRIAD-005  Thể đảo do nốt bass quyết định (F tr. 157).
 - MUS-CHSYM-005  Nốt bass trong hợp âm gạch chéo không cần thuộc hợp âm (OMT Chord Symbols).
 - sus2, sus4     CHƯA CÓ NGUỒN. Có trong SRS nên vẫn dựng, nhưng gắn `verified=False`.
+- MUS-EXT-001    maj9, m9, 9, 13: thêm quãng 9 (M9) và quãng 13 (M13) lên hợp âm bảy (OMT Chord Symbols,
+                 Khải Hoàn Ch.1). Thắng chốt mở rộng 10/11/2026 cho L07 (ADR-019); claim chờ duyệt nên `verified=False`.
+                 Hợp âm 13 bỏ nốt 11 (quy ước phổ biến trên hợp âm át), nên G13 = G B D F A E.
 """
 
 from __future__ import annotations
@@ -19,7 +22,7 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 from .errors import InvalidChordSymbol, NoMatch, UnknownQuality
-from .interval import interval_between, transpose
+from .interval import parse_interval, transpose
 from .pitch import Note, parse_note
 
 
@@ -44,6 +47,11 @@ CHORD_TYPES: dict[str, ChordType] = {t.id: t for t in [
     ChordType("dim7", ("P1", "m3", "d5", "d7"), "dim7", ("MUS-7TH-004",), True),
     ChordType("sus2", ("P1", "M2", "P5"), "sus2", (), False),
     ChordType("sus4", ("P1", "P4", "P5"), "sus4", (), False),
+    # Hợp âm mở rộng (ADR-019): quãng 9 và 13 là quãng kép, tên nốt vẫn suy từ chữ cái.
+    ChordType("maj9", ("P1", "M3", "P5", "M7", "M9"), "maj9", ("MUS-EXT-001",), False),
+    ChordType("m9", ("P1", "m3", "P5", "m7", "M9"), "m9", ("MUS-EXT-001",), False),
+    ChordType("9", ("P1", "M3", "P5", "m7", "M9"), "9", ("MUS-EXT-001",), False),
+    ChordType("13", ("P1", "M3", "P5", "m7", "M9", "M13"), "13", ("MUS-EXT-001",), False),
 ]}
 
 # --- Bí danh ký hiệu ------------------------------------------------------------
@@ -60,6 +68,10 @@ SRS_ALIASES: dict[str, str] = {
     "m7b5": "m7b5", "min7b5": "m7b5", "-7b5": "m7b5", "ø7": "m7b5",
     "dim7": "dim7", "°7": "dim7",
     "sus2": "sus2", "sus4": "sus4",
+    "maj9": "maj9", "M9": "maj9", "Δ9": "maj9",
+    "m9": "m9", "min9": "m9", "-9": "m9",
+    "9": "9",
+    "13": "13",
 }
 # Hồ sơ "extended" (QĐ-2.11, đang chờ duyệt): thêm cách viết trong OMT (Chord Symbols, Triads,
 # Seventh Chords) và Fankhauser tr. 467. Chỉ dùng khi NHẬP; hiển thị vẫn dùng dạng chuẩn SRS.
@@ -100,12 +112,14 @@ class ChordSymbol:
 
     @property
     def inversion(self) -> Optional[int]:
-        """0 = thể gốc, 1 = bass là nốt 3, 2 = nốt 5, 3 = nốt 7; None nếu bass ngoài hợp âm."""
+        """0 = thể gốc, 1 = bass là nốt 3, 2 = nốt 5, 3 = nốt 7; None nếu bass ngoài hợp âm.
+
+        Nốt 9 và 13 là tension, không tạo thể đảo: bass là nốt đó thì trả None."""
         if self.bass is None:
             return 0
         for i, n in enumerate(self.notes):
             if n.same_spelling(self.bass):
-                return i
+                return i if i <= 3 else None
         return None
 
     @property
@@ -191,7 +205,7 @@ def identify_chord(notes: list[str | Note], bass: str | Note | None = None,
             inv = None
             for i, t in enumerate(tones):
                 if key(t) == key(bass_note):
-                    inv = i
+                    inv = i if i <= 3 else None  # 9 và 13 là tension, không có thể đảo
                     break
             chord = ChordSymbol(root, ct, None if inv == 0 else bass_note)
             matches.append(ChordMatch(chord, inv, exact, [str(t) for t in tones]))
@@ -206,8 +220,10 @@ def identify_chord(notes: list[str | Note], bass: str | Note | None = None,
 def chord_member(chord: ChordSymbol, note: str | Note) -> Optional[str]:
     """Vai trò của một nốt trong hợp âm: 'root', 'third', 'fifth', 'seventh', 'second', 'fourth'."""
     n = parse_note(note).with_octave(None)
-    for t in chord.notes:
+    for t, iv in zip(chord.notes, chord.type.intervals):
         if t.same_spelling(n):
-            num = interval_between(chord.root, t).number
-            return {1: "root", 2: "second", 3: "third", 4: "fourth", 5: "fifth", 7: "seventh"}[num]
+            # Lấy số quãng từ bảng loại hợp âm (không tính lại), vì 9 và 13 là quãng kép.
+            num = parse_interval(iv).number
+            return {1: "root", 2: "second", 3: "third", 4: "fourth", 5: "fifth", 7: "seventh",
+                    9: "ninth", 13: "thirteenth"}[num]
     return None

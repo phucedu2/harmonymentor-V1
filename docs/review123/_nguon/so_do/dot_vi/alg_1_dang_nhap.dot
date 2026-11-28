@@ -1,0 +1,40 @@
+digraph G {
+  graph [fontname="Liberation Serif", bgcolor=white, pad=0.2 , nodesep=0.35, ranksep=0.35];
+  node [fontname="Liberation Serif", fontsize=11, color=black];
+  edge [fontname="Liberation Serif", fontsize=9, color=black];
+  node [fontsize=10];
+  s [shape=ellipse, label="Bắt đầu"];
+  i [shape=parallelogram, label="Nhập email, mật khẩu
+(IP máy khách từ proxy)"];
+  k [shape=box, label="khóa = ip | email đã chuẩn hóa"];
+  d1 [shape=diamond, label="số lần sai(khóa) >= 5
+trong 15 phút?", margin=0.02];
+  o1 [shape=parallelogram, label="Trả 429 LOGIN_LOCKED
++ Retry-After"];
+  f [shape=box, label="Tìm user theo email;
+kiểm bcrypt (băm giả nếu không có)"];
+  d2 [shape=diamond, label="Mật khẩu đúng và user
+đang hoạt động, không mô phỏng?", margin=0.02];
+  r [shape=box, label="Redis INCR login_fail:khóa
+(TTL 15 phút ở lần sai đầu)"];
+  o2 [shape=parallelogram, label="Trả 401
+INVALID_CREDENTIALS"];
+  z [shape=box, label="Xóa bộ đếm;
+tạo refresh token (lưu băm SHA-256)"];
+  o3 [shape=parallelogram, label="Trả JWT truy cập (30 phút)
++ refresh cookie HttpOnly (7 ngày)"];
+  e [shape=ellipse, label="Kết thúc"];
+  s -> i;
+  i -> k;
+  k -> d1;
+  d1 -> o1 [label="Có"];
+  d1 -> f [label="Không"];
+  f -> d2;
+  d2 -> r [label="Không"];
+  r -> o2;
+  d2 -> z [label="Có"];
+  z -> o3;
+  o1 -> e;
+  o2 -> e;
+  o3 -> e;
+}

@@ -1,4 +1,4 @@
-import { lazy, type ReactNode } from "react";
+import { lazy } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import { RequireAdmin, RequireAuth } from "./auth/guards";
 import AppLayout from "./components/layout/AppLayout";
@@ -8,17 +8,19 @@ import HomePage from "./pages/public/HomePage";
 // Tách bundle theo route (docs/giai-doan/phase-A/PHASE_A_PLAN.md mục 3): trang chủ tải ngay, phần còn lại tải khi mở.
 const LoginPage = lazy(() => import("./pages/public/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/public/RegisterPage"));
+const ForgotPasswordPage = lazy(() => import("./pages/public/ForgotPasswordPage"));
+const ResetPasswordPage = lazy(() => import("./pages/public/ResetPasswordPage"));
+const VerifyEmailPage = lazy(() => import("./pages/public/VerifyEmailPage"));
 const DashboardPage = lazy(() => import("./pages/Dashboard"));
 const LearnPage = lazy(() => import("./pages/Learn"));
 const PracticePage = lazy(() => import("./pages/Practice"));
 const ProgressPage = lazy(() => import("./pages/Progress"));
 const CompositionLabPage = lazy(() => import("./pages/app/CompositionLabPage"));
 const ProfilePage = lazy(() => import("./pages/app/ProfilePage"));
+const PlacementPage = lazy(() => import("./pages/app/PlacementPage"));
+const QuizPage = lazy(() => import("./pages/app/QuizPage"));
 const AdminHomePage = lazy(() => import("./pages/app/AdminHomePage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
-
-// Trang có từ v0.4.0 dùng CSS cũ; bọc lại cho tới khi chuyển sang Tailwind ở Giai đoạn C.
-const legacy = (page: ReactNode) => <div className="legacy-page">{page}</div>;
 
 const router = createBrowserRouter([
   {
@@ -27,6 +29,9 @@ const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: "dang-nhap", element: <LoginPage /> },
       { path: "dang-ky", element: <RegisterPage /> },
+      { path: "quen-mat-khau", element: <ForgotPasswordPage /> },
+      { path: "dat-lai-mat-khau", element: <ResetPasswordPage /> },
+      { path: "xac-minh-email", element: <VerifyEmailPage /> },
       { path: "*", element: <NotFoundPage /> },
     ],
   },
@@ -34,12 +39,14 @@ const router = createBrowserRouter([
     path: "app",
     element: <RequireAuth><AppLayout /></RequireAuth>,
     children: [
-      { index: true, element: legacy(<DashboardPage />) },
-      { path: "hoc", element: legacy(<LearnPage />) },
-      { path: "luyen-tap", element: legacy(<PracticePage />) },
-      { path: "tien-do", element: legacy(<ProgressPage />) },
+      { index: true, element: <DashboardPage /> },
+      { path: "hoc", element: <LearnPage /> },
+      { path: "luyen-tap", element: <PracticePage /> },
+      { path: "tien-do", element: <ProgressPage /> },
+      { path: "quiz", element: <QuizPage /> },
       { path: "composition", element: <CompositionLabPage /> },
       { path: "ho-so", element: <ProfilePage /> },
+      { path: "kiem-tra-dau-vao", element: <PlacementPage /> },
     ],
   },
   {

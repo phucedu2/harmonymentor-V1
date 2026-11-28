@@ -1,0 +1,1126 @@
+{
+ "pause_s": 5.0,
+ "gold": {
+  "concept": 30,
+  "out_of_scope": 10,
+  "attacks": 10,
+  "seeded": 20,
+  "author": "Claude soạn và tự duyệt 04/11/2026, chưa có người duyệt độc lập"
+ },
+ "settings": {
+  "rag_min_score": 0.6,
+  "rag_top_k": 4,
+  "embed_model": "gemini-embedding-001",
+  "llm": "gemini-3.5-flash-lite"
+ },
+ "gold_engine_checked": {
+  "n": 10,
+  "ok": 10
+ },
+ "retrieval": {
+  "bm25": {
+   "recall@1": 56.7,
+   "recall@4": 90.0,
+   "mrr": 0.708,
+   "rows": [
+    {
+     "id": "G01",
+     "top": [
+      "L01-B04",
+      "L01-B04",
+      "L01-B02",
+      "L01-B04"
+     ],
+     "rank": 3
+    },
+    {
+     "id": "G02",
+     "top": [
+      "L01-B04",
+      "L01-B02",
+      "L01-B04",
+      "L01-B02"
+     ],
+     "rank": 2
+    },
+    {
+     "id": "G03",
+     "top": [
+      "L01-B02",
+      "L01-B13",
+      "L04-B02",
+      "L04-B06"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G04",
+     "top": [
+      "L01-B04",
+      "L01-B04",
+      "L01-B01",
+      "L01-B02"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G05",
+     "top": [
+      "L01-B04",
+      "L02-B02",
+      "L01-B05",
+      "L02-B03"
+     ],
+     "rank": 3
+    },
+    {
+     "id": "G06",
+     "top": [
+      "L01-B04",
+      "L01-B05",
+      "L01-B05",
+      "L02-B02"
+     ],
+     "rank": 2
+    },
+    {
+     "id": "G07",
+     "top": [
+      "L01-B05",
+      "L01-B05",
+      "L04-B08",
+      "L01-B05"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G08",
+     "top": [
+      "L01-B08",
+      "L01-B08",
+      "L01-B01",
+      "L01-B13"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G09",
+     "top": [
+      "L01-B04",
+      "L02-B02",
+      "L01-B12",
+      "L02-B02"
+     ],
+     "rank": null
+    },
+    {
+     "id": "G10",
+     "top": [
+      "L01-B12",
+      "L01-B13",
+      "L02-B05",
+      "L03-B02"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G11",
+     "top": [
+      "L01-B13",
+      "L01-B12",
+      "L04-B02",
+      "L02-B08"
+     ],
+     "rank": 2
+    },
+    {
+     "id": "G12",
+     "top": [
+      "L02-B02",
+      "L02-B05",
+      "L02-B02",
+      "L02-B03"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G13",
+     "top": [
+      "L02-B03",
+      "L02-B02",
+      "L02-B02",
+      "L01-B12"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G14",
+     "top": [
+      "L02-B03",
+      "L02-B02",
+      "L02-B04",
+      "L02-B05"
+     ],
+     "rank": 3
+    },
+    {
+     "id": "G15",
+     "top": [
+      "L02-B04",
+      "L03-B01",
+      "L03-B05",
+      "L03-B03"
+     ],
+     "rank": null
+    },
+    {
+     "id": "G16",
+     "top": [
+      "L02-B05",
+      "L02-B01",
+      "L03-B01",
+      "L02-B05"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G17",
+     "top": [
+      "L01-B04",
+      "L02-B02",
+      "L03-B02",
+      "L04-B02"
+     ],
+     "rank": null
+    },
+    {
+     "id": "G18",
+     "top": [
+      "L02-B05",
+      "L02-B01",
+      "L04-B02",
+      "L01-B05"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G19",
+     "top": [
+      "L02-B03",
+      "L02-B05",
+      "L02-B04",
+      "L01-B12"
+     ],
+     "rank": 2
+    },
+    {
+     "id": "G20",
+     "top": [
+      "L03-B05",
+      "L01-B05",
+      "L03-B02",
+      "L02-B07"
+     ],
+     "rank": 4
+    },
+    {
+     "id": "G21",
+     "top": [
+      "L03-B01",
+      "L03-B03",
+      "L03-B07",
+      "L03-B02"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G22",
+     "top": [
+      "L03-B02",
+      "L03-B04",
+      "L03-B01",
+      "L03-B02"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G23",
+     "top": [
+      "L03-B02",
+      "L03-B02",
+      "L03-B05",
+      "L03-B06"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G24",
+     "top": [
+      "L03-B03",
+      "L03-B01",
+      "L03-B02",
+      "L03-B02"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G25",
+     "top": [
+      "L03-B02",
+      "L03-B04",
+      "L03-B06",
+      "L03-B02"
+     ],
+     "rank": 2
+    },
+    {
+     "id": "G26",
+     "top": [
+      "L04-B01",
+      "L02-B05",
+      "L02-B05",
+      "L02-B05"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G27",
+     "top": [
+      "L04-B01",
+      "L04-B02",
+      "L04-B03",
+      "L04-B04"
+     ],
+     "rank": 2
+    },
+    {
+     "id": "G28",
+     "top": [
+      "L04-B02",
+      "L04-B02",
+      "L04-B02",
+      "L04-B05"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G29",
+     "top": [
+      "L04-B05",
+      "L02-B05",
+      "L04-B02",
+      "L04-B02"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G30",
+     "top": [
+      "L04-B08",
+      "L04-B09",
+      "L04-B02",
+      "L04-B04"
+     ],
+     "rank": 1
+    }
+   ]
+  },
+  "gemini": {
+   "recall@1": 93.3,
+   "recall@4": 100.0,
+   "mrr": 0.967,
+   "rows": [
+    {
+     "id": "G01",
+     "top": [
+      "L01-B02",
+      "L01-B04",
+      "L01-B02",
+      "L02-B02"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G02",
+     "top": [
+      "L01-B02",
+      "L01-B02",
+      "L01-B04",
+      "L01-B13"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G03",
+     "top": [
+      "L01-B02",
+      "L01-B13",
+      "L01-B02",
+      "L02-B02"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G04",
+     "top": [
+      "L01-B04",
+      "L01-B02",
+      "L01-B05",
+      "L02-B02"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G05",
+     "top": [
+      "L01-B05",
+      "L01-B13",
+      "L01-B05",
+      "L01-B05"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G06",
+     "top": [
+      "L01-B05",
+      "L01-B05",
+      "L01-B13",
+      "L01-B05"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G07",
+     "top": [
+      "L01-B05",
+      "L01-B05",
+      "L01-B05",
+      "L01-B05"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G08",
+     "top": [
+      "L01-B08",
+      "L01-B08",
+      "L01-B13",
+      "L01-B01"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G09",
+     "top": [
+      "L01-B04",
+      "L01-B08",
+      "L02-B05",
+      "L02-B02"
+     ],
+     "rank": 2
+    },
+    {
+     "id": "G10",
+     "top": [
+      "L03-B02",
+      "L01-B12",
+      "L02-B05",
+      "L03-B02"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G11",
+     "top": [
+      "L01-B12",
+      "L02-B02",
+      "L02-B05",
+      "L02-B08"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G12",
+     "top": [
+      "L02-B02",
+      "L02-B02",
+      "L02-B08",
+      "L02-B01"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G13",
+     "top": [
+      "L02-B03",
+      "L02-B02",
+      "L02-B02",
+      "L02-B05"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G14",
+     "top": [
+      "L02-B04",
+      "L02-B05",
+      "L02-B08",
+      "L02-B05"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G15",
+     "top": [
+      "L04-B03",
+      "L02-B05",
+      "L02-B07",
+      "L02-B08"
+     ],
+     "rank": 2
+    },
+    {
+     "id": "G16",
+     "top": [
+      "L02-B05",
+      "L02-B05",
+      "L02-B08",
+      "L03-B02"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G17",
+     "top": [
+      "L02-B05",
+      "L02-B08",
+      "L03-B02",
+      "L02-B02"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G18",
+     "top": [
+      "L02-B05",
+      "L02-B05",
+      "L02-B08",
+      "L01-B05"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G19",
+     "top": [
+      "L02-B08",
+      "L02-B04",
+      "L02-B05",
+      "L02-B02"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G20",
+     "top": [
+      "L02-B07",
+      "L03-B05",
+      "L04-B06",
+      "L02-B05"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G21",
+     "top": [
+      "L03-B01",
+      "L03-B02",
+      "L03-B02",
+      "L03-B07"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G22",
+     "top": [
+      "L03-B02",
+      "L03-B01",
+      "L03-B02",
+      "L03-B02"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G23",
+     "top": [
+      "L03-B02",
+      "L03-B02",
+      "L03-B07",
+      "L03-B03"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G24",
+     "top": [
+      "L03-B03",
+      "L03-B02",
+      "L03-B02",
+      "L03-B06"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G25",
+     "top": [
+      "L03-B04",
+      "L03-B02",
+      "L03-B06",
+      "L03-B02"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G26",
+     "top": [
+      "L04-B01",
+      "L02-B05",
+      "L04-B02",
+      "L04-B03"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G27",
+     "top": [
+      "L04-B03",
+      "L04-B02",
+      "L04-B04",
+      "L04-B09"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G28",
+     "top": [
+      "L04-B02",
+      "L04-B02",
+      "L04-B02",
+      "L04-B05"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G29",
+     "top": [
+      "L04-B06",
+      "L04-B05",
+      "L02-B05",
+      "L04-B02"
+     ],
+     "rank": 1
+    },
+    {
+     "id": "G30",
+     "top": [
+      "L04-B08",
+      "L04-B09",
+      "L04-B02",
+      "L04-B04"
+     ],
+     "rank": 1
+    }
+   ],
+   "concept_above_threshold": 100.0
+  }
+ },
+ "gating": {
+  "out_of_scope_refused": 100.0,
+  "attacks_refused": 100.0,
+  "concept_wrongly_blocked": 0.0,
+  "mode": "embedding"
+ },
+ "guardrail": {
+  "caught": 11,
+  "missed": 0,
+  "false_alarm": 0,
+  "clean_passed": 9
+ },
+ "answers": {
+  "n": 30,
+  "status_ok": 100.0,
+  "cite_right_lesson": 100.0,
+  "cites_all_in_gold": 86.7,
+  "contradicted_after_check": 0,
+  "verified_label": 23.3,
+  "latency_ms": {
+   "p50": 1510.5,
+   "p95": 1723,
+   "max": 3103
+  },
+  "api_calls": {
+   "embed": 127,
+   "llm": 31
+  },
+  "rows": [
+   {
+    "id": "G01",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L01-B02"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": false,
+    "fallback_reason": null,
+    "ms": 1460,
+    "reply": "Có 7 tên nốt cơ bản, đó là C, D, E, F, G, A, B. Bạn có muốn tìm hiểu thêm về bàn phím piano không?"
+   },
+   {
+    "id": "G02",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L01-B02",
+     "L01-B04"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": false,
+    "contradicted": false,
+    "verified_label": false,
+    "fallback_reason": null,
+    "ms": 1518,
+    "reply": "Trên piano, phím đen nằm xen giữa phần lớn các cặp phím trắng và một phím đen có thể có hai tên tùy theo bạn dùng dấu thăng (#) hay dấu giáng (b). Dấu # nâng nốt lên một nửa cung và dấu giáng hạ nốt xuống một nửa cung."
+   },
+   {
+    "id": "G03",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L01-B02"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": false,
+    "fallback_reason": null,
+    "ms": 1270,
+    "reply": "Giữa E với F và B với C không có phím đen nằm ở giữa trên bàn phím piano, vì vậy chúng chỉ cách nhau một nửa cung."
+   },
+   {
+    "id": "G04",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L01-B04"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": false,
+    "fallback_reason": null,
+    "ms": 1525,
+    "reply": "Khi đếm số của quãng, mình tính nốt đầu là 1 rồi đếm theo tên chữ cái. Từ C lên G, ta đếm C là 1, D là 2, E là 3, F là 4, và G là 5. Vì vậy, C lên G là quãng 5."
+   },
+   {
+    "id": "G05",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L01-B05",
+     "L01-B13"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": false,
+    "contradicted": false,
+    "verified_label": true,
+    "fallback_reason": null,
+    "ms": 1684,
+    "reply": "Quãng ba trưởng (M3) có 4 nửa cung, còn quãng ba thứ (m3) có 3 nửa cung. Như vậy, quãng ba trưởng rộng hơn quãng ba thứ đúng 1 nửa cung bạn nhé."
+   },
+   {
+    "id": "G06",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L01-B05"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": false,
+    "fallback_reason": null,
+    "ms": 1332,
+    "reply": "Mình xin chia sẻ rằng nhóm các quãng 1, 4, 5 và 8 ở kích thước chuẩn của chúng được gọi là quãng đúng, ký hiệu là P (Perfect). Nhóm này không có Major hay Minor."
+   },
+   {
+    "id": "G07",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L01-B05"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": false,
+    "fallback_reason": null,
+    "ms": 1521,
+    "reply": "Mình giải thích thế này nhé: Quãng tăng (A) là khi bạn giữ nguyên số quãng nhưng kéo rộng thêm 1 nửa cung vượt khỏi kích thước chuẩn lớn nhất (P đối với nhóm 1-4-5-8 hoặc M đối với nhóm 2-3-6-7). Ngược lại, quãng giảm (d) là khi hẹp hơn kích thước chuẩn P một nửa cung."
+   },
+   {
+    "id": "G08",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L01-B08"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": false,
+    "fallback_reason": null,
+    "ms": 1470,
+    "reply": "Mình xin chia sẻ rằng để dựng một hợp âm ba nốt, bạn cần thực hiện theo hai bước. Bước 1 là chọn đúng khung chữ cái 1–3–5 bằng cách bắt đầu từ nốt gốc và bỏ qua một chữ cái mỗi lần. Bước 2 là đếm nửa cung từ nốt gốc để đặt dấu hóa phù hợp như Major, Minor, Diminished hoặc Augmented."
+   },
+   {
+    "id": "G09",
+    "status": "ok",
+    "intent": "out_of_scope",
+    "cites": [
+     "L01-B08"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": false,
+    "fallback_reason": null,
+    "ms": 1612,
+    "reply": "Mình chưa chắc về các nốt của hợp âm Eb trưởng do dữ liệu hiện tại chưa có thông tin. Bạn có thể xem lại bài về hợp âm ba nốt hoặc âm giai trưởng để tìm hiểu thêm nhé."
+   },
+   {
+    "id": "G10",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L01-B12",
+     "L03-B02"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": false,
+    "fallback_reason": null,
+    "ms": 1654,
+    "reply": "Trong nhạc lý, hợp âm chủ (tonic triad) là hợp âm đại diện cho mỗi key, đóng vai trò là vùng ổn định và điểm quy chiếu. Ví dụ, Cmaj7 là hợp âm chủ trong C major."
+   },
+   {
+    "id": "G11",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L01-B12"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": false,
+    "fallback_reason": null,
+    "ms": 1271,
+    "reply": "Có tất cả 24 giọng, bao gồm 12 giọng trưởng và 12 giọng thứ."
+   },
+   {
+    "id": "G12",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L02-B02"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": false,
+    "fallback_reason": null,
+    "ms": 1382,
+    "reply": "Mình xin chia sẻ rằng âm giai trưởng gồm một chuỗi 7 bậc khác nhau trước khi lặp lại tonic ở quãng tám."
+   },
+   {
+    "id": "G13",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L02-B03"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": false,
+    "fallback_reason": null,
+    "ms": 1300,
+    "reply": "Mình giải thích nhé: trong âm giai trưởng, mỗi bậc phải dùng một chữ cái khác nhau để đảm bảo thứ tự từ bậc 1 đến bậc 7 không bị trùng tên chữ cái. Vì vậy giọng G major dùng F#, không viết Gb."
+   },
+   {
+    "id": "G14",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L02-B04"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": false,
+    "fallback_reason": null,
+    "ms": 1340,
+    "reply": "Hợp âm bảy khác hợp âm ba ở chỗ nó được mở rộng bằng cách thêm một nốt quãng bảy vào cấu trúc ba nốt ban đầu (1-3-5), tạo thành khung bốn nốt 1-3-5-7."
+   },
+   {
+    "id": "G15",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L02-B05"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": true,
+    "fallback_reason": null,
+    "ms": 2172,
+    "reply": "Cmaj7 là hợp âm bảy trưởng, được cấu tạo từ một major triad cộng với major seventh tính từ root. Cụ thể, các nốt của Cmaj7 gồm C E G B."
+   },
+   {
+    "id": "G16",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L02-B05"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": true,
+    "fallback_reason": null,
+    "ms": 1503,
+    "reply": "Ký hiệu m7 là hợp âm bảy thứ (minor seventh chord), được cấu tạo từ một hợp âm ba thứ (minor triad) cộng với nốt bảy trưởng. Ví dụ, Dm7 gồm các nốt D–F–A–C."
+   },
+   {
+    "id": "G17",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L02-B05",
+     "L03-B02"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": false,
+    "contradicted": false,
+    "verified_label": true,
+    "fallback_reason": null,
+    "ms": 3103,
+    "reply": "Hợp âm G7 cấu tạo gồm các nốt G B D F. Ký hiệu G7 thuộc chất giọng dominant seventh, gồm một hợp âm trưởng và một nốt bảy thứ tính từ root, đóng vai trò át tạo lực hướng mạnh về tonic."
+   },
+   {
+    "id": "G18",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L02-B05"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": false,
+    "fallback_reason": null,
+    "ms": 1289,
+    "reply": "Ký hiệu ø7 hoặc m7♭5 biểu thị hợp âm half-diminished seventh, được cấu tạo từ một diminished triad kết hợp với minor seventh."
+   },
+   {
+    "id": "G19",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L02-B04"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": false,
+    "fallback_reason": null,
+    "ms": 1325,
+    "reply": "Trong giọng trưởng, khi bạn chồng các quãng ba trên từng bậc của âm giai, các chất lượng hợp âm bảy tạo thành theo mẫu Imaj7, ii7, iii7, IVmaj7, V7, vi7, và viiø7."
+   },
+   {
+    "id": "G20",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L02-B07"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": true,
+    "fallback_reason": null,
+    "ms": 1532,
+    "reply": "Mình thấy Cmaj7 mang lại cảm giác rất ổn định trong C major, trong khi G7 tạo ra xu hướng chuyển động muốn đi về C. Bạn có muốn thử luyện tập bài L02 không?"
+   },
+   {
+    "id": "G21",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L03-B01"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": false,
+    "fallback_reason": null,
+    "ms": 1286,
+    "reply": "Mình chia sẻ với bạn rằng cấu tạo hợp âm (chord symbol) cho biết cấu trúc nốt của hợp âm đó, trong khi chức năng hòa âm (harmonic function) mô tả cách hợp âm hành xử trong một key hoặc vòng hòa âm cụ thể. Hai khái niệm này liên quan nhưng không đồng nhất."
+   },
+   {
+    "id": "G22",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L03-B02"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": false,
+    "fallback_reason": null,
+    "ms": 1294,
+    "reply": "Ba chức năng hòa âm nền tảng gồm Tonic (T - chủ), tạo vùng ổn định và điểm quy chiếu của key; Predominant hoặc Subdominant (PD/SD), nhóm hợp âm thường rời tonic và chuẩn bị cho dominant; và Dominant (D - át), tạo lực hướng mạnh về tonic."
+   },
+   {
+    "id": "G23",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L03-B02"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": false,
+    "fallback_reason": null,
+    "ms": 1360,
+    "reply": "Predominant (tiền át) là nhóm hợp âm giúp đưa câu nhạc rời khỏi vùng tonic ổn định và chuẩn bị lực cho dominant hướng về lại tonic."
+   },
+   {
+    "id": "G24",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L03-B02",
+     "L03-B03"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": false,
+    "contradicted": false,
+    "verified_label": false,
+    "fallback_reason": null,
+    "ms": 1545,
+    "reply": "Một câu hòa âm cơ bản thường đi theo luồng chức năng: ổn định (Tonic), rời điểm ổn định và chuẩn bị (Predominant), căng hơn hướng về (Dominant), rồi trở về điểm ổn định (Tonic). Bạn có muốn luyện tập thêm về luồng T - PD - D - T không?"
+   },
+   {
+    "id": "G25",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L03-B04",
+     "L03-B06"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": true,
+    "fallback_reason": null,
+    "ms": 1723,
+    "reply": "Tiến trình Cmaj7 → Dm7 → G7 → Cmaj7 tương ứng với các chức năng hòa âm: Tonic (ổn định) → Predominant (chuẩn bị) → Dominant (căng hướng về) → Tonic (trở về ổn định)."
+   },
+   {
+    "id": "G26",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L04-B01"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": false,
+    "fallback_reason": null,
+    "ms": 1548,
+    "reply": "Số La Mã ii, V và I dùng để chỉ bậc của hợp âm trong key. Số La Mã viết thường hay hoa còn giúp biểu thị chất lượng của hợp âm như major, minor hoặc diminished theo quy ước."
+   },
+   {
+    "id": "G27",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L04-B03"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": false,
+    "fallback_reason": null,
+    "ms": 1632,
+    "reply": "Trong C major, tiến trình ii-V-I gồm các hợp âm Dm7, G7 và Cmaj7."
+   },
+   {
+    "id": "G28",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L04-B02"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": false,
+    "fallback_reason": null,
+    "ms": 1282,
+    "reply": "Guide tones là các nốt quãng ba (3rd) và quãng bảy (7th) của hợp âm. Chúng rất quan trọng vì giúp xác định màu sắc của hợp âm và tạo ra hướng dẫn chuyển tiếp mượt mà sang hợp âm tiếp theo."
+   },
+   {
+    "id": "G29",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L04-B05",
+     "L04-B06"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": true,
+    "fallback_reason": null,
+    "ms": 1640,
+    "reply": "Khi chuyển từ G7 sang Cmaj7, nốt B được giữ nguyên làm common tone, còn nốt F đi xuống E bằng một nửa cung theo nguyên tắc guide-tone voice leading."
+   },
+   {
+    "id": "G30",
+    "status": "ok",
+    "intent": "concept",
+    "cites": [
+     "L04-B08"
+    ],
+    "cite_right_lesson": true,
+    "cites_in_gold": true,
+    "contradicted": false,
+    "verified_label": false,
+    "fallback_reason": null,
+    "ms": 1524,
+    "reply": "Khi tập vòng ii–V–I, bạn nên bắt đầu thật chậm để nghe rõ hướng đi của guide-tone. Khi đã theo kịp, bạn hãy tăng BPM từng bước một thay vì cố chơi nhanh ngay lập tức nhé."
+   }
+  ],
+  "musical_correctness_vs_reference": "NOT EVALUATED (cần người chấm; Đạt lấy mẫu 10 câu)"
+ }
+}

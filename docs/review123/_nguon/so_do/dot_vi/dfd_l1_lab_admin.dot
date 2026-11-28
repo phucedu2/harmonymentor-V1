@@ -1,0 +1,48 @@
+digraph G {
+  graph [fontname="Liberation Serif", bgcolor=white, pad=0.2 , rankdir=TB, nodesep=0.3, ranksep=0.9];
+  node [fontname="Liberation Serif", fontsize=11, color=black];
+  edge [fontname="Liberation Serif", fontsize=9, color=black];
+  P17 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="17.0
+Gợi ý &
+phối hợp âm"];
+  P18 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="18.0
+Lưu / mở
+dự án"];
+  P19 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="19.0
+Sửa & phát hành
+nội dung bài"];
+  P20 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="20.0
+Thống kê"];
+  P21 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="21.0
+AI soạn
+bài nháp"];
+  L [shape=box, label="Người học"];
+  A [shape=box, label="Quản trị viên"];
+  GM [shape=box, label="Google Gemini"];
+  D15 [shape=record, fontsize=10, label="{D15|composition_projects}"];
+  D16 [shape=record, fontsize=10, label="{D16|chord_events, drum_events}"];
+  D3 [shape=record, fontsize=10, label="{D3|lessons, lesson_blocks}"];
+  D17 [shape=record, fontsize=10, label="{D17|content_revisions}"];
+  D20 [shape=record, fontsize=10, label="{D20|admin_audit_log}"];
+  D18 [shape=record, fontsize=10, label="{D18|source_documents}"];
+  D19 [shape=record, fontsize=10, label="{D19|ai_lesson_drafts}"];
+  D5 [shape=record, fontsize=10, label="{D5|attempts (is_test = false)}"];
+  L -> P17 [label="giọng, lưới hợp âm, phong cách, cường độ"];
+  P17 -> L [label="gợi ý, thế bấm, bản đệm"];
+  L -> P18 [label="dự án"];
+  P18 -> D15 [label="thông tin chung, cấu trúc bài, phối âm"];
+  P18 -> D16 [label="sự kiện tính theo phách"];
+  D15 -> P18 [label="chỉ dự án của mình"];
+  A -> P19 [label="nội dung khối"];
+  P19 -> D17 [label="bản sửa nháp / đã phát hành"];
+  D3 -> P19 [label="khối gốc"];
+  P19 -> D20 [label="thao tác"];
+  D5 -> P20 [label="lượt làm, lượt ôn"];
+  P20 -> A [label="biểu đồ, phễu"];
+  A -> P21 [label="PDF / DOCX / văn bản + nguồn"];
+  P21 -> D18 [label="các trang, độ liên quan"];
+  P21 -> GM [label="các trang được chọn"];
+  GM -> P21 [label="bài nháp JSON"];
+  P21 -> D19 [label="bài nháp + báo cáo Engine"];
+  P21 -> D3 [label="phát hành (Admin bấm)"];
+}

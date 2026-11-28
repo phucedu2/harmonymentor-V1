@@ -1,4 +1,4 @@
-# HarmonyMentor AI - Phase 2 Interactive Music Layer (`v0.5.3-dev`)
+# HarmonyMentor AI (`v0.5.4-dev`): nền tảng học nhạc lý thích ứng
 
 HarmonyMentor is evolving from a deterministic music-theory prototype into a source-grounded learning platform. Phase 2 adds the first interactive music layer and also fixes a pedagogical problem found during Phase 1 testing: Lessons 1-4 were structurally complete but too compressed for a true beginner.
 
@@ -207,8 +207,38 @@ docker compose up --build
 - Tạo admin: `docker compose exec -e ADMIN_PASSWORD=<mật-khẩu> api python -m app.seed_admin --email admin@example.com`.
 - Bảng độ trễ p95: `docker compose logs api --no-log-prefix | python scripts/p95.py`.
 - Xóa sạch dữ liệu: `docker compose down -v`.
+- Hộp thư thử (Mailpit): http://localhost:8025, nơi xem thư đặt lại mật khẩu, xác minh email khi chạy ở máy (xem mục dưới).
 
 4 dịch vụ theo SRS 10.2: `db` (PostgreSQL 16 + pgvector, CSDL `harmony`), `redis` (bộ đếm khóa đăng nhập), `api` (chạy `alembic upgrade head` rồi uvicorn), `web` (nginx, cổng `5173:80`). `/health` trả 503 khi CSDL hoặc Redis lỗi; compose dùng nó để chờ `api` sẵn sàng rồi mới mở `web`.
+
+## Cấu hình gửi email (quên mật khẩu, xác minh email, ADR-040)
+
+HarmonyMentor **không bao giờ gửi mật khẩu qua email**. Thư chỉ chứa một liên kết dùng một lần để bạn tự đặt mật khẩu mới.
+
+**Mặc định: Mailpit, không cần tài khoản thật.** `docker compose up` có sẵn dịch vụ `mailpit`. Mọi thư API gửi đi đều bị Mailpit giữ lại, không ra Internet. Mở http://localhost:8025 để đọc thư, bấm liên kết trong thư như thật. Cả nhóm dùng cách này để thử.
+
+**Gửi thư thật qua Gmail** (khi demo cho người ngoài nhận thư). Làm một lần trên máy chạy Docker:
+
+1. Tạo một tài khoản Gmail riêng cho dự án, ví dụ `harmonymentor.noreply@gmail.com`. Đừng dùng Gmail cá nhân.
+2. Bật **Xác minh 2 bước** cho tài khoản đó: https://myaccount.google.com/security → "Xác minh 2 bước". Gmail chỉ cho tạo Mật khẩu ứng dụng khi đã bật bước này.
+3. Mở https://myaccount.google.com/apppasswords, đặt tên ứng dụng "HarmonyMentor", bấm **Tạo**. Google hiện 16 ký tự (dạng `abcd efgh ijkl mnop`). Chép lại, bỏ dấu cách. Google chỉ hiện một lần.
+4. Mở file `.env` ở thư mục gốc repo (KHÔNG phải `.env.example`) và điền:
+
+   ```env
+   EMAIL_BACKEND=smtp
+   SMTP_HOST=smtp.gmail.com
+   SMTP_PORT=587
+   SMTP_USER=harmonymentor.noreply@gmail.com
+   SMTP_PASSWORD=abcdefghijklmnop
+   EMAIL_FROM=HarmonyMentor <harmonymentor.noreply@gmail.com>
+   FRONTEND_BASE_URL=http://localhost:5173
+   ```
+
+5. Chạy lại: `docker compose up -d --build api`. Thử "Quên mật khẩu?" với email của bạn.
+
+> **Cảnh báo:** `.env` chứa Mật khẩu ứng dụng, tương đương chìa khóa hộp thư. Không commit `.env` (đã có trong `.gitignore`), không dán vào chat hay ảnh chụp màn hình. Lộ thì vào https://myaccount.google.com/apppasswords xóa mật khẩu đó và tạo cái mới. Gmail giới hạn khoảng 500 thư/ngày.
+
+Lỗi thường gặp: `535 Username and Password not accepted` là sai Mật khẩu ứng dụng hoặc chưa bật Xác minh 2 bước. Thư không tới thì xem `docker compose logs api` (log chỉ ghi người nhận đã che, không ghi liên kết). Liên kết trong thư trỏ về `FRONTEND_BASE_URL`, nên người nhận phải mở được địa chỉ đó (máy cá nhân thì chỉ chính máy đó mở được).
 
 ## PostgreSQL target (chạy backend ngoài Docker)
 
@@ -237,6 +267,20 @@ CI GitHub Actions chạy lại toàn bộ trên mỗi PR, kể cả 21 test Post
 Nếu không cài được `music21`, bộ đối chiếu music21 bị bỏ qua và số test sẽ ít hơn (ví dụ 113 passed, 1 skipped ở bản v0.4.0 gốc trước khi thêm test CP1).
 
 Frontend: `cd frontend && npm ci && npm run build` **đạt** (Node 22, 20/10/2026, sau khi gộp v0.5.3 với Giai đoạn B; đã có `package-lock.json` mới gồm Tone.js và VexFlow).
+
+## AI theo góp ý thầy T1–T6 (15/11/2026)
+
+Bản đồ góp ý → việc đã làm: [`docs/AI_TEACHER_FEEDBACK_MAP.md`](docs/AI_TEACHER_FEEDBACK_MAP.md). Kịch bản demo 5 phút: [`docs/DEMO_5_PHUT.md`](docs/DEMO_5_PHUT.md). Sơ đồ pipeline chatbot: [`docs/AI_PIPELINE.md`](docs/AI_PIPELINE.md). Mô hình tự train: [`docs/MODEL_CARD.md`](docs/MODEL_CARD.md). Báo cáo từng cổng: `docs/giai-doan/gop-y-thay/`.
+
+```powershell
+docker compose up --build                                   # gồm dịch vụ Qdrant (nội bộ, không mở cổng)
+docker compose exec api python -m app.rag.ingest --source all   # nạp bài học + tài liệu ở data/corpus/raw/
+cd backend
+python -m app.eval.run                                      # đo, ghi eval/report.md, lỗi nếu tụt so với baseline
+python -m app.ml.relevance_train                            # train lại bộ phân loại liên quan nhạc lý
+```
+
+Mọi ngưỡng, tên mô hình, cấu hình Qdrant nằm ở `backend/app/core/ai_config.py`, ghi đè bằng biến môi trường (xem `.env.example`).
 
 ## Tài liệu phase
 

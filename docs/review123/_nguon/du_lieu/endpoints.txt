@@ -1,0 +1,85 @@
+GET /api/v1/engine/chord/{symbol} | legacy-engine | Get Chord
+GET /api/v1/engine/scale/{tonic} | legacy-engine | Get Scale
+GET /api/v1/engine/interval | legacy-engine | Get Interval
+GET /api/v1/engine/transpose | legacy-engine | Get Transpose
+GET /api/v1/engine/key/{tonic} | legacy-engine | Get Key
+GET /api/v1/engine/diatonic/{tonic} | legacy-engine | Get Diatonic
+GET /api/v1/engine/roman | legacy-engine | Get Roman
+GET /api/v1/engine/ai-tools | legacy-engine | Get Ai Tools
+POST /api/v1/engine/grade/build-chord | legacy-engine | Grade Build Chord
+POST /api/v1/engine/grade/build-scale | legacy-engine | Grade Build Scale
+POST /api/v1/engine/grade/build-interval | legacy-engine | Grade Build Interval
+POST /api/v1/engine/grade/identify-interval | legacy-engine | Grade Identify Interval
+POST /api/v1/engine/grade/identify-chord | legacy-engine | Grade Identify Chord
+POST /api/v1/engine/grade/roman-numeral | legacy-engine | Grade Roman Numeral
+POST /api/v1/engine/grade/tap-rhythm | legacy-engine | Grade Tap Rhythm
+GET /api/v1/lessons | lessons | List Lessons
+GET /api/v1/lessons/{lesson_id} | lessons | Get Lesson
+POST /api/v1/lessons/{lesson_id}/start | lessons | Mark Lesson Started
+POST /api/v1/lessons/{lesson_id}/complete | lessons | Mark Lesson Complete
+GET /api/v1/learning/overview | learning | Get Learning Overview
+POST /api/v1/attempts | attempts | Create Attempt
+GET /api/v1/review/due | review | Due Reviews
+POST /api/v1/review/{review_item_id}/answer | review | Submit Review Answer
+GET /api/v1/music/chords/inspect | music | Inspect Chord Query
+GET /api/v1/music/progression | music | Progression In Key
+GET /api/v1/music/chords/{symbol} | music | Inspect Chord Path
+GET /api/v1/music/lesson1/{root} | music | Lesson1 Theory
+POST /api/v1/practice/attempts | practice | Submit Practice
+GET /api/v1/practice/history | practice | Get Practice History
+GET /api/v1/practice/quiz | practice | Get Quiz
+GET /api/v1/composition/options | composition | Composition Options
+POST /api/v1/composition/suggestions | composition | Composition Suggestions
+POST /api/v1/composition/voicings | composition | Composition Voicings
+POST /api/v1/composition/arrangement | composition | Composition Arrangement
+POST /api/v1/composition/song | composition | Composition Song
+POST /api/v1/composition/analyze | composition | Composition Analyze
+GET /api/v1/projects | composition | List Projects
+POST /api/v1/projects | composition | Create Project
+GET /api/v1/projects/{project_id} | composition | Get Project
+PUT /api/v1/projects/{project_id} | composition | Update Project
+DELETE /api/v1/projects/{project_id} | composition | Delete Project
+POST /api/v1/auth/register | auth | Register
+POST /api/v1/auth/login | auth | Login
+POST /api/v1/auth/refresh | auth | Refresh
+POST /api/v1/auth/logout | auth | Logout
+GET /api/v1/me | auth | Read Me
+PATCH /api/v1/me | auth | Update Me
+GET /api/v1/admin/ping | admin | Admin Ping
+GET /api/v1/admin/lessons | admin | List Lessons
+GET /api/v1/admin/lessons/{lesson_id} | admin | Get Lesson
+PUT /api/v1/admin/lessons/{lesson_id}/blocks/{block_id} | admin | Save Block Draft
+GET /api/v1/admin/lessons/{lesson_id}/blocks/{block_id}/history | admin | Block History
+POST /api/v1/admin/lessons/{lesson_id}/blocks/{block_id}/restore | admin | Restore Block
+POST /api/v1/admin/revisions/{revision_id}/publish | admin | Publish Revision
+POST /api/v1/admin/lessons/{lesson_id}/visibility | admin | Lesson Visibility
+GET /api/v1/admin/users | admin | List Users
+PATCH /api/v1/admin/users/{user_id} | admin | Patch User
+GET /api/v1/admin/stats | admin | Stats
+GET /api/v1/admin/audit | admin | Audit Log
+GET /api/v1/admin/ai/status | admin | Ai Status
+POST /api/v1/admin/ai/documents | admin | Upload Document
+GET /api/v1/admin/ai/documents | admin | List Documents
+POST /api/v1/admin/ai/documents/text | admin | Paste Document
+POST /api/v1/admin/ai/documents/{doc_id}/review | admin | Review Document
+POST /api/v1/admin/ai/documents/{doc_id}/draft | admin | Make Draft
+GET /api/v1/admin/ai/drafts | admin | List Drafts
+GET /api/v1/admin/ai/drafts/{draft_id} | admin | Get Draft
+PUT /api/v1/admin/ai/drafts/{draft_id} | admin | Edit Draft
+POST /api/v1/admin/ai/drafts/{draft_id}/publish | admin | Publish Ai Draft
+POST /api/v1/admin/ai/drafts/{draft_id}/reject | admin | Reject Ai Draft
+GET /api/v1/me/mastery | ai-learning | My Mastery
+GET /api/v1/placement | ai-learning | Get Placement
+POST /api/v1/placement/submit | ai-learning | Submit Placement
+POST /api/v1/placement/skip | ai-learning | Skip Placement
+GET /api/v1/recommend | ai-recommend | Get Recommendations
+POST /api/v1/recommend/{log_id}/click | ai-recommend | Click Recommendation
+GET /api/v1/me/goal | ai-recommend | Get Goal
+PUT /api/v1/me/goal | ai-recommend | Put Goal
+GET /api/v1/chat/sessions | ai-tutor | Sessions
+POST /api/v1/chat/sessions | ai-tutor | New Session
+GET /api/v1/chat/history/{session_id} | ai-tutor | History
+POST /api/v1/chat/message | ai-tutor | Message
+POST /api/v1/chat/explain-attempt | ai-tutor | Explain
+POST /api/v1/chat/messages/{message_id}/rating | ai-tutor | Rate
+GET /health | system | Health

@@ -1,0 +1,1650 @@
+{
+ "note": "Test TẠM: chỉ đo, không chỉnh gì trên tập này. Số chính thức chờ phiếu nhóm. Claude viết 07/11/2026, đóng vai người học (quyết định GĐ2 2A), không dùng Gemini (4A). KHÔNG phải tập test chính thức: số chính thức lấy trên phiếu do Đạt/Thắng/Phúc viết (1A).",
+ "author": "claude",
+ "status": "draft",
+ "seed": 20261107,
+ "groups": [
+  "A-L01-chatluong#1",
+  "A-L01-phimden",
+  "A-L01-quang-tinh-chat",
+  "A-L01-soquang-khainiem#0",
+  "A-L01-tennot#0",
+  "A-L01-tenquang",
+  "A-L01-triad-khainiem#2",
+  "A-L02-bac-nuagiam#0",
+  "A-L03-chucnang-cuthe",
+  "A-L03-hoi-them#0",
+  "A-L04-hoi-them#0",
+  "A-L04-hoi-them#1",
+  "B-L05#1",
+  "B-amgiai-khac#1",
+  "B-chord-khainiem#1",
+  "B-dim7",
+  "B-hop-am-them#1",
+  "B-nhacly-khac#1",
+  "B-nhacly-khac#4",
+  "C-doisong#1",
+  "C-doisong#2",
+  "C-hoctap#1",
+  "D-doimk#0",
+  "D-goiy#0",
+  "D-luyentap#0",
+  "D-tiendo#0",
+  "G-ghep-camon#0",
+  "G-ghep-chao#0"
+ ],
+ "items": [
+  {
+   "q": "cho mình hỏi giữa E và F có phím đen không với",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-phimden",
+   "style": "loi_goi",
+   "base": "giữa E và F có phím đen không"
+  },
+  {
+   "q": "giua E va F co phim den ko",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-phimden",
+   "style": "khong_dau_go_tat",
+   "base": "giữa E và F có phím đen không"
+  },
+  {
+   "q": "giữa C và D có phím đen không",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-phimden",
+   "style": "goc",
+   "base": "giữa C và D có phím đen không"
+  },
+  {
+   "q": "giữa C và D có píhm đen không",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-phimden",
+   "style": "loi_go",
+   "base": "giữa C và D có phím đen không"
+  },
+  {
+   "q": "gữa F và G có phím đen không",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-phimden",
+   "style": "loi_go",
+   "base": "giữa F và G có phím đen không"
+  },
+  {
+   "q": "hỏi ngu tí: giữa F và G có phím đen không với",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-phimden",
+   "style": "loi_goi",
+   "base": "giữa F và G có phím đen không"
+  },
+  {
+   "q": "giua A va B co phim den ko",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-phimden",
+   "style": "khong_dau_go_tat",
+   "base": "giữa A và B có phím đen không"
+  },
+  {
+   "q": "giữa a và b có phím đen không",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-phimden",
+   "style": "chu_thuong",
+   "base": "giữa A và B có phím đen không"
+  },
+  {
+   "q": "giữa D và E có phím đen không",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-phimden",
+   "style": "goc",
+   "base": "giữa D và E có phím đen không"
+  },
+  {
+   "q": "giữa D và E có phím đen ko",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-phimden",
+   "style": "go_tat",
+   "base": "giữa D và E có phím đen không"
+  },
+  {
+   "q": "Dm7 trong C trưởng có chức năng gì",
+   "flow": "A",
+   "lesson": "L03",
+   "group": "A-L03-chucnang-cuthe",
+   "style": "goc",
+   "base": "Dm7 trong C trưởng có chức năng gì"
+  },
+  {
+   "q": "ad ơi Dm7 trong C trưởng có chức năng gì với",
+   "flow": "A",
+   "lesson": "L03",
+   "group": "A-L03-chucnang-cuthe",
+   "style": "loi_goi",
+   "base": "Dm7 trong C trưởng có chức năng gì"
+  },
+  {
+   "q": "g7 trong c trưởng có chức năng gì",
+   "flow": "A",
+   "lesson": "L03",
+   "group": "A-L03-chucnang-cuthe",
+   "style": "chu_thuong",
+   "base": "G7 trong C trưởng có chức năng gì"
+  },
+  {
+   "q": "G7 torng C trưởng có chức năng gì",
+   "flow": "A",
+   "lesson": "L03",
+   "group": "A-L03-chucnang-cuthe",
+   "style": "loi_go",
+   "base": "G7 trong C trưởng có chức năng gì"
+  },
+  {
+   "q": "Cmaj7 trong C trưởng có chức năng gì",
+   "flow": "A",
+   "lesson": "L03",
+   "group": "A-L03-chucnang-cuthe",
+   "style": "goc",
+   "base": "Cmaj7 trong C trưởng có chức năng gì"
+  },
+  {
+   "q": "Cmaj7 trong C trưởng có cứhc năng gì",
+   "flow": "A",
+   "lesson": "L03",
+   "group": "A-L03-chucnang-cuthe",
+   "style": "loi_go",
+   "base": "Cmaj7 trong C trưởng có chức năng gì"
+  },
+  {
+   "q": "Fmaj7 trong C trưởng có chức năng gì",
+   "flow": "A",
+   "lesson": "L03",
+   "group": "A-L03-chucnang-cuthe",
+   "style": "goc",
+   "base": "Fmaj7 trong C trưởng có chức năng gì"
+  },
+  {
+   "q": "Fmaj7 trong C truong co chuc nang j",
+   "flow": "A",
+   "lesson": "L03",
+   "group": "A-L03-chucnang-cuthe",
+   "style": "khong_dau_go_tat",
+   "base": "Fmaj7 trong C trưởng có chức năng gì"
+  },
+  {
+   "q": "D7 trong G trưởng có chức năng gì",
+   "flow": "A",
+   "lesson": "L03",
+   "group": "A-L03-chucnang-cuthe",
+   "style": "goc",
+   "base": "D7 trong G trưởng có chức năng gì"
+  },
+  {
+   "q": "D7 trong G trưởng có chức năng j",
+   "flow": "A",
+   "lesson": "L03",
+   "group": "A-L03-chucnang-cuthe",
+   "style": "go_tat",
+   "base": "D7 trong G trưởng có chức năng gì"
+  },
+  {
+   "q": "Am7 trong C trưởng có chức năng gì",
+   "flow": "A",
+   "lesson": "L03",
+   "group": "A-L03-chucnang-cuthe",
+   "style": "goc",
+   "base": "Am7 trong C trưởng có chức năng gì"
+  },
+  {
+   "q": "đếm số quãng như thế nào",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-soquang-khainiem#0",
+   "style": "goc",
+   "base": "đếm số quãng như thế nào"
+  },
+  {
+   "q": "nốt đầu tiên có được đếm khi tính quãng không",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-soquang-khainiem#0",
+   "style": "goc",
+   "base": "nốt đầu tiên có được đếm khi tính quãng không"
+  },
+  {
+   "q": "bạn ơi nốt đầu tiên có được đếm khi tính quãng không nhỉ",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-soquang-khainiem#0",
+   "style": "loi_goi",
+   "base": "nốt đầu tiên có được đếm khi tính quãng không"
+  },
+  {
+   "q": "quãng 8 là gì",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-soquang-khainiem#0",
+   "style": "goc",
+   "base": "quãng 8 là gì"
+  },
+  {
+   "q": "thầy ơi cho em hỏi quãng 8 là gì vậy ạ",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-soquang-khainiem#0",
+   "style": "loi_goi",
+   "base": "quãng 8 là gì"
+  },
+  {
+   "q": "số quãng đếm theo chữ cái hay theo phím",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-soquang-khainiem#0",
+   "style": "goc",
+   "base": "số quãng đếm theo chữ cái hay theo phím"
+  },
+  {
+   "q": "so quang dem theo chu cai hay theo phim",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-soquang-khainiem#0",
+   "style": "khong_dau_go_tat",
+   "base": "số quãng đếm theo chữ cái hay theo phím"
+  },
+  {
+   "q": "bạn ơi tại sao gọi là guide tone nhỉ",
+   "flow": "A",
+   "lesson": "L04",
+   "group": "A-L04-hoi-them#1",
+   "style": "loi_goi",
+   "base": "tại sao gọi là guide tone"
+  },
+  {
+   "q": "tai sao goi la guide tone",
+   "flow": "A",
+   "lesson": "L04",
+   "group": "A-L04-hoi-them#1",
+   "style": "khong_dau",
+   "base": "tại sao gọi là guide tone"
+  },
+  {
+   "q": "đường guide tone từ Dm7 sang G7 đi thế nào",
+   "flow": "A",
+   "lesson": "L04",
+   "group": "A-L04-hoi-them#1",
+   "style": "goc",
+   "base": "đường guide tone từ Dm7 sang G7 đi thế nào"
+  },
+  {
+   "q": "duong guide tone tu Dm7 sang G7 di the nao",
+   "flow": "A",
+   "lesson": "L04",
+   "group": "A-L04-hoi-them#1",
+   "style": "khong_dau",
+   "base": "đường guide tone từ Dm7 sang G7 đi thế nào"
+  },
+  {
+   "q": "cho mình hỏi 7 tên nốt cơ bản là những nốt nào với",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-tennot#0",
+   "style": "loi_goi",
+   "base": "7 tên nốt cơ bản là những nốt nào"
+  },
+  {
+   "q": "7 ten not co ban la nhung not nao",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-tennot#0",
+   "style": "khong_dau",
+   "base": "7 tên nốt cơ bản là những nốt nào"
+  },
+  {
+   "q": "phím trắng trên piano tên gì",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-tennot#0",
+   "style": "goc",
+   "base": "phím trắng trên piano tên gì"
+  },
+  {
+   "q": "phim trang tren piano ten gi",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-tennot#0",
+   "style": "khong_dau",
+   "base": "phím trắng trên piano tên gì"
+  },
+  {
+   "q": "sau nốt B thì tới nốt gì",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-tennot#0",
+   "style": "goc",
+   "base": "sau nốt B thì tới nốt gì"
+  },
+  {
+   "q": "sau nốt b thì tới nốt gì",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-tennot#0",
+   "style": "chu_thuong",
+   "base": "sau nốt B thì tới nốt gì"
+  },
+  {
+   "q": "phím đen có tên riêng không hay phải gọi theo phím trắng",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-tennot#0",
+   "style": "goc",
+   "base": "phím đen có tên riêng không hay phải gọi theo phím trắng"
+  },
+  {
+   "q": "phim den co ten rieng ko hay fai goi theo phim trang",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-tennot#0",
+   "style": "khong_dau_go_tat",
+   "base": "phím đen có tên riêng không hay phải gọi theo phím trắng"
+  },
+  {
+   "q": "ii V I trong C trưởng gồm hợp âm nào",
+   "flow": "A",
+   "lesson": "L04",
+   "group": "A-L04-hoi-them#0",
+   "style": "goc",
+   "base": "ii V I trong C trưởng gồm hợp âm nào"
+  },
+  {
+   "q": "ad ơi ii V I trong C trưởng gồm hợp âm nào ạ?",
+   "flow": "A",
+   "lesson": "L04",
+   "group": "A-L04-hoi-them#0",
+   "style": "loi_goi",
+   "base": "ii V I trong C trưởng gồm hợp âm nào"
+  },
+  {
+   "q": "B là nốt gì của G7",
+   "flow": "A",
+   "lesson": "L04",
+   "group": "A-L04-hoi-them#0",
+   "style": "goc",
+   "base": "B là nốt gì của G7"
+  },
+  {
+   "q": "B la not j cua G7",
+   "flow": "A",
+   "lesson": "L04",
+   "group": "A-L04-hoi-them#0",
+   "style": "khong_dau_go_tat",
+   "base": "B là nốt gì của G7"
+  },
+  {
+   "q": "hỏi ngu tí: F là ♭7 của hợp âm nào ạ",
+   "flow": "A",
+   "lesson": "L04",
+   "group": "A-L04-hoi-them#0",
+   "style": "loi_goi",
+   "base": "F là ♭7 của hợp âm nào"
+  },
+  {
+   "q": "f là ♭7 của hợp âm nào",
+   "flow": "A",
+   "lesson": "L04",
+   "group": "A-L04-hoi-them#0",
+   "style": "chu_thuong",
+   "base": "F là ♭7 của hợp âm nào"
+  },
+  {
+   "q": "nốt 3 của Cmaj7 là j",
+   "flow": "A",
+   "lesson": "L04",
+   "group": "A-L04-hoi-them#0",
+   "style": "go_tat",
+   "base": "nốt 3 của Cmaj7 là gì"
+  },
+  {
+   "q": "not 3 cua Cmaj7 la j",
+   "flow": "A",
+   "lesson": "L04",
+   "group": "A-L04-hoi-them#0",
+   "style": "khong_dau_go_tat",
+   "base": "nốt 3 của Cmaj7 là gì"
+  },
+  {
+   "q": "ad ơi dominant là gì với",
+   "flow": "A",
+   "lesson": "L03",
+   "group": "A-L03-hoi-them#0",
+   "style": "loi_goi",
+   "base": "dominant là gì"
+  },
+  {
+   "q": "dominatn là gì",
+   "flow": "A",
+   "lesson": "L03",
+   "group": "A-L03-hoi-them#0",
+   "style": "loi_go",
+   "base": "dominant là gì"
+  },
+  {
+   "q": "hợp âm nào là tonic trong giọng C",
+   "flow": "A",
+   "lesson": "L03",
+   "group": "A-L03-hoi-them#0",
+   "style": "goc",
+   "base": "hợp âm nào là tonic trong giọng C"
+  },
+  {
+   "q": "hợp âm nào là tonic trong gọing C",
+   "flow": "A",
+   "lesson": "L03",
+   "group": "A-L03-hoi-them#0",
+   "style": "loi_go",
+   "base": "hợp âm nào là tonic trong giọng C"
+  },
+  {
+   "q": "IV với ii có cùng chức năng không",
+   "flow": "A",
+   "lesson": "L03",
+   "group": "A-L03-hoi-them#0",
+   "style": "goc",
+   "base": "IV với ii có cùng chức năng không"
+  },
+  {
+   "q": "IV voi ii co cung chuc nang khong",
+   "flow": "A",
+   "lesson": "L03",
+   "group": "A-L03-hoi-them#0",
+   "style": "khong_dau",
+   "base": "IV với ii có cùng chức năng không"
+  },
+  {
+   "q": "vì sao tiến trình kết thúc ở tonic nghe trọn vẹn",
+   "flow": "A",
+   "lesson": "L03",
+   "group": "A-L03-hoi-them#0",
+   "style": "go_tat",
+   "base": "vì sao tiến trình kết thúc ở tonic nghe trọn vẹn"
+  },
+  {
+   "q": "vi sao tien trinh ket thuc o tonic nghe tron ven",
+   "flow": "A",
+   "lesson": "L03",
+   "group": "A-L03-hoi-them#0",
+   "style": "khong_dau_go_tat",
+   "base": "vì sao tiến trình kết thúc ở tonic nghe trọn vẹn"
+  },
+  {
+   "q": "từ G đi lên một quãng 3 trưởgn thì tới nốt gì",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-quang-tinh-chat",
+   "style": "loi_go",
+   "base": "từ G đi lên một quãng 3 trưởng thì tới nốt gì"
+  },
+  {
+   "q": "em hỏi xíu từ G đi lên một quãng 3 trưởng thì tới nốt gì???",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-quang-tinh-chat",
+   "style": "loi_goi",
+   "base": "từ G đi lên một quãng 3 trưởng thì tới nốt gì"
+  },
+  {
+   "q": "từ A đi lên một qãung 3 thứ thì tới nốt gì",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-quang-tinh-chat",
+   "style": "loi_go",
+   "base": "từ A đi lên một quãng 3 thứ thì tới nốt gì"
+  },
+  {
+   "q": "thầy ơi cho em hỏi từ A đi lên một quãng 3 thứ thì tới nốt gì ạ",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-quang-tinh-chat",
+   "style": "loi_goi",
+   "base": "từ A đi lên một quãng 3 thứ thì tới nốt gì"
+  },
+  {
+   "q": "em hỏi xíu từ D đi lên một quãng 5 đúng thì tới nốt gì vậy ạ",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-quang-tinh-chat",
+   "style": "loi_goi",
+   "base": "từ D đi lên một quãng 5 đúng thì tới nốt gì"
+  },
+  {
+   "q": "tu D di len mot quang 5 dung thi toi not j",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-quang-tinh-chat",
+   "style": "khong_dau_go_tat",
+   "base": "từ D đi lên một quãng 5 đúng thì tới nốt gì"
+  },
+  {
+   "q": "tu E di len mot quang 4 dung thi toi not j",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-quang-tinh-chat",
+   "style": "khong_dau_go_tat",
+   "base": "từ E đi lên một quãng 4 đúng thì tới nốt gì"
+  },
+  {
+   "q": "từ e đi lên một quãng 4 đúng thì tới nốt gì",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-quang-tinh-chat",
+   "style": "chu_thuong",
+   "base": "từ E đi lên một quãng 4 đúng thì tới nốt gì"
+  },
+  {
+   "q": "từ F đi lên một quãng 7 thứ thì tới nốt gì",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-quang-tinh-chat",
+   "style": "goc",
+   "base": "từ F đi lên một quãng 7 thứ thì tới nốt gì"
+  },
+  {
+   "q": "tu F di len mot quang 7 thu thi toi not gi",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-quang-tinh-chat",
+   "style": "khong_dau",
+   "base": "từ F đi lên một quãng 7 thứ thì tới nốt gì"
+  },
+  {
+   "q": "từ B đi lên một quãng 2 trưởng thì tới nốt gì",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-quang-tinh-chat",
+   "style": "goc",
+   "base": "từ B đi lên một quãng 2 trưởng thì tới nốt gì"
+  },
+  {
+   "q": "từ B đi lên một quãng 2 trưởg thì tới nốt gì",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-quang-tinh-chat",
+   "style": "loi_go",
+   "base": "từ B đi lên một quãng 2 trưởng thì tới nốt gì"
+  },
+  {
+   "q": "từ C đi lên một quãng 6 trưởng thì tới nốt j",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-quang-tinh-chat",
+   "style": "go_tat",
+   "base": "từ C đi lên một quãng 6 trưởng thì tới nốt gì"
+  },
+  {
+   "q": "tu C di len mot quang 6 truong thi toi not j",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-quang-tinh-chat",
+   "style": "khong_dau_go_tat",
+   "base": "từ C đi lên một quãng 6 trưởng thì tới nốt gì"
+  },
+  {
+   "q": "hợp âm bảy nửa giảm là j",
+   "flow": "A",
+   "lesson": "L02",
+   "group": "A-L02-bac-nuagiam#0",
+   "style": "go_tat",
+   "base": "hợp âm bảy nửa giảm là gì"
+  },
+  {
+   "q": "hợp âm bảy nửa gảim là gì",
+   "flow": "A",
+   "lesson": "L02",
+   "group": "A-L02-bac-nuagiam#0",
+   "style": "loi_go",
+   "base": "hợp âm bảy nửa giảm là gì"
+  },
+  {
+   "q": "bm7b5 trong giọng c nằm ở bậc nào",
+   "flow": "A",
+   "lesson": "L02",
+   "group": "A-L02-bac-nuagiam#0",
+   "style": "chu_thuong",
+   "base": "Bm7b5 trong giọng C nằm ở bậc nào"
+  },
+  {
+   "q": "Bm7b5 trong giong C nam o bac nao",
+   "flow": "A",
+   "lesson": "L02",
+   "group": "A-L02-bac-nuagiam#0",
+   "style": "khong_dau_go_tat",
+   "base": "Bm7b5 trong giọng C nằm ở bậc nào"
+  },
+  {
+   "q": "ký hiệu ø7 nghĩa là sao",
+   "flow": "A",
+   "lesson": "L02",
+   "group": "A-L02-bac-nuagiam#0",
+   "style": "goc",
+   "base": "ký hiệu ø7 nghĩa là sao"
+  },
+  {
+   "q": "ký hiu ø7 nghĩa là sao",
+   "flow": "A",
+   "lesson": "L02",
+   "group": "A-L02-bac-nuagiam#0",
+   "style": "loi_go",
+   "base": "ký hiệu ø7 nghĩa là sao"
+  },
+  {
+   "q": "vii ø7 viết thế nào trong giọng trưởng",
+   "flow": "A",
+   "lesson": "L02",
+   "group": "A-L02-bac-nuagiam#0",
+   "style": "goc",
+   "base": "vii ø7 viết thế nào trong giọng trưởng"
+  },
+  {
+   "q": "vii ø7 viet the nao trong giong truong",
+   "flow": "A",
+   "lesson": "L02",
+   "group": "A-L02-bac-nuagiam#0",
+   "style": "khong_dau",
+   "base": "vii ø7 viết thế nào trong giọng trưởng"
+  },
+  {
+   "q": "M3 rộng hơn m3 bao nhiêu",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-chatluong#1",
+   "style": "goc",
+   "base": "M3 rộng hơn m3 bao nhiêu"
+  },
+  {
+   "q": "M3 rong hon m3 bao nhieu",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-chatluong#1",
+   "style": "khong_dau",
+   "base": "M3 rộng hơn m3 bao nhiêu"
+  },
+  {
+   "q": "quãng tăng là gì cho ví dụ",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-chatluong#1",
+   "style": "goc",
+   "base": "quãng tăng là gì cho ví dụ"
+  },
+  {
+   "q": "quang giam la j",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-chatluong#1",
+   "style": "khong_dau_go_tat",
+   "base": "quãng giảm là gì"
+  },
+  {
+   "q": "quãng giảm là gì",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-chatluong#1",
+   "style": "chu_thuong",
+   "base": "quãng giảm là gì"
+  },
+  {
+   "q": "d5 là quãng gì",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-chatluong#1",
+   "style": "goc",
+   "base": "d5 là quãng gì"
+  },
+  {
+   "q": "d5 la quang gi",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-chatluong#1",
+   "style": "khong_dau",
+   "base": "d5 là quãng gì"
+  },
+  {
+   "q": "munố biết một hợp âm là trưởng hay thứ thì đếm sao",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-triad-khainiem#2",
+   "style": "loi_go",
+   "base": "muốn biết một hợp âm là trưởng hay thứ thì đếm sao"
+  },
+  {
+   "q": "muon biet mot hop am la truong hay thu thi dem sao",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-triad-khainiem#2",
+   "style": "khong_dau_go_tat",
+   "base": "muốn biết một hợp âm là trưởng hay thứ thì đếm sao"
+  },
+  {
+   "q": "root của hợp âm là gì",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-triad-khainiem#2",
+   "style": "goc",
+   "base": "root của hợp âm là gì"
+  },
+  {
+   "q": "root cua hop am la gi",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-triad-khainiem#2",
+   "style": "khong_dau",
+   "base": "root của hợp âm là gì"
+  },
+  {
+   "q": "nốt quãng 5 của hợp âm giảm là gì",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-triad-khainiem#2",
+   "style": "goc",
+   "base": "nốt quãng 5 của hợp âm giảm là gì"
+  },
+  {
+   "q": "nốt quãng 5 của hợp âm giảm là j",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-triad-khainiem#2",
+   "style": "go_tat",
+   "base": "nốt quãng 5 của hợp âm giảm là gì"
+  },
+  {
+   "q": "quãng từ D lên F# là quãng gì",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-tenquang",
+   "style": "goc",
+   "base": "quãng từ D lên F# là quãng gì"
+  },
+  {
+   "q": "quãng từ D lên F# là quãng j",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-tenquang",
+   "style": "go_tat",
+   "base": "quãng từ D lên F# là quãng gì"
+  },
+  {
+   "q": "quãng từ E lên G là quãng gì",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-tenquang",
+   "style": "goc",
+   "base": "quãng từ E lên G là quãng gì"
+  },
+  {
+   "q": "quãg từ E lên G là quãng gì",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-tenquang",
+   "style": "loi_go",
+   "base": "quãng từ E lên G là quãng gì"
+  },
+  {
+   "q": "quãng từ A lên C# là quãng gì",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-tenquang",
+   "style": "goc",
+   "base": "quãng từ A lên C# là quãng gì"
+  },
+  {
+   "q": "thầy ơi cho em hỏi quãng từ A lên C# là quãng gì vậy ạ",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-tenquang",
+   "style": "loi_goi",
+   "base": "quãng từ A lên C# là quãng gì"
+  },
+  {
+   "q": "quãng từ C lên Eb là quãng gì",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-tenquang",
+   "style": "goc",
+   "base": "quãng từ C lên Eb là quãng gì"
+  },
+  {
+   "q": "quãng từ C lên Eb là quãg gì",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-tenquang",
+   "style": "loi_go",
+   "base": "quãng từ C lên Eb là quãng gì"
+  },
+  {
+   "q": "quang tu F len B la quang gi",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-tenquang",
+   "style": "khong_dau",
+   "base": "quãng từ F lên B là quãng gì"
+  },
+  {
+   "q": "thầy ơi cho em hỏi quãng từ F lên B là quãng gì???",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-tenquang",
+   "style": "loi_goi",
+   "base": "quãng từ F lên B là quãng gì"
+  },
+  {
+   "q": "quang tu G len D la quang gi",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-tenquang",
+   "style": "khong_dau",
+   "base": "quãng từ G lên D là quãng gì"
+  },
+  {
+   "q": "quãng từ G lên D là qãung gì",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-tenquang",
+   "style": "loi_go",
+   "base": "quãng từ G lên D là quãng gì"
+  },
+  {
+   "q": "quãng từ bb lên d là quãng gì",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-tenquang",
+   "style": "chu_thuong",
+   "base": "quãng từ Bb lên D là quãng gì"
+  },
+  {
+   "q": "quang tu Bb len D la quang j",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-tenquang",
+   "style": "khong_dau_go_tat",
+   "base": "quãng từ Bb lên D là quãng gì"
+  },
+  {
+   "q": "quãng từ E lên C là quãng gì",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-tenquang",
+   "style": "goc",
+   "base": "quãng từ E lên C là quãng gì"
+  },
+  {
+   "q": "em hỏi xíu quãng từ E lên C là quãng gì???",
+   "flow": "A",
+   "lesson": "L01",
+   "group": "A-L01-tenquang",
+   "style": "loi_goi",
+   "base": "quãng từ E lên C là quãng gì"
+  },
+  {
+   "q": "upper structure là gì",
+   "flow": "B",
+   "group": "B-hop-am-them#1",
+   "style": "goc",
+   "base": "upper structure là gì",
+   "engine": null
+  },
+  {
+   "q": "quartal harmony là gì",
+   "flow": "B",
+   "group": "B-hop-am-them#1",
+   "style": "goc",
+   "base": "quartal harmony là gì",
+   "engine": null
+  },
+  {
+   "q": "quartal harmony la gi",
+   "flow": "B",
+   "group": "B-hop-am-them#1",
+   "style": "khong_dau",
+   "base": "quartal harmony là gì"
+  },
+  {
+   "q": "Bdim7 có những nốt gì",
+   "flow": "B",
+   "expect": "Engine: dim7 (kho chưa dạy bảy giảm)",
+   "group": "B-dim7",
+   "style": "goc",
+   "base": "Bdim7 có những nốt gì",
+   "engine": [
+    {
+     "tool": "get_chord_tones",
+     "args": {
+      "symbol": "Bdim7"
+     },
+     "result": "B D F Ab"
+    }
+   ]
+  },
+  {
+   "q": "hỏi ngu tí: Bdim7 có những nốt gì???",
+   "flow": "B",
+   "expect": "Engine: dim7 (kho chưa dạy bảy giảm)",
+   "group": "B-dim7",
+   "style": "loi_goi",
+   "base": "Bdim7 có những nốt gì",
+   "engine": [
+    {
+     "tool": "get_chord_tones",
+     "args": {
+      "symbol": "Bdim7"
+     },
+     "result": "B D F Ab"
+    }
+   ]
+  },
+  {
+   "q": "c#dim7 có những nốt gì",
+   "flow": "B",
+   "expect": "Engine: dim7 (kho chưa dạy bảy giảm)",
+   "group": "B-dim7",
+   "style": "chu_thuong",
+   "base": "C#dim7 có những nốt gì"
+  },
+  {
+   "q": "C#dim7 co nhg not gi",
+   "flow": "B",
+   "expect": "Engine: dim7 (kho chưa dạy bảy giảm)",
+   "group": "B-dim7",
+   "style": "khong_dau_go_tat",
+   "base": "C#dim7 có những nốt gì"
+  },
+  {
+   "q": "F#dim7 co nhg not j",
+   "flow": "B",
+   "expect": "Engine: dim7 (kho chưa dạy bảy giảm)",
+   "group": "B-dim7",
+   "style": "khong_dau_go_tat",
+   "base": "F#dim7 có những nốt gì"
+  },
+  {
+   "q": "f#dim7 có những nốt gì",
+   "flow": "B",
+   "expect": "Engine: dim7 (kho chưa dạy bảy giảm)",
+   "group": "B-dim7",
+   "style": "chu_thuong",
+   "base": "F#dim7 có những nốt gì"
+  },
+  {
+   "q": "G#dim7 có những nốt gì",
+   "flow": "B",
+   "expect": "Engine: dim7 (kho chưa dạy bảy giảm)",
+   "group": "B-dim7",
+   "style": "goc",
+   "base": "G#dim7 có những nốt gì",
+   "engine": [
+    {
+     "tool": "get_chord_tones",
+     "args": {
+      "symbol": "G#dim7"
+     },
+     "result": "G# B D F"
+    }
+   ]
+  },
+  {
+   "q": "bạn ơi G#dim7 có những nốt gì nhỉ",
+   "flow": "B",
+   "expect": "Engine: dim7 (kho chưa dạy bảy giảm)",
+   "group": "B-dim7",
+   "style": "loi_goi",
+   "base": "G#dim7 có những nốt gì",
+   "engine": [
+    {
+     "tool": "get_chord_tones",
+     "args": {
+      "symbol": "G#dim7"
+     },
+     "result": "G# B D F"
+    }
+   ]
+  },
+  {
+   "q": "hợp âm bảy gim là gì",
+   "flow": "B",
+   "group": "B-chord-khainiem#1",
+   "style": "loi_go",
+   "base": "hợp âm bảy giảm là gì"
+  },
+  {
+   "q": "hợp âm bảy giảm là gì",
+   "flow": "B",
+   "group": "B-chord-khainiem#1",
+   "style": "go_tat",
+   "base": "hợp âm bảy giảm là gì"
+  },
+  {
+   "q": "hợp âm 6 là gì",
+   "flow": "B",
+   "group": "B-chord-khainiem#1",
+   "style": "goc",
+   "base": "hợp âm 6 là gì",
+   "engine": null
+  },
+  {
+   "q": "power chord là gì",
+   "flow": "B",
+   "group": "B-chord-khainiem#1",
+   "style": "goc",
+   "base": "power chord là gì",
+   "engine": null
+  },
+  {
+   "q": "power chord la j",
+   "flow": "B",
+   "group": "B-chord-khainiem#1",
+   "style": "khong_dau_go_tat",
+   "base": "power chord là gì"
+  },
+  {
+   "q": "em hỏi xíu slash chord như C/E đọc thế nào với",
+   "flow": "B",
+   "group": "B-chord-khainiem#1",
+   "style": "loi_goi",
+   "base": "slash chord như C/E đọc thế nào"
+  },
+  {
+   "q": "slash chord nhu C/E doc the nao",
+   "flow": "B",
+   "group": "B-chord-khainiem#1",
+   "style": "khong_dau",
+   "base": "slash chord như C/E đọc thế nào"
+  },
+  {
+   "q": "accelerando nghĩa là gì",
+   "flow": "B",
+   "group": "B-nhacly-khac#4",
+   "style": "goc",
+   "base": "accelerando nghĩa là gì",
+   "engine": null
+  },
+  {
+   "q": "accelerando nghĩa là j",
+   "flow": "B",
+   "group": "B-nhacly-khac#4",
+   "style": "go_tat",
+   "base": "accelerando nghĩa là gì"
+  },
+  {
+   "q": "ostinato là gì",
+   "flow": "B",
+   "group": "B-nhacly-khac#4",
+   "style": "goc",
+   "base": "ostinato là gì",
+   "engine": null
+  },
+  {
+   "q": "hỏi ngu tí: ostinato là gì???",
+   "flow": "B",
+   "group": "B-nhacly-khac#4",
+   "style": "loi_goi",
+   "base": "ostinato là gì"
+  },
+  {
+   "q": "counterpoint học có khó không",
+   "flow": "B",
+   "group": "B-nhacly-khac#4",
+   "style": "goc",
+   "base": "counterpoint học có khó không",
+   "engine": null
+  },
+  {
+   "q": "counterpoint hoc co kho ko",
+   "flow": "B",
+   "group": "B-nhacly-khac#4",
+   "style": "khong_dau_go_tat",
+   "base": "counterpoint học có khó không"
+  },
+  {
+   "q": "V/ii nghĩa là gì",
+   "flow": "A",
+   "lesson": "L05",
+   "group": "B-L05#1",
+   "style": "goc",
+   "base": "V/ii nghĩa là gì",
+   "relabel": "B→A: L05 đã vào kho"
+  },
+  {
+   "q": "v/ii nghĩa là gì",
+   "flow": "A",
+   "lesson": "L05",
+   "group": "B-L05#1",
+   "style": "chu_thuong",
+   "base": "V/ii nghĩa là gì",
+   "relabel": "B→A: L05 đã vào kho"
+  },
+  {
+   "q": "tại sao có D7 trong bài giọng Đô trưởng, có fai át phụ không",
+   "flow": "A",
+   "lesson": "L05",
+   "group": "B-L05#1",
+   "style": "go_tat",
+   "base": "tại sao có D7 trong bài giọng Đô trưởng, có phải át phụ không",
+   "relabel": "B→A: L05 đã vào kho"
+  },
+  {
+   "q": "tại sao có D7 trong bài gọing Đô trưởng, có phải át phụ không",
+   "flow": "A",
+   "lesson": "L05",
+   "group": "B-L05#1",
+   "style": "loi_go",
+   "base": "tại sao có D7 trong bài giọng Đô trưởng, có phải át phụ không",
+   "relabel": "B→A: L05 đã vào kho"
+  },
+  {
+   "q": "dấu lặng đen là gì",
+   "flow": "B",
+   "group": "B-nhacly-khac#1",
+   "style": "goc",
+   "base": "dấu lặng đen là gì",
+   "engine": null
+  },
+  {
+   "q": "chuyển giọng là j",
+   "flow": "B",
+   "group": "B-nhacly-khac#1",
+   "style": "go_tat",
+   "base": "chuyển giọng là gì"
+  },
+  {
+   "q": "chuyen giong la gi",
+   "flow": "B",
+   "group": "B-nhacly-khac#1",
+   "style": "khong_dau_go_tat",
+   "base": "chuyển giọng là gì"
+  },
+  {
+   "q": "dịch giọng một bài hát sang tông khác làm sao",
+   "flow": "B",
+   "group": "B-nhacly-khac#1",
+   "style": "chu_thuong",
+   "base": "dịch giọng một bài hát sang tông khác làm sao"
+  },
+  {
+   "q": "cadence là gì, có mấy loại",
+   "flow": "B",
+   "group": "B-nhacly-khac#1",
+   "style": "goc",
+   "base": "cadence là gì, có mấy loại",
+   "engine": null
+  },
+  {
+   "q": "cadence là j, có mấy loại",
+   "flow": "B",
+   "group": "B-nhacly-khac#1",
+   "style": "go_tat",
+   "base": "cadence là gì, có mấy loại"
+  },
+  {
+   "q": "chromatic scale la j",
+   "flow": "B",
+   "group": "B-amgiai-khac#1",
+   "style": "khong_dau_go_tat",
+   "base": "chromatic scale là gì"
+  },
+  {
+   "q": "chromatic scale là gì",
+   "flow": "B",
+   "group": "B-amgiai-khac#1",
+   "style": "chu_thuong",
+   "base": "chromatic scale là gì"
+  },
+  {
+   "q": "âm giai thứ giai điệu khác thứ hòa âm chỗ nào",
+   "flow": "B",
+   "group": "B-amgiai-khac#1",
+   "style": "goc",
+   "base": "âm giai thứ giai điệu khác thứ hòa âm chỗ nào",
+   "engine": null
+  },
+  {
+   "q": "âm gai thứ giai điệu khác thứ hòa âm chỗ nào",
+   "flow": "B",
+   "group": "B-amgiai-khac#1",
+   "style": "loi_go",
+   "base": "âm giai thứ giai điệu khác thứ hòa âm chỗ nào"
+  },
+  {
+   "q": "gam thu tu nhien dung the nao",
+   "flow": "B",
+   "group": "B-amgiai-khac#1",
+   "style": "khong_dau",
+   "base": "gam thứ tự nhiên dựng thế nào"
+  },
+  {
+   "q": "gam thu tu nhien dung sao",
+   "flow": "B",
+   "group": "B-amgiai-khac#1",
+   "style": "khong_dau_go_tat",
+   "base": "gam thứ tự nhiên dựng thế nào"
+  },
+  {
+   "q": "giọng La thứ có liên quan gì với Đô trưởng",
+   "flow": "B",
+   "group": "B-amgiai-khac#1",
+   "style": "goc",
+   "base": "giọng La thứ có liên quan gì với Đô trưởng",
+   "engine": [
+    {
+     "tool": "get_scale",
+     "args": {
+      "tonic": "A",
+      "scale_type": "natural_minor"
+     },
+     "result": "A B C D E F G"
+    }
+   ]
+  },
+  {
+   "q": "giọng La thứ có liên quan gì vs Đô trưởng",
+   "flow": "B",
+   "group": "B-amgiai-khac#1",
+   "style": "go_tat",
+   "base": "giọng La thứ có liên quan gì với Đô trưởng",
+   "engine": [
+    {
+     "tool": "get_scale",
+     "args": {
+      "tonic": "A",
+      "scale_type": "natural_minor"
+     },
+     "result": "A B C D E F G"
+    }
+   ]
+  },
+  {
+   "q": "chỉ mình cách chơi liên quân",
+   "flow": "C",
+   "group": "C-doisong#1",
+   "style": "goc",
+   "base": "chỉ mình cách chơi liên quân"
+  },
+  {
+   "q": "chỉ mik cách chơi liên quân",
+   "flow": "C",
+   "group": "C-doisong#1",
+   "style": "go_tat",
+   "base": "chỉ mình cách chơi liên quân"
+  },
+  {
+   "q": "ad ơi mua điện thoại nào tầm 5 triệu vậy ạ",
+   "flow": "C",
+   "group": "C-doisong#1",
+   "style": "loi_goi",
+   "base": "mua điện thoại nào tầm 5 triệu"
+  },
+  {
+   "q": "mua điện thoại nào tầm 5 trệu",
+   "flow": "C",
+   "group": "C-doisong#1",
+   "style": "loi_go",
+   "base": "mua điện thoại nào tầm 5 triệu"
+  },
+  {
+   "q": "giá vàng hôm nay",
+   "flow": "C",
+   "group": "C-doisong#1",
+   "style": "goc",
+   "base": "giá vàng hôm nay"
+  },
+  {
+   "q": "ad ơi giá vàng hôm nay vậy ạ",
+   "flow": "C",
+   "group": "C-doisong#1",
+   "style": "loi_goi",
+   "base": "giá vàng hôm nay"
+  },
+  {
+   "q": "bài tập vật lý về lực ma sát làm sao",
+   "flow": "C",
+   "group": "C-hoctap#1",
+   "style": "goc",
+   "base": "bài tập vật lý về lực ma sát làm sao"
+  },
+  {
+   "q": "bạn ơi từ vựng tiếng anh lớp 11 unit 3 ạ",
+   "flow": "C",
+   "group": "C-hoctap#1",
+   "style": "loi_goi",
+   "base": "từ vựng tiếng anh lớp 11 unit 3"
+  },
+  {
+   "q": "từ vựng tếing anh lớp 11 unit 3",
+   "flow": "C",
+   "group": "C-hoctap#1",
+   "style": "loi_go",
+   "base": "từ vựng tiếng anh lớp 11 unit 3"
+  },
+  {
+   "q": "cách làm bài nghị lunậ xã hội",
+   "flow": "C",
+   "group": "C-hoctap#1",
+   "style": "loi_go",
+   "base": "cách làm bài nghị luận xã hội"
+  },
+  {
+   "q": "cách làm bài nghị luận xã hội",
+   "flow": "C",
+   "group": "C-hoctap#1",
+   "style": "go_tat",
+   "base": "cách làm bài nghị luận xã hội"
+  },
+  {
+   "q": "cách nấu phở bò",
+   "flow": "C",
+   "group": "C-doisong#2",
+   "style": "goc",
+   "base": "cách nấu phở bò"
+  },
+  {
+   "q": "đi đà lạt nên chơi ở đâu",
+   "flow": "C",
+   "group": "C-doisong#2",
+   "style": "goc",
+   "base": "đi đà lạt nên chơi ở đâu"
+  },
+  {
+   "q": "sao app gợi ý cho mình bài này",
+   "flow": "D",
+   "help": "Bài được gợi ý cho bạn",
+   "group": "D-goiy#0",
+   "style": "goc",
+   "base": "sao app gợi ý cho mình bài này"
+  },
+  {
+   "q": "sao app gợi ý cho mnìh bài này",
+   "flow": "D",
+   "help": "Bài được gợi ý cho bạn",
+   "group": "D-goiy#0",
+   "style": "loi_go",
+   "base": "sao app gợi ý cho mình bài này"
+  },
+  {
+   "q": "bai nen hoc tiep dc chon the nao",
+   "flow": "D",
+   "help": "Bài được gợi ý cho bạn",
+   "group": "D-goiy#0",
+   "style": "khong_dau_go_tat",
+   "base": "bài nên học tiếp được chọn thế nào"
+  },
+  {
+   "q": "bai nen hoc tiep duoc chon the nao",
+   "flow": "D",
+   "help": "Bài được gợi ý cho bạn",
+   "group": "D-goiy#0",
+   "style": "khong_dau",
+   "base": "bài nên học tiếp được chọn thế nào"
+  },
+  {
+   "q": "mục gợi ý bài học dựa vào đâu",
+   "flow": "D",
+   "help": "Bài được gợi ý cho bạn",
+   "group": "D-goiy#0",
+   "style": "loi_go",
+   "base": "mục gợi ý bài học dựa vào đâu"
+  },
+  {
+   "q": "muc goi y bai hoc dua vao dau",
+   "flow": "D",
+   "help": "Bài được gợi ý cho bạn",
+   "group": "D-goiy#0",
+   "style": "khong_dau",
+   "base": "mục gợi ý bài học dựa vào đâu"
+  },
+  {
+   "q": "xem tiến độ học ở đâu",
+   "flow": "D",
+   "help": "Xem tiến độ học",
+   "group": "D-tiendo#0",
+   "style": "goc",
+   "base": "xem tiến độ học ở đâu"
+  },
+  {
+   "q": "xem tếin độ học ở đâu",
+   "flow": "D",
+   "help": "Xem tiến độ học",
+   "group": "D-tiendo#0",
+   "style": "loi_go",
+   "base": "xem tiến độ học ở đâu"
+  },
+  {
+   "q": "mình muốn biết mình đã học được bao nhiêu",
+   "flow": "D",
+   "help": "Xem tiến độ học",
+   "group": "D-tiendo#0",
+   "style": "goc",
+   "base": "mình muốn biết mình đã học được bao nhiêu"
+  },
+  {
+   "q": "mik muốn biết mik đã học đc bn",
+   "flow": "D",
+   "help": "Xem tiến độ học",
+   "group": "D-tiendo#0",
+   "style": "go_tat",
+   "base": "mình muốn biết mình đã học được bao nhiêu"
+  },
+  {
+   "q": "chỗ nào hiện mức thành thạo từng kỹ năng",
+   "flow": "D",
+   "help": "Xem tiến độ học",
+   "group": "D-tiendo#0",
+   "style": "goc",
+   "base": "chỗ nào hiện mức thành thạo từng kỹ năng"
+  },
+  {
+   "q": "bạn ơi chỗ nào hiện mức thành thạo từng kỹ năng ạ",
+   "flow": "D",
+   "help": "Xem tiến độ học",
+   "group": "D-tiendo#0",
+   "style": "loi_goi",
+   "base": "chỗ nào hiện mức thành thạo từng kỹ năng"
+  },
+  {
+   "q": "đổi mật khẩu ở đâu",
+   "flow": "D",
+   "help": "Đổi mật khẩu, đổi tên hiển thị",
+   "group": "D-doimk#0",
+   "style": "go_tat",
+   "base": "đổi mật khẩu ở đâu"
+  },
+  {
+   "q": "doi mat khau o dau",
+   "flow": "D",
+   "help": "Đổi mật khẩu, đổi tên hiển thị",
+   "group": "D-doimk#0",
+   "style": "khong_dau_go_tat",
+   "base": "đổi mật khẩu ở đâu"
+  },
+  {
+   "q": "muốn đổi tên hiển thị thì làm sao",
+   "flow": "D",
+   "help": "Đổi mật khẩu, đổi tên hiển thị",
+   "group": "D-doimk#0",
+   "style": "goc",
+   "base": "muốn đổi tên hiển thị thì làm sao"
+  },
+  {
+   "q": "muốn đổi tên hểin thị thì làm sao",
+   "flow": "D",
+   "help": "Đổi mật khẩu, đổi tên hiển thị",
+   "group": "D-doimk#0",
+   "style": "loi_go",
+   "base": "muốn đổi tên hiển thị thì làm sao"
+  },
+  {
+   "q": "hỏi ngu tí: cách thay mật khẩu tài khoản của mình ạ?",
+   "flow": "D",
+   "help": "Đổi mật khẩu, đổi tên hiển thị",
+   "group": "D-doimk#0",
+   "style": "loi_goi",
+   "base": "cách thay mật khẩu tài khoản của mình"
+  },
+  {
+   "q": "cách thay mật khẩu tài khản của mình",
+   "flow": "D",
+   "help": "Đổi mật khẩu, đổi tên hiển thị",
+   "group": "D-doimk#0",
+   "style": "loi_go",
+   "base": "cách thay mật khẩu tài khoản của mình"
+  },
+  {
+   "q": "luyện tập tự do ở đâu",
+   "flow": "D",
+   "help": "Luyện tập tự do",
+   "group": "D-luyentap#0",
+   "style": "goc",
+   "base": "luyện tập tự do ở đâu"
+  },
+  {
+   "q": "muốn làm thêm bài tập thì vào mục nào",
+   "flow": "D",
+   "help": "Luyện tập tự do",
+   "group": "D-luyentap#0",
+   "style": "goc",
+   "base": "muốn làm thêm bài tập thì vào mục nào"
+  },
+  {
+   "q": "muon lam them bai tap thi vao muc nao",
+   "flow": "D",
+   "help": "Luyện tập tự do",
+   "group": "D-luyentap#0",
+   "style": "khong_dau",
+   "base": "muốn làm thêm bài tập thì vào mục nào"
+  },
+  {
+   "q": "có chỗ nào luyện riêng phần quãng ko",
+   "flow": "D",
+   "help": "Luyện tập tự do",
+   "group": "D-luyentap#0",
+   "style": "go_tat",
+   "base": "có chỗ nào luyện riêng phần quãng không"
+  },
+  {
+   "q": "có chỗ nào luyn riêng phần quãng không",
+   "flow": "D",
+   "help": "Luyện tập tự do",
+   "group": "D-luyentap#0",
+   "style": "loi_go",
+   "base": "có chỗ nào luyện riêng phần quãng không"
+  },
+  {
+   "q": "chao ban, hom nay mik hoc gi nhi",
+   "flow": "G",
+   "group": "G-ghep-chao#0",
+   "style": "khong_dau_go_tat",
+   "base": "chào bạn, hôm nay mình học gì nhỉ"
+  },
+  {
+   "q": "chào bạn, hôm nay mình học gì nhỉ",
+   "flow": "G",
+   "group": "G-ghep-chao#0",
+   "style": "chu_thuong",
+   "base": "chào bạn, hôm nay mình học gì nhỉ"
+  },
+  {
+   "q": "hello, mình mới vào học",
+   "flow": "G",
+   "group": "G-ghep-chao#0",
+   "style": "goc",
+   "base": "hello, mình mới vào học"
+  },
+  {
+   "q": "hello, mìh mới vào học",
+   "flow": "G",
+   "group": "G-ghep-chao#0",
+   "style": "loi_go",
+   "base": "hello, mình mới vào học"
+  },
+  {
+   "q": "chào buổi tối nha, mình học tiếp đây",
+   "flow": "G",
+   "group": "G-ghep-chao#0",
+   "style": "goc",
+   "base": "chào buổi tối nha, mình học tiếp đây"
+  },
+  {
+   "q": "chao buoi toi nha, minh hoc tiep day",
+   "flow": "G",
+   "group": "G-ghep-chao#0",
+   "style": "khong_dau",
+   "base": "chào buổi tối nha, mình học tiếp đây"
+  },
+  {
+   "q": "hi, hôm nay mình định ôn lại chút",
+   "flow": "G",
+   "group": "G-ghep-chao#0",
+   "style": "goc",
+   "base": "hi, hôm nay mình định ôn lại chút"
+  },
+  {
+   "q": "hi, hôm nay mình định ôn lại cúht",
+   "flow": "G",
+   "group": "G-ghep-chao#0",
+   "style": "loi_go",
+   "base": "hi, hôm nay mình định ôn lại chút"
+  },
+  {
+   "q": "cảm ơn nha, hôm nay học thú vị ghê",
+   "flow": "G",
+   "group": "G-ghep-camon#0",
+   "style": "goc",
+   "base": "cảm ơn nha, hôm nay học thú vị ghê"
+  },
+  {
+   "q": "thầy ơi cho em hỏi cảm ơn nha, hôm nay học thú vị ghê với",
+   "flow": "G",
+   "group": "G-ghep-camon#0",
+   "style": "loi_goi",
+   "base": "cảm ơn nha, hôm nay học thú vị ghê"
+  },
+  {
+   "q": "tahnks bạn, bài này dễ hiểu quá",
+   "flow": "G",
+   "group": "G-ghep-camon#0",
+   "style": "loi_go",
+   "base": "thanks bạn, bài này dễ hiểu quá"
+  },
+  {
+   "q": "thầy ơi cho em hỏi thanks bạn, bài này dễ hiểu quá với",
+   "flow": "G",
+   "group": "G-ghep-camon#0",
+   "style": "loi_goi",
+   "base": "thanks bạn, bài này dễ hiểu quá"
+  },
+  {
+   "q": "ok mình hiểu rồi, cảm ơn nhiều nhé",
+   "flow": "G",
+   "group": "G-ghep-camon#0",
+   "style": "goc",
+   "base": "ok mình hiểu rồi, cảm ơn nhiều nhé"
+  },
+  {
+   "q": "cam on, mai minh hoc tiep",
+   "flow": "G",
+   "group": "G-ghep-camon#0",
+   "style": "khong_dau",
+   "base": "cám ơn, mai mình học tiếp"
+  },
+  {
+   "q": "bạn ơi cám ơn, mai mình học tiếp nhỉ",
+   "flow": "G",
+   "group": "G-ghep-camon#0",
+   "style": "loi_goi",
+   "base": "cám ơn, mai mình học tiếp"
+  }
+ ]
+}

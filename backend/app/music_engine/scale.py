@@ -9,6 +9,8 @@ Claim:
 - MUS-SCALE-006  Thứ hòa âm: 2 1 2 2 1 3 1 (F tr. 17; OMT).
 - MUS-SCALE-007  Thứ giai điệu: lên 2 1 2 2 2 2 1, xuống = thứ tự nhiên (F tr. 17; OMT).
 - MUS-SCALE-008  Dorian: 2 1 2 2 2 1 2 (F tr. 18). Cấp 4, chỉ 1 nguồn.
+- MUS-SCALE-009  Mixolydian: 2 2 1 2 2 1 2 = trưởng với bậc 7 thứ (OMT Chord-Scale Theory; Terefenko Ch.7–8).
+                 Thêm 10/11/2026 cho L07 (ADR-019); claim chờ duyệt.
 
 SRS K05 chỉ dạy thứ tự nhiên ở MVP; các dạng khác có sẵn để dùng sau, mỗi loại ghi `mvp`.
 """
@@ -47,6 +49,7 @@ SCALE_TYPES: dict[str, ScaleType] = {
         descending_intervals=("P1", "M2", "m3", "P4", "P5", "m6", "m7"),
     ),
     "dorian": ScaleType("dorian", ("P1", "M2", "m3", "P4", "P5", "M6", "m7"), ("MUS-SCALE-008",), False),
+    "mixolydian": ScaleType("mixolydian", ("P1", "M2", "M3", "P4", "P5", "M6", "m7"), ("MUS-SCALE-009",), False),
 }
 
 # Bí danh nhập cho tiện; "minor" = thứ tự nhiên theo SRS K05.

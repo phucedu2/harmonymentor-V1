@@ -21,6 +21,7 @@ from .core.middleware import install_middleware
 from .db.seed import seed_database
 from .db.session import SessionLocal, create_schema
 from .music_engine.errors import MusicEngineError
+from .services import recommendation_service
 
 logger = logging.getLogger("harmonymentor.seed")
 
@@ -28,6 +29,9 @@ logger = logging.getLogger("harmonymentor.seed")
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     check_runtime_settings(settings)
+    mismatch = recommendation_service.embedding_config_mismatch(settings)
+    if mismatch:
+        logger.warning("%s", mismatch)
     if settings.auto_create_schema:
         create_schema()
     if settings.seed_demo_content:

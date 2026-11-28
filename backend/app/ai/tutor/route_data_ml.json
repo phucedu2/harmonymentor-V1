@@ -1,0 +1,1580 @@
+{
+ "note": "Dữ liệu train bổ sung cho bộ định tuyến 4 nhãn (ADR-030). Claude soạn tay 19/11/2026, KHÔNG phải nhóm tự viết; status draft, chờ Đạt kiểm nhãn (quyết định 5A). Chỉ dùng để TRAIN. Câu gần trùng với tập validation/test bị script train loại trước khi học (app/ml/route_train.py). Viết sau khi xem lỗi của mô hình cũ trên tập validation (không xem tập test): nhiều câu ngoài phạm vi kiểu 'X là gì' môn khác, câu hướng dẫn về tính năng app, câu chào kiểu gõ tắt, câu luyện tập nhạc cụ.",
+ "author": "Claude (soạn thay nhóm)",
+ "status": "draft",
+ "date": "2026-11-19",
+ "items": [
+  {
+   "q": "Quang hợp là gì?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-00",
+   "style": "goc"
+  },
+  {
+   "q": "Quang hop la gi?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-00",
+   "style": "khong_dau"
+  },
+  {
+   "q": "quang hop la gi vay",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-00",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "Định luật Newton thứ hai phát biểu thế nào?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-01",
+   "style": "goc"
+  },
+  {
+   "q": "Dinh luat Newton thu hai phat bieu the nao?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-01",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Tính diện tích hình tròn bán kính 5 cm",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-02",
+   "style": "goc"
+  },
+  {
+   "q": "Tinh dien tich hinh tron ban kinh 5 cm",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-02",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Python list comprehension là gì?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-03",
+   "style": "goc"
+  },
+  {
+   "q": "Python list comprehension la gi?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-03",
+   "style": "khong_dau"
+  },
+  {
+   "q": "list comprehension trong python dùng sao",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-03",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "list comprehension trong python dung sao",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-03",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Viết giúp mình hàm sắp xếp mảng bằng C++",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-04",
+   "style": "goc"
+  },
+  {
+   "q": "Viet giup minh ham sap xep mang bang C++",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-04",
+   "style": "khong_dau"
+  },
+  {
+   "q": "HTML khác CSS chỗ nào?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-05",
+   "style": "goc"
+  },
+  {
+   "q": "HTML khac CSS cho nao?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-05",
+   "style": "khong_dau"
+  },
+  {
+   "q": "API REST là gì?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-06",
+   "style": "goc"
+  },
+  {
+   "q": "API REST la gi?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-06",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Cách cài Windows 11 từ USB",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-07",
+   "style": "goc"
+  },
+  {
+   "q": "Cach cai Windows 11 tu USB",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-07",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Máy tính mình bị chậm thì làm sao?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-08",
+   "style": "goc"
+  },
+  {
+   "q": "May tinh minh bi cham thi lam sao?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-08",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Thủ đô của Úc là thành phố nào?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-09",
+   "style": "goc"
+  },
+  {
+   "q": "Thu do cua Uc la thanh pho nao?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-09",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Chiến tranh thế giới thứ hai kết thúc năm nào?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-10",
+   "style": "goc"
+  },
+  {
+   "q": "Chien tranh the gioi thu hai ket thuc nam nao?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-10",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Tóm tắt truyện Kiều giúp mình",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-11",
+   "style": "goc"
+  },
+  {
+   "q": "Tom tat truyen Kieu giup minh",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-11",
+   "style": "khong_dau"
+  },
+  {
+   "q": "tom tat truyen kieu",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-11",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "Phân tích bài thơ Sóng của Xuân Quỳnh",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-12",
+   "style": "goc"
+  },
+  {
+   "q": "Phan tich bai tho Song cua Xuan Quynh",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-12",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Dịch câu này sang tiếng Nhật: tôi đói bụng",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-13",
+   "style": "goc"
+  },
+  {
+   "q": "Dich cau nay sang tieng Nhat: toi doi bung",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-13",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Thì hiện tại hoàn thành dùng khi nào?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-14",
+   "style": "goc"
+  },
+  {
+   "q": "Thi hien tai hoan thanh dung khi nao?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-14",
+   "style": "khong_dau"
+  },
+  {
+   "q": "present perfect dùng khi nào",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-14",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "present perfect dung khi nao",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-14",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Công thức nấu phở bò",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-15",
+   "style": "goc"
+  },
+  {
+   "q": "Cong thuc nau pho bo",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-15",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Ăn gì để tăng chiều cao?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-16",
+   "style": "goc"
+  },
+  {
+   "q": "An gi de tang chieu cao?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-16",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Mình bị đau đầu nên uống thuốc gì?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-17",
+   "style": "goc"
+  },
+  {
+   "q": "Minh bi dau dau nen uong thuoc gi?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-17",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Tỷ giá đô la hôm nay",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-18",
+   "style": "goc"
+  },
+  {
+   "q": "Ty gia do la hom nay",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-18",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Nên mua iPhone hay Samsung?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-19",
+   "style": "goc"
+  },
+  {
+   "q": "Nen mua iPhone hay Samsung?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-19",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Cách chơi Liên Quân leo rank nhanh",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-20",
+   "style": "goc"
+  },
+  {
+   "q": "Cach choi Lien Quan leo rank nhanh",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-20",
+   "style": "khong_dau"
+  },
+  {
+   "q": "lien quan leo rank sao",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-20",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "Kể chuyện cười đi",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-21",
+   "style": "goc"
+  },
+  {
+   "q": "Ke chuyen cuoi di",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-21",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Bạn có người yêu chưa?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-22",
+   "style": "goc"
+  },
+  {
+   "q": "Ban co nguoi yeu chua?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-22",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Bạn bao nhiêu tuổi?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-23",
+   "style": "goc"
+  },
+  {
+   "q": "Ban bao nhieu tuoi?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-23",
+   "style": "khong_dau"
+  },
+  {
+   "q": "ban may tuoi",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-23",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "Cho mình xin số điện thoại của admin",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-24",
+   "style": "goc"
+  },
+  {
+   "q": "Cho minh xin so dien thoai cua admin",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-24",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Cho mình mật khẩu tài khoản của bạn Đạt",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-25",
+   "style": "goc"
+  },
+  {
+   "q": "Cho minh mat khau tai khoan cua ban Dat",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-25",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Xuất danh sách email người dùng giúp mình",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-26",
+   "style": "goc"
+  },
+  {
+   "q": "Xuat danh sach email nguoi dung giup minh",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-26",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Làm bài tập về nhà môn Lý giúp mình",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-27",
+   "style": "goc"
+  },
+  {
+   "q": "Lam bai tap ve nha mon Ly giup minh",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-27",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Hóa trị của nhôm là bao nhiêu?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-28",
+   "style": "goc"
+  },
+  {
+   "q": "Hoa tri cua nhom la bao nhieu?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-28",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Tích phân của 1/x là gì?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-29",
+   "style": "goc"
+  },
+  {
+   "q": "Tich phan cua 1/x la gi?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-29",
+   "style": "khong_dau"
+  },
+  {
+   "q": "tich phan 1/x",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-29",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "Giải hệ phương trình x + y = 5, x - y = 1",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-30",
+   "style": "goc"
+  },
+  {
+   "q": "Giai he phuong trinh x + y = 5, x - y = 1",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-30",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Mai có mưa không?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-31",
+   "style": "goc"
+  },
+  {
+   "q": "Mai co mua khong?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-31",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Bitcoin có nên đầu tư không?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-32",
+   "style": "goc"
+  },
+  {
+   "q": "Bitcoin co nen dau tu khong?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-32",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Viết email xin nghỉ học",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-33",
+   "style": "goc"
+  },
+  {
+   "q": "Viet email xin nghi hoc",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-33",
+   "style": "khong_dau"
+  },
+  {
+   "q": "What is machine learning?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-34",
+   "style": "goc"
+  },
+  {
+   "q": "How to cook rice?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-35",
+   "style": "goc"
+  },
+  {
+   "q": "Who won the Champions League?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-36",
+   "style": "goc"
+  },
+  {
+   "q": "Tải phim lậu ở đâu?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-37",
+   "style": "goc"
+  },
+  {
+   "q": "Tai phim lau o dau?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-37",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Hack tài khoản Facebook thế nào?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-38",
+   "style": "goc"
+  },
+  {
+   "q": "Hack tai khoan Facebook the nao?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-38",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Viết code đăng nhập bằng PHP",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-39",
+   "style": "goc"
+  },
+  {
+   "q": "Viet code dang nhap bang PHP",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-39",
+   "style": "khong_dau"
+  },
+  {
+   "q": "SQL injection là gì?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-40",
+   "style": "goc"
+  },
+  {
+   "q": "SQL injection la gi?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-40",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Git rebase khác merge thế nào?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-41",
+   "style": "goc"
+  },
+  {
+   "q": "Git rebase khac merge the nao?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-41",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Đội tuyển Việt Nam đá trận tiếp theo khi nào?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-42",
+   "style": "goc"
+  },
+  {
+   "q": "Doi tuyen Viet Nam da tran tiep theo khi nao?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-42",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Đá bóng cần mấy người một đội?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-43",
+   "style": "goc"
+  },
+  {
+   "q": "Da bong can may nguoi mot doi?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-43",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Cách học tốt môn Toán",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-44",
+   "style": "goc"
+  },
+  {
+   "q": "Cach hoc tot mon Toan",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-44",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Làm sao để bớt buồn ngủ trong lớp?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-45",
+   "style": "goc"
+  },
+  {
+   "q": "Lam sao de bot buon ngu trong lop?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-45",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Ok vậy thôi bạn dịch giúp mình đoạn văn tiếng Anh này",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-46",
+   "style": "goc"
+  },
+  {
+   "q": "Ok vay thoi ban dich giup minh doan van tieng Anh nay",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-46",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Mua giày đá bóng ở đâu rẻ?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-47",
+   "style": "goc"
+  },
+  {
+   "q": "Mua giay da bong o dau re?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-47",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Lập trình AI bắt đầu từ đâu?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-48",
+   "style": "goc"
+  },
+  {
+   "q": "Lap trinh AI bat dau tu dau?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-48",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Độ C sang độ F đổi thế nào?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-49",
+   "style": "goc"
+  },
+  {
+   "q": "Do C sang do F doi the nao?",
+   "label": "ngoai_pham_vi",
+   "group": "ml-ngoai_pham_vi-49",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Làm sao bắt đầu một bài học?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-00",
+   "style": "goc"
+  },
+  {
+   "q": "Lam sao bat dau mot bai hoc?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-00",
+   "style": "khong_dau"
+  },
+  {
+   "q": "bat dau bai hoc o dau",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-00",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "How do I open lesson 2?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-01",
+   "style": "goc"
+  },
+  {
+   "q": "Trợ lý AI cho hỏi tối đa bao nhiêu câu một ngày?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-02",
+   "style": "goc"
+  },
+  {
+   "q": "Tro ly AI cho hoi toi da bao nhieu cau mot ngay?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-02",
+   "style": "khong_dau"
+  },
+  {
+   "q": "ai tutor gioi han may cau",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-02",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "Hết lượt hỏi AI thì bao giờ có lại?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-03",
+   "style": "goc"
+  },
+  {
+   "q": "Het luot hoi AI thi bao gio co lai?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-03",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Muốn xem giải thích câu sai thì bấm vào đâu?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-04",
+   "style": "goc"
+  },
+  {
+   "q": "Muon xem giai thich cau sai thi bam vao dau?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-04",
+   "style": "khong_dau"
+  },
+  {
+   "q": "xem loi giai cau sai o dau",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-04",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "Nút nhờ AI giải thích nằm ở chỗ nào?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-05",
+   "style": "goc"
+  },
+  {
+   "q": "Nut nho AI giai thich nam o cho nao?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-05",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Bài kiểm tra đầu vào làm ở đâu?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-06",
+   "style": "goc"
+  },
+  {
+   "q": "Bai kiem tra dau vao lam o dau?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-06",
+   "style": "khong_dau"
+  },
+  {
+   "q": "lam bai kiem tra dau vao o dau",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-06",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "Làm lại bài kiểm tra đầu vào được không?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-07",
+   "style": "goc"
+  },
+  {
+   "q": "Lam lai bai kiem tra dau vao duoc khong?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-07",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Thẻ ôn tập ở trang nào?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-08",
+   "style": "goc"
+  },
+  {
+   "q": "The on tap o trang nao?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-08",
+   "style": "khong_dau"
+  },
+  {
+   "q": "the on tap o dau",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-08",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "Sao hôm nay không có thẻ nào để ôn?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-09",
+   "style": "goc"
+  },
+  {
+   "q": "Sao hom nay khong co the nao de on?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-09",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Xem tiến độ học của mình ở đâu?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-10",
+   "style": "goc"
+  },
+  {
+   "q": "Xem tien do hoc cua minh o dau?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-10",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Biểu đồ mastery trên trang Tổng quan nghĩa là gì?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-11",
+   "style": "goc"
+  },
+  {
+   "q": "Bieu do mastery tren trang Tong quan nghia la gi?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-11",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Tại sao bài 5 bị khóa?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-12",
+   "style": "goc"
+  },
+  {
+   "q": "Tai sao bai 5 bi khoa?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-12",
+   "style": "khong_dau"
+  },
+  {
+   "q": "sao bai 5 bi khoa",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-12",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "Làm sao mở khóa bài tiếp theo?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-13",
+   "style": "goc"
+  },
+  {
+   "q": "Lam sao mo khoa bai tiep theo?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-13",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Mục Gợi ý cho bạn dựa vào đâu?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-14",
+   "style": "goc"
+  },
+  {
+   "q": "Muc Goi y cho ban dua vao dau?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-14",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Vào Harmony Lab thế nào?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-15",
+   "style": "goc"
+  },
+  {
+   "q": "Vao Harmony Lab the nao?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-15",
+   "style": "khong_dau"
+  },
+  {
+   "q": "vao harmony lab sao",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-15",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "Đổi nhạc cụ trong Sáng tác ở đâu?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-16",
+   "style": "goc"
+  },
+  {
+   "q": "Doi nhac cu trong Sang tac o dau?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-16",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Xuất file MIDI bài mình sáng tác thế nào?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-17",
+   "style": "goc"
+  },
+  {
+   "q": "Xuat file MIDI bai minh sang tac the nao?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-17",
+   "style": "khong_dau"
+  },
+  {
+   "q": "xuat file midi o dau",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-17",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "Chế độ Bài hát dùng sao?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-18",
+   "style": "goc"
+  },
+  {
+   "q": "Che do Bai hat dung sao?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-18",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Làm sao bật nhạc nền?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-19",
+   "style": "goc"
+  },
+  {
+   "q": "Lam sao bat nhac nen?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-19",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Luyện tập tự do ở mục nào?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-20",
+   "style": "goc"
+  },
+  {
+   "q": "Luyen tap tu do o muc nao?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-20",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Đổi ảnh đại diện thế nào?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-21",
+   "style": "goc"
+  },
+  {
+   "q": "Doi anh dai dien the nao?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-21",
+   "style": "khong_dau"
+  },
+  {
+   "q": "doi avatar o dau",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-21",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "Đổi giao diện tối được không?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-22",
+   "style": "goc"
+  },
+  {
+   "q": "Doi giao dien toi duoc khong?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-22",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Đăng xuất ở đâu?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-23",
+   "style": "goc"
+  },
+  {
+   "q": "Dang xuat o dau?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-23",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Sao mình nộp bài mà không thấy điểm?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-24",
+   "style": "goc"
+  },
+  {
+   "q": "Sao minh nop bai ma khong thay diem?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-24",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Hoàn thành bài học là phải làm gì?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-25",
+   "style": "goc"
+  },
+  {
+   "q": "Hoan thanh bai hoc la phai lam gi?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-25",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Trang web có app điện thoại không?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-26",
+   "style": "goc"
+  },
+  {
+   "q": "Trang web co app dien thoai khong?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-26",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Lịch sử chat với AI có lưu không?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-27",
+   "style": "goc"
+  },
+  {
+   "q": "Lich su chat voi AI co luu khong?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-27",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Làm sao xóa đoạn chat với trợ lý?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-28",
+   "style": "goc"
+  },
+  {
+   "q": "Lam sao xoa doan chat voi tro ly?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-28",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Where can I see my progress?",
+   "label": "huong_dan",
+   "group": "ml-huong_dan-29",
+   "style": "goc"
+  },
+  {
+   "q": "thanks",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-00",
+   "style": "goc"
+  },
+  {
+   "q": "thx",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-00",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "ty bạn",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-00",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "ty ban",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-00",
+   "style": "khong_dau"
+  },
+  {
+   "q": "cảm ơn nhiều nha",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-01",
+   "style": "goc"
+  },
+  {
+   "q": "cam on nhieu nha",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-01",
+   "style": "khong_dau"
+  },
+  {
+   "q": "cam on nhieu",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-01",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "how are you",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-02",
+   "style": "goc"
+  },
+  {
+   "q": "how r u",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-02",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "bạn khỏe không",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-03",
+   "style": "goc"
+  },
+  {
+   "q": "ban khoe khong",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-03",
+   "style": "khong_dau"
+  },
+  {
+   "q": "ban khoe ko",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-03",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "chào, mình bắt đầu học nhé",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-04",
+   "style": "goc"
+  },
+  {
+   "q": "chao, minh bat dau hoc nhe",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-04",
+   "style": "khong_dau"
+  },
+  {
+   "q": "alo bat dau hoc thoi",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-04",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "hello bạn, mình mới vào",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-05",
+   "style": "goc"
+  },
+  {
+   "q": "hello ban, minh moi vao",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-05",
+   "style": "khong_dau"
+  },
+  {
+   "q": "hi mình là người mới",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-05",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "hi minh la nguoi moi",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-05",
+   "style": "khong_dau"
+  },
+  {
+   "q": "good morning",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-06",
+   "style": "goc"
+  },
+  {
+   "q": "chúc ngủ ngon",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-07",
+   "style": "goc"
+  },
+  {
+   "q": "chuc ngu ngon",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-07",
+   "style": "khong_dau"
+  },
+  {
+   "q": "bye nhé",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-07",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "bye nhe",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-07",
+   "style": "khong_dau"
+  },
+  {
+   "q": "hẹn gặp lại",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-08",
+   "style": "goc"
+  },
+  {
+   "q": "hen gap lai",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-08",
+   "style": "khong_dau"
+  },
+  {
+   "q": "tạm biệt",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-08",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "tam biet",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-08",
+   "style": "khong_dau"
+  },
+  {
+   "q": "ok cảm ơn bạn",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-09",
+   "style": "goc"
+  },
+  {
+   "q": "ok cam on ban",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-09",
+   "style": "khong_dau"
+  },
+  {
+   "q": "oke tks",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-09",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "hay quá",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-10",
+   "style": "goc"
+  },
+  {
+   "q": "hay qua",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-10",
+   "style": "khong_dau"
+  },
+  {
+   "q": "tuyệt vời",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-10",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "tuyet voi",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-10",
+   "style": "khong_dau"
+  },
+  {
+   "q": "yo",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-11",
+   "style": "goc"
+  },
+  {
+   "q": "hey",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-11",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "bạn tên gì thế",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-12",
+   "style": "goc"
+  },
+  {
+   "q": "ban ten gi the",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-12",
+   "style": "khong_dau"
+  },
+  {
+   "q": "ban ten gi",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-12",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "chào buổi tối",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-13",
+   "style": "goc"
+  },
+  {
+   "q": "chao buoi toi",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-13",
+   "style": "khong_dau"
+  },
+  {
+   "q": "chao buoi chieu",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-13",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "mình hiểu rồi, cảm ơn",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-14",
+   "style": "goc"
+  },
+  {
+   "q": "minh hieu roi, cam on",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-14",
+   "style": "khong_dau"
+  },
+  {
+   "q": "da hieu",
+   "label": "chao_hoi",
+   "group": "ml-chao_hoi-14",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "Tập ii–V–I nên bắt đầu ở tempo bao nhiêu?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-00",
+   "style": "goc"
+  },
+  {
+   "q": "Tap ii–V–I nen bat dau o tempo bao nhieu?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-00",
+   "style": "khong_dau"
+  },
+  {
+   "q": "tap ii V I tempo cham hay nhanh",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-00",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "Đánh hợp âm chuyển nhanh bị rối tay thì luyện sao?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-01",
+   "style": "goc"
+  },
+  {
+   "q": "Danh hop am chuyen nhanh bi roi tay thi luyen sao?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-01",
+   "style": "khong_dau"
+  },
+  {
+   "q": "chuyen hop am bi roi tay",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-01",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "Mỗi ngày nên luyện nghe quãng bao lâu?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-02",
+   "style": "goc"
+  },
+  {
+   "q": "Moi ngay nen luyen nghe quang bao lau?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-02",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Luyện nhận biết hợp âm trưởng và thứ bằng tai thế nào?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-03",
+   "style": "goc"
+  },
+  {
+   "q": "Luyen nhan biet hop am truong va thu bang tai the nao?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-03",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Có cách nào nhớ nhanh vòng quãng năm không?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-04",
+   "style": "goc"
+  },
+  {
+   "q": "Co cach nao nho nhanh vong quang nam khong?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-04",
+   "style": "khong_dau"
+  },
+  {
+   "q": "meo nho vong quang 5",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-04",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "Học thuộc các dấu hóa của giọng thế nào cho nhanh?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-05",
+   "style": "goc"
+  },
+  {
+   "q": "Hoc thuoc cac dau hoa cua giong the nao cho nhanh?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-05",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Đếm phách 3/4 thế nào?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-06",
+   "style": "goc"
+  },
+  {
+   "q": "Dem phach 3/4 the nao?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-06",
+   "style": "khong_dau"
+  },
+  {
+   "q": "dem phach 3/4",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-06",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "Nốt móc đơn dài mấy phách?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-07",
+   "style": "goc"
+  },
+  {
+   "q": "Not moc don dai may phach?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-07",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Nên học quãng trước hay hợp âm trước?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-08",
+   "style": "goc"
+  },
+  {
+   "q": "Nen hoc quang truoc hay hop am truoc?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-08",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Tại sao gọi là hợp âm bảy át?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-09",
+   "style": "goc"
+  },
+  {
+   "q": "Tai sao goi la hop am bay at?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-09",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Cadence là gì?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-10",
+   "style": "goc"
+  },
+  {
+   "q": "Cadence la gi?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-10",
+   "style": "khong_dau"
+  },
+  {
+   "q": "cadence la gi",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-10",
+   "style": "cach_noi_khac"
+  },
+  {
+   "q": "Giai điệu khác hòa âm thế nào?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-11",
+   "style": "goc"
+  },
+  {
+   "q": "Giai dieu khac hoa am the nao?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-11",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Âm giai ngũ cung là gì?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-12",
+   "style": "goc"
+  },
+  {
+   "q": "Am giai ngu cung la gi?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-12",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Guitar có mấy dây, lên dây chuẩn là các nốt gì?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-13",
+   "style": "goc"
+  },
+  {
+   "q": "Guitar co may day, len day chuan la cac not gi?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-13",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Piano có bao nhiêu phím?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-14",
+   "style": "goc"
+  },
+  {
+   "q": "Piano co bao nhieu phim?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-14",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Nhạc jazz hay dùng hợp âm gì?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-15",
+   "style": "goc"
+  },
+  {
+   "q": "Nhac jazz hay dung hop am gi?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-15",
+   "style": "khong_dau"
+  },
+  {
+   "q": "Vì sao F major có một dấu giáng?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-16",
+   "style": "goc"
+  },
+  {
+   "q": "Vi sao F major co mot dau giang?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-16",
+   "style": "khong_dau"
+  },
+  {
+   "q": "What is a perfect fifth?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-17",
+   "style": "goc"
+  },
+  {
+   "q": "How many notes in a major scale?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-18",
+   "style": "goc"
+  },
+  {
+   "q": "Inversion của hợp âm là gì?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-19",
+   "style": "goc"
+  },
+  {
+   "q": "Inversion cua hop am la gi?",
+   "label": "nhac_ly",
+   "group": "ml-nhac_ly-19",
+   "style": "khong_dau"
+  }
+ ]
+}

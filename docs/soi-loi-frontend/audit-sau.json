@@ -1,0 +1,266 @@
+{
+ "trang-chu": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 485,
+   "CLS": 0.012,
+   "TBT": 0,
+   "FCP": 431,
+   "finalUrl": "http://localhost:4173/"
+  },
+  "lh_mobile": {
+   "perf": 98,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1828,
+   "CLS": 0.004,
+   "TBT": 145,
+   "FCP": 1368,
+   "finalUrl": "http://localhost:4173/"
+  }
+ },
+ "dang-nhap": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 325,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 325,
+   "finalUrl": "http://localhost:4173/dang-nhap"
+  },
+  "lh_mobile": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1208,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 1208,
+   "finalUrl": "http://localhost:4173/dang-nhap"
+  }
+ },
+ "dang-ky": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 329,
+   "CLS": 0.001,
+   "TBT": 0,
+   "FCP": 327,
+   "finalUrl": "http://localhost:4173/dang-ky"
+  },
+  "lh_mobile": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1207,
+   "CLS": 0.016,
+   "TBT": 0,
+   "FCP": 1207,
+   "finalUrl": "http://localhost:4173/dang-ky"
+  }
+ },
+ "tong-quan": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 94,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 421,
+   "CLS": 0.153,
+   "TBT": 0,
+   "FCP": 288,
+   "finalUrl": "http://localhost:4173/app"
+  },
+  "lh_mobile": {
+   "perf": 90,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1522,
+   "CLS": 0.214,
+   "TBT": 0,
+   "FCP": 1055,
+   "finalUrl": "http://localhost:4173/app"
+  }
+ },
+ "hoc": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 371,
+   "CLS": 0,
+   "TBT": 5,
+   "FCP": 285,
+   "finalUrl": "http://localhost:4173/app/hoc"
+  },
+  "lh_mobile": {
+   "perf": 94,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1361,
+   "CLS": 0,
+   "TBT": 293,
+   "FCP": 919,
+   "finalUrl": "http://localhost:4173/app/hoc"
+  }
+ },
+ "luyen-tap": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 418,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 286,
+   "finalUrl": "http://localhost:4173/app/luyen-tap"
+  },
+  "lh_mobile": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1386,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 1058,
+   "finalUrl": "http://localhost:4173/app/luyen-tap"
+  }
+ },
+ "quiz": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 416,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 288,
+   "finalUrl": "http://localhost:4173/app/quiz"
+  },
+  "lh_mobile": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1510,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 918,
+   "finalUrl": "http://localhost:4173/app/quiz"
+  }
+ },
+ "tien-do": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 415,
+   "CLS": 0,
+   "TBT": 13,
+   "FCP": 287,
+   "finalUrl": "http://localhost:4173/app/tien-do"
+  },
+  "lh_mobile": {
+   "perf": 98,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1405,
+   "CLS": 0,
+   "TBT": 173,
+   "FCP": 1057,
+   "finalUrl": "http://localhost:4173/app/tien-do"
+  }
+ },
+ "composition": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 466,
+   "CLS": 0,
+   "TBT": 6,
+   "FCP": 290,
+   "finalUrl": "http://localhost:4173/app/composition"
+  },
+  "lh_mobile": {
+   "perf": 96,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1679,
+   "CLS": 0,
+   "TBT": 211,
+   "FCP": 927,
+   "finalUrl": "http://localhost:4173/app/composition"
+  }
+ },
+ "ho-so": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 368,
+   "CLS": 0.001,
+   "TBT": 0,
+   "FCP": 285,
+   "finalUrl": "http://localhost:4173/app/ho-so"
+  },
+  "lh_mobile": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1355,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 1053,
+   "finalUrl": "http://localhost:4173/app/ho-so"
+  }
+ },
+ "kiem-tra-dau-vao": {
+  "axe_light": [],
+  "axe_dark": [],
+  "lh_desktop": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 408,
+   "CLS": 0.003,
+   "TBT": 0,
+   "FCP": 284,
+   "finalUrl": "http://localhost:4173/app/kiem-tra-dau-vao"
+  },
+  "lh_mobile": {
+   "perf": 100,
+   "a11y": 100,
+   "bp": 100,
+   "LCP": 1509,
+   "CLS": 0,
+   "TBT": 0,
+   "FCP": 1054,
+   "finalUrl": "http://localhost:4173/app/kiem-tra-dau-vao"
+  }
+ }
+}

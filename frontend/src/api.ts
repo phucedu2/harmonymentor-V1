@@ -1,5 +1,6 @@
 // Backend contracts. Music theory remains deterministic on the server; frontend is presentation/input only.
 import { http } from "./lib/http";
+import type { Arrangement, SongForm } from "./audio/band/types";
 
 export type EngineError = { code: string; message: string; details?: Record<string, unknown> };
 // ApiRequestError (lib/http.ts) thỏa kiểu này, nên các trang cũ đọc lỗi như trước.
@@ -26,6 +27,10 @@ export type LessonSummary = {
   block_count: number;
   exercise_count: number;
   review_item_count: number;
+  // ADR-029: bài AI soạn từ tài liệu (mục "Kiến thức mới"); "Mở rộng" = không tính mức thành thạo.
+  ai_generated?: boolean;
+  expansion?: boolean;
+  published_at?: string | null;
 };
 
 export type LessonBlock = { id: string; position: number; block_type: string; payload: Record<string, unknown> };
@@ -38,6 +43,8 @@ export type LessonExercise = {
   prompt: string;
   options?: string[] | null;
   grading_strategy: string;
+  // HM-011: máy chủ cho biết câu này nhận cách nhập nào; nút "Kiểm tra bằng piano" chỉ hiện khi có "piano".
+  allowed_input_methods?: InputMethod[];
   skill_id: string;
 };
 export type ReviewItem = { id: string; mode: string; front: string; back: string; skill_id: string };
@@ -47,7 +54,10 @@ export type LessonDetail = LessonSummary & {
   exercises: LessonExercise[];
   review_items: ReviewItem[];
   sources: SourceRef[];
+  /** GĐ5: liên kết học thêm ngoài app (sách mở miễn phí); có thể thiếu khi backend cũ. */
+  external_resources?: ExternalResource[];
 };
+export type ExternalResource = { title: string; source: string; url: string; language: string; free: boolean; why_vi: string; draft?: boolean };
 
 export type ChordInspection = {
   symbol: string;
@@ -110,7 +120,7 @@ export type AttemptResult = {
   wrong_attempts: number;
 };
 
-export type InputMethod = "text" | "choice" | "piano";
+export type InputMethod = "text" | "choice" | "multi_choice" | "piano";
 
 export type CompleteLessonResult = {
   lesson_id: string;
@@ -148,16 +158,333 @@ export type ReviewAnswerResult = {
   leitner_box: number;
 };
 
+// Phần khám phá Bài 1, sinh bởi Music Engine (GET /music/lesson1/{root}).
+export type PitchWithOctave = { name: string; midi: number };
+export type Lesson1Interval = { code: string; semitones: number; upper: string; pitches: PitchWithOctave[] };
+export type Lesson1Triad = {
+  quality: string; symbol: string; formula: string[]; interval_formula: string[]; notes: string[]; pitches: PitchWithOctave[];
+};
+export type Lesson1Theory = {
+  root: string; root_octave: number; letter_frame: string[]; intervals: Lesson1Interval[]; triads: Lesson1Triad[];
+};
+
+// Luyện tập (phuc-music Bước 2): máy chủ chấm bằng Music Engine và ghi lịch sử theo token.
+export type PracticeKind = "chord" | "interval" | "scale" | "roman";
+export type PracticeLevel = "de" | "vua" | "kho";
+export type PracticeAttemptResult = {
+  id: string; kind: PracticeKind; correct: boolean; expected: string | string[]; message_vi: string;
+  primary_error: string | null; errors: { code: string; message_vi: string }[]; convention_verified: boolean | null;
+};
+export type PracticeHistoryItem = {
+  id: string; kind: PracticeKind; level: PracticeLevel | null; question: Record<string, string>;
+  answer: string | string[]; correct: boolean; primary_error: string | null; created_at: string;
+};
+export type PracticeHistory = { items: PracticeHistoryItem[]; stats: { kind: PracticeKind; attempts: number; correct: number }[] };
+
+// Harmony Lab (phuc-music Bước 4, FR-17/18): hợp âm, gợi ý và phân tích do backend + Music Engine trả về.
+// Phong cách nền (ADR-012 đề xuất): mẫu nhịp nằm ở backend (style pack), giao diện chỉ cần tên, mô tả, tempo.
+export type ComposeStyle = {
+  id: string; label: string; description: string; default_bpm: number; bpm_range: [number, number]; swing: number;
+  instruments: { keys: string; bass: string; guitar: string };
+};
+export type ComposeOptions = {
+  keys: { key: string; chords: { symbol: string; numeral: string }[] }[];
+  styles: ComposeStyle[];
+  levels: { level: number; label: string }[];
+  tempo: { min: number; max: number };
+  bars: { min: number; max: number };
+  song?: { version: number; max_bars: number; lengths: string[]; section_types: { id: string; label: string }[];
+    transitions: string[]; endings: string[] };
+};
+export type ComposeCandidate = {
+  rule: string; rule_label: string; level: number; level_label: string; symbol: string; label: string;
+  reason_vi: string; notes: string[];
+};
+export type ComposeAnalysis = {
+  key: string; level: number; level_label: string; summary_vi: string;
+  bars: { bar: number; symbol: string | null; level: number | null; rule: string | null; label: string | null; reason_vi: string | null }[];
+  warnings: { code: string; bar: number; message_vi: string }[];
+};
+export type ComposeVoicing = {
+  symbol: string; notes: string[]; pitches: PitchWithOctave[]; bass: { root: PitchWithOctave; fifth: PitchWithOctave };
+};
+export type ComposeMix = Partial<Record<"chords" | "bass" | "guitar" | "drums" | "hook", { volume: number; muted: boolean }>>;
+export type ComposeProjectInput = {
+  name: string; key: string; tempo_bpm: number; bars: number; style: string; chords: (string | null)[];
+  seed: number; energy: number; mix: ComposeMix | null;
+  /** Có = dự án ở chế độ Bài hát (ADR-013 đề xuất); null = Vòng lặp như cũ. */
+  form?: SongForm | null;
+};
+export type ComposeProject = ComposeProjectInput & {
+  id: string; time_signature: string; updated_at: string; arrangement_version: number; arrangement_outdated: boolean;
+};
+export type ComposeProjectSummary = { id: string; name: string; key: string; bars: number; style: string; updated_at: string; mode?: "song" | "loop" };
+
 // Mọi request đi qua lib/http.ts để có access token và lỗi chuẩn SRS 7.4.
 const engineCall = <T,>(path: string, init?: RequestInit) => http<T>("/engine" + path, init, { auth: false });
 const apiCall = <T,>(path: string, init?: RequestInit) => http<T>(path, init);
 const enginePost = <T,>(path: string, data: unknown) => engineCall<T>(path, { method: "POST", body: JSON.stringify(data) });
+export type AdminTemplateParam = { key: string; label: string; example: string };
+export type AdminTemplate = { id: string; title: string; pattern: string; skill_hint: string; params: AdminTemplateParam[] };
+export type AdminTemplateCatalogue = { templates: AdminTemplate[]; skills: string[]; levels: string[] };
+export type AdminTemplateBody = { template: string; params: Record<string, string>; skill_id: string; level: string };
+export type AdminTemplatePreview = {
+  items: { prompt: string; answer: string; explanation: string }[]; skipped: { prompt: string; reason: string }[];
+};
 const apiPost = <T,>(path: string, data: unknown) => apiCall<T>(path, { method: "POST", body: JSON.stringify(data) });
 
+// Pipeline AI GĐ1: mastery và bài kiểm tra đầu vào (UC-06).
+export type MasteryLevel = "not_assessed" | "learning" | "weak" | "ready" | "mastered";
+export type SkillMastery = {
+  skill_id: string; name: string; srs_code: string; group_code: string;
+  assessed: boolean; score: number | null; attempts_count: number; level: MasteryLevel;
+  ready_threshold: number; mastery_threshold: number;
+};
+export type PlacementQuestion = {
+  exercise_id: string; exercise_version_id: string; skill_id: string; kind: string; prompt: string; options?: string[] | null;
+};
+export type PlacementStatus = "not_started" | "completed" | "skipped";
+export type Placement = { status: PlacementStatus; questions: PlacementQuestion[] };
+// Pipeline AI GĐ2: gợi ý bài học (04 mục 6.5) và mục tiêu học.
+export type RecReasonCode = "content" | "mastery" | "due" | "cf" | "foundation" | "route";
+export type RecLesson = {
+  lesson_id: string; order: number; title: string; score: number;
+  components: { content: number; mastery: number; due: number; cf: number | null };
+  reason_code: RecReasonCode; reason: string; badge: string; skills: string[]; label?: string | null;
+};
+export type Recommendations = {
+  generated_at: string; log_id: string; mode: "full" | "cold_start" | "fallback"; weights_mode: "full" | "cold";
+  cf_source: "real" | "synthetic" | "none"; fallback_reason: "no_assessed_dims" | "no_valid_neighbors" | "cf_disabled" | null;
+  neighbors_count: number; content_source: "embedding" | "none"; draft_descriptions: boolean;
+  few_eligible: boolean;
+  route_fallback?: boolean;
+  continue: { lesson_id: string; order: number; title: string; status: "started" }[];
+  next: RecLesson[]; review: RecLesson[];
+};
+export type Goal = { goal_text: string | null; embedded: boolean; embedding_model: string | null };
+export type QuizQuestion = PlacementQuestion & { lesson_id: string; allowed_input_methods?: InputMethod[]; difficulty?: string | null };
+export type Quiz = { skill_id: string; requested: number; available: number; questions: QuizQuestion[] };
+// ADR-028: ngân hàng câu "Từ tài liệu" (AI soạn, Quản trị viên duyệt). Câu mở không chấm đúng/sai, không tính mastery.
+export type BankQuestion = QuizQuestion & { open: boolean };
+export type BankSet = { skill_id: string | null; level: PracticeLevel | null; available: number; questions: BankQuestion[] };
+export type OpenFeedback = {
+  model_answer: string; rubric: string[]; explanation: string | null; counts_for_mastery: false;
+  ai_status: "ok" | "off" | "quota" | "unavailable" | "flagged";
+  ai: { points: { point: string; met: "yes" | "partial" | "no"; comment: string }[]; summary: string } | null;
+};
+export type PlacementSubmitResult = { status: "completed"; results: { skill_id: string; correct: boolean; score: number }[] };
+
+// Pipeline AI GĐ3: AI Tutor (04 mục 3.3, Bảng 13). Nhãn "đã kiểm" do máy chủ quyết, giao diện chỉ hiển thị.
+export type ChatIntent = "concept" | "explain_error" | "quiz" | "study_advice" | "composition" | "out_of_scope"
+  | "greeting" | "help";
+// Bộ định tuyến 4 luồng (ADR-017): A từ bài học, B ngoài bài học (Music Engine hoặc "không biết"), C ngoài phạm vi,
+// D hướng dẫn sử dụng, G chào hỏi. Nhãn nguồn do máy chủ đặt.
+export type ChatFlow = "A" | "B" | "C" | "D" | "G";
+export type ChatCitation = { lesson_id: string; block_id: string; title: string; lesson_title: string };
+export type EngineClaim = {
+  tool: string; args: Record<string, string>; claimed: string; engine: string | null;
+  status: "verified" | "contradicted" | "unsupported"; origin: string;
+};
+export type ChatReply = {
+  message_id: number; session_id: string; reply: string; citations: ChatCitation[]; engine_claims: EngineClaim[];
+  verified: boolean; verified_label: string | null; intent: ChatIntent; hint_level: number;
+  status: "ok" | "failed" | "fallback"; suggested_actions: string[]; fallback_reason: string | null;
+  retrieval_method: string | null; quota_remaining_today: number; attempt_id?: string | null; next_hint_level?: number | null;
+  flow?: ChatFlow | null; source_label?: string | null;
+  suggested_lesson?: { lesson_id: string; title: string } | null; help_page?: { path: string; title: string } | null;
+};
+export type ChatContext = { page?: string; lesson_id?: string; block_id?: string };
+
+// --- Quản trị (ADR-023) ---
+export type AdminEngineReport = { checked: number; verified: number; unsupported: number; contradicted: EngineClaim[] };
+export type AdminLessonRow = { id: string; order: number; track: string; title: string; status: string; hidden: boolean;
+  deleted?: boolean; block_count: number; exercise_count: number; edited_blocks: number; draft_blocks: number };
+export type AdminBlock = { id: string; position: number; block_type: string; payload: Record<string, unknown>;
+  base_payload: Record<string, unknown>; edited: boolean; draft_revision_id: string | null; engine: AdminEngineReport };
+export type AdminImportRow = { id: string; title: string; created: boolean; blocks_changed: boolean; exercises_added: string[];
+  exercises_revised: string[]; exercises_not_in_file: string[]; sources_added: number; cards_added: string[]; cards_revised: string[];
+  cards_not_in_file: string[]; cards_activated_for?: number };
+// Thẻ ôn soạn bằng form (FR-ADM-31..34). Loại do Engine tính (build_chord, build_scale, interval, roman) không gửi đáp án.
+export type AdminCardForm = { kind: string; front: string; skill_id: string; back?: string; expected?: string; case_sensitive?: boolean;
+  keywords?: string[]; symbol?: string; tonic?: string; scale_type?: string; check?: Record<string, string> };
+export type AdminCard = { id: string; front: string; back: string; skill_id: string; mode: string; editable: boolean; form: AdminCardForm | null };
+export type AdminCardList = { cards: AdminCard[]; skills: string[]; kinds: string[] };
+export type AdminLessonDetail = { lesson: AdminLessonRow; objectives: string[]; blocks: AdminBlock[]; meta_edited?: boolean;
+  exercises: { id: string; version: number; skill_id: string; kind: string; prompt: string; status: string }[] };
+export type AdminSkill = { id: string; name: string; domain: string; seed: boolean; mvp: boolean; group_code?: string | null;
+  ready_threshold?: number; mastery_threshold?: number; prerequisites: string[];
+  seed_prerequisites: string[]; lessons: string[] };
+// Câu luyện tập soạn bằng form (FR-ADM-24..29): cùng dạng câu với AI soạn bài, Music Engine tính đáp án.
+export type AdminCheck = { type: "interval"; lower: string; upper: string } | { type: "chord_tones"; symbol: string }
+  | { type: "chord_name"; notes: string } | { type: "roman"; key: string; chord: string } | { type: "scale"; tonic: string; scale_type: string };
+export type AdminQuestion = { kind: string; level: string; prompt: string; skill_id: string; explanation: string;
+  options?: string[]; answer?: string; answers?: string[]; check?: AdminCheck | null; symbol?: string; tonic?: string; scale_type?: string;
+  model_answer?: string; rubric?: string[] };
+export type AdminExercise = { id: string; version: number | null; position: number; skill_id: string; question: AdminQuestion | null;
+  engine_answer: string | string[] | null; prompt?: string };
+export type AdminExerciseList = { editable: boolean; exercises: AdminExercise[]; skills: string[]; levels: string[]; kinds: string[] };
+export type AdminRevision = { id: string; status: string; note: string | null; created_by: string | null; created_at: string;
+  published_at: string | null; payload: Record<string, unknown> };
+export type AdminUser = { id: string; email: string; display_name: string | null; role: string; is_active: boolean; created_at: string;
+  lessons_completed: number; attempts: number; last_activity: string | null };
+export type AdminStats = {
+  days: number;
+  totals: { learners: number; new_learners: number; active_last_7_days: number; attempts: number; correct_rate: number | null;
+    lessons_completed: number; reviews: number; cards_due_now: number };
+  timeline: { date: string; attempts: number; correct: number; reviews: number }[];
+  funnel: { lesson_id: string; title: string; status: string; started: number; completed: number; completion_rate: number | null }[];
+  skills: { skill_id: string; name: string; first_try_total: number; first_try_correct_rate: number }[];
+  hardest_exercises: { exercise_id: string; first_try_total: number; first_try_correct_rate: number }[];
+  mastery: { label: string; count: number }[];
+};
+export type AdminAudit = { id: number; actor_id: string | null; action: string; target_type: string; target_id: string; created_at: string };
+
+export type AiDocument = { id: string; filename: string; kind: string; page_count: number; source_title: string; source_note: string | null; created_at: string;
+  relevance_status: "accepted" | "pending" | "rejected"; relevance_score: number | null; relevance_reason: string | null; dropped_pages: number[]; dropped_chunks: number };
+export type AiQuestionKind = "mcq" | "true_false" | "multi_select" | "short" | "build_chord" | "build_scale" | "open";
+export type AiQuestion = { kind: AiQuestionKind; level?: "nho" | "hieu" | "van_dung"; prompt: string; skill_id: string; explanation: string; page: number;
+  options?: string[]; answer?: string; answers?: string[]; option_feedback?: Record<string, string>;
+  check?: Record<string, string>; symbol?: string; tonic?: string; scale_type?: string; model_answer?: string; rubric?: string[];
+  engine_answer?: string | string[] | null; engine_verified?: boolean; engine_note?: string; needs_review?: boolean; reviewed?: boolean;
+  review_notes?: string[]; block_ref?: number | null; page_claimed?: number;
+  // 27/11/2026: edited = Quản trị viên đã sửa câu (tính là đã duyệt); explanation_source "engine" = lời giải Music Engine viết.
+  edited?: boolean; explanation_source?: "engine" };
+// ADR-039: cờ cho người duyệt (cảnh báo, phải tick "Đã đối chiếu" từng cờ mới xuất bản được).
+export type AiFlag = { id: string; type: string; label: string; where: string; detail: string; acknowledged?: boolean };
+export type AiNodeLog = { node: string; ms: number; in?: number; out?: number; note?: string; ok?: boolean; calls?: number };
+export type AiBudget = { total: number; authoring: { limit: number; used: number }; tutor: { limit: number; used: number }; resets_at: string };
+export type AiDuplicate = { concept: string; where: string; by: "ai" | "e5" | "tfidf"; score: number | null };
+export type AiDraftContent = { title: string; objectives: string[]; blocks: { title: string; paragraphs: string[]; page: number; page_claimed?: number }[];
+  questions: AiQuestion[]; acknowledged_flags?: string[]; log?: AiNodeLog[]; truncated?: string; question_shortfall?: string; prompt_version?: string; dropped_questions: string[]; expansion?: boolean; duplicates?: AiDuplicate[]; part?: { heading: string; index: number } };
+export type AiJobPartStatus = "pending" | "running" | "done" | "no_new" | "not_theory" | "failed";
+export type AiJob = { id: string; document_id: string; status: "running" | "paused" | "done" | "cancelled";
+  pause_reason: "quota" | "rate_minute" | "daily_limit" | "unavailable" | "interrupted" | "admin" | "document_deleted" | null;
+  parts: { index: number; page_from: number; page_to: number; heading: string; status: AiJobPartStatus; draft_id: string | null;
+    duplicates: AiDuplicate[]; note: string | null; log?: AiNodeLog[] }[];
+  skipped_pages: { page: number; reason: string }[]; total: number; finished: number; drafts: number; created_at: string; updated_at: string; budget?: AiBudget };
+export type AiDraft = { id: string; status: "draft" | "published" | "rejected"; document: AiDocument | null; page_from: number; page_to: number;
+  model: string | null; published_lesson_id: string | null; lesson_hidden?: boolean | null; content: AiDraftContent; engine: AdminEngineReport; created_at: string;
+  flags?: AiFlag[]; budget?: AiBudget };
+// ADR-042: chất lượng AI soạn bài theo phiên bản prompt, đo trên bản nháp thật (khác bộ 41 ca thử).
+export type AiQualityRow = { prompt_version: string; drafts: number; published: number; rejected: number; open: number;
+  ai_questions: number; engine_dropped: number; engine_fixed: number; needs_review: number; edited: number; removed_by_reviewer: number;
+  without_snapshot: number; models: string[]; first_at: string; last_at: string;
+  keep_rate: number | null; engine_fix_rate: number | null; edit_rate: number | null; remove_rate: number | null; publish_rate: number | null };
+export type AiQuality = { versions: AiQualityRow[]; budget: AiBudget };
+export type AiDraftRow = { id: string; status: string; title: string | null; questions: number; flags: number; review_flags?: number; published_lesson_id: string | null; lesson_hidden?: boolean | null; created_at: string };
+
 export const api = {
+  aiStatus: () => apiCall<{ enabled: boolean; env_ready: boolean; switch_on: boolean }>("/admin/ai/status"),
+  aiQuality: () => apiCall<AiQuality>("/admin/ai/quality"),
+  adminSetAiSwitch: (on: boolean) =>
+    apiCall<{ switch_on: boolean; env_ready: boolean }>("/admin/ai/switch", { method: "PUT", body: JSON.stringify({ on }) }),
+  aiDocuments: () => apiCall<AiDocument[]>("/admin/ai/documents"),
+  aiUpload: (file: File, sourceTitle: string, sourceNote: string, consent: boolean) => {
+    const form = new FormData();
+    form.append("file", file); form.append("source_title", sourceTitle); form.append("source_note", sourceNote); form.append("consent", String(consent));
+    return apiCall<AiDocument>("/admin/ai/documents", { method: "POST", body: form });
+  },
+  aiPasteText: (text: string, sourceTitle: string, sourceNote: string, consent: boolean) =>
+    apiPost<AiDocument>("/admin/ai/documents/text", { text, source_title: sourceTitle, source_note: sourceNote || null, consent }),
+  aiPendingDocuments: () => apiCall<AiDocument[]>("/admin/ai/documents?status=pending"),
+  aiReviewDocument: (id: string, decision: "approve" | "reject", note?: string) =>
+    apiPost<AiDocument>(`/admin/ai/documents/${encodeURIComponent(id)}/review`, { decision, note: note || null }),
+  aiSummarize: (docId: string) => apiPost<AiJob>(`/admin/ai/documents/${encodeURIComponent(docId)}/summarize`, {}),
+  aiJobs: () => apiCall<AiJob[]>("/admin/ai/jobs"),
+  aiResumeJob: (id: string) => apiPost<AiJob>(`/admin/ai/jobs/${encodeURIComponent(id)}/resume`, {}),
+  aiCancelJob: (id: string) => apiPost<AiJob>(`/admin/ai/jobs/${encodeURIComponent(id)}/cancel`, {}),
+  aiMoreQuestions: (id: string, kinds: AiQuestionKind[] = []) =>
+    apiPost<AiDraft>(`/admin/ai/drafts/${encodeURIComponent(id)}/questions`, { kinds }),
+  aiDrafts: () => apiCall<AiDraftRow[]>("/admin/ai/drafts"),
+  aiDraft: (id: string) => apiCall<AiDraft>(`/admin/ai/drafts/${encodeURIComponent(id)}`),
+  aiSaveDraft: (id: string, content: Omit<AiDraftContent, "dropped_questions" | "duplicates" | "part" | "log" | "truncated">) =>
+    apiCall<AiDraft>(`/admin/ai/drafts/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(content) }),
+  aiFillExplanations: (id: string) =>
+    apiPost<AiDraft & { filled: number; still_missing: number }>(`/admin/ai/drafts/${encodeURIComponent(id)}/fill-explanations`, {}),
+  aiPublish: (id: string, acknowledge: boolean) =>
+    apiPost<{ lesson_id: string; title: string }>(`/admin/ai/drafts/${encodeURIComponent(id)}/publish`, { acknowledge_engine_flags: acknowledge }),
+  aiReject: (id: string) => apiPost<{ id: string }>(`/admin/ai/drafts/${encodeURIComponent(id)}/reject`, {}),
+  adminLessons: () => apiCall<AdminLessonRow[]>("/admin/lessons"),
+  adminLesson: (id: string) => apiCall<AdminLessonDetail>(`/admin/lessons/${encodeURIComponent(id)}`),
+  adminSaveDraft: (lessonId: string, blockId: string, payload: Record<string, unknown>, note?: string) =>
+    apiCall<{ revision_id: string; engine: AdminEngineReport }>(`/admin/lessons/${encodeURIComponent(lessonId)}/blocks/${encodeURIComponent(blockId)}`,
+      { method: "PUT", body: JSON.stringify({ payload, note: note || null }) }),
+  adminPublish: (revisionId: string, acknowledge: boolean) =>
+    apiPost<{ revision_id: string; engine: AdminEngineReport }>(`/admin/revisions/${encodeURIComponent(revisionId)}/publish`, { acknowledge_engine_flags: acknowledge }),
+  adminHistory: (lessonId: string, blockId: string) =>
+    apiCall<AdminRevision[]>(`/admin/lessons/${encodeURIComponent(lessonId)}/blocks/${encodeURIComponent(blockId)}/history`),
+  adminRestore: (lessonId: string, blockId: string, revisionId: string | null) =>
+    apiPost<{ revision_id: string }>(`/admin/lessons/${encodeURIComponent(lessonId)}/blocks/${encodeURIComponent(blockId)}/restore`, { revision_id: revisionId }),
+  adminSkills: () => apiCall<AdminSkill[]>("/admin/skills"),
+  adminCreateSkill: (body: { slug: string; name: string; domain: string; group_code: string }) => apiPost<{ id: string }>("/admin/skills", body),
+  adminSetThresholds: (id: string, ready: number, mastery: number) =>
+    apiCall<{ id: string; changed: boolean }>(`/admin/skills/${encodeURIComponent(id)}/thresholds`, { method: "PUT", body: JSON.stringify({ ready_threshold: ready, mastery_threshold: mastery }) }),
+  adminUpdateSkill: (id: string, body: { name: string; domain: string; group_code?: string }) =>
+    apiCall<{ id: string }>(`/admin/skills/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(body) }),
+  adminDeleteSkill: (id: string) => apiCall<void>(`/admin/skills/${encodeURIComponent(id)}`, { method: "DELETE" }),
+  adminAddPrereq: (id: string, pre: string) => apiPost<unknown>(`/admin/skills/${encodeURIComponent(id)}/prerequisites`, { prerequisite_id: pre }),
+  adminRemovePrereq: (id: string, pre: string) =>
+    apiCall<void>(`/admin/skills/${encodeURIComponent(id)}/prerequisites/${encodeURIComponent(pre)}`, { method: "DELETE" }),
+  adminCreateLesson: (body: { title: string; objectives: string[]; block_title: string; paragraphs: string[] }) =>
+    apiPost<{ id: string; title: string; hidden: boolean }>("/admin/lessons", body),
+  adminDeleteLesson: (id: string) => apiCall<{ id: string }>(`/admin/lessons/${encodeURIComponent(id)}`, { method: "DELETE" }),
+  adminRestoreLesson: (id: string) => apiPost<{ id: string }>(`/admin/lessons/${encodeURIComponent(id)}/restore`, {}),
+  adminReorder: (ids: string[]) => apiPost<{ order: string[] }>("/admin/lessons/reorder", { lesson_ids: ids }),
+  adminAddBlock: (id: string, title: string, paragraphs: string[]) =>
+    apiPost<{ id: string }>(`/admin/lessons/${encodeURIComponent(id)}/blocks`, { title, paragraphs }),
+  adminUpdateLessonMeta: (id: string, body: { title?: string; objectives?: string[]; reset?: boolean }) =>
+    apiCall<{ id: string; title: string; objectives: string[]; changed: boolean }>(`/admin/lessons/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(body) }),
+  adminDeleteBlock: (id: string, blockId: string) =>
+    apiCall<{ id: string }>(`/admin/lessons/${encodeURIComponent(id)}/blocks/${encodeURIComponent(blockId)}`, { method: "DELETE" }),
+  adminReorderBlocks: (id: string, blockIds: string[]) =>
+    apiPost<{ order: string[] }>(`/admin/lessons/${encodeURIComponent(id)}/blocks/reorder`, { block_ids: blockIds }),
+  adminImport: (file: File, dryRun: boolean) => {
+    const form = new FormData();
+    form.append("file", file); form.append("dry_run", String(dryRun));
+    return apiCall<{ dry_run: boolean; lessons: AdminImportRow[] }>("/admin/import", { method: "POST", body: form });
+  },
+  adminImportTemplate: () => apiCall<{ filename: string; content: string }>("/admin/import/template"),
+  adminCards: (id: string) => apiCall<AdminCardList>(`/admin/lessons/${encodeURIComponent(id)}/cards`),
+  adminAddCard: (id: string, f: AdminCardForm) => apiPost<AdminCard & { activated_for: number }>(`/admin/lessons/${encodeURIComponent(id)}/cards`, f),
+  adminUpdateCard: (id: string, f: AdminCardForm) =>
+    apiCall<AdminCard>(`/admin/cards/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(f) }),
+  adminDeleteCard: (id: string) => apiCall<{ id: string }>(`/admin/cards/${encodeURIComponent(id)}`, { method: "DELETE" }),
+  adminQuestionTemplates: () => apiCall<AdminTemplateCatalogue>("/admin/question-templates"),
+  adminTemplatePreview: (lessonId: string, body: AdminTemplateBody) =>
+    apiPost<AdminTemplatePreview>(`/admin/lessons/${encodeURIComponent(lessonId)}/exercise-templates/preview`, body),
+  adminTemplateSave: (lessonId: string, body: AdminTemplateBody) =>
+    apiPost<{ added: string[]; duplicates: string[]; skipped: { prompt: string; reason: string }[] }>(
+      `/admin/lessons/${encodeURIComponent(lessonId)}/exercise-templates`, body),
+  adminAddChordExample: (lessonId: string, body: { symbol: string; title?: string; note?: string }) =>
+    apiPost<{ id: string }>(`/admin/lessons/${encodeURIComponent(lessonId)}/examples/chord`, body),
+  adminAddScaleExample: (lessonId: string, body: { tonic: string; scale_type: string; title?: string; note?: string }) =>
+    apiPost<{ id: string }>(`/admin/lessons/${encodeURIComponent(lessonId)}/examples/scale`, body),
+  adminUpdateExample: (lessonId: string, blockId: string, body: Record<string, string>) =>
+    apiCall<{ id: string }>(`/admin/lessons/${encodeURIComponent(lessonId)}/examples/${encodeURIComponent(blockId)}`, { method: "PUT", body: JSON.stringify(body) }),
+  adminAddAudioExample: (lessonId: string, file: File, f: { title: string; source: string; license: string; note: string }) => {
+    const form = new FormData();
+    form.append("file", file);
+    Object.entries(f).forEach(([k, v]) => form.append(k, v));
+    return apiCall<{ id: string }>(`/admin/lessons/${encodeURIComponent(lessonId)}/examples/audio`, { method: "POST", body: form });
+  },
+  adminExercises: (id: string) => apiCall<AdminExerciseList>(`/admin/lessons/${encodeURIComponent(id)}/exercises`),
+  adminAddExercise: (id: string, q: AdminQuestion) => apiPost<AdminExercise>(`/admin/lessons/${encodeURIComponent(id)}/exercises`, q),
+  adminUpdateExercise: (id: string, q: AdminQuestion) =>
+    apiCall<AdminExercise>(`/admin/exercises/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(q) }),
+  adminRetireExercise: (id: string) => apiCall<{ id: string }>(`/admin/exercises/${encodeURIComponent(id)}`, { method: "DELETE" }),
+  adminVisibility: (lessonId: string, hidden: boolean) =>
+    apiPost<{ id: string; hidden: boolean; tutor_index?: { qdrant: string; chunks: number } }>(`/admin/lessons/${encodeURIComponent(lessonId)}/visibility`, { hidden }),
+  adminUsers: (q = "") => apiCall<{ total: number; items: AdminUser[] }>(`/admin/users?q=${encodeURIComponent(q)}`),
+  adminSetActive: (id: string, isActive: boolean) =>
+    apiCall<{ id: string; is_active: boolean }>(`/admin/users/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify({ is_active: isActive }) }),
+  adminStats: (days = 30) => apiCall<AdminStats>(`/admin/stats?days=${days}`),
+  adminAudit: () => apiCall<AdminAudit[]>("/admin/audit?limit=30"),
   // Legacy Practice routes retained during migration.
   transpose: (note: string, interval: string) =>
     engineCall<{ note: string }>(`/transpose?note=${encodeURIComponent(note)}&interval=${encodeURIComponent(interval)}`),
+  // ADR-032: micro chỉ đo Hz; Engine đặt tên nốt (tên thăng, chấm theo pitch_class_only như bấm phím).
+  noteFromFrequency: (hz: number) =>
+    engineCall<{ note: string; midi: number; cents: number; hz: number }>(`/note-from-frequency?hz=${hz.toFixed(2)}`),
   diatonic: (tonic: string, sevenths: boolean) =>
     engineCall<{ degree: number; numeral: string; chord: string; convention_verified: boolean }[]>(
       `/diatonic/${encodeURIComponent(tonic)}?sevenths=${sevenths}`,
@@ -171,21 +498,76 @@ export const api = {
   gradeRoman: (key: string, chord: string, answer: string) =>
     enginePost<GradeResult>("/grade/roman-numeral", { key, chord, answer }),
 
+  practiceAttempt: (kind: PracticeKind, level: PracticeLevel, question: Record<string, string>, answer: string | string[],
+    input: "text" | "piano" | "choice" | "micro" = "text") =>
+    apiPost<PracticeAttemptResult>("/practice/attempts", { kind, level, question, answer, input }),
+  practiceOptions: (kind: PracticeKind, question: Record<string, string>) =>
+    apiPost<{ options: string[] }>("/practice/options", { kind, question }),
+  bankSkills: () => apiCall<{ skills: { skill_id: string; name: string; count: number }[] }>("/practice/bank/skills"),
+  bank: (skillId: string | null, level: PracticeLevel | null, n = 10) => {
+    const q = new URLSearchParams({ n: String(n) });
+    if (skillId) q.set("skill_id", skillId);
+    if (level) q.set("level", level);
+    return apiCall<BankSet>(`/practice/bank?${q.toString()}`);
+  },
+  openFeedback: (exerciseVersionId: string, answer: string) =>
+    apiPost<OpenFeedback>("/practice/open-feedback", { exercise_version_id: exerciseVersionId, answer }),
+  practiceHistory: (limit = 20) => apiCall<PracticeHistory>(`/practice/history?limit=${limit}`),
+
+  composeOptions: () => apiCall<ComposeOptions>("/composition/options"),
+  composeSuggest: (key: string, chords: (string | null)[], index: number, max_level = 3) =>
+    apiPost<{ candidates: ComposeCandidate[]; ranked_by: string; ai_used: boolean }>("/composition/suggestions", { key, chords, index, max_level }),
+  composeVoicings: (chords: string[]) => apiPost<Record<string, ComposeVoicing>>("/composition/voicings", { chords }),
+  composeAnalyze: (key: string, chords: (string | null)[]) => apiPost<ComposeAnalysis>("/composition/analyze", { key, chords }),
+  composeArrangement: (body: { key: string; style: string; chords: (string | null)[]; seed: number; energy: number; bpm: number }) =>
+    apiPost<Arrangement>("/composition/arrangement", body),
+  composeSong: (body: { key: string; style: string; seed: number; energy: number; bpm: number; form: SongForm }) =>
+    apiPost<Arrangement>("/composition/song", body),
+  listProjects: () => apiCall<ComposeProjectSummary[]>("/projects"),
+  getProject: (id: string) => apiCall<ComposeProject>(`/projects/${encodeURIComponent(id)}`),
+  createProject: (data: ComposeProjectInput) => apiPost<ComposeProject>("/projects", data),
+  updateProject: (id: string, data: ComposeProjectInput) =>
+    apiCall<ComposeProject>(`/projects/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(data) }),
+  deleteProject: (id: string) => apiCall<void>(`/projects/${encodeURIComponent(id)}`, { method: "DELETE" }),
+
   // Phase 0.4B source-grounded learning contract.
   listLessons: () => apiCall<LessonSummary[]>("/lessons"),
-  getLesson: (lessonId: string) => apiCall<LessonDetail>(`/lessons/${encodeURIComponent(lessonId)}`),
+  // preview: Quản trị viên xem bài đang ẩn đúng như học sinh (ADR-039, N6); máy chủ chỉ cho khi token là admin.
+  getLesson: (lessonId: string, preview = false) =>
+    apiCall<LessonDetail>(`/lessons/${encodeURIComponent(lessonId)}${preview ? "?preview=true" : ""}`),
   // user_id không còn gửi từ client (N3): backend lấy từ token (ADR-004).
   startLesson: (lessonId: string) =>
     apiPost<StartLessonResult>(`/lessons/${encodeURIComponent(lessonId)}/start`, {}),
   learningOverview: () => apiCall<LearningOverview>("/learning/overview"),
+  lesson1Theory: (root: string) => apiCall<Lesson1Theory>(`/music/lesson1/${encodeURIComponent(root)}`),
   inspectChord: (symbol: string, key?: string) =>
     apiCall<ChordInspection>(`/music/chords/inspect?symbol=${encodeURIComponent(symbol)}${key ? `&key=${encodeURIComponent(key)}` : ""}`),
-  submitAttempt: (exerciseVersionId: string, answer: unknown, inputMethod: InputMethod = "text") =>
+  /** Vòng hợp âm của bài ở giọng bất kỳ: số La Mã -> ký hiệu, do Music Engine tính. */
+  progressionInKey: (key: string, numerals: string[]) =>
+    apiCall<{ key: string; keys: string[]; numerals: string[]; symbols: string[] }>(`/music/progression?key=${encodeURIComponent(key)}&numerals=${encodeURIComponent(numerals.join(","))}`),
+  submitAttempt: (exerciseVersionId: string, answer: unknown, inputMethod?: InputMethod) =>
     apiPost<AttemptResult>("/attempts", { exercise_version_id: exerciseVersionId, answer, input_method: inputMethod }),
   completeLesson: (lessonId: string) =>
     apiPost<CompleteLessonResult>(`/lessons/${encodeURIComponent(lessonId)}/complete`, {}),
   dueReviews: (includeFuture = false) =>
     apiCall<ReviewState[]>(`/review/due?include_future=${includeFuture}`),
+  myMastery: () => apiCall<{ skill_group_map_version: string; skills: SkillMastery[] }>("/me/mastery"),
+  quiz: (skillId: string, n = 10) => apiCall<Quiz>(`/practice/quiz?skill_id=${encodeURIComponent(skillId)}&n=${n}`),
+  placement: () => apiCall<Placement>("/placement"),
+  submitPlacement: (answers: { exercise_version_id: string; answer: unknown }[], confirmRetake = false) =>
+    apiPost<PlacementSubmitResult>("/placement/submit", { answers, confirm_retake: confirmRetake }),
+  skipPlacement: () => apiPost<Placement>("/placement/skip", {}),
+  recommend: (k = 5) => apiCall<Recommendations>(`/recommend?k=${k}`),
+  clickRecommendation: (logId: string, lessonId: string) =>
+    apiPost<void>(`/recommend/${encodeURIComponent(logId)}/click`, { lesson_id: lessonId }),
+  myGoal: () => apiCall<Goal>("/me/goal"),
+  chatMessage: (message: string, sessionId: string | null, context?: ChatContext) =>
+    apiPost<ChatReply>("/chat/message", { message, session_id: sessionId, context }),
+  explainAttempt: (attemptId: string, sessionId: string | null, hintLevel?: number) =>
+    apiPost<ChatReply>("/chat/explain-attempt", { attempt_id: attemptId, session_id: sessionId, hint_level: hintLevel }),
+  rateChatMessage: (messageId: number, stars: number) =>
+    apiPost<void>(`/chat/messages/${messageId}/rating`, { stars }),
+  setGoal: (goalText: string) => apiCall<Goal>("/me/goal", { method: "PUT", body: JSON.stringify({ goal_text: goalText }) }),
   answerReview: (reviewItemId: string, answer: unknown, rating = "auto") =>
     apiPost<ReviewAnswerResult>(`/review/${encodeURIComponent(reviewItemId)}/answer`, { answer, rating }),
 };

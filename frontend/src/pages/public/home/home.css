@@ -1,0 +1,185 @@
+/* Các mục mới ở trang chủ (lộ trình, đầu ra, bento, chương trình chi tiết).
+   Màu chỉ dùng biến --w-* của wow.css (bị theme/brands.css ghi đè theo phương án nhận diện) và --color-* của
+   Tailwind; không viết cứng mã màu, để cả ba phương án × sáng/tối đều đúng. */
+
+/* Nhịp chuyển động chung, kiểu "ra nhanh, dừng mượt". */
+.wow {
+  --hm-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- Lộ trình ---------- */
+.hm-road {
+  position: relative;
+}
+/* Đường nối: ngang trên máy tính, dọc trên điện thoại. Phần đã tô là .hm-road-fill, GSAP kéo scale theo cuộn. */
+.hm-road-line {
+  position: absolute;
+  background: var(--w-line);
+  overflow: hidden;
+  border-radius: 999px;
+}
+.hm-road-fill {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, var(--w-deep-text), var(--w-brass-deep));
+  transform-origin: top center;
+  transform: scaleY(0);
+}
+@media (min-width: 768px) {
+  .hm-road-fill {
+    background: linear-gradient(90deg, var(--w-deep-text), var(--w-brass-deep));
+    transform-origin: left center;
+    transform: scaleX(0);
+  }
+}
+.hm-road-dot {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--w-line);
+  background: var(--w-panel);
+  color: var(--w-deep-text);
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+.hm-road-step[data-done="true"] .hm-road-dot {
+  border-color: var(--w-deep-text);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--w-deep-text) 14%, transparent);
+}
+/* Chặng cuối (Tự sáng tác) là đích đến, tô bằng màu nhấn. */
+.hm-road-step[data-finish="true"] .hm-road-dot {
+  color: var(--w-brass-deep);
+  border-color: color-mix(in srgb, var(--w-brass-deep) 45%, var(--w-line));
+}
+
+/* ---------- Thẻ bài học (chương trình chi tiết) ---------- */
+.hm-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--w-line);
+  background: var(--w-panel);
+  border-radius: 20px;
+  transition: transform 260ms var(--hm-ease), box-shadow 260ms var(--hm-ease), border-color 200ms var(--hm-ease);
+}
+.hm-card-top {
+  width: 100%;
+  text-align: left;
+  padding: 1.25rem;
+  border-radius: 20px;
+}
+/* Phần mở thêm: 0fr → 1fr cho chiều cao tự nhiên mà vẫn chạy mượt (không đo chiều cao bằng JS). */
+.hm-card-more {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 300ms var(--hm-ease);
+}
+.hm-card-more > div {
+  overflow: hidden;
+  /* visibility ẩn hẳn phần chưa mở nên phím Tab không lọt vào nút "Xem bài" đang vô hình. */
+  visibility: hidden;
+  transition: visibility 300ms;
+}
+.hm-card[data-open="true"] .hm-card-more,
+.hm-card:focus-within .hm-card-more {
+  grid-template-rows: 1fr;
+}
+.hm-card[data-open="true"] .hm-card-more > div,
+.hm-card:focus-within .hm-card-more > div {
+  visibility: visible;
+}
+@media (hover: hover) {
+  .hm-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 18px 40px -24px color-mix(in srgb, var(--w-on-paper) 55%, transparent);
+    border-color: var(--w-deep-text);
+  }
+  .hm-card:hover .hm-card-more { grid-template-rows: 1fr; }
+  .hm-card:hover .hm-card-more > div { visibility: visible; }
+}
+.hm-card:focus-within {
+  border-color: var(--w-deep-text);
+}
+.hm-kind {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border-radius: 999px;
+  border: 1px solid var(--w-line);
+  padding: 0.1rem 0.5rem;
+  font-size: 0.75rem;
+  color: var(--w-ink-soft);
+}
+
+/* ---------- Bento tính năng ---------- */
+.hm-bento {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 640px) {
+  .hm-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) {
+  .hm-bento { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .hm-bento .span-2 { grid-column: span 2; }
+}
+.hm-tile {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--w-line);
+  background: var(--w-panel);
+  border-radius: 22px;
+  padding: 1.5rem;
+  transition: transform 260ms var(--hm-ease), border-color 200ms var(--hm-ease), box-shadow 260ms var(--hm-ease);
+}
+@media (hover: hover) {
+  .hm-tile:hover {
+    transform: translateY(-4px);
+    border-color: var(--w-deep-text);
+    box-shadow: 0 18px 40px -26px color-mix(in srgb, var(--w-on-paper) 55%, transparent);
+  }
+}
+.hm-shot {
+  display: block;
+  width: 100%;
+  /* Khung ảnh cùng tỉ lệ cho mọi ô nên các ô trong một hàng cao bằng nhau; ảnh cắt từ góc trên bên trái
+     (chỗ có tiêu đề và nội dung chính) thay vì co méo. */
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  object-position: top left;
+  border-radius: 14px;
+  border: 1px solid var(--w-line);
+  background: var(--w-ivory);
+}
+
+/* ---------- Đầu ra ---------- */
+.hm-outcome {
+  border: 1px solid var(--w-line);
+  background: var(--w-panel);
+  border-radius: 22px;
+  padding: 1.75rem;
+}
+.hm-outcome li {
+  position: relative;
+  padding-left: 1.4rem;
+}
+.hm-outcome li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--w-deep-text);
+}
+
+/* Giảm chuyển động: giữ việc mở ra (nội dung vẫn phải đọc được) nhưng bỏ dịch chuyển và hiệu ứng trượt. */
+@media (prefers-reduced-motion: reduce) {
+  .hm-card, .hm-tile { transition: border-color 200ms linear; }
+  .hm-card:hover, .hm-tile:hover { transform: none; }
+  .hm-card-more { transition: none; }
+  .hm-road-fill { transform: none; }
+}

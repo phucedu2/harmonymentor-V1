@@ -1,0 +1,3772 @@
+[
+ {
+  "name": "users",
+  "columns": [
+   {
+    "name": "id",
+    "type": "VARCHAR(64)",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "display_name",
+    "type": "VARCHAR(160)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "created_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "utcnow()",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "email",
+    "type": "VARCHAR(320)",
+    "pk": false,
+    "nullable": true,
+    "unique": true,
+    "index": true,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "hashed_password",
+    "type": "VARCHAR(128)",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "role",
+    "type": "VARCHAR(16)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "'learner'",
+    "server_default": "learner",
+    "onupdate": null
+   },
+   {
+    "name": "preferred_instrument",
+    "type": "VARCHAR(16)",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "goal_text",
+    "type": "TEXT",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "is_active",
+    "type": "BOOLEAN",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "True",
+    "server_default": "true",
+    "onupdate": null
+   },
+   {
+    "name": "is_synthetic",
+    "type": "BOOLEAN",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "False",
+    "server_default": "false",
+    "onupdate": null
+   },
+   {
+    "name": "goal_embedding",
+    "type": "JSON",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "goal_embedding_model",
+    "type": "VARCHAR(80)",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [],
+  "checks": []
+ },
+ {
+  "name": "refresh_tokens",
+  "columns": [
+   {
+    "name": "id",
+    "type": "VARCHAR(36)",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "user_id",
+    "type": "VARCHAR(64)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "users.id",
+      null
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "token_hash",
+    "type": "VARCHAR(64)",
+    "pk": false,
+    "nullable": false,
+    "unique": true,
+    "index": true,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "expires_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "revoked_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "created_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "utcnow()",
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [],
+  "checks": []
+ },
+ {
+  "name": "skills",
+  "columns": [
+   {
+    "name": "id",
+    "type": "VARCHAR(120)",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "name",
+    "type": "VARCHAR(200)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "domain",
+    "type": "VARCHAR(80)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "'theory'",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "srs_code",
+    "type": "VARCHAR(40)",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "group_code",
+    "type": "VARCHAR(40)",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": true,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "ready_threshold",
+    "type": "FLOAT",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "0.6",
+    "server_default": "0.6",
+    "onupdate": null
+   },
+   {
+    "name": "mastery_threshold",
+    "type": "FLOAT",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "0.8",
+    "server_default": "0.8",
+    "onupdate": null
+   }
+  ],
+  "uniques": [],
+  "checks": []
+ },
+ {
+  "name": "skill_prerequisites",
+  "columns": [
+   {
+    "name": "id",
+    "type": "INTEGER",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "skill_id",
+    "type": "VARCHAR(120)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "skills.id",
+      "CASCADE"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "prerequisite_skill_id",
+    "type": "VARCHAR(120)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "skills.id",
+      "CASCADE"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [
+   {
+    "name": "uq_skill_prerequisite",
+    "columns": [
+     "skill_id",
+     "prerequisite_skill_id"
+    ]
+   }
+  ],
+  "checks": []
+ },
+ {
+  "name": "lessons",
+  "columns": [
+   {
+    "name": "id",
+    "type": "VARCHAR(32)",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "order_index",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": false,
+    "unique": true,
+    "index": true,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "track",
+    "type": "VARCHAR(80)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "title",
+    "type": "VARCHAR(240)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "status",
+    "type": "VARCHAR(32)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "'draft'",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "objectives",
+    "type": "JSON",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "[]",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "created_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "utcnow()",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "updated_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "utcnow()",
+    "server_default": null,
+    "onupdate": "utcnow()"
+   }
+  ],
+  "uniques": [],
+  "checks": []
+ },
+ {
+  "name": "lesson_blocks",
+  "columns": [
+   {
+    "name": "id",
+    "type": "VARCHAR(64)",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "lesson_id",
+    "type": "VARCHAR(32)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "lessons.id",
+      "CASCADE"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "position",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "block_type",
+    "type": "VARCHAR(40)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "payload",
+    "type": "JSON",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "{}",
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [
+   {
+    "name": "uq_lesson_block_position",
+    "columns": [
+     "lesson_id",
+     "position"
+    ]
+   }
+  ],
+  "checks": []
+ },
+ {
+  "name": "source_works",
+  "columns": [
+   {
+    "name": "id",
+    "type": "VARCHAR(80)",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "title",
+    "type": "VARCHAR(300)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "author",
+    "type": "VARCHAR(200)",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "url",
+    "type": "VARCHAR(800)",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [],
+  "checks": []
+ },
+ {
+  "name": "lesson_sources",
+  "columns": [
+   {
+    "name": "id",
+    "type": "INTEGER",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "lesson_id",
+    "type": "VARCHAR(32)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "lessons.id",
+      "CASCADE"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "source_work_id",
+    "type": "VARCHAR(80)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "source_works.id",
+      "CASCADE"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "locator",
+    "type": "VARCHAR(300)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "note",
+    "type": "TEXT",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [
+   {
+    "name": "uq_lesson_source",
+    "columns": [
+     "lesson_id",
+     "source_work_id",
+     "locator"
+    ]
+   }
+  ],
+  "checks": []
+ },
+ {
+  "name": "exercises",
+  "columns": [
+   {
+    "name": "id",
+    "type": "VARCHAR(64)",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "lesson_id",
+    "type": "VARCHAR(32)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "lessons.id",
+      "CASCADE"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "skill_id",
+    "type": "VARCHAR(120)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "skills.id",
+      null
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "kind",
+    "type": "VARCHAR(40)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "prompt",
+    "type": "TEXT",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "options",
+    "type": "JSON",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "grading_strategy",
+    "type": "VARCHAR(40)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "position",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "0",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "active",
+    "type": "BOOLEAN",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "True",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "deleted_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [],
+  "checks": []
+ },
+ {
+  "name": "exercise_versions",
+  "columns": [
+   {
+    "name": "id",
+    "type": "VARCHAR(80)",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "exercise_id",
+    "type": "VARCHAR(64)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "exercises.id",
+      "CASCADE"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "version",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "1",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "kind",
+    "type": "VARCHAR(40)",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "prompt",
+    "type": "TEXT",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "options",
+    "type": "JSON",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "grading_strategy",
+    "type": "VARCHAR(40)",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "answer_key",
+    "type": "JSON",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "{}",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "grader_config",
+    "type": "JSON",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "{}",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "explanation",
+    "type": "TEXT",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "provenance",
+    "type": "JSON",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "status",
+    "type": "VARCHAR(16)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": "draft",
+    "onupdate": null
+   },
+   {
+    "name": "published_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "content_hash",
+    "type": "VARCHAR(64)",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "snapshot_origin",
+    "type": "VARCHAR(16)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": "missing",
+    "onupdate": null
+   },
+   {
+    "name": "created_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "utcnow()",
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [
+   {
+    "name": "uq_exercise_version",
+    "columns": [
+     "exercise_id",
+     "version"
+    ]
+   }
+  ],
+  "checks": [
+   {
+    "name": "ck_exercise_versions_snapshot",
+    "sql": "snapshot_origin = 'missing' OR (kind IS NOT NULL AND prompt IS NOT NULL AND grading_strategy IS NOT NULL AND content_hash IS NOT NULL)"
+   },
+   {
+    "name": "ck_exercise_versions_status",
+    "sql": "status IN ('draft', 'published')"
+   },
+   {
+    "name": "ck_exercise_versions_origin",
+    "sql": "snapshot_origin IN ('seed', 'git_history', 'missing')"
+   }
+  ]
+ },
+ {
+  "name": "attempts",
+  "columns": [
+   {
+    "name": "id",
+    "type": "VARCHAR(64)",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "user_id",
+    "type": "VARCHAR(64)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "users.id",
+      null
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "exercise_version_id",
+    "type": "VARCHAR(80)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "exercise_versions.id",
+      null
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "answer",
+    "type": "JSON",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "correct",
+    "type": "BOOLEAN",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "score",
+    "type": "FLOAT",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "0.0",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "primary_error",
+    "type": "VARCHAR(100)",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "feedback",
+    "type": "TEXT",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "is_test",
+    "type": "BOOLEAN",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "False",
+    "server_default": "false",
+    "onupdate": null
+   },
+   {
+    "name": "created_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [],
+    "default": "utcnow()",
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [],
+  "checks": []
+ },
+ {
+  "name": "attempt_errors",
+  "columns": [
+   {
+    "name": "id",
+    "type": "INTEGER",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "attempt_id",
+    "type": "VARCHAR(64)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "attempts.id",
+      "CASCADE"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "code",
+    "type": "VARCHAR(100)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "detail",
+    "type": "JSON",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "{}",
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [],
+  "checks": []
+ },
+ {
+  "name": "lesson_progress",
+  "columns": [
+   {
+    "name": "id",
+    "type": "INTEGER",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "user_id",
+    "type": "VARCHAR(64)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "users.id",
+      null
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "lesson_id",
+    "type": "VARCHAR(32)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "lessons.id",
+      null
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "status",
+    "type": "VARCHAR(32)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "'started'",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "started_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "utcnow()",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "completed_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [
+   {
+    "name": "uq_user_lesson_progress",
+    "columns": [
+     "user_id",
+     "lesson_id"
+    ]
+   }
+  ],
+  "checks": []
+ },
+ {
+  "name": "review_items",
+  "columns": [
+   {
+    "name": "id",
+    "type": "VARCHAR(64)",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "lesson_id",
+    "type": "VARCHAR(32)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "lessons.id",
+      "CASCADE"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "skill_id",
+    "type": "VARCHAR(120)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "skills.id",
+      null
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "mode",
+    "type": "VARCHAR(32)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "'recall'",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "front",
+    "type": "TEXT",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "back",
+    "type": "TEXT",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "grading_strategy",
+    "type": "VARCHAR(40)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "'exact'",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "answer_key",
+    "type": "JSON",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "{}",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "grader_config",
+    "type": "JSON",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "{}",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "provenance",
+    "type": "JSON",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [],
+  "checks": []
+ },
+ {
+  "name": "review_states",
+  "columns": [
+   {
+    "name": "id",
+    "type": "INTEGER",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "user_id",
+    "type": "VARCHAR(64)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "users.id",
+      null
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "review_item_id",
+    "type": "VARCHAR(64)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "review_items.id",
+      "CASCADE"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "status",
+    "type": "VARCHAR(32)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "'active'",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "stage",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "0",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "interval_days",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "1",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "due_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "success_streak",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "0",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "failure_count",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "0",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "last_reviewed_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [
+   {
+    "name": "uq_user_review_item",
+    "columns": [
+     "user_id",
+     "review_item_id"
+    ]
+   }
+  ],
+  "checks": []
+ },
+ {
+  "name": "review_attempts",
+  "columns": [
+   {
+    "name": "id",
+    "type": "VARCHAR(64)",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "review_state_id",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "review_states.id",
+      "CASCADE"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "answer",
+    "type": "JSON",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "correct",
+    "type": "BOOLEAN",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "rating",
+    "type": "VARCHAR(16)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "'auto'",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "response_time_ms",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "due_before",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "created_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [],
+    "default": "utcnow()",
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [],
+  "checks": []
+ },
+ {
+  "name": "practice_attempts",
+  "columns": [
+   {
+    "name": "id",
+    "type": "VARCHAR(36)",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "user_id",
+    "type": "VARCHAR(64)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "users.id",
+      null
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "kind",
+    "type": "VARCHAR(16)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "level",
+    "type": "VARCHAR(8)",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "question",
+    "type": "JSON",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "answer",
+    "type": "JSON",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "correct",
+    "type": "BOOLEAN",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "primary_error",
+    "type": "VARCHAR(100)",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "is_test",
+    "type": "BOOLEAN",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "False",
+    "server_default": "false",
+    "onupdate": null
+   },
+   {
+    "name": "created_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [],
+    "default": "utcnow()",
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [],
+  "checks": [
+   {
+    "name": "ck_practice_kind",
+    "sql": "kind IN ('chord', 'interval', 'scale', 'roman')"
+   }
+  ]
+ },
+ {
+  "name": "mastery_states",
+  "columns": [
+   {
+    "name": "id",
+    "type": "INTEGER",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "user_id",
+    "type": "VARCHAR(64)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "users.id",
+      "CASCADE"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "skill_id",
+    "type": "VARCHAR(120)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "skills.id",
+      null
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "score",
+    "type": "FLOAT",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "0.0",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "attempts_count",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "0",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "last_error_code",
+    "type": "VARCHAR(100)",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "updated_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "utcnow()",
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [
+   {
+    "name": "uq_mastery_user_skill",
+    "columns": [
+     "user_id",
+     "skill_id"
+    ]
+   }
+  ],
+  "checks": []
+ },
+ {
+  "name": "mastery_events",
+  "columns": [
+   {
+    "name": "id",
+    "type": "INTEGER",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "user_id",
+    "type": "VARCHAR(64)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "users.id",
+      "CASCADE"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "skill_id",
+    "type": "VARCHAR(120)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "skills.id",
+      null
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "source",
+    "type": "VARCHAR(16)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "source_id",
+    "type": "VARCHAR(64)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "result",
+    "type": "FLOAT",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "counted",
+    "type": "BOOLEAN",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "True",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "score_before",
+    "type": "FLOAT",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "score_after",
+    "type": "FLOAT",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "vn_day",
+    "type": "VARCHAR(10)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "created_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [],
+    "default": "utcnow()",
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [],
+  "checks": [
+   {
+    "name": "ck_mastery_event_source",
+    "sql": "source IN ('attempt', 'review', 'placement')"
+   }
+  ]
+ },
+ {
+  "name": "recommendation_logs",
+  "columns": [
+   {
+    "name": "id",
+    "type": "VARCHAR(64)",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "user_id",
+    "type": "VARCHAR(64)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "users.id",
+      "CASCADE"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "lesson_ids",
+    "type": "JSON",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "[]",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "scores",
+    "type": "JSON",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "[]",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "explanation",
+    "type": "TEXT",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "context",
+    "type": "JSON",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "{}",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "clicked_lesson_id",
+    "type": "VARCHAR(32)",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "clicked_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "created_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [],
+    "default": "utcnow()",
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [],
+  "checks": []
+ },
+ {
+  "name": "chat_sessions",
+  "columns": [
+   {
+    "name": "id",
+    "type": "VARCHAR(36)",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "user_id",
+    "type": "VARCHAR(64)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "users.id",
+      "CASCADE"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "mode",
+    "type": "VARCHAR(24)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "'companion'",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "summary",
+    "type": "TEXT",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "created_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "utcnow()",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "updated_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [],
+    "default": "utcnow()",
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [],
+  "checks": [
+   {
+    "name": "ck_chat_sessions_mode",
+    "sql": "mode IN ('companion', 'harmony_assistant')"
+   }
+  ]
+ },
+ {
+  "name": "chat_messages",
+  "columns": [
+   {
+    "name": "id",
+    "type": "INTEGER",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "session_id",
+    "type": "VARCHAR(36)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "chat_sessions.id",
+      "CASCADE"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "role",
+    "type": "VARCHAR(16)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "content",
+    "type": "TEXT",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "intent",
+    "type": "VARCHAR(32)",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "citations",
+    "type": "JSON",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "[]",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "engine_claims",
+    "type": "JSON",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "[]",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "tool_calls",
+    "type": "JSON",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "{}",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "hint_level",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "status",
+    "type": "VARCHAR(16)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "'ok'",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "latency_ms",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "tokens_in",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "tokens_out",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "created_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [],
+    "default": "utcnow()",
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [],
+  "checks": [
+   {
+    "name": "ck_chat_messages_role",
+    "sql": "role IN ('user', 'assistant', 'tool')"
+   },
+   {
+    "name": "ck_chat_messages_status",
+    "sql": "status IN ('ok', 'failed', 'fallback')"
+   }
+  ]
+ },
+ {
+  "name": "chat_feedback",
+  "columns": [
+   {
+    "name": "id",
+    "type": "INTEGER",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "message_id",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": false,
+    "unique": true,
+    "index": false,
+    "fk": [
+     [
+      "chat_messages.id",
+      "CASCADE"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "user_id",
+    "type": "VARCHAR(64)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "users.id",
+      "CASCADE"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "stars",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "comment",
+    "type": "TEXT",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [],
+  "checks": [
+   {
+    "name": "ck_chat_feedback_stars",
+    "sql": "stars BETWEEN 1 AND 5"
+   }
+  ]
+ },
+ {
+  "name": "placement_results",
+  "columns": [
+   {
+    "name": "user_id",
+    "type": "VARCHAR(64)",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [
+     [
+      "users.id",
+      "CASCADE"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "status",
+    "type": "VARCHAR(16)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "answers",
+    "type": "JSON",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "[]",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "taken_count",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "1",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "completed_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "utcnow()",
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [],
+  "checks": [
+   {
+    "name": "ck_placement_status",
+    "sql": "status IN ('completed', 'skipped')"
+   }
+  ]
+ },
+ {
+  "name": "composition_projects",
+  "columns": [
+   {
+    "name": "id",
+    "type": "VARCHAR(36)",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "user_id",
+    "type": "VARCHAR(64)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "users.id",
+      null
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "name",
+    "type": "VARCHAR(120)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "key",
+    "type": "VARCHAR(8)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "tempo_bpm",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "time_signature",
+    "type": "VARCHAR(8)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "'4/4'",
+    "server_default": "4/4",
+    "onupdate": null
+   },
+   {
+    "name": "bars",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "style",
+    "type": "VARCHAR(16)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "is_test",
+    "type": "BOOLEAN",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "False",
+    "server_default": "false",
+    "onupdate": null
+   },
+   {
+    "name": "seed",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "1",
+    "server_default": "1",
+    "onupdate": null
+   },
+   {
+    "name": "energy",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "2",
+    "server_default": "2",
+    "onupdate": null
+   },
+   {
+    "name": "mix",
+    "type": "JSON",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "arrangement_version",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "0",
+    "server_default": "0",
+    "onupdate": null
+   },
+   {
+    "name": "form",
+    "type": "JSON",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "created_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "utcnow()",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "updated_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "utcnow()",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "deleted_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [],
+  "checks": [
+   {
+    "name": "ck_composition_tempo",
+    "sql": "tempo_bpm BETWEEN 60 AND 160"
+   },
+   {
+    "name": "ck_composition_bars",
+    "sql": "bars BETWEEN 4 AND 8"
+   }
+  ]
+ },
+ {
+  "name": "chord_events",
+  "columns": [
+   {
+    "name": "id",
+    "type": "VARCHAR(36)",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "project_id",
+    "type": "VARCHAR(36)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "composition_projects.id",
+      null
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "start_beat",
+    "type": "FLOAT",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "duration_beats",
+    "type": "FLOAT",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "symbol",
+    "type": "VARCHAR(32)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [],
+  "checks": []
+ },
+ {
+  "name": "drum_events",
+  "columns": [
+   {
+    "name": "id",
+    "type": "VARCHAR(36)",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "project_id",
+    "type": "VARCHAR(36)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "composition_projects.id",
+      null
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "drum",
+    "type": "VARCHAR(8)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "start_beat",
+    "type": "FLOAT",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "velocity",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [],
+  "checks": [
+   {
+    "name": "ck_drum_kind",
+    "sql": "drum IN ('kick', 'snare', 'hat', 'rim', 'xstick', 'br_snare', 'hh_c', 'hh_o', 'hh_p', 'br_hh', 'ride', 'ride_b', 'br_ride', 'crash', 'tom_h', 'tom_m', 'tom_f', 'conga_h', 'conga_l', 'shaker', 'tamb', 'tri', 'clap')"
+   }
+  ]
+ },
+ {
+  "name": "content_revisions",
+  "columns": [
+   {
+    "name": "id",
+    "type": "VARCHAR(36)",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "lesson_id",
+    "type": "VARCHAR(32)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "lessons.id",
+      "CASCADE"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "kind",
+    "type": "VARCHAR(16)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "target",
+    "type": "VARCHAR(64)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "payload",
+    "type": "JSON",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "{}",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "status",
+    "type": "VARCHAR(16)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "'draft'",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "note",
+    "type": "TEXT",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "created_by",
+    "type": "VARCHAR(64)",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [
+     [
+      "users.id",
+      "SET NULL"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "created_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "utcnow()",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "published_by",
+    "type": "VARCHAR(64)",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [
+     [
+      "users.id",
+      "SET NULL"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "published_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [],
+  "checks": [
+   {
+    "name": "ck_content_revisions_status",
+    "sql": "status IN ('draft', 'published')"
+   },
+   {
+    "name": "ck_content_revisions_kind",
+    "sql": "kind IN ('block', 'visibility')"
+   }
+  ]
+ },
+ {
+  "name": "admin_audit_log",
+  "columns": [
+   {
+    "name": "id",
+    "type": "INTEGER",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "actor_id",
+    "type": "VARCHAR(64)",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "users.id",
+      "SET NULL"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "action",
+    "type": "VARCHAR(48)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "target_type",
+    "type": "VARCHAR(32)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "target_id",
+    "type": "VARCHAR(96)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "detail",
+    "type": "JSON",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "{}",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "created_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "utcnow()",
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [],
+  "checks": []
+ },
+ {
+  "name": "source_documents",
+  "columns": [
+   {
+    "name": "id",
+    "type": "VARCHAR(36)",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "uploaded_by",
+    "type": "VARCHAR(64)",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "users.id",
+      "SET NULL"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "filename",
+    "type": "VARCHAR(240)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "kind",
+    "type": "VARCHAR(8)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "size_bytes",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "sha256",
+    "type": "VARCHAR(64)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "source_title",
+    "type": "VARCHAR(300)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "source_note",
+    "type": "VARCHAR(300)",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "consent",
+    "type": "BOOLEAN",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "False",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "pages",
+    "type": "JSON",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "[]",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "relevance_status",
+    "type": "VARCHAR(10)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "'accepted'",
+    "server_default": "accepted",
+    "onupdate": null
+   },
+   {
+    "name": "relevance_score",
+    "type": "FLOAT",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "relevance_reason",
+    "type": "TEXT",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "relevance_detail",
+    "type": "JSON",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "reviewed_by",
+    "type": "VARCHAR(64)",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "reviewed_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "created_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "utcnow()",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "deleted_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   }
+  ],
+  "uniques": [],
+  "checks": [
+   {
+    "name": "ck_source_documents_relevance_status",
+    "sql": "relevance_status IN ('accepted', 'pending', 'rejected')"
+   }
+  ]
+ },
+ {
+  "name": "ai_lesson_drafts",
+  "columns": [
+   {
+    "name": "id",
+    "type": "VARCHAR(36)",
+    "pk": true,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "document_id",
+    "type": "VARCHAR(36)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": true,
+    "fk": [
+     [
+      "source_documents.id",
+      "CASCADE"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "created_by",
+    "type": "VARCHAR(64)",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [
+     [
+      "users.id",
+      "SET NULL"
+     ]
+    ],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "status",
+    "type": "VARCHAR(16)",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "'draft'",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "page_from",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "page_to",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "content",
+    "type": "JSON",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "{}",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "engine_report",
+    "type": "JSON",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "{}",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "model",
+    "type": "VARCHAR(80)",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "tokens_in",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "tokens_out",
+    "type": "INTEGER",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "published_lesson_id",
+    "type": "VARCHAR(32)",
+    "pk": false,
+    "nullable": true,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": null,
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "created_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "utcnow()",
+    "server_default": null,
+    "onupdate": null
+   },
+   {
+    "name": "updated_at",
+    "type": "TIMESTAMP WITH TIME ZONE",
+    "pk": false,
+    "nullable": false,
+    "unique": false,
+    "index": false,
+    "fk": [],
+    "default": "utcnow()",
+    "server_default": null,
+    "onupdate": "utcnow()"
+   }
+  ],
+  "uniques": [],
+  "checks": [
+   {
+    "name": "ck_ai_lesson_drafts_status",
+    "sql": "status IN ('draft', 'published', 'rejected')"
+   }
+  ]
+ }
+]

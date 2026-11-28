@@ -1,0 +1,53 @@
+digraph G {
+  graph [fontname="Liberation Serif", bgcolor=white, pad=0.2 , rankdir=TB, nodesep=0.3, ranksep=0.9];
+  node [fontname="Liberation Serif", fontsize=11, color=black];
+  edge [fontname="Liberation Serif", fontsize=9, color=black];
+  P6 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="6.0
+View lessons"];
+  P7 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="7.0
+Submit answer
+(Music Engine)"];
+  P8 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="8.0
+Update EMA
+mastery"];
+  P9 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="9.0
+Complete lesson
++ Leitner"];
+  P10 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="10.0
+Review
+flashcards"];
+  P11 [shape=circle, width=1.25, fixedsize=true, fontsize=10, label="11.0
+Practice /
+placement / quiz"];
+  L [shape=box, label="Learner"];
+  D3 [shape=record, fontsize=10, label="{D3|lessons, lesson_blocks}"];
+  D4 [shape=record, fontsize=10, label="{D4|exercises, exercise_versions}"];
+  D5 [shape=record, fontsize=10, label="{D5|attempts, attempt_errors}"];
+  D6 [shape=record, fontsize=10, label="{D6|mastery_states, mastery_events}"];
+  D7 [shape=record, fontsize=10, label="{D7|lesson_progress}"];
+  D8 [shape=record, fontsize=10, label="{D8|review_items, review_states}"];
+  D9 [shape=record, fontsize=10, label="{D9|review_attempts}"];
+  D10 [shape=record, fontsize=10, label="{D10|practice_attempts, placement_results}"];
+  L -> P6 [label="open lesson"];
+  D3 -> P6 [label="blocks"];
+  D4 -> P6 [label="published version"];
+  P6 -> L [label="theory, piano, staff, questions"];
+  L -> P7 [label="answer + input method"];
+  D4 -> P7 [label="answer_key, grader_config"];
+  P7 -> D5 [label="attempt + error codes"];
+  P7 -> L [label="correct?, error code, feedback"];
+  P7 -> P8 [label="result 1 / 0.5 / 0"];
+  P8 -> D6 [label="new score"];
+  L -> P9 [label="complete"];
+  D5 -> P9 [label="all questions correct?"];
+  P9 -> D7 [label="completed"];
+  P9 -> D8 [label="cards due now (box 1)"];
+  L -> P10 [label="card answer"];
+  D8 -> P10 [label="due card"];
+  P10 -> D8 [label="box 1..5, due_at"];
+  P10 -> D9 [label="review attempt"];
+  P10 -> P8 [label="due review result"];
+  L -> P11 [label="answer"];
+  P11 -> D10 [label="history / placement"];
+  P11 -> D6 [label="placement 0.65"];
+}

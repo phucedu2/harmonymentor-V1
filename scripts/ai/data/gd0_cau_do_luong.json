@@ -1,0 +1,31 @@
+{
+ "note": "Câu dò GĐ0 (góp ý thầy G4), Claude soạn 06/11/2026, status draft, CHƯA có người duyệt. Chỉ để minh họa lỗ hổng định tuyến hiện tại; không dùng làm bộ test khóa, không dùng để train. Nhãn luồng theo ADR-017 (đề xuất): A trong bài, B nhạc lý bài chưa dạy, C ngoài phạm vi, D hướng dẫn sử dụng, G chào hỏi.",
+ "author": "Claude",
+ "status": "draft",
+ "items": [
+  {"id": "P-B01", "flow": "B", "q": "Csus4 gồm những nốt nào?", "engine": "get_chord_tones Csus4"},
+  {"id": "P-B02", "flow": "B", "q": "Quãng từ E lên Bb là quãng gì?", "engine": "identify_interval E Bb"},
+  {"id": "P-B03", "flow": "B", "q": "Âm giai Rê trưởng có những nốt nào?", "engine": "get_scale D major"},
+  {"id": "P-B04", "flow": "B", "q": "Am trong giọng C trưởng là bậc mấy, viết số La Mã sao?", "engine": "get_roman_numeral C Am"},
+  {"id": "P-B05", "flow": "B", "q": "Hop am C9 gom not gi", "engine": "UNKNOWN_QUALITY → không biết"},
+  {"id": "P-B06", "flow": "B", "q": "Modal interchange là gì?", "engine": "không tính được → không biết + gợi ý bài"},
+  {"id": "P-B07", "flow": "B", "q": "Hợp âm đảo (inversion) là gì?", "engine": "không tính được → không biết"},
+  {"id": "P-B08", "flow": "B", "q": "Bài hát buồn thường dùng hợp âm gì?", "engine": "không tính được → không biết"},
+  {"id": "P-C01", "flow": "C", "q": "Sơn Tùng sinh năm bao nhiêu?"},
+  {"id": "P-C02", "flow": "C", "q": "Mua đàn piano điện loại nào rẻ mà tốt?"},
+  {"id": "P-C03", "flow": "C", "q": "Kể chuyện cười đi"},
+  {"id": "P-C04", "flow": "C", "q": "what is the capital of France"},
+  {"id": "P-D01", "flow": "D", "q": "Làm sao đổi mật khẩu tài khoản?"},
+  {"id": "P-D02", "flow": "D", "q": "Harmony Lab dùng thế nào, có xuất file được không?"},
+  {"id": "P-D03", "flow": "D", "q": "Sao mình không mở được bài L03?"},
+  {"id": "P-D04", "flow": "D", "q": "Bài kiểm tra đầu vào để làm gì?"},
+  {"id": "P-D05", "flow": "D", "q": "Đổi nhạc cụ trong mục Sáng tác ở đâu?"},
+  {"id": "P-D06", "flow": "D", "q": "Mình bị khóa đăng nhập, phải làm sao?"},
+  {"id": "P-G01", "flow": "G", "q": "Chào bạn"},
+  {"id": "P-G02", "flow": "G", "q": "cảm ơn nha"},
+  {"id": "P-A01", "flow": "A", "q": "C7 với Cmaj7 khác nhau chỗ nào", "blocks": ["L02-B05"]},
+  {"id": "P-A02", "flow": "A", "q": "cmaj7 la gi", "blocks": ["L02-B05"]},
+  {"id": "P-A03", "flow": "A", "q": "nốt dẫn là gì, sao nó muốn đi lên chủ âm?", "blocks": ["L04-B02", "L04-B06"]},
+  {"id": "P-A04", "flow": "A", "q": "What is a half-diminished chord?", "blocks": ["L02-B05", "L02-B04", "L02-B08"]}
+ ]
+}
