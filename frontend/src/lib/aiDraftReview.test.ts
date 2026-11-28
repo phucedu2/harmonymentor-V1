@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { AiFlag, AiQuestion } from "../api";
-import { remapAfterBlockRemoved, unackedCount } from "./aiDraftReview";
+import { ratePct, remapAfterBlockRemoved, unackedCount } from "./aiDraftReview";
 
 const q = (block_ref: number | null | undefined): AiQuestion =>
   ({ kind: "mcq", prompt: "p", skill_id: "s", explanation: "", page: 1, block_ref, reviewed: true });
@@ -16,5 +16,15 @@ describe("duyệt bản nháp AI (ADR-039)", () => {
   it("đếm cờ chưa đối chiếu; mã cờ cũ không còn thì không tính", () => {
     expect(unackedCount([f("a"), f("b")], ["a", "zzz"])).toBe(1);
     expect(unackedCount(undefined, undefined)).toBe(0);
+  });
+});
+
+describe("ratePct (ADR-042)", () => {
+  it("làm tròn phần trăm và hiện gạch khi chưa có mẫu số", () => {
+    expect(ratePct(0.756)).toBe("76%");
+    expect(ratePct(0)).toBe("0%");
+    expect(ratePct(null)).toBe("—");
+    expect(ratePct(undefined)).toBe("—");
+    expect(ratePct(Number.NaN)).toBe("—");
   });
 });

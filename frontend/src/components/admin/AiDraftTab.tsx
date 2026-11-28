@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { api, type AiBudget, type AiDocument, type AiDraft, type AiDraftRow, type AiFlag, type AiJob, type AiQuestion, type AiQuestionKind } from "../../api";
-import { remapAfterBlockRemoved, unackedCount } from "../../lib/aiDraftReview";
+import { api, type AiBudget, type AiDocument, type AiDraft, type AiDraftRow, type AiFlag, type AiJob, type AiQuality, type AiQuestion, type AiQuestionKind } from "../../api";
+import { ratePct as pct, remapAfterBlockRemoved, unackedCount } from "../../lib/aiDraftReview";
 import { Button } from "../ui/Button";
 import { Badge, Card, CardTitle, ProgressBar } from "../ui/Page";
 
@@ -28,6 +28,33 @@ function BudgetLine({ budget }: { budget?: AiBudget }) {
   return <p className={`text-xs ${left === 0 ? "text-warning" : "text-muted"}`}>
     Lượt Gemini hôm nay: soạn bài còn {left}/{budget.authoring.limit} · AI Tutor còn {tutorLeft}/{budget.tutor.limit} · đặt lại lúc {at}.
     {left === 0 && " Hết lượt soạn bài vẫn sửa, duyệt, tự điền lời giải và xuất bản được; chỉ AI soạn mới phải chờ."}</p>;
+}
+// ADR-042: số đo THẬT trên bản nháp nhóm đã soạn (AI đưa bao nhiêu câu, Engine loại/sửa bao nhiêu, người duyệt sửa/bỏ bao nhiêu).
+// Mở ra mới tải, để không gọi thêm API mỗi lần vào tab.
+function QualityPanel() {
+  const [data, setData] = useState<AiQuality | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const load = () => api.aiQuality().then(setData).catch((e) => setErr(errMsg(e)));
+  return <Card className="p-4"><details onToggle={(e) => { if ((e.target as HTMLDetailsElement).open && !data) load(); }}>
+    <summary className="cursor-pointer font-semibold">Chất lượng AI soạn bài (theo phiên bản prompt)</summary>
+    <p className="mt-1 text-xs text-muted">Tính trên mọi bản nháp đã soạn. "Qua Engine" = câu AI đưa không bị Engine hay bộ lọc trùng loại.
+      "Engine sửa đáp án" = AI chọn sai, Engine tính lại. "Người sửa/bỏ" = người duyệt sửa hoặc xóa câu trước khi xuất bản.</p>
+    {err && <p className="mt-2 text-sm text-danger">{err}</p>}
+    {!data && !err && <p className="mt-2 text-sm text-muted">Mở ra để tải số liệu…</p>}
+    {data && (data.versions.length === 0 ? <p className="mt-2 text-sm text-muted">Chưa có bản nháp nào.</p> :
+      <div className="mt-2 overflow-x-auto"><table className="w-full min-w-[640px] text-left text-sm">
+        <thead className="text-xs text-muted"><tr><th className="py-1 pr-2">Prompt</th><th className="pr-2">Bản nháp</th><th className="pr-2">Đã xuất bản</th>
+          <th className="pr-2">Câu AI giữ</th><th className="pr-2">Qua Engine</th><th className="pr-2">Engine sửa đáp án</th><th className="pr-2">Người sửa</th><th>Người bỏ</th></tr></thead>
+        <tbody>{data.versions.map((v) => <tr key={v.prompt_version} className="border-t border-line">
+          <td className="py-1 pr-2"><code>{v.prompt_version}</code>{v.models.length > 0 && <span className="block text-xs text-muted">{v.models.join(", ")}</span>}</td>
+          <td className="pr-2">{v.drafts}</td><td className="pr-2">{v.published} ({pct(v.publish_rate)})</td>
+          <td className="pr-2">{v.ai_questions}</td><td className="pr-2">{pct(v.keep_rate)}</td>
+          <td className="pr-2">{v.engine_fixed} ({pct(v.engine_fix_rate)})</td><td className="pr-2">{v.edited} ({pct(v.edit_rate)})</td>
+          <td>{v.removed_by_reviewer} ({pct(v.remove_rate)}){v.without_snapshot > 0 && <span className="block text-xs text-muted">{v.without_snapshot} bản cũ chưa có số chụp</span>}</td>
+        </tr>)}</tbody></table>
+        <BudgetLine budget={data.budget} />
+        <Button variant="ghost" onClick={load}>Tải lại</Button></div>)}
+  </details></Card>;
 }
 function NodeLog({ log }: { log?: { node: string; ms: number; in?: number; out?: number; note?: string }[] }) {
   if (!log?.length) return null;
@@ -228,7 +255,8 @@ const PART: Record<AiJob["parts"][number]["status"], { label: string; tone: "suc
   failed: { label: "Lỗi", tone: "danger" },
 };
 const PAUSE: Record<string, string> = {
-  quota: "Gemini báo hết hạn mức. Đợi hạn mức hồi (thường sau 15:00 giờ Việt Nam hoặc hôm sau) rồi bấm “Chạy tiếp”: hệ thống làm nốt từ phần đang dở.",
+  quota: "Google báo khóa Gemini đã hết lượt trong ngày. Sau 15:00 giờ Việt Nam bấm “Chạy tiếp”: hệ thống làm nốt từ phần đang dở.",
+  rate_minute: "Gemini bị gọi quá nhanh (giới hạn mỗi phút) dù hệ thống đã chờ 1 phút rồi thử lại. Đợi vài phút rồi bấm “Chạy tiếp”; không phải hết lượt trong ngày.",
   daily_limit: "Đã dùng hết lượt Gemini dành cho soạn bài hôm nay (hạn mức chung với AI Tutor). Sau 15:00 giờ Việt Nam bấm “Chạy tiếp”.",
   unavailable: "Hai phần liền nhau lỗi nên hệ thống tạm dừng để không tốn lượt. Bấm “Chạy tiếp” để thử lại các phần lỗi.",
   interrupted: "Máy chủ khởi động lại giữa chừng. Bấm “Chạy tiếp” để làm nốt.",
@@ -390,6 +418,8 @@ export default function AiDraftTab() {
           {job && <JobPanel job={job} busy={busyKey === `job:${job.id}`} onResume={() => resume(job)} onCancel={() => cancel(job)} onOpen={setOpenId} />}
         </li>; })}
     </ul></Card>}
+
+    <QualityPanel />
 
     <Card className="p-4"><CardTitle>Bản nháp</CardTitle>
       {drafts.length === 0 ? <p className="mt-2 text-sm text-muted">Chưa có bản nháp nào.</p> : <ul className="mt-2 grid gap-2">

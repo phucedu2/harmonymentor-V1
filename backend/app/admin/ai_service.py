@@ -211,6 +211,21 @@ def _draft(db: Session, draft_id: str) -> AiLessonDraft:
     return draft
 
 
+def unavailable_error(exc: LLMUnavailable) -> AdminContentError:
+    """ADR-042: nói rõ Google chặn vì quá nhanh trong 1 phút hay vì hết lượt trong ngày, để người dùng biết nên chờ bao lâu."""
+    if exc.reason == "rate_limited" and exc.scope == "day":
+        return AdminContentError("AI_RATE_DAY", "Google báo khóa Gemini đã hết lượt trong ngày. Thử lại sau 15:00 giờ Việt Nam.", 429)
+    if exc.reason == "rate_limited":
+        return AdminContentError("AI_RATE_MINUTE", "Gemini đang bị gọi quá nhanh (giới hạn mỗi phút). Đợi khoảng 1 phút rồi thử lại.", 429)
+    return AdminContentError("AI_UNAVAILABLE", "AI chưa trả lời được lúc này, thử lại sau.", 503)
+
+
+def _record_extra(db: Session, actor_id: str | None, target: tuple[str, str], what: str, attempts: int) -> None:
+    if attempts > 1:
+        budget.record_authoring(db, actor_id, target[0], target[1], f"{what}:retry", attempts - 1)
+        db.commit()
+
+
 def call_json(db: Session, provider: LLMProvider, actor_id: str | None, target: tuple[str, str], what: str,
               system: str, user: str, schema: dict[str, Any], max_tokens: int = 8192, log: list | None = None):
     """Gọi AI, đọc JSON. JSON hỏng thì thử lại 1 lần (nguyên tắc 2, V6). Mỗi lần gọi trừ vào hạn mức chung (V5).
@@ -222,7 +237,13 @@ def call_json(db: Session, provider: LLMProvider, actor_id: str | None, target: 
         budget.record_authoring(db, actor_id, target[0], target[1], what)
         db.commit()   # lượt đã tính dù lần gọi lỗi
         calls += 1
-        result = provider.generate(system, user + note, schema, max_tokens)
+        try:
+            result = provider.generate(system, user + note, schema, max_tokens)
+        except LLMUnavailable as exc:
+            # ADR-042: lần lỗi, lần thử lại sau 429 và mô hình dự phòng đều là lượt Google tính.
+            _record_extra(db, actor_id, target, what, exc.attempts)
+            raise
+        _record_extra(db, actor_id, target, what, result.attempts)
         try:
             raw = json.loads(result.text)
             if isinstance(raw, dict):
@@ -297,12 +318,13 @@ def generate_draft(db: Session, admin: User, provider: LLMProvider | None, doc_i
         raise AdminContentError("DRAFT_LIMIT", f"Đã dùng hết {exc.limit} lượt Gemini dành cho soạn bài hôm nay "
                                 "(hạn mức đặt lại lúc 15:00 giờ Việt Nam).", 429) from exc
     except LLMUnavailable as exc:
-        raise AdminContentError("AI_UNAVAILABLE", "AI chưa trả lời được lúc này, thử lại sau.", 503) from exc
+        raise unavailable_error(exc) from exc
 
     content = normalize_content(db, raw, page_from, page_to)
     top_up_questions(db, provider, admin.id, ("ai_lesson_draft", draft_id), doc.source_title, text, content, page_from, page_to)
     mark_injection(doc, content)
     content["prompt_version"] = prompt_version(SYSTEM, SCHEMA)
+    stamp_ai_stats(content, content["questions"], len(content["dropped_questions"]))
     if truncated:
         content["truncated"] = truncated
     content["flags"] = ai_review.review_flags(doc.pages, content, page_from, page_to)
@@ -351,11 +373,12 @@ def generate_more_questions(db: Session, admin: User, provider: LLMProvider | No
         raise AdminContentError("DRAFT_LIMIT", f"Đã dùng hết {exc.limit} lượt Gemini dành cho soạn bài hôm nay "
                                 "(hạn mức đặt lại lúc 15:00 giờ Việt Nam).", 429) from exc
     except LLMUnavailable as exc:
-        raise AdminContentError("AI_UNAVAILABLE", "AI chưa trả lời được lúc này, thử lại sau.", 503) from exc
+        raise unavailable_error(exc) from exc
     skills = set(_skill_ids(db))
     clamp = page_clamp(draft.page_from, draft.page_to)
     seen = {q["prompt"].casefold() for q in have}
     added, dropped = [], list(draft.content.get("dropped_questions", []))
+    dropped_before = len(dropped)
     for item in (raw.get("questions") if isinstance(raw, dict) else None) or []:
         q, why = aq.normalize_question(item, skills, clamp, blocks=len(blocks))
         if q is None:
@@ -368,6 +391,7 @@ def generate_more_questions(db: Session, admin: User, provider: LLMProvider | No
     if not added:
         raise AdminContentError("AI_EMPTY", "AI chưa soạn được câu hợp lệ nào, thử lại.", 502)
     content = {**draft.content, "questions": have + added, "dropped_questions": dropped[-40:]}
+    stamp_ai_stats(content, added, len(dropped) - dropped_before)
     if content.get("question_shortfall"):
         refresh_shortfall(content)
         content["flags"] = ai_review.review_flags(doc.pages, content, draft.page_from, draft.page_to)
@@ -378,6 +402,62 @@ def generate_more_questions(db: Session, admin: User, provider: LLMProvider | No
     audit(db, admin, "ai.draft.more_questions", "ai_lesson_draft", draft.id, {"added": len(added), "model": result.model})
     db.commit()
     return draft
+
+
+def stamp_ai_stats(content: dict[str, Any], added: list[dict[str, Any]], dropped: int) -> None:
+    """ADR-042: chụp lại AI đã đưa gì LÚC SOẠN (trước khi người duyệt sửa), để đo chất lượng theo phiên bản prompt.
+    Lưu trong content["ai_stats"] vì lúc lưu bản sửa, câu hỏi được chuẩn hóa lại và mất dấu vết Engine sửa/loại."""
+    st = dict(content.get("ai_stats") or {"kept": 0, "dropped": 0, "engine_fixed": 0, "needs_review": 0})
+    st["kept"] += len(added)
+    st["dropped"] += max(0, dropped)
+    st["engine_fixed"] += sum(1 for q in added if q.get("engine_note"))
+    st["needs_review"] += sum(1 for q in added if aq_needs_review(q))
+    content["ai_stats"] = st
+
+
+def quality_report(db: Session) -> dict[str, Any]:
+    """Bảng chất lượng AI soạn bài theo phiên bản prompt (ADR-042): AI đưa bao nhiêu câu, Engine loại/sửa bao nhiêu, người
+    duyệt sửa/bỏ bao nhiêu, bao nhiêu bản nháp được xuất bản. Đây là số đo THẬT trên bản nháp nhóm đã soạn, khác bộ 41 ca thử."""
+    groups: dict[str, dict[str, Any]] = {}
+    for d in db.scalars(select(AiLessonDraft).order_by(AiLessonDraft.created_at)):
+        c = d.content or {}
+        qs = c.get("questions") or []
+        st = c.get("ai_stats")
+        g = groups.setdefault(c.get("prompt_version") or "cũ", {
+            "prompt_version": c.get("prompt_version") or "cũ", "drafts": 0, "published": 0, "rejected": 0, "open": 0,
+            "ai_questions": 0, "engine_dropped": 0, "engine_fixed": 0, "needs_review": 0, "edited": 0,
+            "removed_by_reviewer": 0, "without_snapshot": 0, "first_at": d.created_at, "last_at": d.created_at, "models": set()})
+        g["drafts"] += 1
+        g[{"published": "published", "rejected": "rejected"}.get(d.status, "open")] += 1
+        g["last_at"] = d.created_at
+        if d.model:
+            g["models"].add(d.model)
+        if st is None:   # bản nháp trước ADR-042: chỉ còn số đo trên bản hiện tại
+            g["without_snapshot"] += 1
+            st = {"kept": len(qs), "dropped": len(c.get("dropped_questions") or []),
+                  "engine_fixed": sum(1 for q in qs if q.get("engine_note")),
+                  "needs_review": sum(1 for q in qs if aq_needs_review(q))}
+        g["ai_questions"] += st["kept"]
+        g["engine_dropped"] += st["dropped"]
+        g["engine_fixed"] += st["engine_fixed"]
+        g["needs_review"] += st["needs_review"]
+        g["edited"] += sum(1 for q in qs if q.get("edited"))
+        g["removed_by_reviewer"] += max(0, st["kept"] - len(qs))
+
+    def rate(a: int, b: int) -> float | None:
+        return round(a / b, 3) if b else None
+
+    rows = []
+    for g in groups.values():
+        proposed = g["ai_questions"] + g["engine_dropped"]
+        rows.append({**g, "models": sorted(g["models"]),
+                     "keep_rate": rate(g["ai_questions"], proposed),            # câu AI đưa qua được Engine/lọc trùng
+                     "engine_fix_rate": rate(g["engine_fixed"], g["ai_questions"]),
+                     "edit_rate": rate(g["edited"], g["ai_questions"]),
+                     "remove_rate": rate(g["removed_by_reviewer"], g["ai_questions"]),
+                     "publish_rate": rate(g["published"], g["drafts"])})
+    rows.sort(key=lambda r: r["last_at"], reverse=True)
+    return {"versions": rows, "budget": budget.summary(db)}
 
 
 def refresh_shortfall(content: dict[str, Any]) -> None:
@@ -570,7 +650,7 @@ def update_draft(db: Session, admin: User, draft_id: str, edited: dict[str, Any]
                                      else edited.get("expansion")},
                                 draft.page_from, draft.page_to, trust_review=True)   # H1: trang theo bản nháp, không theo cả tài liệu
     # Báo cáo trùng, tên phần, nhật ký và ghi chú cắt chữ do máy tính lúc soạn, Quản trị viên không sửa: giữ nguyên.
-    for key in ("duplicates", "part", "log", "truncated", "injection_lines_removed", "prompt_version"):
+    for key in ("duplicates", "part", "log", "truncated", "injection_lines_removed", "prompt_version", "ai_stats"):
         if key in draft.content:
             content[key] = draft.content[key]
     if draft.content.get("question_shortfall"):

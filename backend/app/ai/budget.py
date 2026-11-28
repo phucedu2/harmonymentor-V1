@@ -8,8 +8,9 @@ thiếu `created_by` thì không bị đếm, và soạn bài có thể đốt h
 - GEMINI_AUTHORING_SHARE: phần cho soạn bài (mặc định 0,4: 30 lượt → 12 soạn bài, 18 Tutor). Phần còn lại của Tutor
   không cho soạn bài mượn, để học sinh luôn còn lượt hỏi.
 - "Ngày Gemini" bắt đầu lúc 0 giờ Thái Bình Dương (giờ Google đặt lại hạn mức, 15:00 giờ Việt Nam mùa đông).
-- Mỗi lần gọi `generate` của soạn bài (kể cả lần thử lại khi JSON hỏng) ghi một dòng `ai.llm.call` vào nhật ký, không phụ
-  thuộc ai bấm. Tutor đếm theo tin nhắn đã gọi LLM như cũ (ai_tutor_service._llm_rows_today).
+- Mỗi lần gọi HTTP thật của soạn bài (kể cả lần thử lại khi JSON hỏng, lần lỗi và mô hình dự phòng, ADR-042) ghi một dòng
+  `ai.llm.call` vào nhật ký, không phụ thuộc ai bấm. Tutor cộng `gemini_http` của từng tin nhắn (ADR-042); tin nhắn cũ
+  chưa có trường này tính 1 lượt như trước.
 """
 
 from __future__ import annotations
@@ -84,9 +85,18 @@ def used(db: Session, purpose: str, now: datetime | None = None) -> int:
     n = 0
     for tool_calls, created in db.execute(q):
         created = created if created.tzinfo else created.replace(tzinfo=timezone.utc)
-        if created >= start and (tool_calls or {}).get("llm_calls"):
-            n += 1
+        if created >= start:
+            n += http_calls(tool_calls)
     return n
+
+
+def http_calls(tool_calls: dict | None) -> int:
+    """Số lần gọi Gemini thật của một tin nhắn Tutor. Tin cũ (trước ADR-042) không có `gemini_http`: 1 nếu có gọi LLM."""
+    tc = tool_calls or {}
+    n = tc.get("gemini_http")
+    if isinstance(n, int) and not isinstance(n, bool) and n >= 0:
+        return n
+    return 1 if tc.get("llm_calls") else 0
 
 
 def remaining(db: Session, purpose: str, now: datetime | None = None) -> int | None:
@@ -102,10 +112,11 @@ def require(db: Session, purpose: str, now: datetime | None = None) -> None:
             raise BudgetExceeded(purpose, n, cap)
 
 
-def record_authoring(db: Session, actor_id: str | None, target_type: str, target_id: str, what: str) -> None:
-    """Ghi một lượt gọi Gemini của soạn bài. Ghi cả khi không có người bấm (việc nền) để không lọt bộ đếm."""
-    db.add(AdminAuditLog(actor_id=actor_id, action=CALL_ACTION, target_type=target_type, target_id=target_id[:96],
-                         detail={"what": what}, created_at=_now(None)))
+def record_authoring(db: Session, actor_id: str | None, target_type: str, target_id: str, what: str, count: int = 1) -> None:
+    """Ghi `count` lượt gọi Gemini của soạn bài. Ghi cả khi không có người bấm (việc nền) để không lọt bộ đếm."""
+    for _ in range(max(0, count)):
+        db.add(AdminAuditLog(actor_id=actor_id, action=CALL_ACTION, target_type=target_type, target_id=target_id[:96],
+                             detail={"what": what}, created_at=_now(None)))
 
 
 def summary(db: Session, now: datetime | None = None) -> dict:

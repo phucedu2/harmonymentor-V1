@@ -14,3 +14,8 @@ export function remapAfterBlockRemoved(questions: AiQuestion[], index: number): 
     return q.block_ref > removed ? { ...q, block_ref: q.block_ref - 1 } : q;
   });
 }
+
+/** Tỉ lệ 0–1 thành phần trăm làm tròn; null (mẫu số 0) thành "—" thay vì "NaN%" (ADR-042, bảng chất lượng AI). */
+export function ratePct(v: number | null | undefined): string {
+  return v === null || v === undefined || !Number.isFinite(v) ? "—" : `${Math.round(v * 100)}%`;
+}
