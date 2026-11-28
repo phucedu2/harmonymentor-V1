@@ -448,7 +448,7 @@ def draft_provider_dep() -> LLMProvider | None:
         return None
     key = (settings.ai_enabled, bool(settings.gemini_api_key), settings.gemini_model)
     if key not in _draft_provider_cache:
-        _draft_provider_cache[key] = get_provider(dc_replace(settings, ai_timeout_seconds=max(settings.ai_timeout_seconds, 60.0)))
+        _draft_provider_cache[key] = get_provider(dc_replace(settings, ai_timeout_seconds=max(settings.ai_timeout_seconds, 60.0)), authoring=True)
     return _draft_provider_cache[key]
 
 
@@ -466,6 +466,12 @@ class DraftEditIn(BaseModel):
     expansion: bool | None = None
     # ADR-033: id các cờ (trang sai, bám nguồn, chép nguyên văn, hình...) Quản trị viên đã đối chiếu. None = giữ như cũ.
     acknowledged_flags: list[str] | None = Field(default=None, max_length=200)
+
+
+@router.get("/ai/quality")
+def ai_quality(db: Session = Depends(get_db)):
+    """ADR-042: chất lượng AI soạn bài theo phiên bản prompt, tính trên bản nháp thật."""
+    return ai_service.quality_report(db)
 
 
 @router.get("/ai/status")

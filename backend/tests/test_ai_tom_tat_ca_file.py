@@ -179,7 +179,7 @@ def test_het_han_muc_thi_tam_dung_roi_chay_tiep_tu_phan_dang_do(job_env):
     client, use = job_env
     uid, h = new_admin()
     doc = add_doc(uid, BOOK)
-    use([lesson_json("Quãng ghép", "Quãng ghép là gì", "Quãng ghép vượt quá một quãng tám."), LLMUnavailable("rate_limited")])
+    use([lesson_json("Quãng ghép", "Quãng ghép là gì", "Quãng ghép vượt quá một quãng tám."), LLMUnavailable("rate_limited", scope="day")])
     job = client.post(f"/api/v1/admin/ai/documents/{doc}/summarize", headers=h).json()
     assert job["status"] == "paused" and job["pause_reason"] == "quota"
     assert [p["status"] for p in job["parts"]] == ["done", "pending", "pending"]

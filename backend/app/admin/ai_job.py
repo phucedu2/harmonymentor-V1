@@ -408,6 +408,7 @@ def run_part(db: Session, admin_id: str | None, provider: LLMProvider, doc: Sour
                                 part["page_from"], page_to, accept=_not_known, log=log)
     ai_service.mark_injection(doc, content)
     content["prompt_version"] = ai_service.prompt_version(PART_SYSTEM, ai_service.SCHEMA)
+    ai_service.stamp_ai_stats(content, content["questions"], len(content["dropped_questions"]))
     content["duplicates"] = part["duplicates"]
     content["part"] = {"heading": part["heading"], "index": part["index"]}
     if truncated:
@@ -459,7 +460,13 @@ def create_job(db: Session, admin: User, provider: LLMProvider | None, doc_id: s
     return job
 
 
-def run_job(job_id: str, provider: LLMProvider, session_factory: Callable[[], Session], now: Callable[[], datetime] | None = None) -> None:
+# ADR-042: 429 theo phút (provider đã chờ 30 giây mà vẫn bị chặn) thì việc nền chờ thêm 60 giây rồi làm lại phần đó
+# đúng 1 lần, thay vì tạm dừng như hết hạn mức ngày.
+MINUTE_WAIT_S = 60.0
+
+
+def run_job(job_id: str, provider: LLMProvider, session_factory: Callable[[], Session], now: Callable[[], datetime] | None = None,
+            sleep: Callable[[float], None] = time.sleep) -> None:
     """Làm lần lượt các phần còn "chờ". Gọi trong luồng nền (start_job) hoặc trực tiếp trong test."""
     clock = now or (lambda: datetime.now(timezone.utc))
     with _lock:
@@ -477,6 +484,7 @@ def run_job(job_id: str, provider: LLMProvider, session_factory: Callable[[], Se
             sim = Similarity(build_catalog(db))
             admin = db.get(User, job.created_by) if job.created_by else None
             failures = 0
+            minute_retry: int | None = None   # phần đã được chờ lại vì 429 theo phút
             while True:
                 db.refresh(job)
                 if job.status != "running":
@@ -511,10 +519,16 @@ def run_job(job_id: str, provider: LLMProvider, session_factory: Callable[[], Se
                     return
                 except LLMUnavailable as exc:
                     if exc.reason == "rate_limited":
-                        # Hết hạn mức: phần này làm lại từ đầu khi chạy tiếp, không tính là lỗi.
+                        # Phần này làm lại từ đầu, không tính là lỗi.
                         parts = [{**p, "status": "pending"} if p["index"] == todo["index"] else p for p in parts]
                         _set_parts(job, parts)
-                        job.status, job.pause_reason = "paused", "quota"
+                        if exc.scope != "day" and minute_retry != todo["index"]:
+                            minute_retry = todo["index"]
+                            db.commit()
+                            sleep(MINUTE_WAIT_S)
+                            continue
+                        # Hết lượt trong ngày của Google ("quota"), hoặc đã chờ mà vẫn bị chặn theo phút ("rate_minute").
+                        job.status, job.pause_reason = "paused", ("quota" if exc.scope == "day" else "rate_minute")
                         db.commit()
                         return
                     failures += 1

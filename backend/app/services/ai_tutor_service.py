@@ -33,7 +33,7 @@ from ..ai.tutor import prompt as pr
 from ..ai.tutor.guardrail import GuardResult, check_answer, engine_facts_for, run_tool, scan_reply
 from ..ai.tutor.injection import looks_like_injection
 from ..ai.tutor.intent import classify
-from ..ai.tutor.llm import LLMProvider, LLMResult, LLMUnavailable
+from ..ai.tutor.llm import CallCounter, LLMProvider, LLMResult, LLMUnavailable
 from ..ai.tutor.notes import solfege_to_letters, split_notes
 from ..ai.tutor import fact_anchor
 from ..ai.tutor.engine_query import fact_text
@@ -463,12 +463,16 @@ def answer_question(db: Session, user: User, question: str, turns: Sequence[tupl
     return ai_pipeline.run(db, user, question, turns, embedder, provider, now)
 
 
-def _save(db: Session, session: ChatSession, draft: Draft, meta: dict, started: float, now: datetime) -> ChatMessage:
+def _save(db: Session, session: ChatSession, draft: Draft, meta: dict, started: float, now: datetime,
+          provider: LLMProvider | None = None) -> ChatMessage:
     tool_calls = {"route": draft.route, "llm_calls": draft.llm_calls, "flow": draft.flow,
                   "source_label": draft.source_label, "suggested_lesson": draft.suggested_lesson,
                   "help_page": draft.help_page, **meta}
     if draft.llm:
         tool_calls["model"] = draft.llm.model
+    if isinstance(provider, CallCounter):
+        # ADR-042: số lần gọi Gemini thật (cả vòng soạn lại, lần lỗi, mô hình dự phòng); budget.used("tutor") cộng số này.
+        tool_calls["gemini_http"] = provider.http
     if draft.fallback_reason:
         tool_calls["fallback_reason"] = draft.fallback_reason
     msg = ChatMessage(session_id=session.id, role="assistant", content=draft.reply, intent=draft.intent,
@@ -508,6 +512,7 @@ def handle_message(db: Session, user: User, text: str, *, session_id: str | None
                    provider: LLMProvider | None = None, now: datetime | None = None) -> dict[str, Any]:
     started = time.perf_counter()
     now = _now(now)
+    provider = CallCounter(provider) if provider is not None else None   # ADR-042: đếm lần gọi HTTP thật
     session = get_session(db, user.id, session_id) if session_id else create_session(db, user.id, now=now)
     user_msg = ChatMessage(session_id=session.id, role="user", content=text, status="ok", created_at=now,
                            tool_calls={"context": _clean_context(context)})
@@ -523,7 +528,7 @@ def handle_message(db: Session, user: User, text: str, *, session_id: str | None
         db.rollback()  # bấm dồn dập: không lưu tin nhắn nào để khỏi đầy lịch sử
         raise
     meta["suggested_actions"] = draft.suggested_actions or []
-    msg = _save(db, session, draft, meta, started, now)
+    msg = _save(db, session, draft, meta, started, now, provider)
     return out(msg, session, quota_remaining(db, user.id, now))
 
 
@@ -584,6 +589,7 @@ def explain_attempt(db: Session, user: User, attempt_id: str, *, hint_level: int
                     provider: LLMProvider | None = None, now: datetime | None = None) -> dict[str, Any]:
     started = time.perf_counter()
     now = _now(now)
+    provider = CallCounter(provider) if provider is not None else None   # ADR-042
     attempt = db.get(Attempt, attempt_id)
     if attempt is None or attempt.user_id != user.id:
         raise AttemptNotFound(attempt_id)
@@ -654,7 +660,7 @@ def explain_attempt(db: Session, user: User, attempt_id: str, *, hint_level: int
                 draft = _finish(ans, guard, allowed, titles, results, facts)
                 draft.hint_level = level
     meta["suggested_actions"] = draft.suggested_actions or []
-    msg = _save(db, session, draft, meta, started, now)
+    msg = _save(db, session, draft, meta, started, now, provider)
     result = out(msg, session, quota_remaining(db, user.id, now))
     result["attempt_id"] = attempt.id
     result["next_hint_level"] = min(3, level + 1) if level < 3 else None

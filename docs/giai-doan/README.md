@@ -76,6 +76,7 @@ Các giai đoạn 0.2 → 2.3 là lộ trình của bản code gốc (zip v0.1.0
 - [`trang-chu/`](trang-chu/BAO_CAO.md): làm lại trang chủ công khai (lộ trình, đầu ra, bento tính năng, chương trình học chi tiết, footer), 25/11/2026.
 - [`tai-khoan/`](tai-khoan/BAO_CAO.md): luồng tài khoản chuẩn (đăng ký, đăng nhập, quên/đổi mật khẩu qua liên kết một lần, xác minh email, Mailpit, ADR-040), 25/11/2026.
 - [`admin-tinh-gon/`](admin-tinh-gon/BAO_CAO.md): tinh gọn Admin (bỏ nâng quyền, kỹ năng thành mục Nâng cao), Music Engine tự viết lời giải và chỉ chỗ sai, sửa câu quãng kép (ADR-041), 27/11/2026.
+- [`on-bao-ve-ai/`](on-bao-ve-ai/BAO_CAO.md): ôn bảo vệ AI soạn bài, đếm đúng lượt Gemini, xử lý 429 theo phút, bảng chất lượng AI theo phiên bản prompt (ADR-042), 28/11/2026.
 - Mỗi giai đoạn mới (ví dụ `gd2-goi-y`) tạo thư mục `docs/giai-doan/<tên giai đoạn>/`, đặt báo cáo triển khai và file kiểm chứng của giai đoạn đó vào đây, rồi thêm một dòng vào bảng trên.
 - Báo cáo PR vẫn ở [`docs/bao-cao/`](../bao-cao/), ảnh và minh chứng chấm điểm ở [`docs/minh-chung/`](../minh-chung/), quyết định ở [`docs/decisions/`](../decisions/).
 - Đặc tả dùng chung cho nhiều giai đoạn (`SKILL_GRAPH.md`, `LESSON_SPECIFICATIONS.md`, `CURRICULUM_SOURCE_MATRIX.md`) và minh chứng mốc chấm (`CP1_*.md`) giữ ở `docs/`.

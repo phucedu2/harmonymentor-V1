@@ -358,17 +358,24 @@ export type AiDraftContent = { title: string; objectives: string[]; blocks: { ti
   questions: AiQuestion[]; acknowledged_flags?: string[]; log?: AiNodeLog[]; truncated?: string; question_shortfall?: string; prompt_version?: string; dropped_questions: string[]; expansion?: boolean; duplicates?: AiDuplicate[]; part?: { heading: string; index: number } };
 export type AiJobPartStatus = "pending" | "running" | "done" | "no_new" | "not_theory" | "failed";
 export type AiJob = { id: string; document_id: string; status: "running" | "paused" | "done" | "cancelled";
-  pause_reason: "quota" | "daily_limit" | "unavailable" | "interrupted" | "admin" | "document_deleted" | null;
+  pause_reason: "quota" | "rate_minute" | "daily_limit" | "unavailable" | "interrupted" | "admin" | "document_deleted" | null;
   parts: { index: number; page_from: number; page_to: number; heading: string; status: AiJobPartStatus; draft_id: string | null;
     duplicates: AiDuplicate[]; note: string | null; log?: AiNodeLog[] }[];
   skipped_pages: { page: number; reason: string }[]; total: number; finished: number; drafts: number; created_at: string; updated_at: string; budget?: AiBudget };
 export type AiDraft = { id: string; status: "draft" | "published" | "rejected"; document: AiDocument | null; page_from: number; page_to: number;
   model: string | null; published_lesson_id: string | null; lesson_hidden?: boolean | null; content: AiDraftContent; engine: AdminEngineReport; created_at: string;
   flags?: AiFlag[]; budget?: AiBudget };
+// ADR-042: chất lượng AI soạn bài theo phiên bản prompt, đo trên bản nháp thật (khác bộ 41 ca thử).
+export type AiQualityRow = { prompt_version: string; drafts: number; published: number; rejected: number; open: number;
+  ai_questions: number; engine_dropped: number; engine_fixed: number; needs_review: number; edited: number; removed_by_reviewer: number;
+  without_snapshot: number; models: string[]; first_at: string; last_at: string;
+  keep_rate: number | null; engine_fix_rate: number | null; edit_rate: number | null; remove_rate: number | null; publish_rate: number | null };
+export type AiQuality = { versions: AiQualityRow[]; budget: AiBudget };
 export type AiDraftRow = { id: string; status: string; title: string | null; questions: number; flags: number; review_flags?: number; published_lesson_id: string | null; lesson_hidden?: boolean | null; created_at: string };
 
 export const api = {
   aiStatus: () => apiCall<{ enabled: boolean; env_ready: boolean; switch_on: boolean }>("/admin/ai/status"),
+  aiQuality: () => apiCall<AiQuality>("/admin/ai/quality"),
   adminSetAiSwitch: (on: boolean) =>
     apiCall<{ switch_on: boolean; env_ready: boolean }>("/admin/ai/switch", { method: "PUT", body: JSON.stringify({ on }) }),
   aiDocuments: () => apiCall<AiDocument[]>("/admin/ai/documents"),
