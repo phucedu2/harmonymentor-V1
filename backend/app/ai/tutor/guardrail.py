@@ -17,9 +17,11 @@ from ...music_engine import tools as engine
 from ...music_engine.errors import MusicEngineError
 from ...music_engine.roman import diatonic_chords
 from .notes import (
-    CHORD_IS_ROMAN_IN_KEY, CHORD_WITH_NOTES, INTERVAL_PAIR_WITH_NAME, INTERVAL_WITH_NAME,
-    KEY_CHORD_IS_ROMAN, NOTE_SEQ, ROMAN_IN_KEY_IS_CHORD, SCALE_WITH_NOTES, SYMBOL_IN_QUESTION,
-    interval_name, norm_accidentals, normalize_key_names, roman_mode, solfege_to_letters, split_notes,
+    BASS_CLAIM, CHORD_IS_DEGREE_IN_KEY, CHORD_IS_ROMAN_IN_KEY, CHORD_WITH_NOTES, INTERVAL_PAIR_WITH_NAME,
+    INTERVAL_WITH_NAME, KEY_CHORD_IS_ROMAN, KEY_ROMAN_IS_CHORD, NOTE, NOTE_SEQ, PRONOUN_IS_DEGREE_IN_KEY,
+    PRONOUN_IS_ROMAN_IN_KEY, ROMAN_IN_KEY_IS_CHORD, SCALE_WITH_NOTES,
+    SYMBOL_IN_QUESTION, degree_number, interval_name, norm_accidentals, normalize_key_names, roman_mode,
+    solfege_to_letters, split_notes,
 )
 from .schema import Claim
 
@@ -120,6 +122,62 @@ def check_roman(key: str, chord: str, claimed: str, mode: str = "major") -> Chec
     return CheckedClaim("get_roman_numeral", args, rn, f"{rn} = {match.chord.symbol}", "contradicted", "scanned")
 
 
+_SCALE_FOR_MODE = {"major": "major", "natural_minor": "natural_minor"}
+
+
+def check_degree(key: str, chord: str, degree: int, mode: str = "major") -> CheckedClaim:
+    """Khẳng định "<chord> là hợp âm bậc N (thứ N) trong giọng <key>".
+
+    Hợp âm thuận giọng: so bậc Engine trả. Hợp âm ngoài giọng: nhìn nốt gốc trong âm giai. Gốc nằm ở bậc khác
+    → contradicted (ví dụ Gm7 trong G trưởng có gốc G là bậc 1, không phải bậc 3). Gốc đúng bậc nhưng chất lượng
+    ngoài giọng (hợp âm mượn như Fm trong C, át phụ) hoặc gốc không thuộc âm giai → unsupported, không bao giờ
+    verified. Giọng thứ không rõ loại → unsupported."""
+    args = {"key": norm_accidentals(key), "chord": norm_accidentals(chord)}
+    if mode != "major":
+        args["mode"] = mode
+    claimed = f"bậc {degree}"
+    value, raw = run_tool("get_roman_numeral", args)
+    if value is not None:
+        got = raw.get("degree")
+        return CheckedClaim("get_roman_numeral", args, claimed, f"bậc {got} ({value})",
+                            "verified" if got == degree else "contradicted", "scanned")
+    scale_type = _SCALE_FOR_MODE.get(mode)
+    root = re.match(NOTE, args["chord"])
+    notes = run_tool("get_scale", {"tonic": args["key"], "scale_type": scale_type})[0] if scale_type else None
+    if notes is None or root is None or root.group(0) not in notes.split():
+        return CheckedClaim("get_roman_numeral", args, claimed, None, "unsupported", "scanned")
+    got = notes.split().index(root.group(0)) + 1
+    engine_value = f"gốc {root.group(0)} là bậc {got} của giọng {args['key']}; {args['chord']} không thuận giọng"
+    return CheckedClaim("get_roman_numeral", args, claimed, engine_value,
+                        "unsupported" if got == degree else "contradicted", "scanned")
+
+
+def check_bass(symbol: str, claimed_bass: str) -> CheckedClaim:
+    """Khẳng định nốt bass của hợp âm có dấu "/" (C/E: bass là E). Engine không có bass thì unsupported."""
+    args = {"symbol": norm_accidentals(symbol)}
+    claimed = f"bass {norm_accidentals(claimed_bass)}"
+    out = engine.TOOLS["get_chord_tones"](symbol=args["symbol"])
+    bass = out.get("bass") if out.get("ok") else None
+    if not bass:
+        return CheckedClaim("get_chord_tones", args, claimed, None, "unsupported", "scanned")
+    value = f"bass {bass}"
+    return CheckedClaim("get_chord_tones", args, claimed, value, "verified" if claimed == value else "contradicted",
+                        "scanned")
+
+
+# Hợp âm mà "Nó / hợp âm này" có thể chỉ tới: ký hiệu có hậu tố hoặc dấu "/", hoặc "hợp âm X". Tên nốt trần
+# (G, Bb trong dãy nốt, C trong "C major") không tính, vì thường là nốt hay giọng chứ không phải hợp âm.
+_ANTECEDENT = re.compile(
+    rf"(?<![A-Za-z0-9#/])(?P<sym>{NOTE}(?:maj7|M7|mM7|m7b5|ø7|dim7|°7|dim|°|aug|m7|m6|sus2|sus4|m|7|6)(?:/{NOTE})?"
+    rf"|{NOTE}/{NOTE})(?![A-Za-z0-9#])|(?i:hợp âm)\s+(?P<bare>{NOTE})(?![A-Za-z0-9#/])")
+
+
+def _antecedent(text: str, end: int) -> str | None:
+    """Chỉ nhận khi phần câu trả lời phía trước nêu đúng MỘT hợp âm; nhiều hơn thì không đoán."""
+    found = {norm_accidentals(m["sym"] or m["bare"]) for m in _ANTECEDENT.finditer(text, 0, end)}
+    return found.pop() if len(found) == 1 else None
+
+
 def check_declared(claims: Iterable[Claim]) -> list[CheckedClaim]:
     out = []
     for c in claims:
@@ -166,11 +224,29 @@ def scan_reply(reply: str) -> list[CheckedClaim]:
                                 "scanned"))
     # "Dm7: D F A C là ii7": chữ C cuối dãy nốt không phải hợp âm C, nên bỏ khớp nằm trong một dãy nốt.
     seqs = [m.span() for m in re.finditer(NOTE_SEQ, text)]
-    for pattern in (ROMAN_IN_KEY_IS_CHORD, CHORD_IS_ROMAN_IN_KEY, KEY_CHORD_IS_ROMAN):
+    for pattern in (ROMAN_IN_KEY_IS_CHORD, CHORD_IS_ROMAN_IN_KEY, KEY_CHORD_IS_ROMAN, KEY_ROMAN_IS_CHORD):
         for m in pattern.finditer(text):
             if any(a <= m.start("chord") < b for a, b in seqs):
                 continue
             out.append(check_roman(m["key"], m["chord"], m["rn"], roman_mode(m["mode"])))
+    for m in CHORD_IS_DEGREE_IN_KEY.finditer(text):
+        if any(a <= m.start("chord") < b for a, b in seqs):
+            continue
+        out.append(check_degree(m["key"], m["chord"], degree_number(m), roman_mode(m["mode"])))
+    # "Nó / hợp âm này là hợp âm thứ ba trong giọng C": tìm hợp âm được nhắc trước đó trong câu trả lời.
+    for pattern in (PRONOUN_IS_DEGREE_IN_KEY, PRONOUN_IS_ROMAN_IN_KEY):
+        for m in pattern.finditer(text):
+            chord, mode = _antecedent(text, m.start()), roman_mode(m["mode"])
+            if chord is None:
+                claimed = f"bậc {degree_number(m)}" if pattern is PRONOUN_IS_DEGREE_IN_KEY else _norm_roman(m["rn"])
+                out.append(CheckedClaim("get_roman_numeral", {"key": norm_accidentals(m["key"]), "chord": "?"},
+                                        claimed, None, "unsupported", "scanned"))
+            elif pattern is PRONOUN_IS_DEGREE_IN_KEY:
+                out.append(check_degree(m["key"], chord, degree_number(m), mode))
+            else:
+                out.append(check_roman(m["key"], chord, m["rn"], mode))
+    for m in BASS_CLAIM.finditer(text):
+        out.append(check_bass(m["sym"], m["b1"] or m["b2"]))
     return out
 
 

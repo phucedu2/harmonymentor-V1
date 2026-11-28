@@ -22,7 +22,7 @@ NOTE_SEQ = rf"{NOTE}(?:{_SEP}{NOTE}){{2,}}"
 
 # "G7 = G B D F", "Cmaj7 gồm C, E, G, B", "C7 (C – E – G – Bb)", "Cmaj7: C E G B"
 CHORD_WITH_NOTES = re.compile(
-    rf"(?<![A-Za-z0-9#])(?P<sym>{CHORD})(?![A-Za-z0-9#])\s*(?:=|:|\(|là|gồm(?: các nốt)?|có các nốt|có nốt)\s*"
+    rf"(?<![A-Za-z0-9#/])(?P<sym>{CHORD}(?:/{NOTE})?)(?![A-Za-z0-9#])\s*(?:=|:|\(|là|gồm(?: các nốt)?|có các nốt|có nốt)\s*"
     rf"(?P<notes>{NOTE_SEQ})(?![A-Za-z0-9#])")
 # "âm giai G major: G A B C D E F#", "âm giai Rê trưởng gồm D E F# ..."
 SCALE_WITH_NOTES = re.compile(
@@ -61,7 +61,7 @@ ROMAN_IN_KEY_IS_CHORD = re.compile(
     rf"(?<![A-Za-z])(?P<rn>{ROMAN})(?![A-Za-z0-9])\s+(?:trong|của)\s+{_KEY}\s*(?:là|=|:)\s*(?:hợp âm\s+)?"
     rf"(?P<chord>{CHORD})(?![A-Za-z0-9#])")
 CHORD_IS_ROMAN_IN_KEY = re.compile(
-    rf"(?<![A-Za-z0-9#])(?P<chord>{CHORD})(?![A-Za-z0-9#])\s*(?:là|=)\s*(?:hợp âm\s+)?(?P<rn>{ROMAN})"
+    rf"(?<![A-Za-z0-9#/])(?P<chord>{CHORD})(?![A-Za-z0-9#])\s*(?:là|=)\s*(?:hợp âm\s+)?(?P<rn>{ROMAN})"
     rf"(?![A-Za-z0-9])\s+(?:trong|của)\s+{_KEY}")
 
 
@@ -69,6 +69,48 @@ CHORD_IS_ROMAN_IN_KEY = re.compile(
 KEY_CHORD_IS_ROMAN = re.compile(
     rf"(?i:trong)\s+{_KEY}\s*[,;:]\s*(?P<chord>{CHORD})(?![A-Za-z0-9#])\s+(?:là|=)\s+"
     rf"(?P<rn>{ROMAN})(?![A-Za-z0-9])")
+
+
+# Khẳng định bậc bằng số thứ tự hoặc chữ "bậc": "Gm7 là hợp âm thứ ba trong giọng G major",
+# "G7 là hợp âm bậc V của C trưởng", "Gm7 là bậc 2 trong F". Phải có giọng thì Engine mới kiểm được.
+# "thứ bảy" bị bỏ qua vì dễ lẫn với "hợp âm bảy thứ" (minor seventh); bậc 7 phải viết "bậc bảy" / "bậc 7".
+_DEG_WORDS = {"một": 1, "nhất": 1, "hai": 2, "ba": 3, "bốn": 4, "tư": 4, "năm": 5, "sáu": 6, "bảy": 7}
+_DEG_ROMAN = {"i": 1, "ii": 2, "iii": 3, "iv": 4, "v": 5, "vi": 6, "vii": 7}
+_DEG_THU = r"[1-7]|một|nhất|hai|ba|bốn|tư|năm|sáu"
+_DEG_BAC = r"[1-7]|một|hai|ba|bốn|tư|năm|sáu|bảy|VII|VI|IV|V|III|II|I|vii|vi|iv|v|iii|ii|i"
+CHORD_IS_DEGREE_IN_KEY = re.compile(
+    rf"(?<![A-Za-z0-9#/])(?P<chord>{CHORD})(?![A-Za-z0-9#])\s*(?:là|=)\s*(?:một\s+)?(?:hợp âm\s+)?(?:(?:ở|trên)\s+)?"
+    rf"(?:bậc\s+(?P<deg_b>{_DEG_BAC})|thứ\s+(?P<deg_t>{_DEG_THU}))(?![\wÀ-ỹ])\s*(?:\([^)]*\)\s*)?"
+    rf"(?:trong|của)\s+{_KEY}")
+# "Trong giọng G major, ii7 là Am7" (số La Mã trước, hợp âm sau).
+KEY_ROMAN_IS_CHORD = re.compile(
+    rf"(?i:trong)\s+{_KEY}\s*[,;:]\s*(?P<rn>{ROMAN})(?![A-Za-z0-9])\s+(?:là|=)\s+(?:hợp âm\s+)?"
+    rf"(?P<chord>{CHORD})(?![A-Za-z0-9#])")
+
+
+# "Nó / hợp âm này / hợp âm đó là hợp âm thứ ba trong giọng C": hợp âm được chỉ tới do guardrail tìm trong câu trả lời.
+_PRONOUN = r"(?:[Nn]ó|[Hh]ợp âm (?:này|đó|ấy|trên))"
+PRONOUN_IS_DEGREE_IN_KEY = re.compile(
+    rf"(?<![\wÀ-ỹ])(?P<pron>{_PRONOUN})(?![\wÀ-ỹ])\s*(?:là|=)\s*(?:một\s+)?(?:hợp âm\s+)?(?:(?:ở|trên)\s+)?"
+    rf"(?:bậc\s+(?P<deg_b>{_DEG_BAC})|thứ\s+(?P<deg_t>{_DEG_THU}))(?![\wÀ-ỹ])\s*(?:\([^)]*\)\s*)?"
+    rf"(?:trong|của)\s+{_KEY}")
+PRONOUN_IS_ROMAN_IN_KEY = re.compile(
+    rf"(?<![\wÀ-ỹ])(?P<pron>{_PRONOUN})(?![\wÀ-ỹ])\s*(?:là|=)\s*(?:hợp âm\s+)?(?P<rn>{ROMAN})"
+    rf"(?![A-Za-z0-9])\s+(?:trong|của)\s+{_KEY}")
+
+# Nốt bass của hợp âm có dấu "/": "C/E ... nốt bass là E", "C/E ... với E ở bass", "G7/B: nốt trầm là B".
+BASS_CLAIM = re.compile(
+    rf"(?<![A-Za-z0-9#/])(?P<sym>{CHORD}/{NOTE})(?![A-Za-z0-9#])[^.!?\n]{{0,60}}?"
+    rf"(?:(?:bass|trầm|thấp nhất|dưới cùng)\s*(?:là|:|=)\s*(?:nốt\s+)?(?P<b1>{NOTE})(?![A-Za-z0-9#])"
+    rf"|(?P<b2>{NOTE})(?![A-Za-z0-9#])\s+(?:ở|làm|nằm ở|đặt ở)\s+(?:vị trí\s+)?(?:nốt\s+)?(?:bass|trầm|thấp nhất|dưới cùng))")
+
+
+def degree_number(match: re.Match) -> int:
+    """Số bậc 1–7 từ một kết quả CHORD_IS_DEGREE_IN_KEY."""
+    tok = match["deg_b"] or match["deg_t"]
+    if tok.isdigit():
+        return int(tok)
+    return _DEG_WORDS.get(tok.lower()) or _DEG_ROMAN[tok.lower()]
 
 
 def interval_name(match: re.Match) -> str:

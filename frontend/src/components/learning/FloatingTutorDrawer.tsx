@@ -149,6 +149,8 @@ export default function FloatingTutorDrawer() {
     push({ kind: "user", id: nextId(), text: message });
     // Capture the context now: retry must not inherit a later selection.
     const context = { ...contextFromPath(location.pathname, location.search), ...readTutorContext(contextScope) };
+    // Dùng lại phiên để hỏi nối tiếp được ("Vậy nó là bậc mấy?"). Backend chỉ dùng lịch sử khi câu hỏi
+    // chỉ tới hợp âm trước đó; câu độc lập không nhận lịch sử (xem ai_tutor_service.handle_message).
     void run(() => api.chatMessage(message, sessionId, context));
   };
 

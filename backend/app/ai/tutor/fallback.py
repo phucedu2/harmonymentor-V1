@@ -39,6 +39,9 @@ UNAVAILABLE = "Trợ lý AI đang tạm nghỉ, nên mình trả lời bằng ph
 B_BUSY = "Trợ lý AI chưa trả lời được câu này lúc này, bạn thử hỏi lại sau ít phút nhé."
 B_OFF = "Trợ lý AI đang tắt nên mình chưa trả lời thêm được."
 B_NO_SOURCE = "Mình chưa tìm thấy nguồn phù hợp cho câu hỏi này trong giáo trình hoặc kho tham khảo đã duyệt."
+# ADR-021: câu ngoài kho bài không để AI viết kiến thức chung nữa; nói rõ chưa có nội dung đã duyệt.
+NOT_APPROVED = ("Mình chưa có nội dung đã duyệt cho câu này trong khóa học, nên mình chưa trả lời để tránh nói sai. "
+                "Bạn thử hỏi về một nội dung có trong bài học, hoặc hỏi giảng viên.")
 BUSY = "Trợ lý AI chưa trả lời được lúc này, nên mình trả lời bằng phần bài học liên quan nhất."
 
 # Gợi mở theo mã lỗi, không chứa đáp án (mức 1–2). Mức 3 thêm lời giải của câu (explanation đã duyệt).

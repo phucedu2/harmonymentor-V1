@@ -23,7 +23,8 @@ from .notes import NOTE, ROMAN_MODE, roman_mode, norm_accidentals, normalize_key
 # Hậu tố có thể gặp trong câu hỏi, kể cả loại Engine chưa hỗ trợ (để báo "không biết" chứ không bỏ sót).
 _SUFFIX = (r"(?:maj9|maj7|M7|Δ7|mM7|m7b5|m7\(b5\)|ø7|ø|dim7|°7|o7|dim|°|aug|\+|m9|m7|m6|min7|min|mi7|7sus4|"
            r"7b9|7#9|7b5|sus2|sus4|add9|add2|add11|13|11|9|6|7|m)")
-_SYM = re.compile(rf"(?<![A-Za-z0-9#])(?P<sym>{NOTE}{_SUFFIX})(?![A-Za-z0-9#])")
+# Nhận cả hợp âm có bass riêng: "C/E", "G7/B" (trước đây "C/E" chỉ được hiểu là C, mất nốt bass).
+_SYM = re.compile(rf"(?<![A-Za-z0-9#/])(?P<sym>{NOTE}(?:{_SUFFIX}(?:/{NOTE})?|/{NOTE}))(?![A-Za-z0-9#])")
 # Gõ thường cả tên nốt ("cmaj7 la gi"): chỉ nhận khi hậu tố dài, tránh hiểu "a", "em", "do" thành hợp âm.
 _SYM_LOWER = re.compile(r"(?<![A-Za-z0-9#])(?P<root>[a-g])(?P<acc>#|b)?(?P<suf>maj7|m7b5|dim7|m7|dim|aug|sus2|sus4)"
                         r"(?![A-Za-z0-9#])")
@@ -130,7 +131,10 @@ def _add(out: EngineAnswer, seen: set, tool: str, args: dict[str, str]) -> None:
                 out.unknown.append(args.get("symbol") or args.get("chord") or " ".join(args.values()))
         return
     sourced = bool(raw.get("verified")) if tool == "get_chord_tones" else True
-    out.facts.append({"tool": tool, "args": args, "result": value, "sourced": sourced})
+    fact = {"tool": tool, "args": args, "result": value, "sourced": sourced}
+    if tool == "get_chord_tones" and raw.get("bass"):
+        fact["bass"] = raw["bass"]  # C/E: nốt bass E do Engine trả, không suy ra từ chữ
+    out.facts.append(fact)
 
 
 # "Em đếm / Em muốn…" là cách người học tự xưng, không phải hợp âm Mi thứ.
@@ -231,7 +235,8 @@ def fact_text(f: dict[str, Any]) -> str:
     """Một câu tiếng Việt cho một dữ kiện Engine (khuôn viết sẵn, không qua LLM)."""
     a, r = f["args"], f["result"]
     if f["tool"] == "get_chord_tones":
-        return f"{a['symbol']} gồm các nốt {', '.join(r.split())}."
+        bass = f"; nốt bass là {f['bass']} (nốt thấp nhất)" if f.get("bass") else ""
+        return f"{a['symbol']} gồm các nốt {', '.join(r.split())}{bass}."
     if f["tool"] == "identify_interval":
         return f"Từ {a['lower']} lên {a['upper']} là quãng {r}."
     if f["tool"] == "get_scale":

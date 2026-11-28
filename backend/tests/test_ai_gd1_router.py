@@ -272,57 +272,40 @@ def general_reply(reply, claims=None, intent="concept"):
                        "suggested_actions": [], "intent": intent}, ensure_ascii=False)
 
 
-# --- Luồng B sau ADR-020: Gemini trả lời kiến thức chung, có nhãn; Engine vẫn kiểm mọi ký hiệu ---------------------
+# --- ADR-021: luồng B không gọi AI; câu chưa có nội dung đã duyệt được nói rõ -----------------------------------
 
-def test_api_flow_b_general_llm_with_engine_check(fake):
-    fake.script = [general_reply("Csus4 thay nốt 3 bằng nốt 4: Csus4 gồm các nốt C F G.",
-                                 [{"tool": "get_chord_tones", "args": {"symbol": "Csus4"}, "result": "C F G"}])]
+NOT_APPROVED_MARK = "chưa có nội dung đã duyệt"
+
+
+def test_api_flow_b_engine_facts_no_llm(fake):
+    # Engine tính được (Csus4) → dữ kiện Engine viết sẵn, không gọi AI.
     body = ask("Csus4 gồm những nốt nào?")
-    assert body["flow"] == "B" and body["source_label"] == "Chưa có trong bài học, đây là kiến thức chung"
-    assert "C F G" in body["reply"] and body["citations"] == [] and len(fake.calls) == 1
-    assert fake.calls[0][0].startswith("# Vai trò") and "general_music" in fake.calls[0][1]
-    assert "LESSON_CHUNKS" not in fake.calls[0][1]
+    assert body["flow"] == "B" and body["source_label"] == "Ngoài bài học, theo Music Engine"
+    assert "Csus4 gồm các nốt C, F, G." in body["reply"] and fake.calls == []
     assert body["engine_claims"] and all(c["status"] == "verified" for c in body["engine_claims"])
 
 
-def test_api_flow_b_wrong_notes_never_reach_user(fake):
-    # Gemini viết sai nốt hai lần: bỏ câu AI, trả dữ kiện Music Engine viết sẵn.
-    bad = general_reply("Csus4 gồm các nốt C E G.", [{"tool": "get_chord_tones", "args": {"symbol": "Csus4"},
-                                                      "result": "C E G"}])
-    fake.script = [bad, bad]
-    body = ask("Csus4 gồm những nốt nào?")
-    assert len(fake.calls) == 2 and body["source_label"] == "Ngoài bài học, theo Music Engine"
-    assert "Csus4 gồm các nốt C, F, G." in body["reply"] and "C E G" not in body["reply"]
+def test_api_flow_b_not_approved_no_llm(fake):
+    # Kiến thức chung ngoài kho bài: không gọi AI, nói rõ là chưa có nội dung đã duyệt.
+    fake.script = [general_reply("Fugue là hình thức phức điệu.")]
+    body = ask("Kết cấu fugue là gì?")
+    assert body["flow"] == "B" and NOT_APPROVED_MARK in body["reply"] and fake.calls == []
+    assert "phức điệu" not in body["reply"]
 
 
 def test_api_flow_b_later_lesson_pointer(fake, monkeypatch):
     # Không còn bài nào chưa vào kho: giả lập kho chưa có L07 để kiểm luồng "bạn sẽ học sau".
     without = [c for c in router.knowledge_base() if c.lesson_id != "L07"]
     monkeypatch.setattr(router, "knowledge_base", lambda: without)
-    fake.script = [general_reply("Chord-scale là cách ghép một âm giai với từng hợp âm để chọn nốt solo.")]
     body = ask("Chord-scale là gì?")
-    assert body["flow"] == "B" and body["source_label"] == "Chưa có trong bài học, đây là kiến thức chung"
-    assert body["suggested_lesson"]["lesson_id"] == "L07" and "L07" in body["reply"] and len(fake.calls) == 1
-
-
-def test_api_flow_b_dont_know_now_answered(fake):
-    fake.script = [general_reply("Fugue là hình thức phức điệu: một chủ đề được các bè lần lượt vào và đáp lại nhau.")]
-    body = ask("Kết cấu fugue là gì?")
-    assert body["flow"] == "B" and body["source_label"] == "Chưa có trong bài học, đây là kiến thức chung"
-    assert "Fugue" in body["reply"] and len(fake.calls) == 1
+    assert body["flow"] == "B" and NOT_APPROVED_MARK in body["reply"] and fake.calls == []
+    assert body["suggested_lesson"]["lesson_id"] == "L07" and "L07" in body["reply"]
 
 
 def test_api_flow_b_broad_music_not_refused(fake):
-    fake.script = [general_reply("Bắt đầu với 3 hợp âm Em, Am, D và tập chuyển hợp âm chậm theo nhịp đếm.")]
+    # Câu nhạc rộng không bị từ chối như ngoài phạm vi, nhưng cũng không để AI tự trả lời.
     body = ask("Đàn guitar tập thế nào cho người mới?")
-    assert body["flow"] == "B" and len(fake.calls) == 1 and "Em" in body["reply"]
-
-
-def test_api_flow_b_llm_says_not_music(fake):
-    fake.script = [general_reply("Xin lỗi.", intent="out_of_scope")]
-    body = ask("Kết cấu fugue là gì?")
-    assert body["flow"] == "C" and body["source_label"] == "Ngoài phạm vi"
-    assert "trợ lý âm nhạc" in body["reply"] and "Xin lỗi" not in body["reply"]
+    assert body["flow"] == "B" and NOT_APPROVED_MARK in body["reply"] and fake.calls == []
 
 
 def test_api_flow_b_ai_down_engine_or_busy(fake):
@@ -330,10 +313,9 @@ def test_api_flow_b_ai_down_engine_or_busy(fake):
     fake.script = [LLMUnavailable("unavailable")]
     body = ask("Csus4 gồm những nốt nào?")                      # Engine tính được → dữ kiện Engine
     assert body["source_label"] == "Ngoài bài học, theo Music Engine" and "Csus4 gồm các nốt C, F, G." in body["reply"]
-    fake.script = [LLMUnavailable("unavailable")]
-    body = ask("Kết cấu fugue là gì?")                          # Engine không tính → nói thật là chưa trả lời được
-    assert "chưa trả lời được" in body["reply"] and "không biết" not in body["reply"].lower()
-    assert body["status"] == "fallback" and body["fallback_reason"] == "unavailable"
+    body = ask("Kết cấu fugue là gì?")                          # Không cần AI để nói chưa có nội dung đã duyệt
+    assert NOT_APPROVED_MARK in body["reply"] and body["status"] == "fallback"
+    assert body["fallback_reason"] == "not_approved"
 
 
 def test_api_flow_b_ai_off_keeps_old_behaviour():
@@ -344,7 +326,7 @@ def test_api_flow_b_ai_off_keeps_old_behaviour():
         assert body["flow"] == "B" and body["source_label"] == "Ngoài bài học, theo Music Engine"
         assert "Csus4 gồm các nốt C, F, G." in body["reply"] and "chưa đối chiếu" in body["reply"]
         assert body["engine_claims"][0]["status"] == "verified"
-        assert "chưa tìm thấy" in ask("Kết cấu fugue là gì?")["reply"]
+        assert NOT_APPROVED_MARK in ask("Kết cấu fugue là gì?")["reply"]
     finally:
         app.dependency_overrides.pop(ai_tutor.embedder_dep, None)
         app.dependency_overrides.pop(ai_tutor.provider_dep, None)
@@ -382,19 +364,16 @@ def test_non_music_or_blocked_still_refused(q):
     assert router.decide(q, None).flow == "C"
 
 
-def test_api_flow_a_uncited_answer_retried_as_general(fake):
-    # Kho có đoạn bài cho câu hỏi, nhưng AI nói bài chưa dạy (không trích được đoạn nào): hỏi lại theo kiến thức chung.
-    fake.script = [general_reply("Mình không biết câu này vì các bài học hiện có chưa dạy."),
-                   general_reply("Cmaj7 là hợp âm bảy trưởng, gồm C E G B.",
-                                 [{"tool": "get_chord_tones", "args": {"symbol": "Cmaj7"}, "result": "C E G B"}])]
+def test_api_flow_a_uncited_answer_not_retried(fake):
+    # ADR-021: kho có đoạn bài nhưng AI nói "không biết": không hỏi lại kiến thức chung, nói rõ là chưa được duyệt.
+    fake.script = [general_reply("Mình không biết câu này vì các bài học hiện có chưa dạy.")]
     body = ask("Cmaj7 khác C7 chỗ nào?")
-    assert len(fake.calls) == 2 and "LESSON_CHUNKS" in fake.calls[0][1] and "general_music" in fake.calls[1][1]
-    assert body["source_label"] == "Chưa có trong bài học, đây là kiến thức chung" and "C E G B" in body["reply"]
+    assert len(fake.calls) == 1 and "LESSON_CHUNKS" in fake.calls[0][1]
+    assert NOT_APPROVED_MARK in body["reply"]
 
-def test_api_flow_a_unknown_tagged_out_of_scope_still_retried(fake):
-    # Thử thật 12/11: Gemini ở chế độ bài học trả "không biết" kèm intent out_of_scope cho "piano có bao nhiêu phím".
-    fake.script = [general_reply("Mình không biết câu này vì các bài học hiện có chưa dạy.", intent="out_of_scope"),
-                   general_reply("Đàn piano tiêu chuẩn có 88 phím.")]
+
+def test_api_flow_a_unknown_tagged_out_of_scope_not_retried(fake):
+    # Thử thật 12/11: AI ở chế độ bài học trả "không biết" kèm intent out_of_scope: không gọi lại kiến thức chung.
+    fake.script = [general_reply("Mình không biết câu này vì các bài học hiện có chưa dạy.", intent="out_of_scope")]
     body = ask("Cmaj7 khác C7 chỗ nào?")
-    assert len(fake.calls) == 2 and "general_music" in fake.calls[1][1]
-    assert body["source_label"] == "Chưa có trong bài học, đây là kiến thức chung" and "88 phím" in body["reply"]
+    assert len(fake.calls) == 1 and NOT_APPROVED_MARK in body["reply"] and "88 phím" not in body["reply"]

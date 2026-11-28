@@ -37,6 +37,7 @@ from ..ai.tutor.intent import classify
 from ..ai.tutor.llm import LLMProvider, LLMResult, LLMUnavailable
 from ..ai.tutor.notes import solfege_to_letters, split_notes
 from ..ai.tutor.engine_query import fact_text
+from ..ai.tutor.followup import chord_from_turns, is_followup
 from ..ai.tutor.general import fold
 from ..ai.tutor.retriever import Hit, Retrieval, help_page, retrieve, retrieve_for_skill
 from ..ai.tutor.router import decide
@@ -326,7 +327,8 @@ def _weak_skill_names(db: Session, user_id: str, limit: int = 3) -> list[str]:
 
 def _engine_facts(dec_facts: Sequence[dict[str, Any]]) -> list[dict[str, Any]]:
     """Dữ kiện Engine dạng cũ {tool, args, result} cho prompt và nhãn kiểm (không gửi cờ nội bộ)."""
-    return [{"tool": f["tool"], "args": f["args"], "result": f["result"]} for f in dec_facts]
+    return [{"tool": f["tool"], "args": f["args"], "result": f["result"],
+             **({"bass": f["bass"]} if f.get("bass") else {})} for f in dec_facts]
 
 
 def _engine_only_answer(dec, titles: dict[str, str]) -> Draft:
@@ -390,6 +392,26 @@ def _b_without_ai(dec, titles: dict[str, str], reason: str, question: str = "") 
     return Draft(text, "concept", [], [], "fallback", "ai_off", 0, actions, flow="B",
                  source_label=fb.LABEL_LATER if lesson else fb.LABEL_NO_SOURCE,
                  suggested_lesson=lesson, fallback_reason=reason)
+
+
+def _b_not_approved(dec, titles: dict[str, str], question: str) -> Draft:
+    """ADR-021: luồng B không gọi AI. Dùng dữ kiện Engine (đã tính được), FAQ đã duyệt hoặc bài sẽ học sau;
+    còn lại nói rõ là chưa có nội dung đã duyệt. Không gợi ý bài chỉ khớp từ khóa."""
+    if dec.kind == "engine":
+        d = _engine_only_answer(dec, titles)
+        d.fallback_reason = "not_approved"
+        return d
+    hit = _faq_answer(question, titles, "not_approved")
+    if hit is not None:
+        return hit
+    lesson = dec.later_lesson
+    text = fb.NOT_APPROVED
+    if lesson:
+        text += fb.later_lesson_line(lesson, titles)
+    actions = [f"Mở bài {lesson}"] if lesson else []
+    return Draft(text, "concept", [], [], "fallback", "not_approved", 0, actions, flow="B",
+                 source_label=fb.LABEL_LATER if lesson else fb.LABEL_NO_SOURCE,
+                 suggested_lesson=lesson, fallback_reason="not_approved")
 
 
 def _general_answer(db: Session, user: User, question: str, turns: Sequence[tuple[str, str]], dec,
@@ -531,7 +553,8 @@ def answer_question(db: Session, user: User, question: str, turns: Sequence[tupl
         if faq_hit is not None:
             return faq_hit, meta
     if dec.flow == "B":
-        return _general_answer(db, user, question, turns, dec, titles, facts, provider, now, context=context), meta
+        # ADR-021: không để AI viết kiến thức chung; câu chưa có trong kho bài thì nói rõ là chưa được duyệt.
+        return _b_not_approved(dec, titles, question), meta
 
     # Luồng A: có đoạn bài đủ điểm.
     hits = dec.hits
@@ -578,15 +601,11 @@ def answer_question(db: Session, user: User, question: str, turns: Sequence[tupl
     # câu "không biết" ("piano có bao nhiêu phím", thử thật 12/11). Câu ngoài âm nhạc đã bị bộ định tuyến chặn, và
     # prompt kiến thức chung là chốt thứ hai.
     if not d.citations and _says_unknown(d.reply):
-        # Kho có đoạn "giống chữ" nhưng AI không trích được đoạn nào (thường là "bài chưa dạy", ví dụ "piano có bao
-        # nhiêu phím"): hỏi lại theo kiến thức chung như luồng B (ADR-020). AI lỗi hoặc hết hạn mức thì giữ câu cũ.
-        try:
-            g = _general_answer(db, user, question, turns, dec, titles, facts, provider, now, context=context)
-        except QuotaExceeded:
-            return d, meta
-        if g.route in ("general_llm", "out_of_scope"):
-            g.llm_calls += d.llm_calls
-            return g, meta
+        # ADR-021: AI không trích được đoạn nào và nói "không biết" (thường là bài chưa dạy): không hỏi lại
+        # kiến thức chung nữa, mà nói rõ là chưa có nội dung đã duyệt.
+        g = _b_not_approved(dec, titles, question)
+        g.llm_calls = d.llm_calls
+        return g, meta
     return d, meta
 
 
@@ -646,8 +665,20 @@ def handle_message(db: Session, user: User, text: str, *, session_id: str | None
     db.add(user_msg)
     db.flush()
     turns = recent_turns(db, session.id, before_id=user_msg.id)
+    ctx = _clean_context(context)
+    # Drawer dùng lại phiên (28/11, phương án a). Lịch sử chỉ dùng cho câu hỏi nối tiếp ("Vậy nó là bậc mấy?");
+    # câu độc lập không nhận lịch sử, để các câu hỏi không làm lệch câu trả lời của nhau.
+    if is_followup(text):
+        chord = chord_from_turns(turns)
+        if chord and not ctx.get("selected_chord"):  # hợp âm chọn trên giao diện vẫn được ưu tiên
+            resolved = _clean_context({**ctx, "selected_chord": chord})
+            if resolved.get("selected_chord") == chord:
+                ctx = resolved
+                user_msg.tool_calls = {**(user_msg.tool_calls or {}), "resolved_chord": chord}
+    else:
+        turns = []
     try:
-        draft, meta = answer_question(db, user, text, turns, embedder, provider, now, context=_clean_context(context))
+        draft, meta = answer_question(db, user, text, turns, embedder, provider, now, context=ctx)
     except QuotaExceeded:
         db.commit()  # tin nhắn vẫn được lưu (04 Bảng 11, mã 429)
         raise

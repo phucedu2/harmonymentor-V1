@@ -209,10 +209,20 @@ def test_tc11_only_last_six_messages_sent():
     sid = None
     for i in range(6):
         sid = ask(uid, f"Câu số {i:02d}: Cmaj7 gồm những nốt nào?", sid)["session_id"]
-    ask(uid, "Câu cuối: Cmaj7 với C7 khác gì nhau?", sid)
+    # Lịch sử chỉ gửi cho câu hỏi nối tiếp (28/11, phương án a).
+    ask(uid, "Câu cuối: vậy nó khác C7 chỗ nào?", sid)
     hist = fake.calls[-1][1].split('kind="HISTORY">>>', 1)[1].split("<<<HM_END>>>")[0]
     rows = json.loads(hist)
     assert len(rows) == 6 and "Câu số 03" in rows[0]["content"] and "Câu số 00" not in hist
+
+
+def test_independent_question_in_same_session_gets_no_history():
+    fake = use(FakeProvider([GOOD]))
+    uid = make_user()
+    sid = ask(uid, "Câu số 00: Cmaj7 gồm những nốt nào?")["session_id"]
+    ask(uid, "Cmaj7 với C7 khác gì nhau?", sid)
+    hist = fake.calls[-1][1].split('kind="HISTORY">>>', 1)[1].split("<<<HM_END>>>")[0]
+    assert json.loads(hist) == []
 
 
 def test_session_of_other_user_is_404():

@@ -62,7 +62,8 @@ def test_rs27_new_learner_gets_recommendation_not_refusal():
 
 def test_rs07_ai_off_says_not_found_without_off_topic_pointer():
     body = ask("Kết cấu fugue là gì?")
-    assert "chưa tìm thấy" in body["reply"] and "tạm nghỉ" not in body["reply"]
+    # ADR-021: câu ngoài kho bài nói rõ là chưa có nội dung đã duyệt (không còn câu "chưa tìm thấy").
+    assert "chưa có nội dung đã duyệt" in body["reply"] and "tạm nghỉ" not in body["reply"]
 
 
 def test_rs28_no_nearest_lesson_below_gray_threshold():
